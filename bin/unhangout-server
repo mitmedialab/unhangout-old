@@ -20,13 +20,13 @@ logger.info("Starting unhangout-server.");
 // show all related env variables
 var env = {};
 _.each(process.env, function(value, key) {
-	if(key.indexOf("UNHANGOUT")!=-1) {
-		env[key] = value;
+	if(key.indexOf("UNHANGOUT_")!=-1) {
+		env[key.slice(10)] = value;
 	}
 });
 
 logger.info("env: " + JSON.stringify(env));
 
 var s = new server.UnhangoutServer();
-s.init({"level":"debug", "transport":"console"});
+s.init(_.extend(env, {"level":"debug", "transport":"console"}));
 s.start();
