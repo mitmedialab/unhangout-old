@@ -1,4 +1,6 @@
-var server = require('../lib/unhangout-server');
+var server = require('../lib/unhangout-server'),
+	should = require('should'),
+	request = require('superagent');
 
 var s;
 
@@ -28,4 +30,21 @@ describe('unhangout server', function() {
 		});
 	});
 	
+	
+	describe('routes', function() {
+		
+		beforeEach(function() {
+			s.start();
+		});
+		
+		describe("GET /", function() {
+			it('should return without error', function(done) {
+				request('http://localhost:7777/', function(args) {
+					should.not.exist(args.err);
+					should.exist(args.res);
+					done();
+				});
+			});
+		});
+	});
 })

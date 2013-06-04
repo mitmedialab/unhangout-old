@@ -31,7 +31,9 @@
   },
   "analyze": false,
   "devDependencies": {
-    "mocha"    :  "*"
+    "mocha"     : "*",
+	"superagent": "*",
+	"should"    : "*"
   },
   "license": "BSD",
   "engines": {
