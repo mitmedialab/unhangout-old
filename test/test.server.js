@@ -20,8 +20,11 @@ var standardShutdown = function(done) {
 
 describe('unhangout server', function() {
 	describe('configuration', function() {
-		it('should not initialize without google credentials', function(done) {
+		beforeEach(function() {
 			s = new server.UnhangoutServer();
+		});
+		
+		it('should not initialize without google credentials', function(done) {
 			s.on("error", function() {
 				done();
 			});
@@ -29,7 +32,41 @@ describe('unhangout server', function() {
 				should.fail("Expected an error.");
 			});
 			s.init({"transport":"file", "level":"debug"});
-		});	
+		});
+		
+		it('#start should fail if init is not called first', function(done) {
+			s.on("error", function() {
+				done();
+			});
+			
+			s.on("started", function() {
+				should.fail("expected an error");
+			});
+			s.start();
+		});
+		
+		it("#stop should fail if not started", function(done) {
+			s.on("error", function() {
+				done();
+			});
+			
+			s.on("started", function() {
+				should.fail("expected an error");
+			});
+			s.stop();
+		});
+		
+		it("#destroy should succeed regardless of state", function(done) {
+			s.on("destroyed", function() {
+				done();
+			});
+			
+			s.on("error", function() {
+				should.fail();
+			})
+			
+			s.destroy();
+		});
 	});
 	
 	
