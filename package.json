@@ -21,6 +21,7 @@
   "dependencies" : {
 	"commander" :  "*",
     "express"   :  "*",
+	"winston"   :  "*",
 	"sockjs"    :  "*",
 	"underscore":  "*",
 	"node-uuid" :  "*",
