@@ -5,16 +5,27 @@ var s;
 describe('unhangout server', function() {
 	beforeEach(function() {
 		s = new server.UnhangoutServer();
+		s.init({"transport":"file", "level":"debug"});
 	});
 	
+	afterEach(function(done) {
+		s.stop();
+		s.on("stopped", function() {
+			s.on("destroyed", done);
+			s.destroy();
+		})
+	});
+	
+	
 	describe('setup', function() {
-		it('#init should initialize', function() {
-			s.init();
-		});
-
 		it('#start should start', function() {
-			s.init();
+			s.start();
+		});
+		
+		it("#start should emit 'started' message when complete", function(done) {
+			s.on("started", done);
 			s.start();
 		});
 	});
+	
 })
