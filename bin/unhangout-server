@@ -26,3 +26,7 @@ _.each(process.env, function(value, key) {
 });
 
 logger.info("env: " + JSON.stringify(env));
+
+var server = new server.UnhangoutServer();
+server.init();
+server.start();
