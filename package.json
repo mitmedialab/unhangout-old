@@ -1,0 +1,39 @@
+{
+  "name": "unhangout-server",
+  "version": "0.1.0",
+  "author": "Drew Harry <dharry@media.mit.edu>",
+  "description": "a server for managing un-hangouts; large scale online un-conference-style events using Google Hangout",
+  "contributors": [ 
+    {
+      "name": "Drew Harry",
+      "email": "dharry@media.mit.edu"
+    } 
+  ],
+  "scripts": {
+    "start": "node ./bin/unhangout-server",
+    "test": "mocha"
+  },
+  "main": "./lib/unhangout-server.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/drewww/unhangout.git"
+  },
+  "dependencies" : {
+	"commander" :  "*",
+    "express"   :  "*",
+	"sockjs"    :  "*",
+	"underscore":  "*",
+	"node-uuid" :  "*",
+	"backbone"  :  "*",
+	"ejs"       :  "*",
+	"async"     :  "*"
+  },
+  "analyze": false,
+  "devDependencies": {
+    "mocha"    :  "*"
+  },
+  "license": "BSD",
+  "engines": {
+    "node": ">=0.10"
+  }
+}
