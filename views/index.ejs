@@ -8,6 +8,25 @@
 	      body {
 	        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
 	      }
+			
+		.identity {
+			height: 40px;
+		}
+		
+		 .username {
+			display: block;
+			font-size: 14px;
+			color: #999;
+			padding: 10px 15px 10px 15px;
+			line-height: 20px;
+			height: 40px;
+		}
+		
+		.username:hover {
+			color: white;
+			text-decoration: none;
+		}
+	
 	 </style>
 
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
@@ -30,6 +49,13 @@
 						<li><a href="#about">About</a></li>
 						<li><a href="#contact">Contact</a></li>
 					</ul>
+					<div class="nav pull-right identity">
+					<% if(!user) {%>
+					<a class="btn btn-primary pull-left" href="/auth/google">Login</a>
+					<% } else { %>
+					<a href="/account" class="username pull-left"><%= user.displayName%></a>
+					<% } %>
+					</div>
 				</div><!--/.nav-collapse -->
 			</div>
 		</div>
