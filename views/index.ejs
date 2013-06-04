@@ -19,14 +19,12 @@
 			color: #999;
 			padding: 10px 15px 10px 15px;
 			line-height: 20px;
-			height: 40px;
 		}
 		
-		.username:hover {
+		.username:hover, .username:active, .username:visited {
 			color: white;
 			text-decoration: none;
-		}
-	
+		}		
 	 </style>
 
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
@@ -53,7 +51,14 @@
 					<% if(!user) {%>
 					<a class="btn btn-primary pull-left" href="/auth/google">Login</a>
 					<% } else { %>
-					<a href="/account" class="username pull-left"><%= user.displayName%></a>
+						<div class="dropdown">
+							<a class="dropdown-toggle username" data-toggle="dropdown" href="#"><%= user.displayName%></a>
+							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
+								</li>
+							</ul>
+						</div>
 					<% } %>
 					</div>
 				</div><!--/.nav-collapse -->
