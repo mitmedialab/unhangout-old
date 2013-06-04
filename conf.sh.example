@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# run this with "source" to set these environment variables easily
+
+
+export UNHANGOUT_GOOGLE_CLIENT_ID=client_id
+export UNHANGOUT_GOOGLE_CLIENT_SECRET=secret
+
+export UNHANGOUT_SESSION_SECRET=sessionsecret
+
+export UNHANGOUT_PORT=7777
+export UNHANGOUT_HOST=localhost
+
+echo "Set env variables!"

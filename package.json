@@ -27,7 +27,9 @@
 	"node-uuid" :  "*",
 	"backbone"  :  "*",
 	"ejs"       :  "*",
-	"async"     :  "*"
+	"async"     :  "*",
+	"passport"  :  "*",
+	"passport-google-oauth":"*"
   },
   "analyze": false,
   "devDependencies": {
