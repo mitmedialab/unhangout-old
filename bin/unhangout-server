@@ -28,5 +28,8 @@ _.each(process.env, function(value, key) {
 logger.info("env: " + JSON.stringify(env));
 
 var s = new server.UnhangoutServer();
+s.on("inited", function() {
+	s.start();
+});
+
 s.init(_.extend(env, {"level":"debug", "transport":"console"}));
-s.start();

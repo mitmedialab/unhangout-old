@@ -4,10 +4,11 @@ var server = require('../lib/unhangout-server'),
 
 var s;
 
-var standardSetup = function() {
+var standardSetup = function(done) {
 	s = new server.UnhangoutServer();
+	s.on("inited", function() {s.start()});
+	s.on("started", done);
 	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true});
-	s.start();
 }
 
 var standardShutdown = function(done) {
@@ -71,16 +72,13 @@ describe('unhangout server', function() {
 	
 	
 	describe('setup', function() {
-		beforeEach(function() {
+		beforeEach(function(done) {
 			s = new server.UnhangoutServer();
+			s.on("inited", done);
 			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true});
 		});
 
 		afterEach(standardShutdown);
-		
-		it('#start should start', function() {
-			s.start();
-		});
 		
 		it("#start should emit 'started' message when complete", function(done) {
 			s.on("started", done);

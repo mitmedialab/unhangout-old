@@ -29,7 +29,8 @@
 	"ejs"       :  "*",
 	"async"     :  "*",
 	"passport"  :  "*",
-	"passport-google-oauth":"*"
+	"passport-google-oauth":"*",
+	"redis"     :  "*"
   },
   "analyze": false,
   "devDependencies": {
