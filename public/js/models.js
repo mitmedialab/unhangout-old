@@ -6,6 +6,8 @@ var _ = require('underscore'),
     Backbone = require('backbone');
     
 exports.Event = Backbone.Model.extend({
+	urlRoot: "event",
+	
 	defaults: function() {
 		// also need:
 		// 	1. Some sort of image.
@@ -39,6 +41,8 @@ exports.EventList = Backbone.Collection.extend({
 
 
 exports.Session = Backbone.Model.extend({
+	urlRoot: "session",
+	
 	defaults: function() {
 		return {
 			title: "Great Session",
@@ -54,7 +58,7 @@ exports.SessionList = Backbone.Model.extend({
 
 
 exports.User = Backbone.Model.extend({
-	
+	urlRoot: "user"
 });
 
 exports.UserList = Backbone.Collection.extend({
