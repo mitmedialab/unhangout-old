@@ -6,17 +6,37 @@ var _ = require('underscore'),
     Backbone = require('backbone');
     
 exports.Event = Backbone.Model.extend({
-	
 	defaults: function() {
 		// also need:
 		// 	1. Some sort of image.
 		return {
 			title: "My Great Event",
 			organizer: "MIT Media Lab",
-			description: "This is my description about this great event. It has wonderful sessions in it."
+			description: "This is my description about this great event. It has wonderful sessions in it.",
+			start: new Date().getTime(),
+			end: new Date().getTime()+60*60*2,
+			connectedUsers: new exports.UserList(),
 		}
+	},
+	
+	isLive: function() {
+		var curTime = new Date().getTime();
+		return curTime > this.get("start") && curTime < this.get("end");
+	},
+	
+	userConnected: function(user) {
+		this.get("connectedUsers").add(user);
+	},
+	
+	numUsersConnected: function() {
+		return this.get("connectedUsers").length;
 	}
 });
+
+exports.EventList = Backbone.Collection.extend({
+	model:exports.Event
+})
+
 
 exports.Session = Backbone.Model.extend({
 	defaults: function() {
@@ -28,6 +48,16 @@ exports.Session = Backbone.Model.extend({
 	}
 });
 
+exports.SessionList = Backbone.Model.extend({
+	model:exports.Session
+});
+
+
 exports.User = Backbone.Model.extend({
 	
 });
+
+exports.UserList = Backbone.Collection.extend({
+	model:exports.User
+});
+
