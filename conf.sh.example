@@ -11,4 +11,8 @@ export UNHANGOUT_SESSION_SECRET=sessionsecret
 export UNHANGOUT_PORT=7777
 export UNHANGOUT_HOST=localhost
 
+export UNHANGOUT_REDIS_HOST=localhost
+export UNHANGOUT_REDIS_PORT=6379
+export UNHANGOUT_REDIS_DB=0
+
 echo "Set env variables!"
