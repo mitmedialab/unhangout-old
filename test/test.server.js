@@ -7,8 +7,10 @@ var s;
 var standardSetup = function(done) {
 	s = new server.UnhangoutServer();
 	s.on("inited", function() {s.start()});
-	s.on("started", done);
-	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true});
+	s.on("started", function() {
+		s.redis.flushdb(done)
+	});
+	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1});
 }
 
 var standardShutdown = function(done) {
