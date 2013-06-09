@@ -18,6 +18,7 @@ exports.Event = Backbone.Model.extend({
 			start: new Date().getTime(),
 			end: new Date().getTime()+60*60*2,
 			connectedUsers: new exports.UserList(),
+			sessions: new exports.SessionList()
 		}
 	},
 	

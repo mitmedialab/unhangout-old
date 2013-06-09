@@ -70,6 +70,15 @@
 
 		<h1>Welcome to Unhangout!</h1>
 		<p>A platform for running large scale online un-conference-style events using Google Hangouts for many simultaneous small sessions.</p>
+		
+		<h2>Upcoming and Live Events</h2>
+		<% events.each(function(event) {%>
+		<div class="event" id="event-<%=event.id%>">
+		<h3><%=event.get("title")%></h3>
+		<div class="organizer"><%=event.get("organizer")%></div>
+		<div class="description"><%=event.get("description")%></div>
+		</div>
+		<% }); %>
 	</div>
 </body>
 </html>
