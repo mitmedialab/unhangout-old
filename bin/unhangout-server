@@ -14,6 +14,7 @@ var logger= new (winston.Logger)({
     ],
     levels: winston.config.syslog.levels
 });
+
 logger.cli();
 logger.info("Starting unhangout-server.");
 
