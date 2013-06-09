@@ -32,6 +32,12 @@ exports.Event = Backbone.Model.extend({
 	
 	numUsersConnected: function() {
 		return this.get("connectedUsers").length;
+	},
+	
+	toJSON: function() {
+		var attrs = _.clone(this.attributes);
+		delete attrs["connectedUsers"];
+		return attrs;
 	}
 });
 
