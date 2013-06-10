@@ -31,6 +31,13 @@
 	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
 	<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 	<script type="text/javascript" src="/public/js/app.js"></script>
+	
+	<script type="text/javascript" charset="utf-8">
+		<% if(!_.isUndefined(user)) { %>
+		var SOCK_KEY = '<%= user.getSockKey() %>';
+		var USER_ID = '<%= user.id %>';
+		<% } %>
+	</script>
 </head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">

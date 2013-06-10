@@ -2,7 +2,8 @@
 // so it needs to figure out which situation it is in. If it's on the server,
 // put everything in exports and behave like a module. If it's on the client,
 // fake it and expect the client to understand how to deal with things.
-var _ = require('underscore'),
+var _ = require('underscore')._,
+	crypto = require('crypto'),
     Backbone = require('backbone');
     
 exports.Event = Backbone.Model.extend({
@@ -68,9 +69,33 @@ exports.SessionList = Backbone.Model.extend({
 	model:exports.Session
 });
 
+exports.USER_KEY_SALT = "SET ME EXTERNALLY";
 
 exports.User = Backbone.Model.extend({
-	urlRoot: "user"
+	urlRoot: "user",
+	
+	// This method generates time invariant key that gets embedded in all pages
+	// and can be used on the sockjs channel to authenticate a sock connection
+	// as belonging to this user. It is simply the id of the user plus some salt.
+	// The user can then present this key plus the userid they wish to authenticate
+	// as, and the server can verify that it matches the key it would have identified
+	// using that salt.
+	getSockKey: function() {
+		if(_.isUndefined(this.get("sock-key"))) {
+			var shasum = crypto.createHash('sha256');
+			shasum.update(this.get("id"));
+			shasum.update(exports.USER_KEY_SALT);
+			this.set("sock-key", shasum.digest('hex'));
+		}
+		
+		return this.get("sock-key");
+	},
+	
+	toJSON: function() {
+		var attrs = _.clone(this.attributes);
+		delete attrs["sock-key"];
+		return attrs;
+	}
 });
 
 exports.UserList = Backbone.Collection.extend({
