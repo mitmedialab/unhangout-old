@@ -16,7 +16,7 @@ exports.Event = Backbone.Model.extend({
 			organizer: "MIT Media Lab",
 			description: "This is my description about this great event. It has wonderful sessions in it.",
 			start: new Date().getTime(),
-			end: new Date().getTime()+60*60*2,
+			end: new Date().getTime()+60*60*2*1000,
 			connectedUsers: new exports.UserList(),
 			sessions: new exports.SessionList()
 		}
