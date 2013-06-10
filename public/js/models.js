@@ -91,9 +91,18 @@ exports.User = Backbone.Model.extend({
 		return this.get("sock-key");
 	},
 	
+	validateSockKey: function(key) {
+		return key == this.getSockKey();
+	},
+	
+	isConnected: function() {
+		return !_.isUndefined(this.get("sock"));
+	},
+	
 	toJSON: function() {
 		var attrs = _.clone(this.attributes);
 		delete attrs["sock-key"];
+		delete attrs["sock"];
 		return attrs;
 	}
 });

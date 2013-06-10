@@ -11,6 +11,10 @@ $(document).ready(function() {
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
 	sock.onopen = function() {
 		console.log('open');
+		
+		var AUTH = {type:"AUTH", key:SOCK_KEY, id:USER_ID};
+		
+		sock.send(JSON.stringify(AUTH));
 	};
 	sock.onmessage = function(e) {
 		console.log('message', e.data);
