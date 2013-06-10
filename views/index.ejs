@@ -77,6 +77,11 @@
 		<h3><%=event.get("title")%></h3>
 		<div class="organizer"><%=event.get("organizer")%></div>
 		<div class="description"><%=event.get("description")%></div>
+		<% if(event.isLive()) {%>
+		<a class="btn btn-primary" href="/event/<%=event.id%>">Join!</a>
+		<% } else { %>
+		<div class="start-time"><%= event.getStartTimeFormatted() %></div>
+		<% } %>
 		</div>
 		<% }); %>
 	</div>

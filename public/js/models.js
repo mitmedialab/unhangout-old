@@ -39,6 +39,11 @@ exports.Event = Backbone.Model.extend({
 		var attrs = _.clone(this.attributes);
 		delete attrs["connectedUsers"];
 		return attrs;
+	},
+	
+	getStartTimeFormatted: function() {
+		var date = new Date(this.get("start"));
+		return date.toLocaleDateString() + " " + date.toLocaleTimeString();
 	}
 });
 
