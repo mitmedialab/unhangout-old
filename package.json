@@ -30,7 +30,8 @@
 	"async"     :  "*",
 	"passport"  :  "*",
 	"passport-google-oauth":"*",
-	"redis"     :  "*"
+	"redis"     :  "*",
+	"connect-redis":"*"
   },
   "analyze": false,
   "devDependencies": {
