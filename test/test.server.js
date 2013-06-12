@@ -13,6 +13,15 @@ var standardSetup = function(done) {
 	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1});
 }
 
+var mockSetup = function(done) {
+	s = new server.UnhangoutServer();
+	s.on("inited", function() {s.start()});
+	s.on("started", function() {
+		s.redis.flushdb(done)
+	});
+	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true});
+}
+
 var standardShutdown = function(done) {
 	s.stop();
 	s.on("stopped", function() {
@@ -89,12 +98,9 @@ describe('unhangout server', function() {
 	});
 	
 	
-	describe('routes', function() {
-		
+	describe('routes (unauthenticated)', function() {
 		beforeEach(standardSetup);
-		
 		afterEach(standardShutdown);
-		
 		
 		describe("GET /", function() {
 			it('should return without error', function(done) {
@@ -115,6 +121,21 @@ describe('unhangout server', function() {
 					res.header['location'].should.equal("/auth/google");
 					done();
 				});
+			});
+		});
+	});
+	
+	describe('routes (authenticated)', function() {
+		beforeEach(mockSetup);
+		afterEach(standardShutdown);
+		
+		describe("GET /event/:id", function() {
+			it('should allow connections without redirection', function(done) {
+				request('http://localhost:7777/event/0')
+				.end(function(res) {
+					res.status.should.equal(200);
+					done();
+				});				
 			});
 		});
 	});
