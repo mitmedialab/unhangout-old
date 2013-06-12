@@ -20,9 +20,14 @@ exports.Event = Backbone.Model.extend({
 			description: "This is my description about this great event. It has wonderful sessions in it.",
 			start: new Date().getTime(),
 			end: new Date().getTime()+60*60*2*1000,
-			connectedUsers: new exports.UserList(),
-			sessions: new exports.SessionList(this)
+			connectedUsers: null,			// these two fields are setup in initialize
+			sessions: null
 		}
+	},
+	
+	initialize: function() {
+		this.set("sessions", new exports.SessionList(null, this));
+		this.set("connectdUsers", new exports.UserList());
 	},
 	
 	isLive: function() {
@@ -93,7 +98,7 @@ exports.SessionList = Backbone.Collection.extend({
 	
 	url: function() {
 		return this.event.url() + "/sessions";
-	}
+	},
 });
 
 exports.USER_KEY_SALT = "SET ME EXTERNALLY";

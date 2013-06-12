@@ -58,7 +58,6 @@ exports.run = function(dbId, redis, callback) {
 				async.series(_.map(_.union(events, sessions), function(model) {
 					return function(callback) {
 						model.save(null, {success:function() {
-							console.log("saved! " + JSON.stringify(model.toJSON()) + " to " + model.url());
 							callback();
 						}});
 					};
