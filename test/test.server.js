@@ -1,5 +1,6 @@
 var server = require('../lib/unhangout-server'),
 	should = require('should'),
+	sock_client = require('sockjs-client'),
 	request = require('superagent');
 
 var s;
@@ -137,6 +138,16 @@ describe('unhangout server', function() {
 					done();
 				});				
 			});
+		});
+	});
+	
+	describe('sock (mock)', function() {
+		beforeEach(mockSetup);
+		afterEach(standardShutdown);
+
+		it('should accept a connection at /sock', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("connection", done);
 		});
 	});
 })
