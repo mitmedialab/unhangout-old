@@ -27,7 +27,7 @@ exports.Event = Backbone.Model.extend({
 	
 	initialize: function() {
 		this.set("sessions", new exports.SessionList(null, this));
-		this.set("connectdUsers", new exports.UserList());
+		this.set("connectedUsers", new exports.UserList());
 	},
 	
 	isLive: function() {
