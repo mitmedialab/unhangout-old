@@ -137,7 +137,7 @@ describe('unhangout server', function() {
 		
 		describe("GET /event/:id", function() {
 			it('should allow connections without redirection', function(done) {
-				request('http://localhost:7777/event/0')
+				request('http://localhost:7777/event/1')
 				.end(function(res) {
 					res.status.should.equal(200);
 					done();
