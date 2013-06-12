@@ -12,7 +12,7 @@ $(document).ready(function() {
 	sock.onopen = function() {
 		console.log('open');
 		
-		var AUTH = {type:"AUTH", key:SOCK_KEY, id:USER_ID};
+		var AUTH = {type:"auth", args:{key:SOCK_KEY, id:USER_ID}};
 		
 		sock.send(JSON.stringify(AUTH));
 	};

@@ -158,6 +158,24 @@ describe('unhangout server', function() {
 				socketsList.length.should.equal(1);
 				done();
 			});
-		})
+		});
+		
+		it('should reject a bad authorization key', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-err") {
+					done();
+				} else {
+					console.log("oops: " + msg.type);
+				}
+			});
+			
+			sock.on("connection", function() {
+				sock.write(JSON.stringify({type:"auth", args:{key:"abe027d9c910236af", id:"0"}}));
+			});
+			
+		});
 	});
 })
