@@ -30,13 +30,15 @@
 	"async"     :  "*",
 	"passport"  :  "*",
 	"passport-google-oauth":"*",
-	"redis"     :  "*"
+	"redis"     :  "*",
+	"connect-redis":"*"
   },
   "analyze": false,
   "devDependencies": {
     "mocha"     : "*",
 	"superagent": "*",
-	"should"    : "*"
+	"should"    : "*",
+	"sockjs-client": "*"
   },
   "license": "BSD",
   "engines": {

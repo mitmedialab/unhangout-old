@@ -33,4 +33,4 @@ s.on("inited", function() {
 	s.start();
 });
 
-s.init(_.extend(env, {"level":"debug", "transport":"console"}));
+s.init(_.extend(env, {"level":"debug", "transport":"console", "mock-auth":true}));

@@ -1,5 +1,7 @@
 var server = require('../lib/unhangout-server'),
 	should = require('should'),
+	_ = require('underscore')._,
+	sock_client = require('sockjs-client'),
 	request = require('superagent');
 
 var s;
@@ -11,6 +13,15 @@ var standardSetup = function(done) {
 		s.redis.flushdb(done)
 	});
 	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1});
+}
+
+var mockSetup = function(done) {
+	s = new server.UnhangoutServer();
+	s.on("inited", function() {s.start()});
+	s.on("started", function() {
+		s.redis.flushdb(done)
+	});
+	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true});
 }
 
 var standardShutdown = function(done) {
@@ -89,21 +100,112 @@ describe('unhangout server', function() {
 	});
 	
 	
-	describe('routes', function() {
-		
+	describe('routes (unauthenticated)', function() {
 		beforeEach(standardSetup);
-		
 		afterEach(standardShutdown);
-		
 		
 		describe("GET /", function() {
 			it('should return without error', function(done) {
-				request('http://localhost:7777/', function(args) {
-					should.not.exist(args.err);
-					should.exist(args.res);
+				request('http://localhost:7777/').end(function(res) {
+					should.exist(res);
+					res.status.should.equal(200);
 					done();
 				});
 			});
+		});
+		
+		describe("GET /event/:id", function() {
+			it('should redirect to authentication, if unauthenticated', function(done) {
+				request('http://localhost:7777/event/0')
+				.redirects(0)
+				.end(function(res) {
+					res.status.should.equal(302);
+					res.header['location'].should.equal("/auth/google");
+					done();
+				});
+			});
+		});
+	});
+	
+	describe('routes (authenticated)', function() {
+		beforeEach(mockSetup);
+		afterEach(standardShutdown);
+		
+		describe("GET /event/:id", function() {
+			it('should allow connections without redirection', function(done) {
+				request('http://localhost:7777/event/0')
+				.end(function(res) {
+					res.status.should.equal(200);
+					done();
+				});				
+			});
+		});
+	});
+	
+	describe('sock (mock)', function() {
+		beforeEach(mockSetup);
+		afterEach(standardShutdown);
+
+		it('should accept a connection at /sock', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("connection", done);
+		});
+		
+		it('should consider the socket unauthenticated before an AUTH message', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("connection", function() {
+				var socketsList = _.values(s.unauthenticatedSockets);
+				socketsList.length.should.equal(1);
+				socketsList[0].authenticated.should.equal(false);
+				done();
+			});
+		});
+		
+		it('should reject a bad authorization key', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-err") {
+					done();
+				}
+			});
+			
+			sock.on("connection", function() {
+				sock.write(JSON.stringify({type:"auth", args:{key:"abe027d9c910236af", id:"0"}}));
+			});	
+		});
+		
+		it('should reject a good authorization key for the wrong id', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-err") {
+					done();
+				}
+			});
+			
+			sock.on("connection", function() {
+				var user = s.users.at(0);
+				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:"1"}}));
+			});	
+		});
+		
+		it('should accept a good authorization key', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-ack") {
+					done();
+				}
+			});
+			
+			sock.on("connection", function() {
+				var user = s.users.at(0);
+				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+			});	
 		});
 	});
 })
