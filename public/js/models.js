@@ -96,7 +96,7 @@ exports.User = Backbone.Model.extend({
 	},
 	
 	isConnected: function() {
-		return !_.isUndefined(this.get("sock"));
+		return !_.isUndefined(this.get("sock")) && !_.isNull(this.get("sock"));
 	},
 	
 	toJSON: function() {

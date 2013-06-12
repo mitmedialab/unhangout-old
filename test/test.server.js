@@ -1,5 +1,6 @@
 var server = require('../lib/unhangout-server'),
 	should = require('should'),
+	_ = require('underscore')._,
 	sock_client = require('sockjs-client'),
 	request = require('superagent');
 
@@ -149,5 +150,14 @@ describe('unhangout server', function() {
 			var sock = sock_client.create("http://localhost:7777/sock");
 			sock.on("connection", done);
 		});
+		
+		it('should consider the socket unauthenticated before an AUTH message', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("connection", function() {
+				var socketsList = _.values(s.unauthenticatedSockets);
+				socketsList.length.should.equal(1);
+				done();
+			});
+		})
 	});
 })
