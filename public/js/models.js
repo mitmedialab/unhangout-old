@@ -56,6 +56,14 @@ exports.Event = Backbone.Model.extend({
 	getStartTimeFormatted: function() {
 		var date = new Date(this.get("start"));
 		return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+	},
+	
+	url: function() {
+		// okay this is sort of stupid, but we want to have a fixed width 
+		// url because that makes it easier to match events from redis with
+		// the loader. We want to use ??? selectors instead of *, which 
+		// matches /event/id/session/id as well as /event/id
+		return this.urlRoot + "/" + pad(this.id, 5);
 	}
 });
 
@@ -130,4 +138,10 @@ exports.User = Backbone.Model.extend({
 exports.UserList = Backbone.Collection.extend({
 	model:exports.User
 });
+
+function pad(n, width, z) {
+  z = z || '0';
+  n = n + '';
+  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+}
 
