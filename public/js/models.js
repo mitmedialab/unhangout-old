@@ -7,6 +7,8 @@ var _ = require('underscore')._,
     Backbone = require('backbone');
     
 exports.Event = Backbone.Model.extend({
+	idRoot: "event",
+	
 	urlRoot: "event",
 	
 	defaults: function() {
@@ -19,7 +21,7 @@ exports.Event = Backbone.Model.extend({
 			start: new Date().getTime(),
 			end: new Date().getTime()+60*60*2*1000,
 			connectedUsers: new exports.UserList(),
-			sessions: new exports.SessionList()
+			sessions: new exports.SessionList(this)
 		}
 	},
 	
@@ -39,7 +41,16 @@ exports.Event = Backbone.Model.extend({
 	toJSON: function() {
 		var attrs = _.clone(this.attributes);
 		delete attrs["connectedUsers"];
+		
+		// for now just delete sessions; they'll save separately and will know their
+		// event by id + url.
+		delete attrs["sessions"];
+		
 		return attrs;
+	},
+	
+	addSession: function(session) {
+		this.get("sessions").add(session);
 	},
 	
 	getStartTimeFormatted: function() {
@@ -54,7 +65,7 @@ exports.EventList = Backbone.Collection.extend({
 
 
 exports.Session = Backbone.Model.extend({
-	urlRoot: "session",
+	idRoot: "session",
 	
 	defaults: function() {
 		return {
@@ -65,13 +76,22 @@ exports.Session = Backbone.Model.extend({
 	}
 });
 
-exports.SessionList = Backbone.Model.extend({
-	model:exports.Session
+exports.SessionList = Backbone.Collection.extend({
+	model:exports.Session,
+	
+	initialize: function(event) {
+		this.event = event;
+	},
+	
+	url: function() {
+		return this.event.url() + "/sessions";
+	}
 });
 
 exports.USER_KEY_SALT = "SET ME EXTERNALLY";
 
 exports.User = Backbone.Model.extend({
+	idRoot: "user",
 	urlRoot: "user",
 	
 	// This method generates time invariant key that gets embedded in all pages
