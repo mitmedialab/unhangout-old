@@ -2,26 +2,30 @@ var server = require('../lib/unhangout-server'),
 	should = require('should'),
 	_ = require('underscore')._,
 	sock_client = require('sockjs-client'),
-	request = require('superagent');
+	request = require('superagent'),
+	redis = require('redis').createClient();
+	seed = require('../bin/seed.js');
 
 var s;
 
 var standardSetup = function(done) {
 	s = new server.UnhangoutServer();
 	s.on("inited", function() {s.start()});
-	s.on("started", function() {
-		s.redis.flushdb(done)
+	s.on("started", done);
+	
+	seed.run(1, redis, function() {
+		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1});		
 	});
-	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1});
 }
 
 var mockSetup = function(done) {
 	s = new server.UnhangoutServer();
 	s.on("inited", function() {s.start()});
-	s.on("started", function() {
-		s.redis.flushdb(done)
+	s.on("started", done);
+	
+	seed.run(1, redis, function() {
+		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true});		
 	});
-	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true});
 }
 
 var standardShutdown = function(done) {
