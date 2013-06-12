@@ -98,9 +98,21 @@ describe('unhangout server', function() {
 		
 		describe("GET /", function() {
 			it('should return without error', function(done) {
-				request('http://localhost:7777/', function(args) {
-					should.not.exist(args.err);
-					should.exist(args.res);
+				request('http://localhost:7777/').end(function(res) {
+					should.exist(res);
+					res.status.should.equal(200);
+					done();
+				});
+			});
+		});
+		
+		describe("GET /event/:id", function() {
+			it('should redirect to authentication, if unauthenticated', function(done) {
+				request('http://localhost:7777/event/0')
+				.redirects(0)
+				.end(function(res) {
+					res.status.should.equal(302);
+					res.header['location'].should.equal("/auth/google");
 					done();
 				});
 			});
