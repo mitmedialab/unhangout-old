@@ -86,6 +86,14 @@ exports.Session = Backbone.Model.extend({
 			description: "This session is really wonderful.",
 			attendee_ids: []
 		}
+	},
+	
+	numAttendees: function() {
+		return this.get("attendee_ids").length;
+	},
+	
+	addAttendee: function(user) {
+		this.get("attendee_ids").push(user.id);
 	}
 });
 

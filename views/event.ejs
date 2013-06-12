@@ -1,5 +1,14 @@
 <% include header.ejs %>
 <div id="app">
 	<h1><%=event.get("title")%></h1>
+	
+	<% event.get("sessions").each(function(session) { %>
+	<div class="session">
+		<h3><%= session.get("title") %></h3>
+		<div class="description"><%= session.get("description") %> </div>
+		<div class="attending"><%= session.numAttendees() %> people attending</div>
+		<div class="btn btn-primary">I'm going!</div>
+	</div>
+	<% }) %>
 </div>
 <% include footer.ejs %>
