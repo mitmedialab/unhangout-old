@@ -156,6 +156,7 @@ describe('unhangout server', function() {
 			sock.on("connection", function() {
 				var socketsList = _.values(s.unauthenticatedSockets);
 				socketsList.length.should.equal(1);
+				socketsList[0].authenticated.should.equal(false);
 				done();
 			});
 		});
@@ -167,15 +168,44 @@ describe('unhangout server', function() {
 				
 				if(msg.type=="auth-err") {
 					done();
-				} else {
-					console.log("oops: " + msg.type);
 				}
 			});
 			
 			sock.on("connection", function() {
 				sock.write(JSON.stringify({type:"auth", args:{key:"abe027d9c910236af", id:"0"}}));
+			});	
+		});
+		
+		it('should reject a good authorization key for the wrong id', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-err") {
+					done();
+				}
 			});
 			
+			sock.on("connection", function() {
+				var user = s.users.at(0);
+				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:"1"}}));
+			});	
+		});
+		
+		it('should accept a good authorization key', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-ack") {
+					done();
+				}
+			});
+			
+			sock.on("connection", function() {
+				var user = s.users.at(0);
+				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+			});	
 		});
 	});
 })
