@@ -79,8 +79,9 @@ if(require.main === module)
 				timestamp: true
 			})
 			],
-			levels: winston.config.syslog.levels
 		});
+		
+	logger.cli();
 
 	logger.info("Called seeds directly; running on main redis db.");
 	
@@ -99,6 +100,5 @@ if(require.main === module)
 				timestamp: true
 			})
 			],
-			levels: winston.config.syslog.levels
 		});
 }

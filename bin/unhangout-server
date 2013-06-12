@@ -12,10 +12,10 @@ var logger= new (winston.Logger)({
 			timestamp: true
 			})
     ],
-    levels: winston.config.syslog.levels
 });
 
 logger.cli();
+
 logger.info("Starting unhangout-server.");
 
 // show all related env variables

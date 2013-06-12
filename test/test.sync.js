@@ -12,7 +12,6 @@ var logger= new (winston.Logger)({
 			timestamp: true
 			})
     ],
-    levels: winston.config.syslog.levels
 });
 
 var event;
