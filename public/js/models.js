@@ -8,7 +8,6 @@ var _ = require('underscore')._,
     
 exports.Event = Backbone.Model.extend({
 	idRoot: "event",
-	
 	urlRoot: "event",
 	
 	defaults: function() {
@@ -34,11 +33,7 @@ exports.Event = Backbone.Model.extend({
 		var curTime = new Date().getTime();
 		return curTime > this.get("start") && curTime < this.get("end");
 	},
-	
-	userConnected: function(user) {
-		this.get("connectedUsers").add(user);
-	},
-	
+		
 	numUsersConnected: function() {
 		return this.get("connectedUsers").length;
 	},
@@ -90,10 +85,6 @@ exports.Session = Backbone.Model.extend({
 	
 	numAttendees: function() {
 		return this.get("attendee_ids").length;
-	},
-	
-	addAttendee: function(user) {
-		this.get("attendee_ids").push(user.id);
 	}
 });
 

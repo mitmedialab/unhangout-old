@@ -234,6 +234,7 @@ describe('unhangout server', function() {
 				sock.once("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="join-ack") {
+						s.events.get(1).numUsersConnected().should.equal(1);
 						done();
 					}
 				});
@@ -279,7 +280,7 @@ describe('unhangout server', function() {
 			});
 			
 			it("should accept an ATTEND request with a valid session id (part of event)", function(done) {
-				sock.once("data", function(message) {
+				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="attend-ack") {
 						done();
@@ -292,7 +293,7 @@ describe('unhangout server', function() {
 			});
 			
 			it('should reject an ATTEND request with a valid session id (not part of event)', function(done) {
-				sock.once("data", function(message) {
+				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="attend-ack") {
 						should.fail();
@@ -317,8 +318,36 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"attend", args:{id:4}}));
 			});
 			
-			it('should increment attendee count');
-			it('should generate a message to clients joined to that event');
+			it('should increment attendee count', function(done) {
+				var session = s.events.get(1).get("sessions").get(1);
+				session.numAttendees().should.equal(0);
+				
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend-ack") {
+						session.numAttendees().should.equal(1);
+						done();
+					} else if(msg.type=="attend-err") {
+						should.fail();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:1}}));	
+			});
+			
+			it('should generate a message to clients joined to that event', function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend") {
+						msg.args.should.have.keys("id", "user");
+						done();
+					} else if(msg.type=="attend-err") {
+						should.fail();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:1}}));				
+			});
 		});
 	});
 })
