@@ -240,6 +240,17 @@ describe('unhangout server', function() {
 				
 				sock.write(JSON.stringify({type:"join", args:{id:1}}));
 			});
+			
+			it("should reject a join message with an invalid event id", function(done) {
+				sock.once("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="join-err") {
+						done();
+					}
+				});
+												// 0 is not a valid event id in seeds
+				sock.write(JSON.stringify({type:"join", args:{id:0}}));
+			});
 		})
 	});
 })
