@@ -251,6 +251,35 @@ describe('unhangout server', function() {
 												// 0 is not a valid event id in seeds
 				sock.write(JSON.stringify({type:"join", args:{id:0}}));
 			});
-		})
+			
+			it("should reject an ATTEND message before a join");
+		});
+		
+		describe("ATTEND", function() {
+			beforeEach(function(done) {
+				sock = sock_client.create("http://localhost:7777/sock");
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="auth-ack") {
+						sock.write(JSON.stringify({type:"join", args:{id:1}}));
+					} else if(msg.type=="join-ack") {
+						sock.removeAllListeners();
+						done();
+					}
+				});
+
+				sock.on("connection", function() {
+					var user = s.users.at(0);
+					sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+				});	
+			});
+			
+			it("should accept an ATTEND request with a valid session id (part of event)");
+			it('should reject an ATTEND request with a valid session id (not part of event)');
+			it('should reject an ATTEND request with an invalid session id');
+			it('should increment attendee count');
+			it('should generate a message to clients joined to that event');
+		});
 	});
 })
