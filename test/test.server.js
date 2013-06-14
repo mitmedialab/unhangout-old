@@ -262,6 +262,9 @@ describe('unhangout server', function() {
 					var msg = JSON.parse(message);
 
 					if(msg.type=="auth-ack") {
+						
+						// Joining event id 1 for all these tests, valid session ids for that
+						// event are 1, 2, 3 (invalid are 4, 5, 6)
 						sock.write(JSON.stringify({type:"join", args:{id:1}}));
 					} else if(msg.type=="join-ack") {
 						sock.removeAllListeners();
@@ -275,7 +278,19 @@ describe('unhangout server', function() {
 				});	
 			});
 			
-			it("should accept an ATTEND request with a valid session id (part of event)");
+			it("should accept an ATTEND request with a valid session id (part of event)", function(done) {
+				sock.once("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend-ack") {
+						done();
+					} else if(msg.type=="attend-err") {
+						should.fail();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:1}}));
+			});
+			
 			it('should reject an ATTEND request with a valid session id (not part of event)');
 			it('should reject an ATTEND request with an invalid session id');
 			it('should increment attendee count');

@@ -100,19 +100,14 @@ exports.Session = Backbone.Model.extend({
 exports.SessionList = Backbone.Collection.extend({
 	model:exports.Session,
 	
-	initialize: function(event) {
-		this.event = event;
-	},
-	
 	url: function() {
-		return this.event.url() + "/sessions";
-	},
+		console.log("GETTING LOCAL SESSION LISTe;")
+		return "WAT";
+	}
 });
 
 
 exports.User = Backbone.Model.extend({
-	idRoot: "user",
-	urlRoot: "user"
 });
 
 exports.UserList = Backbone.Collection.extend({
