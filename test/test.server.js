@@ -213,6 +213,25 @@ describe('unhangout server', function() {
 			});	
 		});
 		
+		it('should trigger a disconnect event when closing the socket', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-ack") {
+					sock.close();
+				}
+			});
+			
+			sock.on("connection", function() {
+				var user = s.users.at(0);
+				
+				user.on("disconnect", done);
+				
+				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+			});	
+		});
+		
 		describe("JOIN", function() {
 			beforeEach(function(done) {
 				sock = sock_client.create("http://localhost:7777/sock");
