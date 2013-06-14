@@ -7,6 +7,7 @@ var server = require('../lib/unhangout-server'),
 	seed = require('../bin/seed.js');
 
 var s;
+var sock;
 
 var standardSetup = function(done) {
 	s = new server.UnhangoutServer();
@@ -211,5 +212,34 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
 			});	
 		});
+		
+		describe("JOIN", function() {
+			beforeEach(function(done) {
+				sock = sock_client.create("http://localhost:7777/sock");
+				sock.once("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="auth-ack") {
+						done();
+					}
+				});
+
+				sock.on("connection", function() {
+					var user = s.users.at(0);
+					sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+				});	
+			});
+			
+			it("should accept a join message with a valid event id", function(done) {
+				sock.once("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="join-ack") {
+						done();
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"join", args:{id:1}}));
+			});
+		})
 	});
 })
