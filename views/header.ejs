@@ -35,9 +35,14 @@
 	<% if(loadApp) { %>
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone.js"></script>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.0.0-rc4-bundled/backbone.marionette.min.js"></script>
 	<% } %>
 	
 	<script type="text/javascript" charset="utf-8">
+		_.templateSettings = {
+		    interpolate : /\{\{(.+?)\}\}/g
+		};
+	
 		<% if(!_.isUndefined(user)) { %>
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';
@@ -49,9 +54,23 @@
 	</script>
 	
 	<% if(loadApp) { %>	
-	<script type="text/javascript" src="/public/js/models.js"></script>	
+		<script type="text/javascript" src="/public/js/models.js"></script>	
+		<script type="text/javascript" src="/public/js/views.js"></script>	
 	<% } %>
-	
+
+	<% if(loadApp) { %>	
+		<!-- Templates for the backbone views go here. Sort of annoying to have to have them in this view,
+		     but that seems to be how we can make this work with express and no content_for equivalent. -->
+
+			<script type="text/template" id="session-template">
+			<div class="session">
+				<h3>{{ title }}</h3>
+				<div class="description">{{ description }} </div>
+				<div class="attending">{{ numAttendees }} people attending</div>
+				<div class="btn btn-primary">I\'m going!</div>
+			</div>
+			</script>
+	<% } %>	
 </head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">
