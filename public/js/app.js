@@ -14,7 +14,7 @@ $(document).ready(function() {
 	
 	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 	
-	curEvent.get("sessions").add(EVENT_ATTRS)
+	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 	
 	console.log("Inflated models.");
 
