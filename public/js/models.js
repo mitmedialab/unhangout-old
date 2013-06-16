@@ -54,6 +54,9 @@ models.Event = Backbone.Model.extend({
 	
 	toJSON: function() {
 		var attrs = _.clone(this.attributes);
+		
+		// delete transient attributes that shouldn't
+		// be saved to redis.
 		delete attrs["connectedUsers"];
 		
 		// for now just delete sessions; they'll save separately and will know their
@@ -61,6 +64,10 @@ models.Event = Backbone.Model.extend({
 		delete attrs["sessions"];
 		
 		return attrs;
+	},
+	
+	toClientJSON: function() {
+		return _.clone(this.attributes);
 	},
 	
 	addSession: function(session) {

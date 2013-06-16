@@ -44,8 +44,8 @@
 		<% } %>
 
 		<% if(!_.isUndefined(event)) { %>
-		var EVENT_ID = <%= event.id %>;
-		<% } %>		
+		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+		<% } %>
 	</script>
 	
 	<% if(loadApp) { %>	

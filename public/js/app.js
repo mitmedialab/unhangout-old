@@ -1,5 +1,7 @@
 var sock;
 
+var curEvent, users;
+
 $(document).ready(function() {
 	if($("#app").length!=1) {
 		console.log("Code running on a page that does not have an #app div.");
@@ -7,6 +9,14 @@ $(document).ready(function() {
 	}
 
 	console.log("Starting app!");
+	
+	curEvent = new models.Event(EVENT_ATTRS);
+	
+	users = new models.UserList(EVENT_ATTRS.connectedUsers);
+	
+	curEvent.get("sessions").add(EVENT_ATTRS)
+	
+	console.log("Inflated models.");
 
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
 	sock.onopen = function() {
@@ -31,10 +41,11 @@ $(document).ready(function() {
 				
 			case "join":
 				console.log("join: " + JSON.stringify(msg.args));
+				users.add(new models.User(msg.args.user));
 				break;
 				
 			case "auth-ack":
-				sock.send(JSON.stringify({type:"join", args:{id:EVENT_ID}}));
+				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;
 				
 			case "join-ack":
