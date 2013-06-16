@@ -39,6 +39,7 @@
 	<% } %>
 	
 	<script type="text/javascript" charset="utf-8">
+		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
 		_.templateSettings = {
 		    interpolate : /\{\{(.+?)\}\}/g
 		};

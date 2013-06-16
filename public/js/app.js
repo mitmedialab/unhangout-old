@@ -2,6 +2,8 @@ var sock;
 
 var curEvent, users;
 
+var app;
+
 $(document).ready(function() {
 	if($("#app").length!=1) {
 		console.log("Code running on a page that does not have an #app div.");
@@ -17,6 +19,16 @@ $(document).ready(function() {
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 	
 	console.log("Inflated models.");
+
+	app = new Backbone.Marionette.Application();
+	
+	app.addRegions({
+		sessions: '#sessions',
+		users: '#users',
+		chat: '#chat',		
+	});
+
+	console.log("Setup regions.");
 
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
 	sock.onopen = function() {
