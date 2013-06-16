@@ -32,6 +32,11 @@
 	<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 	<script type="text/javascript" src="/public/js/app.js"></script>
 	
+	<% if(loadApp) { %>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone.js"></script>
+	<% } %>
+	
 	<script type="text/javascript" charset="utf-8">
 		<% if(!_.isUndefined(user)) { %>
 		var SOCK_KEY = '<%= user.getSockKey() %>';
@@ -40,10 +45,13 @@
 
 		<% if(!_.isUndefined(event)) { %>
 		var EVENT_ID = <%= event.id %>;
-		<% } %>
-		
-		
+		<% } %>		
 	</script>
+	
+	<% if(loadApp) { %>	
+	<script type="text/javascript" src="/public/js/models.js"></script>	
+	<% } %>
+	
 </head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">

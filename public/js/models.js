@@ -1,12 +1,26 @@
-// This is include-able both in a browser environment and in a v8/node env,
-// so it needs to figure out which situation it is in. If it's on the server,
-// put everything in exports and behave like a module. If it's on the client,
-// fake it and expect the client to understand how to deal with things.
-var _ = require('underscore')._,
-	crypto = require('crypto'),
-    Backbone = require('backbone');
+(function () {
+  var server = false,
+		models, Backbone;
+		
+  if (typeof exports !== 'undefined') {
+    models = exports;
+    server = true;
+
+	// This is include-able both in a browser environment and in a v8/node env,
+	// so it needs to figure out which situation it is in. If it's on the server,
+	// put everything in exports and behave like a module. If it's on the client,
+	// fake it and expect the client to understand how to deal with things.
+	var _ = require('underscore')._,
+	    Backbone = require('backbone');
+  } else {
+    models = this.models = {};
+
+	// I'm a little unclear about why I need to do this, but if I don't,
+	// Backbone isn't available in scope here. 
+	Backbone = window.Backbone;
+  }
     
-exports.Event = Backbone.Model.extend({
+models.Event = Backbone.Model.extend({
 	idRoot: "event",
 	urlRoot: "event",
 	
@@ -25,8 +39,8 @@ exports.Event = Backbone.Model.extend({
 	},
 	
 	initialize: function() {
-		this.set("sessions", new exports.SessionList(null, this));
-		this.set("connectedUsers", new exports.UserList());
+		this.set("sessions", new models.SessionList(null, this));
+		this.set("connectedUsers", new models.UserList());
 	},
 	
 	isLive: function() {
@@ -67,12 +81,12 @@ exports.Event = Backbone.Model.extend({
 	}
 });
 
-exports.EventList = Backbone.Collection.extend({
-	model:exports.Event
+models.EventList = Backbone.Collection.extend({
+	model:models.Event
 })
 
 
-exports.Session = Backbone.Model.extend({
+models.Session = Backbone.Model.extend({
 	idRoot: "session",
 	
 	defaults: function() {
@@ -88,8 +102,8 @@ exports.Session = Backbone.Model.extend({
 	}
 });
 
-exports.SessionList = Backbone.Collection.extend({
-	model:exports.Session,
+models.SessionList = Backbone.Collection.extend({
+	model:models.Session,
 	
 	url: function() {
 		console.log("GETTING LOCAL SESSION LISTe;")
@@ -98,11 +112,11 @@ exports.SessionList = Backbone.Collection.extend({
 });
 
 
-exports.User = Backbone.Model.extend({
+models.User = Backbone.Model.extend({
 });
 
-exports.UserList = Backbone.Collection.extend({
-	model:exports.User
+models.UserList = Backbone.Collection.extend({
+	model:models.User
 });
 
 function pad(n, width, z) {
@@ -110,4 +124,7 @@ function pad(n, width, z) {
   n = n + '';
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
+
+})()
+
 
