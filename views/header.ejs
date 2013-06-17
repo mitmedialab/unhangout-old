@@ -67,10 +67,15 @@
 			<div class="session">
 				<h3>{{ title }}</h3>
 				<div class="description">{{ description }} </div>
-				<div class="attending">{{ numAttendees }} people attending</div>
-				<div class="btn btn-primary">I\'m going!</div>
+				<div class="attending">{{ attendee_ids.length }} people attending</div>
+				<div class="btn btn-primary">I am going!</div>
 			</div>
 			</script>
+			
+			<script type="text/template" id="session-list-template">
+				<ul id="session-list"></ul>
+			</script>
+			
 	<% } %>	
 </head>
 <body>

@@ -27,6 +27,17 @@ $(document).ready(function() {
 		users: '#users',
 		chat: '#chat',		
 	});
+	
+	app.addInitializer(function(options) {
+		
+		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
+		
+		this.sessions.show(this.sessionListView);
+		
+		console.log("Initialized app.");
+	});
+	
+	app.start();
 
 	console.log("Setup regions.");
 
