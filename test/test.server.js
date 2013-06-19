@@ -35,6 +35,32 @@ var standardShutdown = function(done) {
 		s.on("destroyed", done);
 		s.destroy();
 	})
+};
+
+var joinEventSetup = function(done) {
+	connectNewSock(done);
+};
+
+function connectNewSock(done, callback) {
+	sock = sock_client.create("http://localhost:7777/sock");
+	sock.on("data", function(message) {
+		var msg = JSON.parse(message);
+
+		if(msg.type=="auth-ack") {
+			// Joining event id 1 for all these tests, valid session ids for that
+			// event are 1, 2, 3 (invalid are 4, 5, 6)
+			sock.write(JSON.stringify({type:"join", args:{id:1}}));
+		} else if(msg.type=="join-ack") {
+			sock.removeAllListeners();
+			done && done();
+			callback && callback(sock);
+		}
+	});
+
+	sock.on("connection", function() {
+		var user = s.users.at(s.users.length-1);
+		sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+	});
 }
 
 describe('unhangout server', function() {
@@ -276,27 +302,7 @@ describe('unhangout server', function() {
 		});
 		
 		describe("ATTEND", function() {
-			beforeEach(function(done) {
-				sock = sock_client.create("http://localhost:7777/sock");
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-
-					if(msg.type=="auth-ack") {
-						
-						// Joining event id 1 for all these tests, valid session ids for that
-						// event are 1, 2, 3 (invalid are 4, 5, 6)
-						sock.write(JSON.stringify({type:"join", args:{id:1}}));
-					} else if(msg.type=="join-ack") {
-						sock.removeAllListeners();
-						done();
-					}
-				});
-
-				sock.on("connection", function() {
-					var user = s.users.at(0);
-					sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
-				});	
-			});
+			beforeEach(joinEventSetup);
 			
 			it("should accept an ATTEND request with a valid session id (part of event)", function(done) {
 				sock.on("data", function(message) {
@@ -368,5 +374,59 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"attend", args:{id:1}}));				
 			});
 		});
+		
+		
+		
+		describe("CHAT", function() {
+			beforeEach(joinEventSetup);
+			
+			it("should reject a chat message without text argument", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="chat-ack") {
+						should.fail();
+					} else if(msg.type=="chat-err") {
+						done();
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"chat", args:{}}));
+			});
+			
+			it("should accept a chat message with proper arguments", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="chat-ack") {
+						done();
+					} else if(msg.type=="chat-err") {
+						should.fail();
+					}
+				});				
+				sock.write(JSON.stringify({type:"chat", args:{text:"hello world"}}));
+			});
+			
+			it("should broadcast a chat message to everyone in event", function(done) {
+				connectNewSock(null, function(altSock) {
+					// at this point we have two sockets; sock and altSock. Both are connected to event.
+					altSock.on("data", function(message) {
+
+						var msg = JSON.parse(message);
+						if(msg.type=="chat") {
+							msg.args.should.have.keys("text", "user", "time");
+							msg.args.text.should.equal("hello world");
+							altSock.close();
+							done();
+						}
+					});
+					
+					sock.write(JSON.stringify({type:"chat", args:{text:"hello world"}}));
+				});
+			});
+			
+			it("should not send the chat message to users in other events", function(done) {
+				done();
+			});
+		});
+		
 	});
 })

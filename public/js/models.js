@@ -155,6 +155,27 @@ function pad(n, width, z) {
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
 
+
+models.ChatMessage = Backbone.Model.extend({
+	default: function() {
+		return {
+			text: "This is my awesome chat message.",
+			time: new Date().getTime(),
+			user: null
+		};
+	},
+	
+	initialize: function() {
+		if(_.isUndefined(this.get("time"))) {
+			this.set("time", new Date().getTime());
+		}
+	}
+});
+
+models.ChatMessageList = Backbone.Collection.extend({
+	model:models.ChatMessage
+});
+
 })()
 
 
