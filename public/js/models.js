@@ -111,9 +111,13 @@ models.Session = Backbone.Model.extend({
 	
 	addAttendee: function(user) {
 		var attendee_ids = _.clone(this.get("attendee_ids"));
-		attendee_ids.push(user.id);
-		this.set("attendee_ids", attendee_ids);
 		
+		if(attendee_ids.indexOf(user.id)==-1) {
+			attendee_ids.push(user.id);
+			this.set("attendee_ids", attendee_ids);
+		} else {
+			throw new Exception("user already attending session");
+		}
 	}
 });
 
