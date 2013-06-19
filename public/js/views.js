@@ -23,6 +23,8 @@ var SessionView = Marionette.ItemView.extend({
 	
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
+		var message = {type:"attend", args:{id:this.model.id}};
+		sock.send(JSON.stringify(message));
 	}
 });
 

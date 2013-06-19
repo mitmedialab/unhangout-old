@@ -18,6 +18,7 @@
 	// I'm a little unclear about why I need to do this, but if I don't,
 	// Backbone isn't available in scope here. 
 	Backbone = window.Backbone;
+	_ = window._;
   }
     
 models.Event = Backbone.Model.extend({
@@ -106,6 +107,13 @@ models.Session = Backbone.Model.extend({
 	
 	numAttendees: function() {
 		return this.get("attendee_ids").length;
+	},
+	
+	addAttendee: function(user) {
+		var attendee_ids = _.clone(this.get("attendee_ids"));
+		attendee_ids.push(user.id);
+		this.set("attendee_ids", attendee_ids);
+		
 	}
 });
 

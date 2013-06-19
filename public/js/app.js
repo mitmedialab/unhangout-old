@@ -61,9 +61,9 @@ $(document).ready(function() {
 		
 		switch(msg.type) {
 			case "attend":
-				console.log("attend: " + JSON.stringify(msg.args));
+				curEvent.get("sessions").get(msg.args.id).addAttendee(msg.args.user);
+				console.log("added attendee to a session");
 				break;
-				
 			case "join":
 				console.log("join: " + JSON.stringify(msg.args));
 				users.add(new models.User(msg.args.user));
