@@ -64,4 +64,4 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 	}
-})
+});
