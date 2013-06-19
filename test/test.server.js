@@ -250,7 +250,7 @@ describe('unhangout server', function() {
 			});
 			
 			it("should accept a join message with a valid event id", function(done) {
-				sock.once("data", function(message) {
+				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="join-ack") {
 						s.events.get(1).numUsersConnected().should.equal(1);
