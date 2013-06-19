@@ -1,14 +1,28 @@
-// This is include-able both in a browser environment and in a v8/node env,
-// so it needs to figure out which situation it is in. If it's on the server,
-// put everything in exports and behave like a module. If it's on the client,
-// fake it and expect the client to understand how to deal with things.
-var _ = require('underscore')._,
-	crypto = require('crypto'),
-    Backbone = require('backbone');
+(function () {
+  var server = false,
+		models, Backbone;
+		
+  if (typeof exports !== 'undefined') {
+    models = exports;
+    server = true;
+
+	// This is include-able both in a browser environment and in a v8/node env,
+	// so it needs to figure out which situation it is in. If it's on the server,
+	// put everything in exports and behave like a module. If it's on the client,
+	// fake it and expect the client to understand how to deal with things.
+	var _ = require('underscore')._,
+	    Backbone = require('backbone');
+  } else {
+    models = this.models = {};
+
+	// I'm a little unclear about why I need to do this, but if I don't,
+	// Backbone isn't available in scope here. 
+	Backbone = window.Backbone;
+	_ = window._;
+  }
     
-exports.Event = Backbone.Model.extend({
+models.Event = Backbone.Model.extend({
 	idRoot: "event",
-	
 	urlRoot: "event",
 	
 	defaults: function() {
@@ -26,25 +40,24 @@ exports.Event = Backbone.Model.extend({
 	},
 	
 	initialize: function() {
-		this.set("sessions", new exports.SessionList(null, this));
-		this.set("connectedUsers", new exports.UserList());
+		this.set("sessions", new models.SessionList(null, this));
+		this.set("connectedUsers", new models.UserList());
 	},
 	
 	isLive: function() {
 		var curTime = new Date().getTime();
 		return curTime > this.get("start") && curTime < this.get("end");
 	},
-	
-	userConnected: function(user) {
-		this.get("connectedUsers").add(user);
-	},
-	
+		
 	numUsersConnected: function() {
 		return this.get("connectedUsers").length;
 	},
 	
 	toJSON: function() {
 		var attrs = _.clone(this.attributes);
+		
+		// delete transient attributes that shouldn't
+		// be saved to redis.
 		delete attrs["connectedUsers"];
 		
 		// for now just delete sessions; they'll save separately and will know their
@@ -52,6 +65,10 @@ exports.Event = Backbone.Model.extend({
 		delete attrs["sessions"];
 		
 		return attrs;
+	},
+	
+	toClientJSON: function() {
+		return _.clone(this.attributes);
 	},
 	
 	addSession: function(session) {
@@ -72,12 +89,12 @@ exports.Event = Backbone.Model.extend({
 	}
 });
 
-exports.EventList = Backbone.Collection.extend({
-	model:exports.Event
+models.EventList = Backbone.Collection.extend({
+	model:models.Event
 })
 
 
-exports.Session = Backbone.Model.extend({
+models.Session = Backbone.Model.extend({
 	idRoot: "session",
 	
 	defaults: function() {
@@ -93,63 +110,43 @@ exports.Session = Backbone.Model.extend({
 	},
 	
 	addAttendee: function(user) {
-		this.get("attendee_ids").push(user.id);
+		var attendee_ids = _.clone(this.get("attendee_ids"));
+		
+		if(attendee_ids.indexOf(user.id)==-1) {
+			attendee_ids.push(user.id);
+			this.set("attendee_ids", attendee_ids);
+		} else {
+			throw new Exception("user already attending session");
+		}
 	}
 });
 
-exports.SessionList = Backbone.Collection.extend({
-	model:exports.Session,
-	
-	initialize: function(event) {
-		this.event = event;
-	},
+models.SessionList = Backbone.Collection.extend({
+	model:models.Session,
 	
 	url: function() {
-		return this.event.url() + "/sessions";
-	},
-});
-
-exports.USER_KEY_SALT = "SET ME EXTERNALLY";
-
-exports.User = Backbone.Model.extend({
-	idRoot: "user",
-	urlRoot: "user",
-	
-	// This method generates time invariant key that gets embedded in all pages
-	// and can be used on the sockjs channel to authenticate a sock connection
-	// as belonging to this user. It is simply the id of the user plus some salt.
-	// The user can then present this key plus the userid they wish to authenticate
-	// as, and the server can verify that it matches the key it would have identified
-	// using that salt.
-	getSockKey: function() {
-		if(_.isUndefined(this.get("sock-key"))) {
-			var shasum = crypto.createHash('sha256');
-			shasum.update(this.get("id"));
-			shasum.update(exports.USER_KEY_SALT);
-			this.set("sock-key", shasum.digest('hex'));
-		}
-		
-		return this.get("sock-key");
-	},
-	
-	validateSockKey: function(key) {
-		return key == this.getSockKey();
-	},
-	
-	isConnected: function() {
-		return !_.isUndefined(this.get("sock")) && !_.isNull(this.get("sock"));
-	},
-	
-	toJSON: function() {
-		var attrs = _.clone(this.attributes);
-		delete attrs["sock-key"];
-		delete attrs["sock"];
-		return attrs;
+		console.log("GETTING LOCAL SESSION LISTe;")
+		return "WAT";
 	}
 });
 
-exports.UserList = Backbone.Collection.extend({
-	model:exports.User
+
+models.User = Backbone.Model.extend({
+	initialize: function() {
+		// copy some bonus fields out of the attributes if present.
+		if("_json" in this.attributes) {
+			var json = this.get("_json");
+			
+			if("picture" in json) { this.set("picture", this.get("_json").picture); }
+			else { this.set("picture", "")}
+			
+			if("link" in json) this.set("link", this.get("_json").link);
+		}
+	}
+});
+
+models.UserList = Backbone.Collection.extend({
+	model:models.User
 });
 
 function pad(n, width, z) {
@@ -157,4 +154,7 @@ function pad(n, width, z) {
   n = n + '';
   return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
 }
+
+})()
+
 

@@ -7,6 +7,7 @@ var server = require('../lib/unhangout-server'),
 	seed = require('../bin/seed.js');
 
 var s;
+var sock;
 
 var standardSetup = function(done) {
 	s = new server.UnhangoutServer();
@@ -210,6 +211,162 @@ describe('unhangout server', function() {
 				var user = s.users.at(0);
 				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
 			});	
+		});
+		
+		it('should trigger a disconnect event when closing the socket', function(done) {
+			var sock = sock_client.create("http://localhost:7777/sock");
+			sock.on("data", function(message) {
+				var msg = JSON.parse(message);
+				
+				if(msg.type=="auth-ack") {
+					sock.close();
+				}
+			});
+			
+			sock.on("connection", function() {
+				var user = s.users.at(0);
+				
+				user.on("disconnect", done);
+				
+				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+			});	
+		});
+		
+		describe("JOIN", function() {
+			beforeEach(function(done) {
+				sock = sock_client.create("http://localhost:7777/sock");
+				sock.once("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="auth-ack") {
+						done();
+					}
+				});
+
+				sock.on("connection", function() {
+					var user = s.users.at(0);
+					sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+				});	
+			});
+			
+			it("should accept a join message with a valid event id", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="join-ack") {
+						s.events.get(1).numUsersConnected().should.equal(1);
+						done();
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"join", args:{id:1}}));
+			});
+			
+			it("should reject a join message with an invalid event id", function(done) {
+				sock.once("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="join-err") {
+						done();
+					}
+				});
+												// 0 is not a valid event id in seeds
+				sock.write(JSON.stringify({type:"join", args:{id:0}}));
+			});
+			
+			it("should reject an ATTEND message before a join");
+		});
+		
+		describe("ATTEND", function() {
+			beforeEach(function(done) {
+				sock = sock_client.create("http://localhost:7777/sock");
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="auth-ack") {
+						
+						// Joining event id 1 for all these tests, valid session ids for that
+						// event are 1, 2, 3 (invalid are 4, 5, 6)
+						sock.write(JSON.stringify({type:"join", args:{id:1}}));
+					} else if(msg.type=="join-ack") {
+						sock.removeAllListeners();
+						done();
+					}
+				});
+
+				sock.on("connection", function() {
+					var user = s.users.at(0);
+					sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
+				});	
+			});
+			
+			it("should accept an ATTEND request with a valid session id (part of event)", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend-ack") {
+						done();
+					} else if(msg.type=="attend-err") {
+						should.fail();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:1}}));
+			});
+			
+			it('should reject an ATTEND request with a valid session id (not part of event)', function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend-ack") {
+						should.fail();
+					} else if(msg.type=="attend-err") {
+						done();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:4}}));
+			});
+			
+			it('should reject an ATTEND request with an invalid session id', function(done) {
+				sock.once("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend-ack") {
+						should.fail();
+					} else if(msg.type=="attend-err") {
+						done();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:4}}));
+			});
+			
+			it('should increment attendee count', function(done) {
+				var session = s.events.get(1).get("sessions").get(1);
+				session.numAttendees().should.equal(0);
+				
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend-ack") {
+						session.numAttendees().should.equal(1);
+						done();
+					} else if(msg.type=="attend-err") {
+						should.fail();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:1}}));	
+			});
+			
+			it('should generate a message to clients joined to that event', function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="attend") {
+						msg.args.should.have.keys("id", "user");
+						done();
+					} else if(msg.type=="attend-err") {
+						should.fail();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:1}}));				
+			});
 		});
 	});
 })
