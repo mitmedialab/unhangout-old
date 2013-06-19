@@ -3,7 +3,10 @@
 <head>
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>Unhangout</title>
-	<link rel="stylesheet" href="/public/css/bootstrap.css" type="text/css" media="screen">
+	<!-- <link rel="stylesheet" href="/public/css/bootstrap.css" type="text/css" media="screen"> -->
+	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	
 	<style>
 	      body {
 	        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
@@ -24,7 +27,35 @@
 		.username:hover, .username:active, .username:visited {
 			color: white;
 			text-decoration: none;
-		}		
+		}
+		
+		.user {
+			width: 50px;
+			height: 50px;
+			margin: 10px;
+			
+			border: 1px solid #aaa;
+			border-radius: 25px;
+			
+		}
+		
+		.user img {
+			width: 50px;
+			height: 50px;
+			
+			border: 1px;
+			border-radius: 25px;
+			
+		}
+		
+		.user i {
+			font-size: 40px;
+			width: 50px;
+			height: 50px;
+			line-height: 50px;
+			padding-left: 10px;
+		}
+		
 	 </style>
 
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
@@ -41,7 +72,8 @@
 	<script type="text/javascript" charset="utf-8">
 		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
 		_.templateSettings = {
-		    interpolate : /\{\{(.+?)\}\}/g
+		    interpolate : /\{\{=(.+?)\}\}/g,
+			evaluate: /\{\{(.+?)\}\}/g
 		};
 	
 		<% if(!_.isUndefined(user)) { %>
@@ -65,15 +97,27 @@
 
 			<script type="text/template" id="session-template">
 			<div class="session">
-				<h3>{{ title }}</h3>
-				<div class="description">{{ description }} </div>
-				<div class="attending">{{ attendee_ids.length }} people attending</div>
+				<h3>{{= title }}</h3>
+				<div class="description">{{= description }} </div>
+				<div class="attending">{{= attendee_ids.length }} people attending</div>
 				<div class="btn btn-primary">I am going!</div>
 			</div>
 			</script>
 			
 			<script type="text/template" id="session-list-template">
 				<ul id="session-list"></ul>
+			</script>
+			
+			<script type="text/template" id="user-template">
+				{{ if(picture=="") { }}
+				<i class="icon-user icon-3x"></i>
+				{{ } else { }}
+				<img src="{{=picture}}">
+				{{ } }}
+			</script>
+			
+			<script type="text/template" id="user-list-template">
+			<ul id="user-list"></ul>
 			</script>
 			
 	<% } %>	

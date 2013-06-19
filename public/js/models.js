@@ -120,6 +120,17 @@ models.SessionList = Backbone.Collection.extend({
 
 
 models.User = Backbone.Model.extend({
+	initialize: function() {
+		// copy some bonus fields out of the attributes if present.
+		if("_json" in this.attributes) {
+			var json = this.get("_json");
+			
+			if("picture" in json) { this.set("picture", this.get("_json").picture); }
+			else { this.set("picture", "")}
+			
+			if("link" in json) this.set("link", this.get("_json").link);
+		}
+	}
 });
 
 models.UserList = Backbone.Collection.extend({

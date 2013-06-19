@@ -31,8 +31,10 @@ $(document).ready(function() {
 	app.addInitializer(function(options) {
 		
 		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
+		this.userListView = new UserListView({collection: users});
 		
 		this.sessions.show(this.sessionListView);
+		this.users.show(this.userListView);
 		
 		console.log("Initialized app.");
 	});
@@ -65,6 +67,10 @@ $(document).ready(function() {
 			case "join":
 				console.log("join: " + JSON.stringify(msg.args));
 				users.add(new models.User(msg.args.user));
+				break;
+			
+			case "leave":
+				users.remove(users.get(msg.args.user.id));
 				break;
 				
 			case "auth-ack":
