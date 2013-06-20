@@ -1,14 +1,21 @@
 <% include header.ejs %>
 <div id="app">
-	<h1><%=event.get("title")%></h1>	
-	
-	<div id="top">
+	<div class="row">
+	<h1 class="span9"><%=event.get("title")%></h1>	
 	</div>
 	
-	<div id="main">
+	<div class="row">
+	<div id="top" class="span12">
+	</div>
 	</div>
 	
-	<div id="right">
+	<!-- Not totally sure why this row needs to be fluid for a 9+3 to fit, but it seems to. -->
+	<div class="row">
+	<div id="main" class="span9">
+	</div>
+	
+	<div id="right" class="span3">
+	</div>
 	</div>
 </div>
 <% include footer.ejs %>
