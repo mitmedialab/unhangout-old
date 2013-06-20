@@ -5,7 +5,7 @@ var curEvent, users, messages;
 var app;
 
 $(document).ready(function() {
-	if($("#app").length!=1) {
+	if($("#main").length!=1) {
 		console.log("Code running on a page that does not have an #app div.");
 		return;
 	}
@@ -26,8 +26,8 @@ $(document).ready(function() {
 	
 	app.addRegions({
 		top: '#top',
-		right: '#right',
-		main: '#main',		
+		right: '#main-right',
+		main: '#main-left',		
 	});
 	
 	app.addInitializer(function(options) {

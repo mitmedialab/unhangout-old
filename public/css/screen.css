@@ -8,27 +8,57 @@ body {
   /* 60px to make the container go all the way to the bottom of the topbar */
 }
 
-/* line 11, ../../sass/screen.scss */
+/* line 10, ../../sass/screen.scss */
+.fill {
+  position: absolute;
+  top: 40px;
+  bottom: 0px;
+  width: auto;
+  height: auto;
+}
+
+/* line 20, ../../sass/screen.scss */
+#app {
+  position: absolute;
+  top: 40px;
+  bottom: 0px;
+  width: 1170px;
+  left: 50%;
+  margin-left: -585px;
+}
+
+/* line 31, ../../sass/screen.scss */
 #top {
   /*	border: 1px solid red;*/
+  position: absolute;
+  background-color: #eae;
+  display: none;
 }
 
-/* line 15, ../../sass/screen.scss */
-#right {
+/* line 39, ../../sass/screen.scss */
+#main-right {
   /*	border: 1px solid green;*/
+  height: 100%;
 }
 
-/* line 19, ../../sass/screen.scss */
+/* line 44, ../../sass/screen.scss */
+#main-left {
+  height: 100%;
+}
+
+/* line 48, ../../sass/screen.scss */
 #main {
   /*	border: 1px solid purple;*/
+  height: 100%;
+  background-color: #eee;
 }
 
-/* line 24, ../../sass/screen.scss */
+/* line 55, ../../sass/screen.scss */
 .identity {
   height: 40px;
 }
 
-/* line 28, ../../sass/screen.scss */
+/* line 59, ../../sass/screen.scss */
 .username {
   display: block;
   font-size: 14px;
@@ -36,13 +66,13 @@ body {
   padding: 10px 15px 10px 15px;
   line-height: 20px;
 }
-/* line 35, ../../sass/screen.scss */
+/* line 66, ../../sass/screen.scss */
 .username:hover, .username:active, .username:visited {
   color: white;
   text-decoration: none;
 }
 
-/* line 41, ../../sass/screen.scss */
+/* line 72, ../../sass/screen.scss */
 .user {
   width: 50px;
   height: 50px;
@@ -50,14 +80,14 @@ body {
   border: 1px solid #aaa;
   border-radius: 25px;
 }
-/* line 49, ../../sass/screen.scss */
+/* line 80, ../../sass/screen.scss */
 .user img {
   width: 50px;
   height: 50px;
   border: 1px;
   border-radius: 25px;
 }
-/* line 57, ../../sass/screen.scss */
+/* line 88, ../../sass/screen.scss */
 .user i {
   font-size: 40px;
   width: 50px;
@@ -66,11 +96,18 @@ body {
   padding-left: 10px;
 }
 
-/* line 66, ../../sass/screen.scss */
-#chat-list {
-  width: 400px;
+/* line 97, ../../sass/screen.scss */
+.session {
+  display: none;
 }
-/* line 69, ../../sass/screen.scss */
-#chat-list span.from {
+
+/* line 102, ../../sass/screen.scss */
+#chat input {
+  position: absolute;
+  bottom: 0px;
+}
+
+/* line 109, ../../sass/screen.scss */
+#chat-list-container span.from {
   margin-right: 20px;
 }

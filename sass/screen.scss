@@ -7,17 +7,48 @@ body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
   }
 
+.fill {
+	position: absolute;
+	
+	top: 40px;
+	bottom: 0px;
+	
+	width: auto;
+	height: auto;
+}
+
+#app {
+	position: absolute;
+	
+	top: 40px;
+	bottom: 0px;
+	
+	width: 1170px;
+	left: 50%;
+	margin-left: -585px;
+}
 
 #top {
 /*	border: 1px solid red;*/
+	position: absolute;
+	background-color: #eae;
+	
+	display: none;
 }
 
-#right {
+#main-right {
 /*	border: 1px solid green;*/
+	height: 100%;
+}
+
+#main-left {
+	height: 100%;
 }
 
 #main {
 /*	border: 1px solid purple;*/
+	height: 100%;
+	background-color: #eee;
 }
 
 	
@@ -63,9 +94,18 @@ body {
 	}
 }
 
-#chat-list {
-	width: 400px;
-	
+.session {
+	display: none;
+}
+
+#chat {
+	input {
+		position: absolute;
+		bottom: 0px;
+	}
+}
+
+#chat-list-container {
 	span.from {
 		margin-right: 20px;		
 	}
