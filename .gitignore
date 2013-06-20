@@ -19,3 +19,5 @@ node_modules
 
 # ignore conf.sh, so we can safely keep settings in there.
 conf.sh
+
+.sass-cache
