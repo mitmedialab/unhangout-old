@@ -56,6 +56,14 @@
 			padding-left: 10px;
 		}
 		
+		#chat-list {
+			width: 400px;
+		}
+		
+		#chat-list span.from {
+			margin-right: 20px;
+		}
+		
 	 </style>
 
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
@@ -119,6 +127,16 @@
 			<script type="text/template" id="user-list-template">
 			<ul id="user-list"></ul>
 			</script>
+			
+			<script type="text/template" id="chat-message-template">
+			<span class="from">{{=user.displayName}}</span><span class="message">{{=text}}</span>
+			</script>
+			
+			<script type="text/template" id="chat-template">
+			<ul id="chat-list"></ul>
+			<form><input type="text" id="chat-input"></input></form>
+			</script>
+			
 			
 	<% } %>	
 </head>

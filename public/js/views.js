@@ -1,3 +1,4 @@
+
 var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
 	
@@ -65,3 +66,46 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 		this.listenTo(this.collection, 'all', this.update, this);
 	}
 });
+
+var ChatMessageView = Marionette.ItemView.extend({
+	template: '#chat-message-template',
+	className: 'chat-message'
+});
+
+var ChatView = Marionette.CompositeView.extend({
+	template: '#chat-template',
+	itemView: ChatMessageView,
+	itemViewContainer: "#chat-list",
+	
+	ui: {
+		chatInput: "#chat-input"
+	},
+	
+	events: {
+		'submit form':'chat'
+	},
+	
+	initialize: function() {
+		this.listenTo(this.collection, 'all', this.update, this);
+	},
+	
+	chat: function(e) {
+		var msg = this.ui.chatInput.val();
+		sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
+		this.ui.chatInput.val("");
+		e.preventDefault();
+		return false;
+	}
+});
+
+
+
+
+
+
+
+
+
+
+
+
