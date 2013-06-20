@@ -21,8 +21,7 @@ body {
   padding: 10px 15px 10px 15px;
   line-height: 20px;
 }
-
-/* line 22, ../../sass/screen.scss */
+/* line 21, ../../sass/screen.scss */
 .username:hover, .username:active, .username:visited {
   color: white;
   text-decoration: none;
@@ -36,16 +35,14 @@ body {
   border: 1px solid #aaa;
   border-radius: 25px;
 }
-
-/* line 37, ../../sass/screen.scss */
+/* line 35, ../../sass/screen.scss */
 .user img {
   width: 50px;
   height: 50px;
   border: 1px;
   border-radius: 25px;
 }
-
-/* line 46, ../../sass/screen.scss */
+/* line 43, ../../sass/screen.scss */
 .user i {
   font-size: 40px;
   width: 50px;
@@ -54,12 +51,11 @@ body {
   padding-left: 10px;
 }
 
-/* line 54, ../../sass/screen.scss */
+/* line 52, ../../sass/screen.scss */
 #chat-list {
   width: 400px;
 }
-
-/* line 58, ../../sass/screen.scss */
+/* line 55, ../../sass/screen.scss */
 #chat-list span.from {
   margin-right: 20px;
 }
