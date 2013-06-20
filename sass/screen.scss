@@ -48,7 +48,7 @@ body {
 #main {
 /*	border: 1px solid purple;*/
 	height: 100%;
-	background-color: #eee;
+/*	background-color: #eee;*/
 }
 
 	
@@ -106,7 +106,17 @@ body {
 }
 
 #chat-list-container {
-	span.from {
-		margin-right: 20px;		
+	
+	.chat-message {
+		
+		padding-left: 100px;
+		
+		span.from {
+			margin-left: -120px;
+			float: left;
+			display: block;	
+			font-weight: bold;
+		}
 	}
+	
 }

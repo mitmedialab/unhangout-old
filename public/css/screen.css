@@ -50,7 +50,7 @@ body {
 #main {
   /*	border: 1px solid purple;*/
   height: 100%;
-  background-color: #eee;
+  /*	background-color: #eee;*/
 }
 
 /* line 55, ../../sass/screen.scss */
@@ -107,7 +107,14 @@ body {
   bottom: 0px;
 }
 
-/* line 109, ../../sass/screen.scss */
-#chat-list-container span.from {
-  margin-right: 20px;
+/* line 110, ../../sass/screen.scss */
+#chat-list-container .chat-message {
+  padding-left: 100px;
+}
+/* line 114, ../../sass/screen.scss */
+#chat-list-container .chat-message span.from {
+  margin-left: -120px;
+  float: left;
+  display: block;
+  font-weight: bold;
 }
