@@ -1,6 +1,7 @@
 
 var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
+	className: 'session',
 	
 	ui: {
 		attend: '.btn'
@@ -32,7 +33,8 @@ var SessionView = Marionette.ItemView.extend({
 var SessionListView = Backbone.Marionette.CompositeView.extend({
 	template: "#session-list-template",
 	itemView: SessionView,
-	itemViewContainer: '#session-list',
+	itemViewContainer: '#session-list-container',
+	id: "session-list",
 	
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
@@ -60,7 +62,8 @@ var UserView = Marionette.ItemView.extend({
 var UserListView = Backbone.Marionette.CompositeView.extend({
 	template: '#user-list-template',
 	itemView: UserView,
-	itemViewContainer: "#user-list",
+	itemViewContainer: "#user-list-container",
+	id: "user-list",
 	
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
@@ -75,7 +78,8 @@ var ChatMessageView = Marionette.ItemView.extend({
 var ChatView = Marionette.CompositeView.extend({
 	template: '#chat-template',
 	itemView: ChatMessageView,
-	itemViewContainer: "#chat-list",
+	itemViewContainer: "#chat-list-container",
+	id: "chat",
 	
 	ui: {
 		chatInput: "#chat-input"

@@ -25,9 +25,9 @@ $(document).ready(function() {
 	app = new Backbone.Marionette.Application();
 	
 	app.addRegions({
-		sessions: '#sessions',
-		users: '#users',
-		chat: '#chat',		
+		top: '#top',
+		right: '#right',
+		main: '#main',		
 	});
 	
 	app.addInitializer(function(options) {
@@ -36,9 +36,9 @@ $(document).ready(function() {
 		this.userListView = new UserListView({collection: users});
 		this.chatView = new ChatView({collection:messages});
 		
-		this.sessions.show(this.sessionListView);
-		this.users.show(this.userListView);
-		this.chat.show(this.chatView);
+		this.top.show(this.sessionListView);
+		this.right.show(this.userListView);
+		this.main.show(this.chatView);
 		
 		console.log("Initialized app.");
 	});

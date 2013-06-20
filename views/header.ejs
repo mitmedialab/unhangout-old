@@ -51,16 +51,14 @@
 		     but that seems to be how we can make this work with express and no content_for equivalent. -->
 
 			<script type="text/template" id="session-template">
-			<div class="session">
-				<h3>{{= title }}</h3>
-				<div class="description">{{= description }} </div>
-				<div class="attending">{{= attendee_ids.length }} people attending</div>
-				<div class="btn btn-primary">I am going!</div>
-			</div>
+			<h3>{{= title }}</h3>
+			<div class="description">{{= description }} </div>
+			<div class="attending">{{= attendee_ids.length }} people attending</div>
+			<div class="btn btn-primary">I am going!</div>
 			</script>
 			
 			<script type="text/template" id="session-list-template">
-				<ul id="session-list"></ul>
+				<ul id="session-list-container"></ul>
 			</script>
 			
 			<script type="text/template" id="user-template">
@@ -72,7 +70,7 @@
 			</script>
 			
 			<script type="text/template" id="user-list-template">
-			<ul id="user-list"></ul>
+			<ul id="user-list-container"></ul>
 			</script>
 			
 			<script type="text/template" id="chat-message-template">
@@ -80,7 +78,7 @@
 			</script>
 			
 			<script type="text/template" id="chat-template">
-			<ul id="chat-list"></ul>
+			<ul id="chat-list-container"></ul>
 			<form><input type="text" id="chat-input"></input></form>
 			</script>
 			
