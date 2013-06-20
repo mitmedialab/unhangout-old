@@ -120,6 +120,16 @@
 			<ul id="user-list"></ul>
 			</script>
 			
+			<script type="text/template" id="chat-message-template">
+			<div class="from">{{=user.displayName}}</div><div class="message">{{=text}}</div>
+			</script>
+			
+			<script type="text/template" id="chat-template">
+			<ul id="chat-list"></ul>
+			<form><input type="text" id="chat-input"></input></form>
+			</script>
+			
+			
 	<% } %>	
 </head>
 <body>

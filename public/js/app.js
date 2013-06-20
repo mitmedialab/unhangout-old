@@ -1,6 +1,6 @@
 var sock;
 
-var curEvent, users;
+var curEvent, users, messages;
 
 var app;
 
@@ -18,6 +18,8 @@ $(document).ready(function() {
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 	
+	messages = new models.ChatMessageList();
+	
 	console.log("Inflated models.");
 
 	app = new Backbone.Marionette.Application();
@@ -32,9 +34,11 @@ $(document).ready(function() {
 		
 		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
 		this.userListView = new UserListView({collection: users});
+		this.chatView = new ChatView({collection:messages});
 		
 		this.sessions.show(this.sessionListView);
 		this.users.show(this.userListView);
+		this.chat.show(this.chatView);
 		
 		console.log("Initialized app.");
 	});
@@ -71,6 +75,10 @@ $(document).ready(function() {
 			
 			case "leave":
 				users.remove(users.get(msg.args.user.id));
+				break;
+				
+			case "chat":
+				message.add(new models.ChatMessage(msg.args));
 				break;
 				
 			case "auth-ack":
