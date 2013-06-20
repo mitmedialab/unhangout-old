@@ -78,7 +78,7 @@ $(document).ready(function() {
 				break;
 				
 			case "chat":
-				message.add(new models.ChatMessage(msg.args));
+				messages.add(new models.ChatMessage(msg.args));
 				break;
 				
 			case "auth-ack":

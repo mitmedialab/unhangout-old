@@ -91,9 +91,7 @@ var ChatView = Marionette.CompositeView.extend({
 	
 	chat: function(e) {
 		var msg = this.ui.chatInput.val();
-		
-		console.log("chat: " + msg);
-		
+		sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
 		e.preventDefault();
 		return false;
 	}
