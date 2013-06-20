@@ -39,26 +39,27 @@ body {
 #main-right {
   /*	border: 1px solid green;*/
   height: 100%;
+  background-color: #eeeeee;
 }
 
-/* line 44, ../../sass/screen.scss */
+/* line 45, ../../sass/screen.scss */
 #main-left {
   height: 100%;
 }
 
-/* line 48, ../../sass/screen.scss */
+/* line 49, ../../sass/screen.scss */
 #main {
   /*	border: 1px solid purple;*/
   height: 100%;
   /*	background-color: #eee;*/
 }
 
-/* line 55, ../../sass/screen.scss */
+/* line 56, ../../sass/screen.scss */
 .identity {
   height: 40px;
 }
 
-/* line 59, ../../sass/screen.scss */
+/* line 60, ../../sass/screen.scss */
 .username {
   display: block;
   font-size: 14px;
@@ -66,28 +67,30 @@ body {
   padding: 10px 15px 10px 15px;
   line-height: 20px;
 }
-/* line 66, ../../sass/screen.scss */
+/* line 67, ../../sass/screen.scss */
 .username:hover, .username:active, .username:visited {
   color: white;
   text-decoration: none;
 }
 
-/* line 72, ../../sass/screen.scss */
+/* line 73, ../../sass/screen.scss */
 .user {
   width: 50px;
   height: 50px;
-  margin: 10px;
+  margin: 5px;
   border: 1px solid #aaa;
   border-radius: 25px;
+  background-color: white;
+  float: left;
 }
-/* line 80, ../../sass/screen.scss */
+/* line 85, ../../sass/screen.scss */
 .user img {
   width: 50px;
   height: 50px;
   border: 1px;
   border-radius: 25px;
 }
-/* line 88, ../../sass/screen.scss */
+/* line 93, ../../sass/screen.scss */
 .user i {
   font-size: 40px;
   width: 50px;
@@ -96,22 +99,22 @@ body {
   padding-left: 10px;
 }
 
-/* line 97, ../../sass/screen.scss */
+/* line 102, ../../sass/screen.scss */
 .session {
   display: none;
 }
 
-/* line 102, ../../sass/screen.scss */
+/* line 107, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
 
-/* line 110, ../../sass/screen.scss */
+/* line 115, ../../sass/screen.scss */
 #chat-list-container .chat-message {
   padding-left: 100px;
 }
-/* line 114, ../../sass/screen.scss */
+/* line 119, ../../sass/screen.scss */
 #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
