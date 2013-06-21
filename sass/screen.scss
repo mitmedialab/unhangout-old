@@ -181,6 +181,10 @@ body {
 }
 
 #chat {
+	position: absolute;
+	padding-bottom: 25px;
+	bottom: 0px;
+	
 	input {
 		position: absolute;
 		bottom: 0px;

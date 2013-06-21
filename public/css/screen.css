@@ -167,17 +167,23 @@ body {
   background-color: #3d594a;
 }
 
-/* line 184, ../../sass/screen.scss */
+/* line 183, ../../sass/screen.scss */
+#chat {
+  position: absolute;
+  padding-bottom: 25px;
+  bottom: 0px;
+}
+/* line 188, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
 
-/* line 192, ../../sass/screen.scss */
+/* line 196, ../../sass/screen.scss */
 #chat-list-container .chat-message {
   padding-left: 100px;
 }
-/* line 196, ../../sass/screen.scss */
+/* line 200, ../../sass/screen.scss */
 #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
