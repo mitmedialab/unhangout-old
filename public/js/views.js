@@ -26,7 +26,9 @@ var SessionView = Marionette.ItemView.extend({
 		} else {
 			this.$el.find(".attending").show();
 			
-			this.$el.find(".first").append($("<img src='" + this.model.get("firstAttendee").picture + "'>"))
+			var firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
+			
+			this.$el.find(".first").append(firstUserView.render().el);
 			
 			var count = 0;
 			this.$el.find(".attending").children().each(function(index, el) {
