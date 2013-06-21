@@ -5,7 +5,7 @@ var curEvent, users, messages;
 var app;
 
 $(document).ready(function() {
-	if($("#app").length!=1) {
+	if($("#main").length!=1) {
 		console.log("Code running on a page that does not have an #app div.");
 		return;
 	}
@@ -25,9 +25,9 @@ $(document).ready(function() {
 	app = new Backbone.Marionette.Application();
 	
 	app.addRegions({
-		sessions: '#sessions',
-		users: '#users',
-		chat: '#chat',		
+		top: '#top',
+		right: '#main-right',
+		main: '#main-left',		
 	});
 	
 	app.addInitializer(function(options) {
@@ -36,15 +36,70 @@ $(document).ready(function() {
 		this.userListView = new UserListView({collection: users});
 		this.chatView = new ChatView({collection:messages});
 		
-		this.sessions.show(this.sessionListView);
-		this.users.show(this.userListView);
-		this.chat.show(this.chatView);
+		this.top.show(this.sessionListView);
+		this.right.show(this.userListView);
+		this.main.show(this.chatView);
+				
+		// set up some extra methods for managing show/hide of top region.
+		this.topShown = false;
 		
+		this.hideTop = _.bind(function() {
+			this.top.$el.animate({
+				top: -this.top.$el.outerHeight(),
+			}, 500, "swing", _.bind(function() {
+					this.topShown = false;
+				}, this));
+				
+			this.main.$el.find("#chat-container").animate({
+				top: 0
+			}, 500, "swing")
+				
+		}, this);
+		
+		this.showTop = _.bind(function() {
+			this.top.$el.animate({
+				top: 0,
+			}, 500, "swing", _.bind(function() {
+				this.topShown = true;
+			}, this));
+			
+			// hardcoded a bit, but we don't use main for anything else right now.
+			this.main.$el.find("#chat-container").animate({
+				top: this.top.$el.outerHeight()
+			}, 500, "swing")
+			
+		}, this);
+				
+		// start sessions open, but triggering it properly.
+		this.top.$el.css("top", -this.top.$el.outerHeight());
+				
 		console.log("Initialized app.");
 	});
+
+	app.vent.on("sessions-button", _.bind(function() {
+		if(this.top.currentView==this.sessionListView && this.topShown) {
+			// in this case, treat it as a dismissal.
+			this.hideTop();
+		} else {
+			this.top.show(this.sessionListView);
+			this.showTop();
+		}
+	}, app));
 	
 	app.start();
-
+	app.vent.trigger("sessions-button");
+	
+	$("#sessions-nav").click(function() {
+		console.log("CLICK");
+		if($(this).hasClass("active")) {
+			$(this).removeClass("active");
+		} else {
+			$(this).addClass("active");
+		}
+		
+		app.vent.trigger("sessions-button");
+	});
+	
 	console.log("Setup regions.");
 
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");

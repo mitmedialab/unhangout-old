@@ -1,0 +1,234 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+$primary: #3d594a;
+$background: #c9c8c8;
+
+body {
+    padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+  }
+
+.fill {
+	position: absolute;
+	
+	top: 40px;
+	bottom: 0px;
+	
+	width: auto;
+	height: auto;
+}
+
+#app {
+	position: absolute;
+	
+	top: 40px;
+	bottom: 0px;
+	
+	width: 1170px;
+	left: 50%;
+	margin-left: -585px;
+	
+}
+
+#top {
+	position: absolute;
+	padding-top: 30px;
+	padding-bottom: 60px;
+	padding-right: 30px;
+	
+	background-color: white;
+	box-shadow: 1px 1px 1px #bbb;
+	border: 1px solid #aaa;
+	z-index: 50;	
+}
+
+#main-right {
+/*	border: 1px solid green;*/
+	height: 100%;
+	background-color: #eeeeee;
+}
+
+#main-left {
+	height: 100%;
+}
+
+#main {
+/*	border: 1px solid purple;*/
+	height: 100%;
+/*	background-color: #eee;*/
+}
+
+	
+.identity {
+	height: 40px;
+}
+
+ .username {
+	display: block;
+	font-size: 14px;
+	color: #999;
+	padding: 10px 15px 10px 15px;
+	line-height: 20px;
+	
+	&:hover, &:active, &:visited {
+		color: white;
+		text-decoration: none;
+	}
+}
+
+.user {
+	width: 40px;
+	height: 40px;
+	margin: 5px;
+	
+	border: 1px solid $background;
+/*	border-radius: 25px;*/
+	
+	background-color: white;
+	
+	float: left;
+	
+	overflow: hidden;
+
+	img {
+		width: 40px;
+		height: 40px;
+
+/*		border-radius: 20px;	*/
+	}
+	
+	i {
+		font-size: 40px;
+		width: 50px;
+		height: 50px;
+		line-height: 50px;
+		padding-left: 10px;
+	}
+}
+
+#session-list {	
+	ul, li {
+		margin: 0px;
+	}	
+}
+
+.session {
+/*	overflow: hidden;*/
+	background-color: #e6e7e6;
+	position: relative;
+	
+	h3 {
+		background-color: $primary;
+		color: white;
+		margin: 0px;
+		
+		font-weight: normal;
+		font-size: 1.3em;
+		
+		padding: 0px 10px 0px 10px;
+		
+		i {
+			margin-right: 5px;
+		}
+		
+		position: absolute;
+		right: 0px;
+		left: 0px;
+		
+		height: 40px;
+	}
+	
+	.description {
+		padding: 5px;
+		margin-top: 40px;
+	}
+	
+	.btn {
+/*		width: 100%;*/
+/*		background-color: #4c4c4c;*/
+		color: white;
+		border-radius: 0px;
+		
+		position: absolute;
+		right: 0px;
+		left: 0px;
+	}
+	
+	.attending {
+		height: 50px;
+		padding: 5px;
+		
+		.first {
+			width: 50px;
+			height: 50px;
+			background-color: $background;
+			
+			float: left;
+		}
+		
+		.counter {
+			background-color: $background;
+			
+			width: 10px;
+			height: 50px;
+			
+			margin-left: 5px;
+			float: left;
+			
+			&.selected {
+				background-color: $primary;
+			}
+			
+			
+		}
+	}
+	
+}
+
+#chat {
+/*	position: absolute;*/
+/*	padding-bottom: 25px;*/
+/*	bottom: 0px;*/
+/*	left: 0px;*/
+	
+	
+	input {
+		position: absolute;
+		bottom: 0px;
+	}
+	
+	#chat-container {
+		
+		bottom: 40px;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		position: absolute;
+		
+		overflow: auto;
+		
+		
+		#chat-list-container {
+			overflow: auto;
+			height: auto;
+			width: auto;
+
+			margin: 0px 300px 0px 0px;
+
+			.chat-message {
+
+				padding-left: 120px;
+
+				span.from {
+					margin-left: -120px;
+					float: left;
+					display: block;	
+					font-weight: bold;
+				}
+			}
+		}
+	}
+}
+

@@ -1,6 +1,7 @@
 
 var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
+	className: 'session span3',
 	
 	ui: {
 		attend: '.btn'
@@ -15,7 +16,30 @@ var SessionView = Marionette.ItemView.extend({
 	},
 	
 	onRender: function() {
-		console.log("rendered session view");
+		// things to do here:
+		// 1. Hide attending if no one is attending
+		// 2. If numAttending > 0, pick the first person and put their icon in .first
+		// 3. manage the counter bars for the rest of the count.
+		var numAttendees = this.model.numAttendees();
+		if(numAttendees==0) {
+			this.$el.find(".attending").hide();
+		} else {
+			this.$el.find(".attending").show();
+			
+			var count = 0;
+			this.$el.find(".attending").children().each(function(index, el) {
+				console.log("checking child")
+				if(count < numAttendees) {
+					console.log("adding class");
+					$(el).addClass("selected");
+					console.log(el);
+				} else {
+					$(el).removeClass("selected");
+				}
+				
+				count ++;
+			});
+		}
 	},
 	
 	destroy: function() {
@@ -32,7 +56,8 @@ var SessionView = Marionette.ItemView.extend({
 var SessionListView = Backbone.Marionette.CompositeView.extend({
 	template: "#session-list-template",
 	itemView: SessionView,
-	itemViewContainer: '#session-list',
+	itemViewContainer: '#session-list-container',
+	id: "session-list",
 	
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
@@ -60,7 +85,8 @@ var UserView = Marionette.ItemView.extend({
 var UserListView = Backbone.Marionette.CompositeView.extend({
 	template: '#user-list-template',
 	itemView: UserView,
-	itemViewContainer: "#user-list",
+	itemViewContainer: "#user-list-container",
+	id: "user-list",
 	
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
@@ -69,13 +95,15 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
-	className: 'chat-message'
+	className: 'chat-message',
+	
 });
 
 var ChatView = Marionette.CompositeView.extend({
 	template: '#chat-template',
 	itemView: ChatMessageView,
-	itemViewContainer: "#chat-list",
+	itemViewContainer: "#chat-list-container",
+	id: "chat",
 	
 	ui: {
 		chatInput: "#chat-input"
@@ -88,6 +116,10 @@ var ChatView = Marionette.CompositeView.extend({
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 	},
+	
+	update: function() {
+		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
+	},	
 	
 	chat: function(e) {
 		var msg = this.ui.chatInput.val();

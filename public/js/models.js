@@ -20,6 +20,7 @@
 	Backbone = window.Backbone;
 	_ = window._;
   }
+
     
 models.Event = Backbone.Model.extend({
 	idRoot: "event",
