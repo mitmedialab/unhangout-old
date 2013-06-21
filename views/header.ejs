@@ -16,14 +16,7 @@
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
 	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
 	<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
-	
-	<% if(loadApp) { %>
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone.js"></script>
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.0.0-rc4-bundled/backbone.marionette.min.js"></script>
-		<script type="text/javascript" src="/public/js/app.js"></script>
-	<% } %>
-	
+		
 	<script type="text/javascript" charset="utf-8">
 		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
 		_.templateSettings = {
@@ -39,52 +32,7 @@
 		<% if(!_.isUndefined(event)) { %>
 		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
 		<% } %>
-	</script>
-	
-	<% if(loadApp) { %>	
-		<script type="text/javascript" src="/public/js/models.js"></script>	
-		<script type="text/javascript" src="/public/js/views.js"></script>	
-	<% } %>
-
-	<% if(loadApp) { %>	
-		<!-- Templates for the backbone views go here. Sort of annoying to have to have them in this view,
-		     but that seems to be how we can make this work with express and no content_for equivalent. -->
-
-			<script type="text/template" id="session-template">
-			<h3><i class="icon-comments"></i>{{= title }}</h3>
-			<div class="description">{{= description }} </div>
-			<div class="attending"><div class="first"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div></div>
-			<div class="btn btn-inverse">I am going!</div>
-			</script>
-			
-			<script type="text/template" id="session-list-template">
-				<ul id="session-list-container"></ul>
-			</script>
-			
-			<script type="text/template" id="user-template">
-				{{ if(picture=="") { }}
-				<i class="icon-user icon-3x"></i>
-				{{ } else { }}
-				<img src="{{=picture}}">
-				{{ } }}
-			</script>
-			
-			<script type="text/template" id="user-list-template">
-			<h2></h2>
-			<ul id="user-list-container"></ul>
-			</script>
-			
-			<script type="text/template" id="chat-message-template">
-			<span class="from">{{=user.displayName}}</span>{{=text}}
-			</script>
-			
-			<script type="text/template" id="chat-template">
-			<ul id="chat-list-container"></ul>
-			<form><input type="text" id="chat-input" class="span9"></input></form>
-			</script>
-			
-			
-	<% } %>	
+	</script>	
 </head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">
