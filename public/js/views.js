@@ -30,9 +30,7 @@ var SessionView = Marionette.ItemView.extend({
 			
 			var count = 0;
 			this.$el.find(".attending").children().each(function(index, el) {
-				console.log("checking child")
 				if(count < numAttendees) {
-					console.log("adding class");
 					$(el).addClass("selected");
 					console.log(el);
 				} else {
@@ -79,9 +77,24 @@ var UserView = Marionette.ItemView.extend({
 	template: '#user-template',
 	className: 'user',
 	
+	events: {
+		'click' : 'click'
+	},
+	
 	initialize: function() {
 		this.listenTo(this.model, 'change', this.render, this);
 	},	
+	
+	click: function() {
+		console.log("user clicked: " + this.model.get("displayName"));
+	},
+	
+	onRender: function() {
+		// add in the tooltip attributes
+		this.$el.attr("data-toggle", "tooltip");
+		this.$el.attr("title", this.model.get("displayName"));
+		this.$el.tooltip();
+	}
 });
 
 var UserListView = Backbone.Marionette.CompositeView.extend({

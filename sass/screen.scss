@@ -95,16 +95,14 @@ body {
 	img {
 		width: 40px;
 		height: 40px;
-
-/*		border-radius: 20px;	*/
 	}
 	
 	i {
 		font-size: 40px;
-		width: 50px;
-		height: 50px;
-		line-height: 50px;
-		padding-left: 10px;
+		width: 40px;
+		height: 40px;
+		line-height: 40px;
+		padding-left: 5px;
 	}
 }
 
@@ -115,7 +113,6 @@ body {
 }
 
 .session {
-/*	overflow: hidden;*/
 	background-color: #e6e7e6;
 	position: relative;
 	
@@ -146,8 +143,6 @@ body {
 	}
 	
 	.btn {
-/*		width: 100%;*/
-/*		background-color: #4c4c4c;*/
 		color: white;
 		border-radius: 0px;
 		
@@ -193,12 +188,6 @@ body {
 }
 
 #chat {
-/*	position: absolute;*/
-/*	padding-bottom: 25px;*/
-/*	bottom: 0px;*/
-/*	left: 0px;*/
-	
-	
 	input {
 		position: absolute;
 		bottom: 0px;
