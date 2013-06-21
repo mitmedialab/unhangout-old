@@ -41,7 +41,7 @@ $(document).ready(function() {
 		this.main.show(this.chatView);
 				
 		// set up some extra methods for managing show/hide of top region.
-		this.topShown = true;
+		this.topShown = false;
 		
 		this.hideTop = _.bind(function() {
 			this.top.$el.animate({
@@ -49,6 +49,11 @@ $(document).ready(function() {
 			}, 500, "swing", _.bind(function() {
 					this.topShown = false;
 				}, this));
+				
+			this.main.$el.find("#chat-container").animate({
+				top: 0
+			}, 500, "swing")
+				
 		}, this);
 		
 		this.showTop = _.bind(function() {
@@ -57,7 +62,16 @@ $(document).ready(function() {
 			}, 500, "swing", _.bind(function() {
 				this.topShown = true;
 			}, this));
+			
+			// hardcoded a bit, but we don't use main for anything else right now.
+			this.main.$el.find("#chat-container").animate({
+				top: this.top.$el.outerHeight()
+			}, 500, "swing")
+			
 		}, this);
+				
+		// start sessions open, but triggering it properly.
+		this.top.$el.css("top", -this.top.$el.outerHeight());
 				
 		console.log("Initialized app.");
 	});
@@ -73,6 +87,7 @@ $(document).ready(function() {
 	}, app));
 	
 	app.start();
+	app.vent.trigger("sessions-button");
 	
 	$("#sessions-nav").click(function() {
 		console.log("CLICK");
@@ -84,7 +99,7 @@ $(document).ready(function() {
 		
 		app.vent.trigger("sessions-button");
 	});
-
+	
 	console.log("Setup regions.");
 
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
