@@ -2,13 +2,13 @@
  * In this file you should write your main styles. (or centralize your imports)
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
-/* line 6, ../../sass/screen.scss */
+/* line 8, ../../sass/screen.scss */
 body {
   padding-top: 60px;
   /* 60px to make the container go all the way to the bottom of the topbar */
 }
 
-/* line 10, ../../sass/screen.scss */
+/* line 12, ../../sass/screen.scss */
 .fill {
   position: absolute;
   top: 40px;
@@ -17,7 +17,7 @@ body {
   height: auto;
 }
 
-/* line 20, ../../sass/screen.scss */
+/* line 22, ../../sass/screen.scss */
 #app {
   position: absolute;
   top: 40px;
@@ -27,39 +27,39 @@ body {
   margin-left: -585px;
 }
 
-/* line 31, ../../sass/screen.scss */
+/* line 33, ../../sass/screen.scss */
 #top {
   /*	border: 1px solid red;*/
   position: absolute;
-  background-color: #eae;
-  display: none;
+  /*	background-color: #eae;*/
+  /*	display: none;*/
 }
 
-/* line 39, ../../sass/screen.scss */
+/* line 41, ../../sass/screen.scss */
 #main-right {
   /*	border: 1px solid green;*/
   height: 100%;
   background-color: #eeeeee;
 }
 
-/* line 45, ../../sass/screen.scss */
+/* line 47, ../../sass/screen.scss */
 #main-left {
   height: 100%;
 }
 
-/* line 49, ../../sass/screen.scss */
+/* line 51, ../../sass/screen.scss */
 #main {
   /*	border: 1px solid purple;*/
   height: 100%;
   /*	background-color: #eee;*/
 }
 
-/* line 56, ../../sass/screen.scss */
+/* line 58, ../../sass/screen.scss */
 .identity {
   height: 40px;
 }
 
-/* line 60, ../../sass/screen.scss */
+/* line 62, ../../sass/screen.scss */
 .username {
   display: block;
   font-size: 14px;
@@ -67,13 +67,13 @@ body {
   padding: 10px 15px 10px 15px;
   line-height: 20px;
 }
-/* line 67, ../../sass/screen.scss */
+/* line 69, ../../sass/screen.scss */
 .username:hover, .username:active, .username:visited {
   color: white;
   text-decoration: none;
 }
 
-/* line 73, ../../sass/screen.scss */
+/* line 75, ../../sass/screen.scss */
 .user {
   width: 50px;
   height: 50px;
@@ -83,14 +83,14 @@ body {
   background-color: white;
   float: left;
 }
-/* line 85, ../../sass/screen.scss */
+/* line 87, ../../sass/screen.scss */
 .user img {
   width: 50px;
   height: 50px;
   border: 1px;
   border-radius: 25px;
 }
-/* line 93, ../../sass/screen.scss */
+/* line 95, ../../sass/screen.scss */
 .user i {
   font-size: 40px;
   width: 50px;
@@ -99,22 +99,61 @@ body {
   padding-left: 10px;
 }
 
-/* line 102, ../../sass/screen.scss */
-.session {
-  display: none;
+/* line 105, ../../sass/screen.scss */
+#session-list ul, #session-list li {
+  margin: 0px;
 }
 
-/* line 107, ../../sass/screen.scss */
+/* line 110, ../../sass/screen.scss */
+.session {
+  /*	overflow: hidden;*/
+  background-color: #e6e7e6;
+  position: relative;
+}
+/* line 115, ../../sass/screen.scss */
+.session h3 {
+  background-color: #3d594a;
+  color: white;
+  margin: 0px;
+  font-weight: normal;
+  font-size: 1.3em;
+  padding: 0px 10px 0px 10px;
+  position: absolute;
+  right: 0px;
+  left: 0px;
+  height: 40px;
+}
+/* line 125, ../../sass/screen.scss */
+.session h3 i {
+  margin-right: 5px;
+}
+/* line 136, ../../sass/screen.scss */
+.session .description {
+  padding: 5px;
+  margin-top: 40px;
+}
+/* line 141, ../../sass/screen.scss */
+.session .btn {
+  /*		width: 100%;*/
+  /*		background-color: #4c4c4c;*/
+  color: white;
+  border-radius: 0px;
+  position: absolute;
+  right: 0px;
+  left: 0px;
+}
+
+/* line 155, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
 
-/* line 115, ../../sass/screen.scss */
+/* line 163, ../../sass/screen.scss */
 #chat-list-container .chat-message {
   padding-left: 100px;
 }
-/* line 119, ../../sass/screen.scss */
+/* line 167, ../../sass/screen.scss */
 #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;

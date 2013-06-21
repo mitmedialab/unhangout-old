@@ -3,6 +3,8 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
+$primary: #3d594a;
+
 body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
   }
@@ -31,9 +33,9 @@ body {
 #top {
 /*	border: 1px solid red;*/
 	position: absolute;
-	background-color: #eae;
+/*	background-color: #eae;*/
 	
-	display: none;
+/*	display: none;*/
 }
 
 #main-right {
@@ -99,8 +101,54 @@ body {
 	}
 }
 
+#session-list {
+	ul, li {
+		margin: 0px;
+	}
+}
+
 .session {
-	display: none;
+/*	overflow: hidden;*/
+	background-color: #e6e7e6;
+	position: relative;
+	
+	h3 {
+		background-color: $primary;
+		color: white;
+		margin: 0px;
+		
+		font-weight: normal;
+		font-size: 1.3em;
+		
+		padding: 0px 10px 0px 10px;
+		
+		i {
+			margin-right: 5px;
+		}
+		
+		position: absolute;
+		right: 0px;
+		left: 0px;
+		
+		height: 40px;
+	}
+	
+	.description {
+		padding: 5px;
+		margin-top: 40px;
+	}
+	
+	.btn {
+/*		width: 100%;*/
+/*		background-color: #4c4c4c;*/
+		color: white;
+		border-radius: 0px;
+		
+		position: absolute;
+		right: 0px;
+		left: 0px;
+	}
+	
 }
 
 #chat {

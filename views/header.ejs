@@ -51,10 +51,10 @@
 		     but that seems to be how we can make this work with express and no content_for equivalent. -->
 
 			<script type="text/template" id="session-template">
-			<h3>{{= title }}</h3>
+			<h3><i class="icon-comments"></i>{{= title }}</h3>
 			<div class="description">{{= description }} </div>
 			<div class="attending">{{= attendee_ids.length }} people attending</div>
-			<div class="btn btn-primary">I am going!</div>
+			<div class="btn btn-inverse">I am going!</div>
 			</script>
 			
 			<script type="text/template" id="session-list-template">
@@ -70,6 +70,7 @@
 			</script>
 			
 			<script type="text/template" id="user-list-template">
+			<h2></h2>
 			<ul id="user-list-container"></ul>
 			</script>
 			
