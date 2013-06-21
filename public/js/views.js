@@ -42,6 +42,12 @@ var SessionView = Marionette.ItemView.extend({
 				count ++;
 			});
 		}
+		
+		if(this.model.isAttending(USER_ID)) {
+			console.log("toggling button");
+			this.ui.attend.button('toggle');
+			this.ui.attend.text("NOT GOING");
+		}
 	},
 	
 	destroy: function() {
@@ -50,8 +56,13 @@ var SessionView = Marionette.ItemView.extend({
 	
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
-		var message = {type:"attend", args:{id:this.model.id}};
-		sock.send(JSON.stringify(message));
+
+		if(this.ui.attend.hasClass("active")) {
+			this.ui.attend.text("JOIN");
+		} else {
+			var message = {type:"attend", args:{id:this.model.id}};
+			sock.send(JSON.stringify(message));	
+		}		
 	}
 });
 

@@ -124,6 +124,10 @@ models.Session = Backbone.Model.extend({
 		} else {
 			throw new Exception("user already attending session");
 		}
+	},
+	
+	isAttending: function(userId) {
+		return this.get("attendeeIds").indexOf(userId)!=-1;
 	}
 });
 
@@ -131,7 +135,7 @@ models.SessionList = Backbone.Collection.extend({
 	model:models.Session,
 	
 	url: function() {
-		console.log("GETTING LOCAL SESSION LISTe;")
+		console.log("GETTING LOCAL SESSION LIST");
 		return "WAT";
 	}
 });
