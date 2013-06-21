@@ -31,11 +31,10 @@ body {
 }
 
 #top {
-/*	border: 1px solid red;*/
 	position: absolute;
-/*	background-color: #eae;*/
-	
-/*	display: none;*/
+	padding-top: 10px;
+	background-color: white;
+	padding-bottom: 30px;
 }
 
 #main-right {
@@ -73,23 +72,24 @@ body {
 }
 
 .user {
-	width: 50px;
-	height: 50px;
+	width: 40px;
+	height: 40px;
 	margin: 5px;
 	
-	border: 1px solid #aaa;
-	border-radius: 25px;
+	border: 1px solid #c9c8c8;
+/*	border-radius: 25px;*/
 	
 	background-color: white;
 	
 	float: left;
+	
+	overflow: hidden;
 
 	img {
-		width: 50px;
-		height: 50px;
+		width: 40px;
+		height: 40px;
 
-		border: 1px;
-		border-radius: 25px;	
+/*		border-radius: 20px;	*/
 	}
 	
 	i {
@@ -101,7 +101,7 @@ body {
 	}
 }
 
-#session-list {
+#session-list {	
 	ul, li {
 		margin: 0px;
 	}
@@ -147,6 +147,35 @@ body {
 		position: absolute;
 		right: 0px;
 		left: 0px;
+	}
+	
+	.attending {
+		height: 50px;
+		padding: 5px;
+		
+		.first {
+			width: 50px;
+			height: 50px;
+			background-color: #c9c8c8;
+			
+			float: left;
+		}
+		
+		.counter {
+			background-color: #c9c8c8;
+			
+			width: 10px;
+			height: 50px;
+			
+			margin-left: 5px;
+			float: left;
+			
+			&.selected {
+				background-color: $primary;
+			}
+			
+			
+		}
 	}
 	
 }
