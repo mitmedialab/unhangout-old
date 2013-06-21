@@ -26,6 +26,8 @@ var SessionView = Marionette.ItemView.extend({
 		} else {
 			this.$el.find(".attending").show();
 			
+			this.$el.find(".first").append($("<img src='" + this.model.get("firstAttendee").picture + "'>"))
+			
 			var count = 0;
 			this.$el.find(".attending").children().each(function(index, el) {
 				console.log("checking child")

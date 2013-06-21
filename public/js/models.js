@@ -102,20 +102,25 @@ models.Session = Backbone.Model.extend({
 		return {
 			title: "Great Session",
 			description: "This session is really wonderful.",
-			attendee_ids: []
+			attendeeIds: [],
+			firstAttendee: null,
 		}
 	},
 	
 	numAttendees: function() {
-		return this.get("attendee_ids").length;
+		return this.get("attendeeIds").length;
 	},
 	
 	addAttendee: function(user) {
-		var attendee_ids = _.clone(this.get("attendee_ids"));
+		if(_.isNull(this.get("firstAttendee"))) {
+			this.set("firstAttendee", user);
+		}
 		
-		if(attendee_ids.indexOf(user.id)==-1) {
-			attendee_ids.push(user.id);
-			this.set("attendee_ids", attendee_ids);
+		var attendeeIds = _.clone(this.get("attendeeIds"));
+		
+		if(attendeeIds.indexOf(user.id)==-1) {
+			attendeeIds.push(user.id);
+			this.set("attendeeIds", attendeeIds);
 		} else {
 			throw new Exception("user already attending session");
 		}

@@ -166,6 +166,11 @@ body {
 			background-color: $background;
 			
 			float: left;
+			
+			img {
+				width: 50px;
+				height: 50px;
+			}
 		}
 		
 		.counter {
