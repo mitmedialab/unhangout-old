@@ -39,11 +39,51 @@ $(document).ready(function() {
 		this.top.show(this.sessionListView);
 		this.right.show(this.userListView);
 		this.main.show(this.chatView);
+				
+		// set up some extra methods for managing show/hide of top region.
+		this.topShown = true;
 		
+		this.hideTop = _.bind(function() {
+			this.top.$el.animate({
+				top: -this.top.$el.outerHeight(),
+			}, 500, "swing", _.bind(function() {
+					this.topShown = false;
+				}, this));
+		}, this);
+		
+		this.showTop = _.bind(function() {
+			this.top.$el.animate({
+				top: 0,
+			}, 500, "swing", _.bind(function() {
+				this.topShown = true;
+			}, this));
+		}, this);
+				
 		console.log("Initialized app.");
 	});
+
+	app.vent.on("sessions-button", _.bind(function() {
+		if(this.top.currentView==this.sessionListView && this.topShown) {
+			// in this case, treat it as a dismissal.
+			this.hideTop();
+		} else {
+			this.top.show(this.sessionListView);
+			this.showTop();
+		}
+	}, app));
 	
 	app.start();
+	
+	$("#sessions-nav").click(function() {
+		console.log("CLICK");
+		if($(this).hasClass("active")) {
+			$(this).removeClass("active");
+		} else {
+			$(this).addClass("active");
+		}
+		
+		app.vent.trigger("sessions-button");
+	});
 
 	console.log("Setup regions.");
 
