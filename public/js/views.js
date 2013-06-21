@@ -95,7 +95,8 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
-	className: 'chat-message'
+	className: 'chat-message',
+	
 });
 
 var ChatView = Marionette.CompositeView.extend({
@@ -115,6 +116,10 @@ var ChatView = Marionette.CompositeView.extend({
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 	},
+	
+	update: function() {
+		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
+	},	
 	
 	chat: function(e) {
 		var msg = this.ui.chatInput.val();

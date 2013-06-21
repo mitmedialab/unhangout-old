@@ -187,28 +187,47 @@ body {
 }
 
 #chat {
-	position: absolute;
-	padding-bottom: 25px;
-	bottom: 0px;
+/*	position: absolute;*/
+/*	padding-bottom: 25px;*/
+/*	bottom: 0px;*/
+/*	left: 0px;*/
+	
 	
 	input {
 		position: absolute;
 		bottom: 0px;
 	}
-}
-
-#chat-list-container {
 	
-	.chat-message {
+	#chat-container {
 		
-		padding-left: 100px;
+		bottom: 40px;
+		top: 0px;
+		left: 0px;
+		right: 300px;
+		position: absolute;
 		
-		span.from {
-			margin-left: -120px;
-			float: left;
-			display: block;	
-			font-weight: bold;
+		overflow: auto;
+		
+		
+		#chat-list-container {
+			overflow: auto;
+			height: auto;
+			width: auto;
+
+			margin: 0px 300px 0px 0px;
+
+			.chat-message {
+
+				padding-left: 120px;
+
+				span.from {
+					margin-left: -120px;
+					float: left;
+					display: block;	
+					font-weight: bold;
+				}
+			}
 		}
 	}
-	
 }
+

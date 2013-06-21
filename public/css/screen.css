@@ -172,22 +172,38 @@ body {
 
 /* line 189, ../../sass/screen.scss */
 #chat {
-  position: absolute;
-  padding-bottom: 25px;
-  bottom: 0px;
+  /*	position: absolute;*/
+  /*	padding-bottom: 25px;*/
+  /*	bottom: 0px;*/
+  /*	left: 0px;*/
 }
-/* line 194, ../../sass/screen.scss */
+/* line 196, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
-
-/* line 202, ../../sass/screen.scss */
-#chat-list-container .chat-message {
-  padding-left: 100px;
+/* line 201, ../../sass/screen.scss */
+#chat #chat-container {
+  bottom: 40px;
+  top: 0px;
+  left: 0px;
+  right: 300px;
+  position: absolute;
+  overflow: auto;
 }
-/* line 206, ../../sass/screen.scss */
-#chat-list-container .chat-message span.from {
+/* line 212, ../../sass/screen.scss */
+#chat #chat-container #chat-list-container {
+  overflow: auto;
+  height: auto;
+  width: auto;
+  margin: 0px 300px 0px 0px;
+}
+/* line 219, ../../sass/screen.scss */
+#chat #chat-container #chat-list-container .chat-message {
+  padding-left: 120px;
+}
+/* line 223, ../../sass/screen.scss */
+#chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
   display: block;
