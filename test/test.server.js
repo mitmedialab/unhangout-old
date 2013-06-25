@@ -404,10 +404,44 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));
 			});
 			
+			it("should reject an UNATTEND request if that user.id is not attending", function(done) {
+				// manipulate internal state to do an attend.
+				var user = s.users.at(0);
+				var event = s.events.at(1);
+				var session = event.get("sessions").at(0);
+				
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					
+					if(msg.type=="unattend-ack") {
+						should.fail("unattend-err");
+					} else if(msg.type=="unattend-err") {
+						done();
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));				
+			});
 			
-			it("should reject an UNATTEND request if that user.id is not attending");
-			
-			it("should send an UNATTEND message to all connected users in that event");
+			it("should send an UNATTEND message to all connected users in that event", function(done) {
+				var user = s.users.at(0);
+				var event = s.events.at(1);
+				var session = event.get("sessions").at(0);
+				
+				session.addAttendee(user);
+				
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					
+					if(msg.type=="unattend") {
+						done();
+					} else if(msg.type=="unattend-err") {
+						should.fail("unattend-err");
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));
+			});
 			
 			
 		})
