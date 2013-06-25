@@ -175,13 +175,11 @@ models.User = Backbone.Model.extend({
 	},
 	
 	checkJSON: function() {
-		console.log("CHECKING JSON: " + JSON.stringify(this.attributes));
 		if(this.has("_json")) {
 			var json = this.get("_json");
 
 			if("picture" in json) { 
 				this.set("picture", json.picture);
-				console.log("SET PICTURE!!!!!");
 			}
 			else { this.set("picture", "")}
 
