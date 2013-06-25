@@ -165,23 +165,25 @@ models.User = Backbone.Model.extend({
 	},
 	
 	initialize: function() {
-		if(!this.has("picture")) {
-			this.set("picture", "");
-		}
-		
-		this.on("change:_json", function(model, name) {
-			console.log("in change _json");
-			// copy some bonus fields out of the attributes if present.
-			if("_json" in this.attributes) {
-				var json = this.get("_json");
+		this.checkJSON();
+		this.on("change:_json", this.checkJSON)
+	},
+	
+	checkJSON: function() {
+		console.log("CHECKING JSON: " + JSON.stringify(this.attributes));
+		if(this.has("_json")) {
+			var json = this.get("_json");
 
-				if("picture" in json) { this.set("picture", this.get("_json").picture); }
-				else { this.set("picture", "")}
-
-				if("link" in json) this.set("link", this.get("_json").link);
+			if("picture" in json) { 
+				this.set("picture", json.picture);
+				console.log("SET PICTURE!!!!!");
 			}
-		})
+			else { this.set("picture", "")}
+
+			if("link" in json) this.set("link", this.get("_json").link);
+		}		
 	}
+	
 });
 
 models.UserList = Backbone.Collection.extend({
