@@ -149,7 +149,10 @@ models.Session = Backbone.Model.extend({
 	setFirstAttendee: function(user) {
 		this.set("firstAttendee", user);
 		this.trigger("change");
-		console.log("set first attendee triggering");
+	},
+	
+	start: function() {
+		this.trigger("start");
 	}
 });
 
@@ -166,7 +169,7 @@ models.SessionList = Backbone.Collection.extend({
 models.User = Backbone.Model.extend({
 
 	default: function() {
-		return {picture: ""}
+		return {picture: "", admin:false}
 	},
 	
 	initialize: function() {
@@ -185,8 +188,11 @@ models.User = Backbone.Model.extend({
 
 			if("link" in json) this.set("link", this.get("_json").link);
 		}		
-	}
+	},
 	
+	isAdmin: function() {
+		return this.get("admin");
+	}
 });
 
 models.UserList = Backbone.Collection.extend({
