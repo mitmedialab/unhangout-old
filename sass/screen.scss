@@ -10,7 +10,7 @@ body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
   }
 
-.admin {
+.admin-header {
 	width: 100%;
 	height: 5px;
 	background-color: orange;
@@ -152,7 +152,7 @@ body {
 		margin-top: 40px;
 	}
 	
-	.btn {
+	.attend.btn {
 		color: white;
 		border-radius: 0px;
 		
@@ -227,6 +227,13 @@ body {
 		}
 	}
 	
+	.admin {
+		position: absolute;
+		
+		.btn {
+			border-radius: 0px;
+		}
+	}
 }
 
 #chat {

@@ -5,11 +5,13 @@ var SessionView = Marionette.ItemView.extend({
 	firstUserView: null,
 	
 	ui: {
-		attend: '.btn'
+		attend: '.attend',
+		start:'.start'
 	},
 	
 	events: {
-		'click .btn':'attend'
+		'click .attend':'attend',
+		'click .start':'start',		
 	},
 	
 	initialize: function() {
@@ -68,6 +70,15 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".full").hide();			
 		}
 		
+		if(IS_ADMIN) {
+			// show the admin UI. obviously, requests generated here are authenticated
+			// on the server, so doesn't matter if users mess around and show these
+			// buttons covertly.
+			this.$el.find(".admin").show();
+		} else {
+			this.$el.find(".admin").hide();			
+		}
+		
 		if(this.model.isAttending(USER_ID)) {
 			this.ui.attend.addClass("active");
 			this.ui.attend.text("JOINED");
@@ -92,6 +103,10 @@ var SessionView = Marionette.ItemView.extend({
 			var message = {type:"attend", args:{id:this.model.id}};
 			sock.send(JSON.stringify(message));	
 		}		
+	},
+	
+	start: function() {
+		console.log("start session!");
 	}
 });
 

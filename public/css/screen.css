@@ -9,7 +9,7 @@ body {
 }
 
 /* line 13, ../../sass/screen.scss */
-.admin {
+.admin-header {
   width: 100%;
   height: 5px;
   background-color: orange;
@@ -145,7 +145,7 @@ body {
   margin-top: 40px;
 }
 /* line 155, ../../sass/screen.scss */
-.session .btn {
+.session .attend.btn {
   color: white;
   border-radius: 0px;
   position: absolute;
@@ -212,13 +212,21 @@ body {
   padding-top: 15px;
   margin-left: 5px;
 }
-
+/* line 230, ../../sass/screen.scss */
+.session .admin {
+  position: absolute;
+}
 /* line 233, ../../sass/screen.scss */
+.session .admin .btn {
+  border-radius: 0px;
+}
+
+/* line 240, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
-/* line 238, ../../sass/screen.scss */
+/* line 245, ../../sass/screen.scss */
 #chat #chat-container {
   bottom: 40px;
   top: 0px;
@@ -227,18 +235,18 @@ body {
   position: absolute;
   overflow: auto;
 }
-/* line 249, ../../sass/screen.scss */
+/* line 256, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   overflow: auto;
   height: auto;
   width: auto;
   margin: 0px 300px 0px 0px;
 }
-/* line 256, ../../sass/screen.scss */
+/* line 263, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 260, ../../sass/screen.scss */
+/* line 267, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
