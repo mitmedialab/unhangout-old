@@ -322,6 +322,22 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"attend", args:{id:1}}));
 			});
 			
+			it("should also send a FIRST-ATTENDEE message for the first attendee", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="first-attendee") {
+						msg.args.should.have.keys("id", "user");
+						msg.args.id.should.equal(1);
+						msg.args.user.id.should.equal(s.users.at(0).id);
+						done();
+					} else if(msg.type=="attend-err") {
+						should.fail();
+					}
+				});
+
+				sock.write(JSON.stringify({type:"attend", args:{id:1}}));
+			});
+			
 			it('should reject an ATTEND request with a valid session id (not part of event)', function(done) {
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
@@ -443,8 +459,38 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));
 			});
 			
-			
-		})
+			it("should send a FIRST-ATTENDEE (null) message if we remove the only attendee", function(done) {
+				// manipulate internal state to do an attend.
+				var user = s.users.at(0);
+				var event = s.events.at(1);
+				var session = event.get("sessions").at(0);
+				
+				session.addAttendee(user);
+				
+				var firstAttendeeCount = 0;
+				
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="first-attendee") {
+						// throw out the first one, which is triggered by the add.
+						if(firstAttendeeCount==0) {
+							firstAttendeeCount++;
+							sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));
+							return;
+						}
+						
+						msg.args.should.have.keys("id", "user");
+						msg.args.id.should.equal(session.id);
+						should.equal(msg.args.user, null);
+						done();
+					} else if(msg.type=="unattend-err") {
+						should.fail("unattend-err");
+					}
+				});
+				
+			})
+		});
 		
 		
 		

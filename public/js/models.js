@@ -112,10 +112,6 @@ models.Session = Backbone.Model.extend({
 	},
 	
 	addAttendee: function(user) {
-		if(_.isNull(this.get("firstAttendee"))) {
-			this.set("firstAttendee", user);
-		}
-		
 		var attendeeIds = _.clone(this.get("attendeeIds"));
 		
 		if(attendeeIds.indexOf(user.id)==-1) {
@@ -134,18 +130,17 @@ models.Session = Backbone.Model.extend({
 		if(index==-1) {
 			throw new Exception("user not attending this session");
 		} else {
-			attendeeIds = attendeeIds.slice(index, 1);
+			attendeeIds.splice(index, 1);
 			this.set("attendeeIds", attendeeIds);
-			
-			if(attendeeIds.length==0) {
-				// then we removed the last person and should unset firstAttendee.
-				this.set("firstAttendee", null);
-			}
 		}
 	},
 	
 	isAttending: function(userId) {
 		return this.get("attendeeIds").indexOf(userId)!=-1;
+	},
+	
+	setFirstAttendee: function(user) {
+		this.set("firstAttendee", user);
 	}
 });
 

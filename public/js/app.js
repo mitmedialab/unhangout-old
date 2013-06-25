@@ -123,6 +123,17 @@ $(document).ready(function() {
 				curEvent.get("sessions").get(msg.args.id).addAttendee(msg.args.user);
 				console.log("added attendee to a session");
 				break;
+			
+			case "firstAttendee":
+				curEvent.get("sessions").get(msg.args.id).setFirstAttendee(msg.args.user);
+				console.log("set first attendee");
+				break;
+			
+			case "unattend"	:
+				curEvent.get("sessions").get(msg.args.id).removeAttendee(msg.args.user);
+				console.log("removed attendee from a session");
+				break;
+			
 			case "join":
 				console.log("join: " + JSON.stringify(msg.args));
 				users.add(new models.User(msg.args.user));
