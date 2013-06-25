@@ -182,7 +182,7 @@ body {
 /* line 192, ../../sass/screen.scss */
 .session .attending .counter {
   background-color: #c9c8c8;
-  width: 10px;
+  width: 12px;
   height: 50px;
   margin-left: 5px;
   float: left;
@@ -191,13 +191,24 @@ body {
 .session .attending .counter.selected {
   background-color: #3d594a;
 }
+/* line 206, ../../sass/screen.scss */
+.session .attending .full {
+  background-color: #F85863;
+  color: white;
+  float: left;
+  width: 42px;
+  height: 35px;
+  padding-left: 8px;
+  padding-top: 15px;
+  margin-left: 5px;
+}
 
-/* line 212, ../../sass/screen.scss */
+/* line 223, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
-/* line 217, ../../sass/screen.scss */
+/* line 228, ../../sass/screen.scss */
 #chat #chat-container {
   bottom: 40px;
   top: 0px;
@@ -206,18 +217,18 @@ body {
   position: absolute;
   overflow: auto;
 }
-/* line 228, ../../sass/screen.scss */
+/* line 239, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   overflow: auto;
   height: auto;
   width: auto;
   margin: 0px 300px 0px 0px;
 }
-/* line 235, ../../sass/screen.scss */
+/* line 246, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 239, ../../sass/screen.scss */
+/* line 250, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;

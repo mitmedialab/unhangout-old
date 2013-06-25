@@ -192,7 +192,7 @@ body {
 		.counter {
 			background-color: $background;
 			
-			width: 10px;
+			width: 12px;
 			height: 50px;
 			
 			margin-left: 5px;
@@ -201,8 +201,19 @@ body {
 			&.selected {
 				background-color: $primary;
 			}
+		}
+		
+		.full {
+			background-color: #F85863;
+			color: white;
+			float: left;
+			width: 42px;
+			height: 35px;
 			
+			padding-left: 8px;
+			padding-top: 15px;
 			
+			margin-left: 5px;
 		}
 	}
 	

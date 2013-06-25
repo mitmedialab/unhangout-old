@@ -97,6 +97,7 @@ models.EventList = Backbone.Collection.extend({
 
 models.Session = Backbone.Model.extend({
 	idRoot: "session",
+	MAX_ATTENDEES: 10,
 	
 	defaults: function() {
 		return {
@@ -112,6 +113,10 @@ models.Session = Backbone.Model.extend({
 	},
 	
 	addAttendee: function(user) {
+		if(this.get("attendeeIds").length==this.MAX_ATTENDEES) {
+			throw new Exception("already at max attendees");
+		}
+		
 		var attendeeIds = _.clone(this.get("attendeeIds"));
 		
 		if(attendeeIds.indexOf(user.id)==-1) {
