@@ -1,9 +1,10 @@
 var models = require('../lib/server-models.js'),
+	client_models = require('../public/js/models.js'),
 	should = require('should');
 
 models.logger = {warn: function() {}, info: function() {}, debug: function(){}};
 
-describe("EVENT", function() {
+describe("SERVEREVENT", function() {
 	describe("#new", function() {
 		it('should construct a default model', function() {
 			var event = new models.ServerEvent();
@@ -41,4 +42,22 @@ describe("EVENT", function() {
 			event.numUsersConnected().should.equal(0);
 		})
 	});
+});
+
+describe("SESSION", function() {
+	describe("#addAttendee", function() {
+		it('should reject a second add, when max attendees is set to 1', function(done) {
+			client_models.Session.prototype.MAX_ATTENDEES = 1;
+
+			var session = new client_models.Session();
+			session.addAttendee(new client_models.User({id:0}));
+
+			try {
+				session.addAttendee(new client_models.User({id:1}));
+			} catch (e) {
+				client_models.Session.prototype.MAX_ATTENDEES = 10;
+				done();
+			} 
+		})
+	});	
 });

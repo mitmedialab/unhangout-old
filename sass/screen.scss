@@ -150,6 +150,13 @@ body {
 		right: 0px;
 		left: 0px;
 	}
+	.empty {
+		height: 40px;
+		text-align: center;
+		color: #aaa;
+		font-style: italic;
+		padding-top: 20px;
+	}
 	
 	.attending {
 		height: 50px;
@@ -169,17 +176,23 @@ body {
 				
 				border: 0px;
 				
-				img {
+				img, i {
 					width: 50px;
 					height: 50px;
+					line-height: 50px;
 				}
+				
+				i {
+					margin-left: 5px;
+				}
+				
 			}
 		}
 		
 		.counter {
 			background-color: $background;
 			
-			width: 10px;
+			width: 12px;
 			height: 50px;
 			
 			margin-left: 5px;
@@ -188,8 +201,19 @@ body {
 			&.selected {
 				background-color: $primary;
 			}
+		}
+		
+		.full {
+			background-color: #F85863;
+			color: white;
+			float: left;
+			width: 42px;
+			height: 35px;
 			
+			padding-left: 8px;
+			padding-top: 15px;
 			
+			margin-left: 5px;
 		}
 	}
 	

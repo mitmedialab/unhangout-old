@@ -97,6 +97,7 @@ models.EventList = Backbone.Collection.extend({
 
 models.Session = Backbone.Model.extend({
 	idRoot: "session",
+	MAX_ATTENDEES: 10,
 	
 	defaults: function() {
 		return {
@@ -112,8 +113,8 @@ models.Session = Backbone.Model.extend({
 	},
 	
 	addAttendee: function(user) {
-		if(_.isNull(this.get("firstAttendee"))) {
-			this.set("firstAttendee", user);
+		if(this.get("attendeeIds").length==this.MAX_ATTENDEES) {
+			throw new Exception("already at max attendees");
 		}
 		
 		var attendeeIds = _.clone(this.get("attendeeIds"));
@@ -121,9 +122,34 @@ models.Session = Backbone.Model.extend({
 		if(attendeeIds.indexOf(user.id)==-1) {
 			attendeeIds.push(user.id);
 			this.set("attendeeIds", attendeeIds);
+			this.trigger("change");
 		} else {
 			throw new Exception("user already attending session");
 		}
+	},
+	
+	removeAttendee: function(user) {
+		var attendeeIds = _.clone(this.get("attendeeIds"));
+		
+		var index = attendeeIds.indexOf(user.id);
+		
+		if(index==-1) {
+			throw new Exception("user not attending this session");
+		} else {
+			attendeeIds.splice(index, 1);
+			this.set("attendeeIds", attendeeIds);
+			this.trigger("change");
+		}
+	},
+	
+	isAttending: function(userId) {
+		return this.get("attendeeIds").indexOf(userId)!=-1;
+	},
+	
+	setFirstAttendee: function(user) {
+		this.set("firstAttendee", user);
+		this.trigger("change");
+		console.log("set first attendee triggering");
 	}
 });
 
@@ -131,24 +157,36 @@ models.SessionList = Backbone.Collection.extend({
 	model:models.Session,
 	
 	url: function() {
-		console.log("GETTING LOCAL SESSION LISTe;")
+		console.log("GETTING LOCAL SESSION LIST");
 		return "WAT";
 	}
 });
 
 
 models.User = Backbone.Model.extend({
+
+	default: function() {
+		return {picture: ""}
+	},
+	
 	initialize: function() {
-		// copy some bonus fields out of the attributes if present.
-		if("_json" in this.attributes) {
+		this.checkJSON();
+		this.on("change:_json", this.checkJSON)
+	},
+	
+	checkJSON: function() {
+		if(this.has("_json")) {
 			var json = this.get("_json");
-			
-			if("picture" in json) { this.set("picture", this.get("_json").picture); }
+
+			if("picture" in json) { 
+				this.set("picture", json.picture);
+			}
 			else { this.set("picture", "")}
-			
+
 			if("link" in json) this.set("link", this.get("_json").link);
-		}
+		}		
 	}
+	
 });
 
 models.UserList = Backbone.Collection.extend({

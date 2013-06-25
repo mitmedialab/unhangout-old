@@ -2,6 +2,7 @@
 var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
 	className: 'session span3',
+	firstUserView: null,
 	
 	ui: {
 		attend: '.btn'
@@ -12,10 +13,22 @@ var SessionView = Marionette.ItemView.extend({
 	},
 	
 	initialize: function() {
+		console.log("initializing session view, model: " + JSON.stringify(this.model));
+		if(!_.isNull(this.model.get("firstAttendee"))) {
+			console.log("setting up first user view");
+			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
+		} else {
+			console.log("Missing first attendee.");
+		}
+		
 		this.listenTo(this.model, 'change', this.render, this);
+		this.listenTo(this.model, 'change:firstAttendee', function() {
+			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
+		}, this);
 	},
 	
 	onRender: function() {
+		console.log("on render");
 		// things to do here:
 		// 1. Hide attending if no one is attending
 		// 2. If numAttending > 0, pick the first person and put their icon in .first
@@ -23,12 +36,18 @@ var SessionView = Marionette.ItemView.extend({
 		var numAttendees = this.model.numAttendees();
 		if(numAttendees==0) {
 			this.$el.find(".attending").hide();
+			this.$el.find(".empty").show();
 		} else {
 			this.$el.find(".attending").show();
+			this.$el.find(".empty").hide();
 			
-			var firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
-			
-			this.$el.find(".first").append(firstUserView.render().el);
+			// console.log("about to make a user view for the firstUser: " + JSON.stringify(this.model.get("firstAttendee")));
+			// var firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
+			if(!_.isNull(this.firstUserView)) {
+				if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
+					this.$el.find(".first").append(this.firstUserView.render().el);
+				}
+			}
 			
 			var count = 0;
 			this.$el.find(".attending").children().each(function(index, el) {
@@ -42,16 +61,37 @@ var SessionView = Marionette.ItemView.extend({
 				count ++;
 			});
 		}
+		
+		if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
+			this.$el.find(".full").show();
+		} else {
+			this.$el.find(".full").hide();			
+		}
+		
+		if(this.model.isAttending(USER_ID)) {
+			this.ui.attend.addClass("active");
+			this.ui.attend.text("JOINED");
+		} else {
+			this.ui.attend.removeClass("active");
+			this.ui.attend.text("JOIN");
+		}
 	},
 	
 	destroy: function() {
 		this.model.destroy();
 	},
-	
+		
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
-		var message = {type:"attend", args:{id:this.model.id}};
-		sock.send(JSON.stringify(message));
+
+		if(this.ui.attend.hasClass("active")) {
+			this.ui.attend.text("JOIN");
+			var message = {type:"unattend", args:{id:this.model.id}};
+			sock.send(JSON.stringify(message));				
+		} else {
+			var message = {type:"attend", args:{id:this.model.id}};
+			sock.send(JSON.stringify(message));	
+		}		
 	}
 });
 
