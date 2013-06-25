@@ -380,6 +380,38 @@ describe('unhangout server', function() {
 			});
 		});
 		
+		describe("UNATTEND", function() {
+			beforeEach(joinEventSetup);
+			
+			it("should accept an UNATTEND request with the user.id of an attending user", function(done) {
+				// manipulate internal state to do an attend.
+				var user = s.users.at(0);
+				var event = s.events.at(1);
+				var session = event.get("sessions").at(0);
+				
+				session.addAttendee(user);
+				
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					
+					if(msg.type=="unattend-ack") {
+						done();
+					} else if(msg.type=="unattend-err") {
+						should.fail("unattend-err");
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));
+			});
+			
+			
+			it("should reject an UNATTEND request if that user.id is not attending");
+			
+			it("should send an UNATTEND message to all connected users in that event");
+			
+			
+		})
+		
 		
 		
 		describe("CHAT", function() {
