@@ -36,8 +36,11 @@ var SessionView = Marionette.ItemView.extend({
 		var numAttendees = this.model.numAttendees();
 		if(numAttendees==0) {
 			this.$el.find(".attending").hide();
+			this.$el.find(".empty").show();
+
 		} else {
 			this.$el.find(".attending").show();
+			this.$el.find(".empty").hide();
 			
 			// console.log("about to make a user view for the firstUser: " + JSON.stringify(this.model.get("firstAttendee")));
 			// var firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
