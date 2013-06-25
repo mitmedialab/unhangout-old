@@ -492,7 +492,37 @@ describe('unhangout server', function() {
 			})
 		});
 		
-		
+		describe("START", function() {
+			beforeEach(joinEventSetup);
+			
+			it("should reject start messages from non-admins", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="start-ack") {
+						should.fail();
+					} else if(msg.type=="start-err") {
+						done();
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"start", args:{id:s.events.at(1).get("sessions").at(0).id}}));
+			});
+			
+			it("should accept start messages from admins", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="start-ack") {
+						done();
+					} else if(msg.type=="start-err") {
+						should.fail();
+					}
+				});
+				
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"start", args:{id:s.events.at(1).get("sessions").at(0).id}}));
+			});
+		});
 		
 		describe("CHAT", function() {
 			beforeEach(joinEventSetup);
