@@ -16,6 +16,7 @@ var SessionView = Marionette.ItemView.extend({
 	},
 	
 	onRender: function() {
+		console.log("on render");
 		// things to do here:
 		// 1. Hide attending if no one is attending
 		// 2. If numAttending > 0, pick the first person and put their icon in .first

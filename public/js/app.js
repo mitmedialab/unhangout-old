@@ -124,7 +124,7 @@ $(document).ready(function() {
 				console.log("added attendee to a session");
 				break;
 			
-			case "firstAttendee":
+			case "first-attendee":
 				curEvent.get("sessions").get(msg.args.id).setFirstAttendee(msg.args.user);
 				console.log("set first attendee");
 				break;

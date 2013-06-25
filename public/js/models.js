@@ -117,6 +117,7 @@ models.Session = Backbone.Model.extend({
 		if(attendeeIds.indexOf(user.id)==-1) {
 			attendeeIds.push(user.id);
 			this.set("attendeeIds", attendeeIds);
+			this.trigger("change");
 		} else {
 			throw new Exception("user already attending session");
 		}
@@ -132,6 +133,7 @@ models.Session = Backbone.Model.extend({
 		} else {
 			attendeeIds.splice(index, 1);
 			this.set("attendeeIds", attendeeIds);
+			this.trigger("change");
 		}
 	},
 	
@@ -141,6 +143,8 @@ models.Session = Backbone.Model.extend({
 	
 	setFirstAttendee: function(user) {
 		this.set("firstAttendee", user);
+		this.trigger("change");
+		console.log("set first attendee triggering");
 	}
 });
 
@@ -155,8 +159,18 @@ models.SessionList = Backbone.Collection.extend({
 
 
 models.User = Backbone.Model.extend({
+
+	default: function() {
+		return {picture: ""}
+	},
+	
 	initialize: function() {
+		if(!this.has("picture")) {
+			this.set("picture", "");
+		}
+		
 		this.on("change:_json", function(model, name) {
+			console.log("in change _json");
 			// copy some bonus fields out of the attributes if present.
 			if("_json" in this.attributes) {
 				var json = this.get("_json");
