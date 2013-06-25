@@ -8,7 +8,9 @@ redis = require('redis')
 
 var logger;
 
-
+// This file populates the database with basic starter objects to make development easier and more predictable.
+// typically run like this:
+// node /bin/seed.js
 
 exports.run = function(dbId, redis, callback) {
 		redis.select(dbId, function(err) {

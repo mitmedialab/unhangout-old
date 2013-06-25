@@ -166,7 +166,7 @@ models.SessionList = Backbone.Collection.extend({
 models.User = Backbone.Model.extend({
 
 	default: function() {
-		return {picture: ""}
+		return {picture: "", admin:false}
 	},
 	
 	initialize: function() {
@@ -185,8 +185,11 @@ models.User = Backbone.Model.extend({
 
 			if("link" in json) this.set("link", this.get("_json").link);
 		}		
-	}
+	},
 	
+	isAdmin: function() {
+		return this.get("admin");
+	}
 });
 
 models.UserList = Backbone.Collection.extend({
