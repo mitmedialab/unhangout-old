@@ -82,6 +82,10 @@
 			</script>
 </head>
 <body>
+	<% if(user.isAdmin()) {%>
+		<div class="admin">
+		</div>
+	<% } %>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
