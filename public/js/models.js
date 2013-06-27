@@ -105,8 +105,8 @@ models.Session = Backbone.Model.extend({
 			description: "This session is really wonderful.",
 			attendeeIds: [],
 			firstAttendee: null,
-			youtubeEmbed: null,
-		}
+			youtubeEmbed: null
+		};
 	},
 	
 	numAttendees: function() {
