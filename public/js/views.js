@@ -239,15 +239,17 @@ var AdminView = Marionette.ItemView.extend({
 	},
 	
 	events: {
-		'click #start-all':'startAll'
+		'click #start-all':'startAll',
+		'click #set-embed':'setEmbed'
 	},
 	
 	startAll: function() {
 		console.log("start all!");
 	},
 	
-	onRender: function() {
-		console.log("rendered ADMIN");
+	setEmbed: function() {
+		var message = {type:"embed", {ytId:$("#youtube_id").val()}};
+		sock.send(JSON.stringify(message));
 	}
 });
 

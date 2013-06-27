@@ -36,7 +36,8 @@ models.Event = Backbone.Model.extend({
 			start: new Date().getTime(),
 			end: new Date().getTime()+60*60*2*1000,
 			connectedUsers: null,			// these two fields are setup in initialize
-			sessions: null
+			sessions: null,
+			youtubeEmbed: null
 		}
 	},
 	
@@ -87,13 +88,16 @@ models.Event = Backbone.Model.extend({
 		// the loader. We want to use ??? selectors instead of *, which 
 		// matches /event/id/session/id as well as /event/id
 		return this.urlRoot + "/" + pad(this.id, 5);
+	},
+	
+	setEmbed: function(ytId) {
+		this.set("youtubeEmbed", ytId);
 	}
 });
 
 models.EventList = Backbone.Collection.extend({
 	model:models.Event
-})
-
+});
 
 models.Session = Backbone.Model.extend({
 	idRoot: "session",
@@ -104,8 +108,7 @@ models.Session = Backbone.Model.extend({
 			title: "Great Session",
 			description: "This session is really wonderful.",
 			attendeeIds: [],
-			firstAttendee: null,
-			youtubeEmbed: null
+			firstAttendee: null
 		};
 	},
 	
@@ -154,11 +157,7 @@ models.Session = Backbone.Model.extend({
 	
 	start: function() {
 		this.trigger("start");
-	},
-	
-	setEmbed: function(ytId) {
-		this.set("youtubeEmbed", ytId);
-	}
+	}	
 });
 
 models.SessionList = Backbone.Collection.extend({
