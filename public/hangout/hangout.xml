@@ -19,6 +19,7 @@
 <Content type="html"><![CDATA[
 <html>
 <script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
+<script src="//code.jquery.com/jquery-2.0.0.min.js"></script>
 <script>
 function init() {
 	console.log("init running");
@@ -27,9 +28,26 @@ function init() {
         if (eventObj.isApiReady) {
 		  // When API is ready...                                                         
 			console.log("READY!");
-			appData = gadgets.views.getParams()['appData'];
-			console.log(appData);
 			gapi.hangout.hideApp();
+			
+			// now, phone home.
+			// we expect that appData has format:
+			// host:port:sessionid
+			// unpack that and post it back to the server.
+			var appData = gadgets.views.getParams()['appData'];
+			console.log(appData);
+			var appDataPieces = appData.split(":");
+			
+			var url = appDataPieces[0] + ":" + appDataPieces[1] + "/session/hangout/" + appDataPieces[2];
+			
+			$.post(url, {
+				url: gapi.hangout.getHangoutUrl()
+			}).done(function() {
+				console.log("success!");
+			}).fail(function() {
+				console.log("failure");
+			});
+			
 			console.log(gapi.hangout.getHangoutUrl());
     	}
       });
