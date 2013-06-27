@@ -146,6 +146,11 @@ $(document).ready(function() {
 			case "chat":
 				messages.add(new models.ChatMessage(msg.args));
 				break;
+			
+			case "embed":
+				curEvent.get("sessions").get(msg.args.id).setEmbed(msg.args.ytId);
+				console.log("added yt embed id");
+				break;
 				
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));

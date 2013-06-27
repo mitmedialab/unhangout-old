@@ -105,6 +105,7 @@ models.Session = Backbone.Model.extend({
 			description: "This session is really wonderful.",
 			attendeeIds: [],
 			firstAttendee: null,
+			youtubeEmbed: null,
 		}
 	},
 	
@@ -153,6 +154,10 @@ models.Session = Backbone.Model.extend({
 	
 	start: function() {
 		this.trigger("start");
+	},
+	
+	setEmbed: function(ytId) {
+		this.set("youtubeEmbed", ytId);
 	}
 });
 
