@@ -39,7 +39,7 @@ function init() {
 			console.log(appData);
 			var appDataPieces = appData.split(":");
 			
-			var url = appDataPieces[0] + ":" + appDataPieces[1] + "/session/hangout/" + appDataPieces[2];
+			var url = "http://" + appDataPieces[0] + ":" + appDataPieces[1] + "/session/hangout/" + appDataPieces[2];
 			
 			$.post(url, {
 				url: gapi.hangout.getHangoutUrl()
