@@ -222,21 +222,23 @@ body {
 }
 
 /* line 239, ../../sass/screen.scss */
-#user-list {
+#user-column {
   position: relative;
+  height: 100%;
 }
-/* line 242, ../../sass/screen.scss */
-#user-list #admin-controls {
+/* line 243, ../../sass/screen.scss */
+#user-column #admin-controls {
   position: absolute;
-  bottom: 0px;
+  bottom: 20px;
+  padding: 5px;
 }
 
-/* line 249, ../../sass/screen.scss */
+/* line 252, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
-/* line 254, ../../sass/screen.scss */
+/* line 257, ../../sass/screen.scss */
 #chat #chat-container {
   bottom: 40px;
   top: 0px;
@@ -245,18 +247,18 @@ body {
   position: absolute;
   overflow: auto;
 }
-/* line 265, ../../sass/screen.scss */
+/* line 268, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   overflow: auto;
   height: auto;
   width: auto;
   margin: 0px 300px 0px 0px;
 }
-/* line 272, ../../sass/screen.scss */
+/* line 275, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 276, ../../sass/screen.scss */
+/* line 279, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;

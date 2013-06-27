@@ -157,6 +157,8 @@ var UserView = Marionette.ItemView.extend({
 var UserColumnLayout = Backbone.Marionette.Layout.extend({
 	template: "#user-column-layout-template",
 	
+	id: "user-column",
+	
 	userListView: null,
 	adminControlsView: null,
 	
