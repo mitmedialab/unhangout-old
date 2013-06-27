@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # run this with "source" to set these environment variables easily
-
+# e.g. `source conf.sh`
 
 export UNHANGOUT_GOOGLE_CLIENT_ID=client_id
 export UNHANGOUT_GOOGLE_CLIENT_SECRET=secret
@@ -16,5 +16,7 @@ export UNHANGOUT_REDIS_PORT=6379
 export UNHANGOUT_REDIS_DB=0
 
 export UNHANGOUT_ADMIN_EMAIL='user@example.com'
+
+export UNHANGOUT_HANGOUT_APP_ID=123456789012
 
 echo "Set env variables!"
