@@ -248,7 +248,7 @@ var AdminView = Marionette.ItemView.extend({
 	},
 	
 	setEmbed: function() {
-		var message = {type:"embed", {ytId:$("#youtube_id").val()}};
+		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
 		sock.send(JSON.stringify(message));
 	}
 });

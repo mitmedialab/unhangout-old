@@ -148,12 +148,16 @@ $(document).ready(function() {
 				break;
 			
 			case "embed":
-				curEvent.get("sessions").get(msg.args.id).setEmbed(msg.args.ytId);
+				curEvent.setEmbed(msg.args.ytId);
 				console.log("added yt embed id");
 				break;
 				
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
+				break;
+				
+			case "embed-ack":
+				$("#embed-modal").modal('hide');
 				break;
 				
 			case "join-ack":
