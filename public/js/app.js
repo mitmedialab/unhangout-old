@@ -33,11 +33,11 @@ $(document).ready(function() {
 	app.addInitializer(function(options) {
 		
 		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
-		this.userListView = new UserListView({collection: users});
+		this.userColumnLayout = new UserColumnLayout({users: users});
 		this.chatView = new ChatView({collection:messages});
 		
 		this.top.show(this.sessionListView);
-		this.right.show(this.userListView);
+		this.right.show(this.userColumnLayout);
 		this.main.show(this.chatView);
 				
 		// set up some extra methods for managing show/hide of top region.

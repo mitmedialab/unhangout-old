@@ -236,6 +236,15 @@ body {
 	}
 }
 
+#user-list {
+	position: relative;
+
+	#admin-controls {
+		position: absolute;
+		bottom: 0px;
+	}
+}
+
 #chat {
 	input {
 		position: absolute;

@@ -154,6 +154,31 @@ var UserView = Marionette.ItemView.extend({
 	}
 });
 
+var UserColumnLayout = Backbone.Marionette.Layout.extend({
+	template: "#user-column-layout-template",
+	
+	userListView: null,
+	adminControlsView: null,
+	
+	regions: {
+		userList: "#user-list",
+		footer: "#footer"
+	},
+	
+	initialize: function() {
+		this.userListView = new UserListView({collection:this.options.users});
+		this.adminControls = new AdminView();
+	},
+	
+	onRender: function() {
+		this.userList.show(this.userListView);
+		
+		if(IS_ADMIN) {
+			this.footer.show(this.adminControls);
+		}
+	}
+});
+
 var UserListView = Backbone.Marionette.CompositeView.extend({
 	template: '#user-list-template',
 	itemView: UserView,
@@ -162,7 +187,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
-	}
+	},
 });
 
 var ChatMessageView = Marionette.ItemView.extend({
@@ -199,6 +224,28 @@ var ChatView = Marionette.CompositeView.extend({
 		this.ui.chatInput.val("");
 		e.preventDefault();
 		return false;
+	}
+});
+
+var AdminView = Marionette.ItemView.extend({
+	template: '#admin-controls-template',
+	
+	id: 'admin-controls',
+	
+	ui: {
+		startAll: '#start-all'
+	},
+	
+	events: {
+		'click #start-all':'startAll'
+	},
+	
+	startAll: function() {
+		console.log("start all!");
+	},
+	
+	onRender: function() {
+		console.log("rendered ADMIN");
 	}
 });
 
