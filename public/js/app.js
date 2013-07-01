@@ -151,12 +151,8 @@ $(document).ready(function() {
 				curEvent.get("sessions").get(msg.args.id).start();
 				break;
 				
-			case "set-hangout-url":
+			case "hangout-url":
 				curEvent.get("sessions").get(msg.args.id).set("hangout-url", msg.args.url);
-				
-				// now, if we're RSVP'd on this event, pop a dialog box.
-				console.log("POP A DIALOG BOX HERE!")
-				console.log(msg.args.id + "; " + msg.args.url);
 				break;
 				
 			case "auth-ack":

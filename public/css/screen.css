@@ -257,3 +257,10 @@ body {
   display: block;
   font-weight: bold;
 }
+
+/* line 284, ../../sass/screen.scss */
+.modal .join-chosen-session {
+  width: 100%;
+  padding-left: 0px;
+  padding-right: 0px;
+}

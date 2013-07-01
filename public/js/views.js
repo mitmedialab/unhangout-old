@@ -6,12 +6,14 @@ var SessionView = Marionette.ItemView.extend({
 	
 	ui: {
 		attend: '.attend',
-		start:'.start'
+		start:'.start',
+		joinDialog:'.started-modal'
 	},
 	
 	events: {
 		'click .attend':'attend',
-		'click .start':'start',		
+		'click .start':'start',
+		'click a.join-chosen-session':'joined'
 	},
 	
 	initialize: function() {
@@ -28,6 +30,10 @@ var SessionView = Marionette.ItemView.extend({
 			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
 		}, this);
 		this.listenTo(this.model, 'started', this.render, this);
+		this.listenTo(this.model, 'change:hangout-url', _.bind(function() {
+			this.ui.joinDialog.modal('show');
+			this.ui.joinDialog.find("a").attr("href", this.model.get("hangout-url"));
+		}, this));
 		
 	},
 	
@@ -117,6 +123,10 @@ var SessionView = Marionette.ItemView.extend({
 	start: function() {
 		var message = {type:"start", args:{id:this.model.id}};
 		sock.send(JSON.stringify(message));
+	},
+	
+	joined: function() {
+		this.joinDialog.modal('hide');
 	}
 });
 
