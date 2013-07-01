@@ -27,6 +27,8 @@ var SessionView = Marionette.ItemView.extend({
 		this.listenTo(this.model, 'change:firstAttendee', function() {
 			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
 		}, this);
+		this.listenTo(this.model, 'started', this.render, this);
+		
 	},
 	
 	onRender: function() {
@@ -64,6 +66,13 @@ var SessionView = Marionette.ItemView.extend({
 			});
 		}
 		
+		console.log("started: " + this.model.get("started"));
+		if(this.model.get("started")) {
+			this.$el.find(".started").show();
+		} else {
+			this.$el.find(".started").hide();			
+		}
+		
 		if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
 			this.$el.find(".full").show();
 		} else {
@@ -81,10 +90,10 @@ var SessionView = Marionette.ItemView.extend({
 		
 		if(this.model.isAttending(USER_ID)) {
 			this.ui.attend.addClass("active");
-			this.ui.attend.text("JOINED");
+			this.ui.attend.find(".text").text("JOINED");
 		} else {
 			this.ui.attend.removeClass("active");
-			this.ui.attend.text("JOIN");
+			this.ui.attend.find(".text").text("JOIN");
 		}
 	},
 	
@@ -106,7 +115,8 @@ var SessionView = Marionette.ItemView.extend({
 	},
 	
 	start: function() {
-		console.log("start session!");
+		var message = {type:"start", args:{id:this.model.id}};
+		sock.send(JSON.stringify(message));
 	}
 });
 
