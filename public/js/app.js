@@ -148,13 +148,10 @@ $(document).ready(function() {
 				break;
 				
 			case "start":
+				curEvent.get("sessions").get(msg.args.id).set("session-key", msg.args.key);
 				curEvent.get("sessions").get(msg.args.id).start();
 				break;
-				
-			case "hangout-url":
-				curEvent.get("sessions").get(msg.args.id).set("hangout-url", msg.args.url);
-				break;
-				
+								
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;

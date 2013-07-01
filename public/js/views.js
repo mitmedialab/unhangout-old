@@ -29,16 +29,16 @@ var SessionView = Marionette.ItemView.extend({
 		this.listenTo(this.model, 'change:firstAttendee', function() {
 			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
 		}, this);
-		this.listenTo(this.model, 'started', this.render, this);
-		this.listenTo(this.model, 'change:hangout-url', _.bind(function() {
+		this.listenTo(this.model, 'change:session-key', function() {
+			console.log("got start message!");
 			this.ui.joinDialog.modal('show');
-			this.ui.joinDialog.find("a").attr("href", this.model.get("hangout-url"));
-		}, this));
+			this.ui.joinDialog.find("a").attr("href", "/session/" + this.model.get("session-key"));
+		}, this);
 		
 	},
 	
 	onRender: function() {
-		console.log("on render");
+		console.log("on render FOR SESSION");
 		// things to do here:
 		// 1. Hide attending if no one is attending
 		// 2. If numAttending > 0, pick the first person and put their icon in .first
@@ -63,7 +63,6 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".attending").children().each(function(index, el) {
 				if(count < numAttendees) {
 					$(el).addClass("selected");
-					console.log(el);
 				} else {
 					$(el).removeClass("selected");
 				}
@@ -72,7 +71,6 @@ var SessionView = Marionette.ItemView.extend({
 			});
 		}
 		
-		console.log("started: " + this.model.get("started"));
 		if(this.model.get("started")) {
 			this.$el.find(".started").show();
 		} else {
@@ -146,7 +144,6 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 	
 	update: function() {
 		// ?? don't think we need this.
-		console.log("update");
 	},
 })
 
