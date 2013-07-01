@@ -105,6 +105,7 @@ models.Session = Backbone.Model.extend({
 			description: "This session is really wonderful.",
 			attendeeIds: [],
 			firstAttendee: null,
+			started: false
 		}
 	},
 	
@@ -149,6 +150,11 @@ models.Session = Backbone.Model.extend({
 	setFirstAttendee: function(user) {
 		this.set("firstAttendee", user);
 		this.trigger("change");
+	},
+	
+	start: function() {
+		this.set("started", new Date().getTime());
+		this.trigger("start");
 	}	
 });
 

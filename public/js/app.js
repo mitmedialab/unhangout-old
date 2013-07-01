@@ -147,6 +147,10 @@ $(document).ready(function() {
 				messages.add(new models.ChatMessage(msg.args));
 				break;
 				
+			case "start":
+				curEvent.get("sessions").get(msg.args.id).start();
+				break;
+				
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;
