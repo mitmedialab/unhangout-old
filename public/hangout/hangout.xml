@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *      
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License
+-->
+<ModulePrefs title="Unhangout Manager">
+        <Require feature="rpc" />
+        <Require feature="views" />
+</ModulePrefs>
+<Content type="html"><![CDATA[
+<html>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js" ></script>
+	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js" ></script>
+	<script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
+<script>
+function init() {
+	console.log("init running");
+	gapi.hangout.onApiReady.add(
+      function(eventObj) {
+        if (eventObj.isApiReady) {
+		  // When API is ready...                                                         
+			console.log("READY!");
+			gapi.hangout.hideApp();
+			
+			// now, phone home.
+			// we expect that appData has format:
+			// host:port:sessionid
+			// unpack that and post it back to the server.
+			var appData = gadgets.views.getParams()['appData'];
+			console.log(appData);
+			var appDataPieces = appData.split(":");
+			
+			var url = "http://" + appDataPieces[0] + ":" + appDataPieces[1] + "/session/hangout/" + appDataPieces[2];
+			
+			$.post(url, {
+				url: gapi.hangout.getHangoutUrl()
+			}).done(function() {
+				console.log("success!");
+			}).fail(function() {
+				console.log("failure");
+			});
+			
+			console.log(gapi.hangout.getHangoutUrl());
+    	}
+      });
+}
+
+// Wait for gadget to load.                                                       
+gadgets.util.registerOnLoadHandler(init);
+</script>
+<body>
+	<p>This hangout extension doesn't have any UI - no need to show this pane!</p>
+</body>
+]]>
+</Content>
+</Module>

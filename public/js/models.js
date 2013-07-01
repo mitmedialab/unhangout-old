@@ -149,11 +149,7 @@ models.Session = Backbone.Model.extend({
 	setFirstAttendee: function(user) {
 		this.set("firstAttendee", user);
 		this.trigger("change");
-	},
-	
-	start: function() {
-		this.trigger("start");
-	}
+	}	
 });
 
 models.SessionList = Backbone.Collection.extend({
