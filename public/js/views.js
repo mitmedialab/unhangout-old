@@ -31,8 +31,14 @@ var SessionView = Marionette.ItemView.extend({
 		}, this);
 		this.listenTo(this.model, 'change:session-key', function() {
 			console.log("got start message!");
-			this.ui.joinDialog.modal('show');
 			this.ui.joinDialog.find("a").attr("href", "/session/" + this.model.get("session-key"));
+			this.ui.joinDialog.modal('show');
+			setTimeout(_.bind(function() {
+				console.log("running hide");
+				$(".modal.in").modal("hide");
+				// this.ui.joinDialog.modal('hide');
+			}, this), 10000);
+			
 		}, this);
 		
 	},
@@ -124,7 +130,8 @@ var SessionView = Marionette.ItemView.extend({
 	},
 	
 	joined: function() {
-		this.joinDialog.modal('hide');
+		console.log("joined event cliked")
+		this.ui.joinDialog.modal('hide');
 	}
 });
 
