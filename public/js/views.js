@@ -30,6 +30,11 @@ var SessionView = Marionette.ItemView.extend({
 			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
 		}, this);
 		this.listenTo(this.model, 'change:session-key', function() {
+			if(!this.model.isAttending(USER_ID)) {
+				console.log("skipping dialog for a non-attending user");
+				return;
+			}
+			
 			console.log("got start message!");
 			this.ui.joinDialog.find("a").attr("href", "/session/" + this.model.get("session-key"));
 			this.ui.joinDialog.modal('show');
