@@ -253,6 +253,40 @@ var AdminView = Marionette.ItemView.extend({
 	}
 });
 
+var VideoEmbedView = Marionette.ItemView.extend({
+	template: '#video-embed-template',
+	id: 'video-embed',
+	
+	ui: {
+		large: ".large",
+		medium: ".medium",
+		small: ".small"
+	},
+	
+	events: {
+		'click .btn':'click'
+	},
+	
+	initialize: function() {
+		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
+	},
+	
+	onRender: function() {
+		console.log("rendering EMBED");
+		
+		if(_.isNull(this.model.get("youtubeEmbed")) || this.model.get("youtubeEmbed").length!=11) {
+			this.$el.hide();
+		} else {
+			this.$el.show();
+			// do the actual YT embed code here
+		}
+	},
+	
+	click: function(e) {
+		console.log("click!: " + this.id);
+	}
+});
+
 
 
 

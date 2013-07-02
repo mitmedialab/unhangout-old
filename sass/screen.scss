@@ -287,3 +287,23 @@ body {
 	}
 }
 
+#global {
+	position: absolute;
+	z-index: 1000;
+}
+
+#video-embed {
+	position: absolute;
+	left: 300px;
+	top: 300px;
+	
+	width: 450px;
+	height: 200px;
+	
+	
+	.player {
+		width: 400px;
+		height: 200px;
+		background-color: green;
+	}
+}

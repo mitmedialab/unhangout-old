@@ -265,3 +265,24 @@ body {
   display: block;
   font-weight: bold;
 }
+
+/* line 290, ../../sass/screen.scss */
+#global {
+  position: absolute;
+  z-index: 1000;
+}
+
+/* line 295, ../../sass/screen.scss */
+#video-embed {
+  position: absolute;
+  left: 300px;
+  top: 300px;
+  width: 450px;
+  height: 200px;
+}
+/* line 304, ../../sass/screen.scss */
+#video-embed .player {
+  width: 400px;
+  height: 200px;
+  background-color: green;
+}

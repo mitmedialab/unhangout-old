@@ -27,7 +27,8 @@ $(document).ready(function() {
 	app.addRegions({
 		top: '#top',
 		right: '#main-right',
-		main: '#main-left',		
+		main: '#main-left',
+		global: '#global'
 	});
 	
 	app.addInitializer(function(options) {
@@ -35,11 +36,15 @@ $(document).ready(function() {
 		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
 		this.userColumnLayout = new UserColumnLayout({users: users});
 		this.chatView = new ChatView({collection:messages});
+		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		
 		this.top.show(this.sessionListView);
 		this.right.show(this.userColumnLayout);
 		this.main.show(this.chatView);
-				
+		
+		this.global.show(this.youtubeEmbedView);
+		
+		
 		// set up some extra methods for managing show/hide of top region.
 		this.topShown = false;
 		

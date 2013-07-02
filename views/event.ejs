@@ -107,6 +107,16 @@
 			  </div>
 			</div>
 			</script>
+			
+			
+			<script type="text/template" id="video-embed-template">
+			<div class="btn-group" data-toggle="buttons-radio">
+				<button id="large" class="btn">L</button>
+				<button id="medium" class="btn">M</button>
+				<button id="small" class="btn">S</button>
+			</div>
+			<div class="player"></div>
+			</script>
 </head>
 <body>
 	<% if(user.isAdmin()) {%>
@@ -148,6 +158,7 @@
 	<div class="container">
 <div id="app">
 	<div class="row">
+	<div id="global"></div>
 	<div id="top">
 	</div>
 	</div>
