@@ -6,12 +6,14 @@ var SessionView = Marionette.ItemView.extend({
 	
 	ui: {
 		attend: '.attend',
-		start:'.start'
+		start:'.start',
+		joinDialog:'.started-modal'
 	},
 	
 	events: {
 		'click .attend':'attend',
-		'click .start':'start',		
+		'click .start':'start',
+		'click a.join-chosen-session':'joined'
 	},
 	
 	initialize: function() {
@@ -27,10 +29,27 @@ var SessionView = Marionette.ItemView.extend({
 		this.listenTo(this.model, 'change:firstAttendee', function() {
 			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
 		}, this);
+		this.listenTo(this.model, 'change:session-key', function() {
+			if(!this.model.isAttending(USER_ID)) {
+				console.log("skipping dialog for a non-attending user");
+				return;
+			}
+			
+			console.log("got start message!");
+			this.ui.joinDialog.find("a").attr("href", "/session/" + this.model.get("session-key"));
+			this.ui.joinDialog.modal('show');
+			setTimeout(_.bind(function() {
+				console.log("running hide");
+				$(".modal.in").modal("hide");
+				// this.ui.joinDialog.modal('hide');
+			}, this), 10000);
+			
+		}, this);
+		
 	},
 	
 	onRender: function() {
-		console.log("on render");
+		console.log("on render FOR SESSION");
 		// things to do here:
 		// 1. Hide attending if no one is attending
 		// 2. If numAttending > 0, pick the first person and put their icon in .first
@@ -55,13 +74,18 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".attending").children().each(function(index, el) {
 				if(count < numAttendees) {
 					$(el).addClass("selected");
-					console.log(el);
 				} else {
 					$(el).removeClass("selected");
 				}
 				
 				count ++;
 			});
+		}
+		
+		if(this.model.get("started")) {
+			this.$el.find(".started").show();
+		} else {
+			this.$el.find(".started").hide();			
 		}
 		
 		if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
@@ -81,10 +105,10 @@ var SessionView = Marionette.ItemView.extend({
 		
 		if(this.model.isAttending(USER_ID)) {
 			this.ui.attend.addClass("active");
-			this.ui.attend.text("JOINED");
+			this.ui.attend.find(".text").text("JOINED");
 		} else {
 			this.ui.attend.removeClass("active");
-			this.ui.attend.text("JOIN");
+			this.ui.attend.find(".text").text("JOIN");
 		}
 	},
 	
@@ -94,6 +118,12 @@ var SessionView = Marionette.ItemView.extend({
 		
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
+		
+		if(this.model.get("started")) {
+			// make this load the hangout directly.
+			window.open("/session/" + this.model.get("session-key"), "_blank");
+			return;
+		}
 
 		if(this.ui.attend.hasClass("active")) {
 			this.ui.attend.text("JOIN");
@@ -106,7 +136,13 @@ var SessionView = Marionette.ItemView.extend({
 	},
 	
 	start: function() {
-		console.log("start session!");
+		var message = {type:"start", args:{id:this.model.id}};
+		sock.send(JSON.stringify(message));
+	},
+	
+	joined: function() {
+		console.log("joined event cliked")
+		this.ui.joinDialog.modal('hide');
 	}
 });
 
@@ -126,7 +162,6 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 	
 	update: function() {
 		// ?? don't think we need this.
-		console.log("update");
 	},
 })
 

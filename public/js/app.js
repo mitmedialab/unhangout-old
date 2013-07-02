@@ -147,6 +147,25 @@ $(document).ready(function() {
 				messages.add(new models.ChatMessage(msg.args));
 				break;
 				
+			case "start":
+				// this is a little wacky, but we want to give people who RSVP'd a chance to join first.
+				// so we're going to do two things here: 
+				// 1) if not rsvp, delay triggering start and setting the session key.
+				// 2) if not rsvp, supress the dialog popup
+				var session = curEvent.get("sessions").get(msg.args.id);
+				
+				var timeout = 0;
+				
+				if(!(session.isAttending(USER_ID))) {
+					timeout = 60*1000;
+				}
+				
+				setTimeout(function() {
+					session.set("session-key", msg.args.key);
+					session.start();
+				}, timeout);
+				
+				break;
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;

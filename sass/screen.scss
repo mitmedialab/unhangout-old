@@ -225,6 +225,11 @@ body {
 			
 			margin-left: 5px;
 		}
+		
+	}
+
+	.started {
+		margin-left: 3px;
 	}
 	
 	.admin {
@@ -233,7 +238,7 @@ body {
 		.btn {
 			border-radius: 0px;
 		}
-	}
+	}	
 }
 
 #chat {
@@ -274,4 +279,13 @@ body {
 		}
 	}
 }
+
+.modal {
+	.join-chosen-session {
+		width: 100%;
+		padding-left: 0px;
+		padding-right: 0px;
+	}
+}
+
 
