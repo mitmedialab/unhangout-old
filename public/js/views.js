@@ -113,6 +113,12 @@ var SessionView = Marionette.ItemView.extend({
 		
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
+		
+		if(this.model.get("started")) {
+			// make this load the hangout directly.
+			window.open("/session/" + this.model.get("session-key"), "_blank");
+			return;
+		}
 
 		if(this.ui.attend.hasClass("active")) {
 			this.ui.attend.text("JOIN");
