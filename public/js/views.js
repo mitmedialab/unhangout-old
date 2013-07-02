@@ -267,11 +267,19 @@ var VideoEmbedView = Marionette.ItemView.extend({
 		'click .btn':'click'
 	},
 	
+	player: null,
+	
 	initialize: function() {
 		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
+		
+		this.dimensions = {
+			    "small":{width:284, height:160},
+			    "medium":{width:400, height:225},
+			    "large":{width:533, height:300},
+			  };	
 	},
 	
-	onRender: function() {
+	onDomRefresh: function() {
 		console.log("rendering EMBED");
 		
 		if(_.isNull(this.model.get("youtubeEmbed")) || this.model.get("youtubeEmbed").length!=11) {
@@ -279,6 +287,31 @@ var VideoEmbedView = Marionette.ItemView.extend({
 		} else {
 			this.$el.show();
 			// do the actual YT embed code here
+			console.log("about to embed the player: "+ this.model.get("youtubeEmbed"));
+			this.player = new YT.Player('player', {
+			        // height: this.dimensions['large'].height,
+			        // width: this.dimensions['large'].width,
+			        videoId: this.model.get("youtubeEmbed"),
+			        // leaving this here for later.
+			        // turning this on means users can't scrub or change volume, but can
+			        // still start/stop by clicking on the video. that's a sort of in-
+			        // between state. Need to pair controls: 0 with a more elaborate
+			        // UI redesign that exposes volume and blocks play-pause, or has some
+			        // way of swapping in and out of controls:0 for users that want to
+			        // desynchronize.
+			        // playerVars: {
+			        //             controls: '0'
+			        //           },
+					// 			        events: {
+					// 			          "onReady": function(args) {
+					// console.log("video ready!");
+					// 			            },
+					// 			          "onStateChange": function(args) {
+					// console.log("state change");
+					// 			          }
+					// 			        }
+			      });
+			
 		}
 	},
 	

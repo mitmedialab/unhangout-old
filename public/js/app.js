@@ -33,6 +33,17 @@ $(document).ready(function() {
 	
 	app.addInitializer(function(options) {
 		
+		// include the youtube JS api per docs:
+	    // https://developers.google.com/youtube/iframe_api_reference
+	    var tag = document.createElement('script');
+	    tag.src = "//www.youtube.com/iframe_api";
+	    var firstScriptTag = document.getElementsByTagName('script')[0];
+	    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+	    window.onYouTubeIframeAPIReady = _.bind(function(playerId) {
+			this.vent.trigger("youtube-ready");
+	    }, this);
+		
 		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
 		this.userColumnLayout = new UserColumnLayout({users: users});
 		this.chatView = new ChatView({collection:messages});
@@ -41,9 +52,6 @@ $(document).ready(function() {
 		this.top.show(this.sessionListView);
 		this.right.show(this.userColumnLayout);
 		this.main.show(this.chatView);
-		
-		this.global.show(this.youtubeEmbedView);
-		
 		
 		// set up some extra methods for managing show/hide of top region.
 		this.topShown = false;
@@ -89,6 +97,10 @@ $(document).ready(function() {
 			this.top.show(this.sessionListView);
 			this.showTop();
 		}
+	}, app));
+	
+	app.vent.on("youtube-ready", _.bind(function() {
+		this.global.show(this.youtubeEmbedView);
 	}, app));
 	
 	app.start();
