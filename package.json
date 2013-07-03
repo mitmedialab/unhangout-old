@@ -31,7 +31,11 @@
 	"passport"  :  "*",
 	"passport-google-oauth":"*",
 	"redis"     :  "*",
-	"connect-redis":"*"
+	"connect-redis":"*",
+	
+	"moment"    : "*",
+	"googleapis": "*",
+	"gapitoken" : "*"
   },
   "analyze": false,
   "devDependencies": {
