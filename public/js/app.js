@@ -27,19 +27,32 @@ $(document).ready(function() {
 	app.addRegions({
 		top: '#top',
 		right: '#main-right',
-		main: '#main-left',		
+		main: '#main-left',
+		global: '#global'
 	});
 	
 	app.addInitializer(function(options) {
 		
+		// include the youtube JS api per docs:
+	    // https://developers.google.com/youtube/iframe_api_reference
+	    var tag = document.createElement('script');
+	    tag.src = "//www.youtube.com/iframe_api";
+	    var firstScriptTag = document.getElementsByTagName('script')[0];
+	    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+	    window.onYouTubeIframeAPIReady = _.bind(function(playerId) {
+			this.vent.trigger("youtube-ready");
+	    }, this);
+		
 		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
-		this.userListView = new UserListView({collection: users});
+		this.userColumnLayout = new UserColumnLayout({users: users});
 		this.chatView = new ChatView({collection:messages});
+		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		
 		this.top.show(this.sessionListView);
-		this.right.show(this.userListView);
+		this.right.show(this.userColumnLayout);
 		this.main.show(this.chatView);
-				
+		
 		// set up some extra methods for managing show/hide of top region.
 		this.topShown = false;
 		
@@ -84,6 +97,10 @@ $(document).ready(function() {
 			this.top.show(this.sessionListView);
 			this.showTop();
 		}
+	}, app));
+	
+	app.vent.on("youtube-ready", _.bind(function() {
+		this.global.show(this.youtubeEmbedView);
 	}, app));
 	
 	app.start();
@@ -146,6 +163,11 @@ $(document).ready(function() {
 			case "chat":
 				messages.add(new models.ChatMessage(msg.args));
 				break;
+			
+			case "embed":
+				curEvent.setEmbed(msg.args.ytId);
+				console.log("added yt embed id");
+				break;
 				
 			case "start":
 				// this is a little wacky, but we want to give people who RSVP'd a chance to join first.
@@ -168,6 +190,10 @@ $(document).ready(function() {
 				break;
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
+				break;
+				
+			case "embed-ack":
+				$("#embed-modal").modal('hide');
 				break;
 				
 			case "join-ack":

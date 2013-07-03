@@ -3,19 +3,19 @@ var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
 	className: 'session span3',
 	firstUserView: null,
-	
+
 	ui: {
 		attend: '.attend',
 		start:'.start',
 		joinDialog:'.started-modal'
 	},
-	
+
 	events: {
 		'click .attend':'attend',
 		'click .start':'start',
 		'click a.join-chosen-session':'joined'
 	},
-	
+
 	initialize: function() {
 		console.log("initializing session view, model: " + JSON.stringify(this.model));
 		if(!_.isNull(this.model.get("firstAttendee"))) {
@@ -24,7 +24,7 @@ var SessionView = Marionette.ItemView.extend({
 		} else {
 			console.log("Missing first attendee.");
 		}
-		
+
 		this.listenTo(this.model, 'change', this.render, this);
 		this.listenTo(this.model, 'change:firstAttendee', function() {
 			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
@@ -48,6 +48,7 @@ var SessionView = Marionette.ItemView.extend({
 		
 	},
 	
+
 	onRender: function() {
 		console.log("on render FOR SESSION");
 		// things to do here:
@@ -61,15 +62,13 @@ var SessionView = Marionette.ItemView.extend({
 		} else {
 			this.$el.find(".attending").show();
 			this.$el.find(".empty").hide();
-			
-			// console.log("about to make a user view for the firstUser: " + JSON.stringify(this.model.get("firstAttendee")));
-			// var firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
-			if(!_.isNull(this.firstUserView)) {
-				if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
-					this.$el.find(".first").append(this.firstUserView.render().el);
-				}
+		}
+
+		if(!_.isNull(this.firstUserView)) {
+			if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
+				this.$el.find(".first").append(this.firstUserView.render().el);
 			}
-			
+		
 			var count = 0;
 			this.$el.find(".attending").children().each(function(index, el) {
 				if(count < numAttendees) {
@@ -77,23 +76,23 @@ var SessionView = Marionette.ItemView.extend({
 				} else {
 					$(el).removeClass("selected");
 				}
-				
+			
 				count ++;
 			});
 		}
-		
+
 		if(this.model.get("started")) {
 			this.$el.find(".started").show();
 		} else {
 			this.$el.find(".started").hide();			
 		}
-		
+	
 		if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
 			this.$el.find(".full").show();
 		} else {
 			this.$el.find(".full").hide();			
 		}
-		
+
 		if(IS_ADMIN) {
 			// show the admin UI. obviously, requests generated here are authenticated
 			// on the server, so doesn't matter if users mess around and show these
@@ -102,28 +101,22 @@ var SessionView = Marionette.ItemView.extend({
 		} else {
 			this.$el.find(".admin").hide();			
 		}
-		
+
 		if(this.model.isAttending(USER_ID)) {
 			this.ui.attend.addClass("active");
-			this.ui.attend.find(".text").text("JOINED");
+			this.ui.attend.text("JOINED");
 		} else {
 			this.ui.attend.removeClass("active");
-			this.ui.attend.find(".text").text("JOIN");
+			this.ui.attend.text("JOIN");
 		}
 	},
-	
+
 	destroy: function() {
 		this.model.destroy();
 	},
-		
+
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
-		
-		if(this.model.get("started")) {
-			// make this load the hangout directly.
-			window.open("/session/" + this.model.get("session-key"), "_blank");
-			return;
-		}
 
 		if(this.ui.attend.hasClass("active")) {
 			this.ui.attend.text("JOIN");
@@ -134,16 +127,81 @@ var SessionView = Marionette.ItemView.extend({
 			sock.send(JSON.stringify(message));	
 		}		
 	},
-	
+
 	start: function() {
-		var message = {type:"start", args:{id:this.model.id}};
-		sock.send(JSON.stringify(message));
-	},
-	
-	joined: function() {
-		console.log("joined event cliked")
-		this.ui.joinDialog.modal('hide');
+		console.log("start session!");
 	}
+});
+
+var SessionListView = Backbone.Marionette.CompositeView.extend({
+	template: "#session-list-template",
+	itemView: SessionView,
+	itemViewContainer: '#session-list-container',
+	id: "session-list",
+
+	initialize: function() {
+		this.listenTo(this.collection, 'all', this.update, this);
+	},
+
+	onRender: function() {
+		this.update();
+	},
+
+	update: function() {
+		// ?? don't think we need this.
+		console.log("update");
+	},
+})
+
+var UserView = Marionette.ItemView.extend({
+	template: '#user-template',
+	className: 'user',
+
+	events: {
+		'click' : 'click'
+	},
+
+	initialize: function() {
+		this.listenTo(this.model, 'change', this.render, this);
+	},	
+
+	click: function() {
+		console.log("user clicked: " + this.model.get("displayName"));
+	},
+
+	onRender: function() {
+		// add in the tooltip attributes
+		this.$el.attr("data-toggle", "tooltip");
+		this.$el.attr("title", this.model.get("displayName"));
+		this.$el.tooltip();
+	}
+});
+
+var UserColumnLayout = Backbone.Marionette.Layout.extend({
+	template: "#user-column-layout-template",
+
+	id: "user-column",
+
+	userListView: null,
+	adminControlsView: null,
+
+	regions: {
+		userList: "#user-list",
+		footer: "#footer"
+	},
+
+	initialize: function() {
+		this.userListView = new UserListView({collection:this.options.users});
+		this.adminControls = new AdminView();
+	},
+
+	onRender: function() {
+		this.userList.show(this.userListView);
+
+		if(IS_ADMIN) {
+			this.footer.show(this.adminControls);
+		}
+	},
 });
 
 var SessionListView = Backbone.Marionette.CompositeView.extend({
@@ -162,30 +220,6 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 	
 	update: function() {
 		// ?? don't think we need this.
-	},
-})
-
-var UserView = Marionette.ItemView.extend({
-	template: '#user-template',
-	className: 'user',
-	
-	events: {
-		'click' : 'click'
-	},
-	
-	initialize: function() {
-		this.listenTo(this.model, 'change', this.render, this);
-	},	
-	
-	click: function() {
-		console.log("user clicked: " + this.model.get("displayName"));
-	},
-	
-	onRender: function() {
-		// add in the tooltip attributes
-		this.$el.attr("data-toggle", "tooltip");
-		this.$el.attr("title", this.model.get("displayName"));
-		this.$el.tooltip();
 	}
 });
 
@@ -194,7 +228,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	itemView: UserView,
 	itemViewContainer: "#user-list-container",
 	id: "user-list",
-	
+
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 	}
@@ -202,8 +236,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
-	className: 'chat-message',
-	
+	className: 'chat-message'
 });
 
 var ChatView = Marionette.CompositeView.extend({
@@ -211,23 +244,23 @@ var ChatView = Marionette.CompositeView.extend({
 	itemView: ChatMessageView,
 	itemViewContainer: "#chat-list-container",
 	id: "chat",
-	
+
 	ui: {
 		chatInput: "#chat-input"
 	},
-	
+
 	events: {
 		'submit form':'chat'
 	},
-	
+
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 	},
-	
+
 	update: function() {
 		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
 	},	
-	
+
 	chat: function(e) {
 		var msg = this.ui.chatInput.val();
 		sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
@@ -237,14 +270,93 @@ var ChatView = Marionette.CompositeView.extend({
 	}
 });
 
+var AdminView = Marionette.ItemView.extend({
+	template: '#admin-controls-template',
 
+	id: 'admin-controls',
 
+	ui: {
+		startAll: '#start-all'
+	},
 
+	events: {
+		'click #start-all':'startAll',
+		'click #set-embed':'setEmbed'
+	},
 
+	startAll: function() {
+		console.log("start all!");
+	},
 
+	setEmbed: function() {
+		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
+		sock.send(JSON.stringify(message));
+	}
+});
 
+var VideoEmbedView = Marionette.ItemView.extend({
+	template: '#video-embed-template',
+	id: 'video-embed',
 
+	ui: {
+		large: ".large",
+		medium: ".medium",
+		small: ".small"
+	},
 
+	events: {
+		'click .btn':'click'
+	},
 
+	player: null,
 
+	initialize: function() {
+		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
 
+		this.dimensions = {
+			"small":{width:284, height:160},
+			"medium":{width:400, height:225},
+			"large":{width:533, height:300},
+		};	
+	},
+
+	onDomRefresh: function() {
+		console.log("rendering EMBED");
+
+		if(_.isNull(this.model.get("youtubeEmbed")) || this.model.get("youtubeEmbed").length!=11) {
+			this.$el.hide();
+		} else {
+			this.$el.show();
+			this.$el.draggable();
+			// do the actual YT embed code here
+			console.log("about to embed the player: "+ this.model.get("youtubeEmbed"));
+			this.player = new YT.Player('player', {
+				height: this.dimensions['small'].height,
+				width: this.dimensions['small'].width,
+				videoId: this.model.get("youtubeEmbed"),
+				events: {
+					"onReady": function(args) {
+						console.log("video ready!");
+					},
+					"onStateChange": function(args) {
+						console.log("state change");
+					}
+				}
+			});
+	
+			this.$el.css("height", this.dimensions['small'].height + 40);
+		}
+	},
+
+	click: function(e) {
+		console.log("click!: " + e.target.id);
+		
+		if(e.target.id in this.dimensions) {
+			var dim = this.dimensions[e.target.id];
+			
+			this.$el.find(".player").attr("height", dim.height);
+			this.$el.find(".player").attr("width", dim.width);
+			this.$el.css("height", dim.height + 40);
+		}
+	}
+});

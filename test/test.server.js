@@ -524,6 +524,72 @@ describe('unhangout server', function() {
 			});
 		});
 		
+		describe("EMBED", function() {
+			beforeEach(joinEventSetup);
+			
+			it("should reject embed messages from non-admins", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="embed-ack") {
+						should.fail();
+					} else if(msg.type=="embed-err") {
+						done();
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"embed", args:{ydId:"QrsIICQ1eg8"}}));
+			});
+			
+			
+			it("should reject embed messages without a ytId argument", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="embed-ack") {
+						should.fail();
+					} else if(msg.type=="embed-err") {
+						done();
+					}
+				});
+				
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"embed", args:{}}));
+			});
+			
+			
+			it("should accept embed messages from admins", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="embed-ack") {
+						done();
+					} else if(msg.type=="embed-err") {
+						should.fail();
+					}
+				});
+				
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"embed", args:{ytId:"QrsIICQ1eg8"}}));
+			});
+			
+			it("should generate messages to everyone in the event on embed", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="embed") {
+						msg.args.should.have.keys("ytId");
+						msg.args.ytId.should.equal("QrsIICQ1eg8");
+						done();
+					} else if(msg.type=="embed-err") {
+						should.fail();
+					}
+				});
+				
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"embed", args:{ytId:"QrsIICQ1eg8"}}));
+			});	
+		});
+		
 		describe("CHAT", function() {
 			beforeEach(joinEventSetup);
 			

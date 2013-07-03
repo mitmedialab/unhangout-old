@@ -14,6 +14,7 @@
 	<![endif]-->
 	
 	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
+	<script type="text/javascript" src="/public/js/jquery-ui-1.10.3.custom.min.js"></script>
 	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
 	<script src="http://cdn.sockjs.org/sockjs-0.3.min.js"></script>
 	
@@ -96,6 +97,40 @@
 			</div>
 			<form><input type="text" id="chat-input" class="span9"></input></form>
 			</script>
+			
+			<script type="text/template" id="user-column-layout-template">
+			<div id="user-list"></div>
+			<div id="footer"></div>
+			</script>
+			
+			<script type="text/template" id="admin-controls-template">
+			<a href="#embed-modal" role="button" class="btn btn-warning" data-toggle="modal">embed</a>
+			<a role="button" class="btn btn-warning" id="start-all">start all</a>
+			
+			<div id="embed-modal" class="modal hide fade">
+			  <div class="modal-header">
+			    <h3>SET EMBED ID</h3>
+			  </div>
+			  <div class="modal-body">
+				<label for="youtube_id">Youtube Id</label><input type="text" name="youtube_id" value="" id="youtube_id">
+			  </div>
+			  <div class="modal-footer">
+			    <a href="#" class="btn btn-primary" id="set-embed">Set Embed</a>
+			  </div>
+			</div>
+			</script>
+			
+			
+			<script type="text/template" id="video-embed-template">
+			<div class="header clearfix">
+				<div class="btn-group" data-toggle="buttons-radio">
+					<button id="large" class="btn">L</button>
+					<button id="medium" class="btn">M</button>
+					<button id="small" class="btn active">S</button>
+				</div>
+			</div>
+			<div id="player" class="player"></div>
+			</script>
 </head>
 <body>
 	<% if(user.isAdmin()) {%>
@@ -137,6 +172,7 @@
 	<div class="container">
 <div id="app">
 	<div class="row">
+	<div id="global"></div>
 	<div id="top">
 	</div>
 	</div>

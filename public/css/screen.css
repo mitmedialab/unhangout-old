@@ -212,25 +212,33 @@ body {
   padding-top: 15px;
   margin-left: 5px;
 }
-/* line 231, ../../sass/screen.scss */
-.session .started {
-  margin-left: 3px;
-}
-/* line 235, ../../sass/screen.scss */
+/* line 230, ../../sass/screen.scss */
 .session .admin {
   position: absolute;
 }
-/* line 238, ../../sass/screen.scss */
+/* line 233, ../../sass/screen.scss */
 .session .admin .btn {
   border-radius: 0px;
 }
 
-/* line 245, ../../sass/screen.scss */
+/* line 239, ../../sass/screen.scss */
+#user-column {
+  position: relative;
+  height: 100%;
+}
+/* line 243, ../../sass/screen.scss */
+#user-column #admin-controls {
+  position: absolute;
+  bottom: 20px;
+  padding: 5px;
+}
+
+/* line 252, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
-/* line 250, ../../sass/screen.scss */
+/* line 257, ../../sass/screen.scss */
 #chat #chat-container {
   bottom: 40px;
   top: 0px;
@@ -239,18 +247,18 @@ body {
   position: absolute;
   overflow: auto;
 }
-/* line 261, ../../sass/screen.scss */
+/* line 268, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   overflow: auto;
   height: auto;
   width: auto;
   margin: 0px 300px 0px 0px;
 }
-/* line 268, ../../sass/screen.scss */
+/* line 275, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 272, ../../sass/screen.scss */
+/* line 279, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
@@ -258,9 +266,32 @@ body {
   font-weight: bold;
 }
 
-/* line 284, ../../sass/screen.scss */
-.modal .join-chosen-session {
+/* line 290, ../../sass/screen.scss */
+#global {
+  position: absolute;
+  z-index: 1000;
   width: 100%;
-  padding-left: 0px;
-  padding-right: 0px;
+  height: 100%;
+}
+
+/* line 297, ../../sass/screen.scss */
+#video-embed {
+  position: absolute;
+  right: -20px;
+  bottom: 50px;
+  box-shadow: 3px 3px 5px #aaa;
+}
+/* line 304, ../../sass/screen.scss */
+#video-embed .header {
+  background-color: #bbb;
+  cursor: move;
+  padding: 5px;
+}
+/* line 309, ../../sass/screen.scss */
+#video-embed .header .btn-group {
+  float: right;
+}
+/* line 314, ../../sass/screen.scss */
+#video-embed .player {
+  background-color: #aaa;
 }
