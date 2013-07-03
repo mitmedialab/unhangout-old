@@ -277,16 +277,19 @@ body {
   position: absolute;
   left: 300px;
   top: 300px;
-  /*	width: 450px;
-  	height: 200px;
-  */
+  box-shadow: 3px 3px 5px #aaa;
 }
-/* line 303, ../../sass/screen.scss */
+/* line 302, ../../sass/screen.scss */
 #video-embed .header {
   background-color: #bbb;
   cursor: move;
+  padding: 5px;
 }
-/* line 308, ../../sass/screen.scss */
+/* line 307, ../../sass/screen.scss */
+#video-embed .header .btn-group {
+  float: right;
+}
+/* line 312, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
 }

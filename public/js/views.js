@@ -312,7 +312,8 @@ var SessionView = Marionette.ItemView.extend({
 							}
 						}
 					});
-
+					
+					this.$el.css("height", this.dimensions['medium'].height + 40);
 				}
 			},
 
@@ -324,6 +325,7 @@ var SessionView = Marionette.ItemView.extend({
 					
 					this.$el.find(".player").attr("height", dim.height);
 					this.$el.find(".player").attr("width", dim.width);
+					this.$el.css("height", dim.height + 40);
 				}
 			}
 		});

@@ -297,12 +297,16 @@ body {
 	left: 300px;
 	top: 300px;
 	
-/*	width: 450px;
-	height: 200px;
-*/	
+	box-shadow: 3px 3px 5px #aaa;
+	
 	.header {
 		background-color: #bbb;
 		cursor: move;
+		padding: 5px;
+		
+		.btn-group {
+			float: right;
+		}
 	}
 	
 	.player {
