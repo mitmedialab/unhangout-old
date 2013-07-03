@@ -290,8 +290,8 @@ var SessionView = Marionette.ItemView.extend({
 				// do the actual YT embed code here
 				console.log("about to embed the player: "+ this.model.get("youtubeEmbed"));
 				this.player = new YT.Player('player', {
-					height: this.dimensions['medium'].height,
-					width: this.dimensions['medium'].width,
+					height: this.dimensions['small'].height,
+					width: this.dimensions['small'].width,
 					videoId: this.model.get("youtubeEmbed"),
 					// leaving this here for later.
 					// turning this on means users can't scrub or change volume, but can
@@ -313,7 +313,7 @@ var SessionView = Marionette.ItemView.extend({
 						}
 					});
 					
-					this.$el.css("height", this.dimensions['medium'].height + 40);
+					this.$el.css("height", this.dimensions['small'].height + 40);
 				}
 			},
 
