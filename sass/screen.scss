@@ -297,9 +297,12 @@ body {
 	left: 300px;
 	top: 300px;
 	
-	width: 450px;
+/*	width: 450px;
 	height: 200px;
-	
+*/	
+	.header {
+		background-color: #bbb;
+	}
 	
 	.player {
 		background-color: #aaa;

@@ -277,10 +277,15 @@ body {
   position: absolute;
   left: 300px;
   top: 300px;
-  width: 450px;
-  height: 200px;
+  /*	width: 450px;
+  	height: 200px;
+  */
 }
-/* line 304, ../../sass/screen.scss */
+/* line 303, ../../sass/screen.scss */
+#video-embed .header {
+  background-color: #bbb;
+}
+/* line 307, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
 }
