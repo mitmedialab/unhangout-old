@@ -270,28 +270,26 @@ body {
 #global {
   position: absolute;
   z-index: 1000;
-  width: 100%;
-  height: 100%;
 }
 
-/* line 297, ../../sass/screen.scss */
+/* line 295, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
-  right: -20px;
-  bottom: 50px;
+  left: 900px;
+  top: 350px;
   box-shadow: 3px 3px 5px #aaa;
 }
-/* line 304, ../../sass/screen.scss */
+/* line 302, ../../sass/screen.scss */
 #video-embed .header {
   background-color: #bbb;
   cursor: move;
   padding: 5px;
 }
-/* line 309, ../../sass/screen.scss */
+/* line 307, ../../sass/screen.scss */
 #video-embed .header .btn-group {
   float: right;
 }
-/* line 314, ../../sass/screen.scss */
+/* line 312, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
 }
