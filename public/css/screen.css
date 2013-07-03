@@ -284,8 +284,9 @@ body {
 /* line 303, ../../sass/screen.scss */
 #video-embed .header {
   background-color: #bbb;
+  cursor: move;
 }
-/* line 307, ../../sass/screen.scss */
+/* line 308, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
 }

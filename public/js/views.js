@@ -286,6 +286,7 @@ var SessionView = Marionette.ItemView.extend({
 				this.$el.hide();
 			} else {
 				this.$el.show();
+				this.$el.draggable();
 				// do the actual YT embed code here
 				console.log("about to embed the player: "+ this.model.get("youtubeEmbed"));
 				this.player = new YT.Player('player', {
