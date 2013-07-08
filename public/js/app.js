@@ -25,6 +25,8 @@ $(document).ready(function() {
 	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
+
+	$("#sessions-nav").find("a").text("Sessions (" + curEvent.get("sessions").length + ")");
 	
 	messages = new models.ChatMessageList();
 	
