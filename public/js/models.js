@@ -119,7 +119,7 @@ models.Session = Backbone.Model.extend({
 	
 	addAttendee: function(user) {
 		if(this.get("attendeeIds").length==this.MAX_ATTENDEES) {
-			throw new Exception("already at max attendees");
+			return new Error("already at max attendees");
 		}
 		
 		var attendeeIds = _.clone(this.get("attendeeIds"));
@@ -129,7 +129,7 @@ models.Session = Backbone.Model.extend({
 			this.set("attendeeIds", attendeeIds);
 			this.trigger("change");
 		} else {
-			throw new Exception("user already attending session");
+			return new Error("user already attending session");
 		}
 	},
 	
@@ -139,7 +139,7 @@ models.Session = Backbone.Model.extend({
 		var index = attendeeIds.indexOf(user.id);
 		
 		if(index==-1) {
-			throw new Exception("user not attending this session");
+			return new Error("user not attending this session");
 		} else {
 			attendeeIds.splice(index, 1);
 			this.set("attendeeIds", attendeeIds);
