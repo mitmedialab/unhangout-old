@@ -4,6 +4,14 @@ var curEvent, users, messages;
 
 var app;
 
+// handle IE not having console.log
+if (typeof console === "undefined" || typeof console.log === "undefined") {
+     console = {};
+     console.log = function() {};
+}
+
+
+
 $(document).ready(function() {
 	if($("#main").length!=1) {
 		console.log("Code running on a page that does not have an #app div.");
