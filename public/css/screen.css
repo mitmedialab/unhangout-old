@@ -159,35 +159,39 @@ body {
   padding-top: 20px;
 }
 /* line 167, ../../sass/screen.scss */
+.session .started {
+  margin-left: 5px;
+}
+/* line 171, ../../sass/screen.scss */
 .session .attending {
   height: 50px;
   padding: 5px;
 }
-/* line 171, ../../sass/screen.scss */
+/* line 175, ../../sass/screen.scss */
 .session .attending .first {
   width: 50px;
   height: 50px;
   background-color: #c9c8c8;
   float: left;
 }
-/* line 178, ../../sass/screen.scss */
+/* line 182, ../../sass/screen.scss */
 .session .attending .first .user {
   margin: 0px;
   width: 50px;
   height: 50px;
   border: 0px;
 }
-/* line 185, ../../sass/screen.scss */
+/* line 189, ../../sass/screen.scss */
 .session .attending .first .user img, .session .attending .first .user i {
   width: 50px;
   height: 50px;
   line-height: 50px;
 }
-/* line 191, ../../sass/screen.scss */
+/* line 195, ../../sass/screen.scss */
 .session .attending .first .user i {
   margin-left: 5px;
 }
-/* line 198, ../../sass/screen.scss */
+/* line 202, ../../sass/screen.scss */
 .session .attending .counter {
   background-color: #c9c8c8;
   width: 12px;
@@ -195,11 +199,11 @@ body {
   margin-left: 5px;
   float: left;
 }
-/* line 207, ../../sass/screen.scss */
+/* line 211, ../../sass/screen.scss */
 .session .attending .counter.selected {
   background-color: #3d594a;
 }
-/* line 212, ../../sass/screen.scss */
+/* line 216, ../../sass/screen.scss */
 .session .attending .full {
   background-color: #F85863;
   color: white;
@@ -210,33 +214,33 @@ body {
   padding-top: 15px;
   margin-left: 5px;
 }
-/* line 226, ../../sass/screen.scss */
+/* line 230, ../../sass/screen.scss */
 .session .admin {
   position: absolute;
 }
-/* line 229, ../../sass/screen.scss */
+/* line 233, ../../sass/screen.scss */
 .session .admin .btn {
   border-radius: 0px;
 }
 
-/* line 235, ../../sass/screen.scss */
+/* line 239, ../../sass/screen.scss */
 #user-column {
   position: relative;
   height: 100%;
 }
-/* line 239, ../../sass/screen.scss */
+/* line 243, ../../sass/screen.scss */
 #user-column #admin-controls {
   position: absolute;
   bottom: 20px;
   padding: 5px;
 }
 
-/* line 248, ../../sass/screen.scss */
+/* line 252, ../../sass/screen.scss */
 #chat input {
   position: absolute;
   bottom: 0px;
 }
-/* line 253, ../../sass/screen.scss */
+/* line 257, ../../sass/screen.scss */
 #chat #chat-container {
   bottom: 40px;
   top: 0px;
@@ -245,18 +249,18 @@ body {
   position: absolute;
   overflow: auto;
 }
-/* line 264, ../../sass/screen.scss */
+/* line 268, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   overflow: auto;
   height: auto;
   width: auto;
   margin: 0px 300px 0px 0px;
 }
-/* line 271, ../../sass/screen.scss */
+/* line 275, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 275, ../../sass/screen.scss */
+/* line 279, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
@@ -264,30 +268,30 @@ body {
   font-weight: bold;
 }
 
-/* line 286, ../../sass/screen.scss */
+/* line 290, ../../sass/screen.scss */
 #global {
   position: absolute;
   z-index: 1000;
 }
 
-/* line 291, ../../sass/screen.scss */
+/* line 295, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
   left: 700px;
   top: 350px;
   box-shadow: 3px 3px 5px #aaa;
 }
-/* line 298, ../../sass/screen.scss */
+/* line 302, ../../sass/screen.scss */
 #video-embed .header {
   background-color: #bbb;
   cursor: move;
   padding: 5px;
 }
-/* line 303, ../../sass/screen.scss */
+/* line 307, ../../sass/screen.scss */
 #video-embed .header .btn-group {
   float: right;
 }
-/* line 308, ../../sass/screen.scss */
+/* line 312, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
 }

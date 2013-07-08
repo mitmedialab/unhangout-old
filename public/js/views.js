@@ -44,13 +44,13 @@ var SessionView = Marionette.ItemView.extend({
 				// this.ui.joinDialog.modal('hide');
 			}, this), 10000);
 			
-		}, this);
-		
+		}, this);		
 	},
 	
 
 	onRender: function() {
-		console.log("on render FOR SESSION");
+		console.log("on render FOR SESSION ");
+		console.log(this);
 		// things to do here:
 		// 1. Hide attending if no one is attending
 		// 2. If numAttending > 0, pick the first person and put their icon in .first
@@ -81,11 +81,6 @@ var SessionView = Marionette.ItemView.extend({
 			});
 		}
 
-		if(this.model.get("started")) {
-			this.$el.find(".started").show();
-		} else {
-			this.$el.find(".started").hide();			
-		}
 	
 		if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
 			this.$el.find(".full").show();
@@ -104,11 +99,24 @@ var SessionView = Marionette.ItemView.extend({
 
 		if(this.model.isAttending(USER_ID)) {
 			this.ui.attend.addClass("active");
-			this.ui.attend.text("JOINED");
+			this.ui.attend.find(".text").text("JOINED");
 		} else {
 			this.ui.attend.removeClass("active");
-			this.ui.attend.text("JOIN");
+			this.ui.attend.find(".text").text("JOIN");
 		}
+
+		if(this.model.get("started")) {
+			this.$el.find(".started").show();
+
+			// remove the toggle-ness of the button once the event starts.
+			this.ui.attend.attr("data-toggle", "");
+			this.ui.attend.removeClass("btn-info");			
+			this.ui.attend.removeClass("active");
+			this.ui.attend.addClass("btn-success");
+		} else {
+			this.$el.find(".started").hide();			
+		}
+
 	},
 
 	destroy: function() {
