@@ -48,6 +48,10 @@ body {
 	box-shadow: 1px 1px 1px #bbb;
 	border: 1px solid #aaa;
 	z-index: 50;	
+
+	width: 720px;
+	max-height: 400px;
+	overflow-y: scroll;
 }
 
 #main-right {
@@ -121,6 +125,8 @@ body {
 .session {
 	background-color: #e6e7e6;
 	position: relative;
+
+	margin-bottom: 50px;
 	
 	h3 {
 		background-color: $primary;
@@ -136,7 +142,6 @@ body {
 			margin-right: 5px;
 		}
 		
-		position: absolute;
 		right: 0px;
 		left: 0px;
 		
@@ -145,7 +150,6 @@ body {
 	
 	.description {
 		padding: 5px;
-		margin-top: 40px;
 	}
 	
 	.attend.btn {
@@ -259,7 +263,7 @@ body {
 		bottom: 40px;
 		top: 0px;
 		left: 0px;
-		right: 300px;
+		right: 240px;
 		position: absolute;
 		
 		overflow: auto;

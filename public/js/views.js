@@ -3,17 +3,22 @@ var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
 	className: 'session span3',
 	firstUserView: null,
+	mini: true,
 
 	ui: {
 		attend: '.attend',
 		start:'.start',
-		joinDialog:'.started-modal'
+		joinDialog:'.started-modal',
+		attending: '.attending',
+		empty: '.empty',
+		description: '.description'
 	},
 
 	events: {
 		'click .attend':'attend',
 		'click .start':'start',
-		'click a.join-chosen-session':'joined'
+		'click a.join-chosen-session':'joined',
+		'click h3':'headerClick'
 	},
 
 	initialize: function() {
@@ -55,38 +60,6 @@ var SessionView = Marionette.ItemView.extend({
 		// 1. Hide attending if no one is attending
 		// 2. If numAttending > 0, pick the first person and put their icon in .first
 		// 3. manage the counter bars for the rest of the count.
-		var numAttendees = this.model.numAttendees();
-		if(numAttendees==0) {
-			this.$el.find(".attending").hide();
-			this.$el.find(".empty").show();
-		} else {
-			this.$el.find(".attending").show();
-			this.$el.find(".empty").hide();
-		}
-
-		if(!_.isNull(this.firstUserView)) {
-			if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
-				this.$el.find(".first").append(this.firstUserView.render().el);
-			}
-		
-			var count = 0;
-			this.$el.find(".attending").children().each(function(index, el) {
-				if(count < numAttendees) {
-					$(el).addClass("selected");
-				} else {
-					$(el).removeClass("selected");
-				}
-			
-				count ++;
-			});
-		}
-
-	
-		if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
-			this.$el.find(".full").show();
-		} else {
-			this.$el.find(".full").hide();			
-		}
 
 		if(IS_ADMIN) {
 			// show the admin UI. obviously, requests generated here are authenticated
@@ -117,6 +90,49 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".started").hide();			
 		}
 
+		// check and see if we're in mini mode. If we are, hide the description and attendee counting in large form.
+		if(this.mini) {
+			this.ui.description.hide();
+			this.ui.empty.hide();
+			this.ui.attending.hide();
+		} else {
+			this.ui.description.show();
+			this.ui.empty.show();
+			this.ui.attending.show();	
+
+
+			if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
+				this.$el.find(".full").show();
+			} else {
+				this.$el.find(".full").hide();			
+			}
+
+			if(!_.isNull(this.firstUserView)) {
+				if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
+					this.$el.find(".first").append(this.firstUserView.render().el);
+				}
+			
+				var count = 0;
+				this.$el.find(".attending").children().each(function(index, el) {
+					if(count < numAttendees) {
+						$(el).addClass("selected");
+					} else {
+						$(el).removeClass("selected");
+					}
+				
+					count ++;
+				});
+			}
+
+			var numAttendees = this.model.numAttendees();
+			if(numAttendees==0) {
+				this.$el.find(".attending").hide();
+				this.$el.find(".empty").show();
+			} else {
+				this.$el.find(".attending").show();
+				this.$el.find(".empty").hide();
+			}
+		}
 	},
 
 	destroy: function() {
@@ -146,6 +162,11 @@ var SessionView = Marionette.ItemView.extend({
 
 	start: function() {
 		sock.send(JSON.stringify({type:"start", args:{id:this.model.id}}));
+	},
+
+	headerClick: function() {
+		this.mini = !this.mini;
+		this.render();
 	}
 });
 
