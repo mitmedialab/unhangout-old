@@ -129,7 +129,7 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	start: function() {
-		console.log("start session!");
+		sock.send(JSON.stringify({type:"start", args:{id:this.model.id}}));
 	}
 });
 
