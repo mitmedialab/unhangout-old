@@ -41,24 +41,55 @@ exports.run = function(dbId, redis, callback) {
 
 				var sessions = [];
 				
-				sessions.push(new models.ServerSession());
-				sessions.push(new models.ServerSession());
-				sessions.push(new models.ServerSession());
-				sessions.push(new models.ServerSession());
-				sessions.push(new models.ServerSession());
-				sessions.push(new models.ServerSession());
+
+				for(var i=0; i<30; i++) {
+					sessions.push(new models.ServerSession({name:"Session #" + i}));
+				}
 
 				events[0].addSession(sessions[0]);
 				events[0].addSession(sessions[1]);
 				events[0].addSession(sessions[2]);
+				events[0].addSession(sessions[3]);
+				events[0].addSession(sessions[4]);
+				events[0].addSession(sessions[5]);
+				events[0].addSession(sessions[6]);
+				events[0].addSession(sessions[7]);
+				events[0].addSession(sessions[8]);
+				events[0].addSession(sessions[9]);
+				events[0].addSession(sessions[10]);
+				events[0].addSession(sessions[11]);
+				events[0].addSession(sessions[12]);
+				events[0].addSession(sessions[13]);
+				events[0].addSession(sessions[14]);
+				events[0].addSession(sessions[15]);
+				events[0].addSession(sessions[16]);
+				events[0].addSession(sessions[17]);
+				events[0].addSession(sessions[18]);
+				events[0].addSession(sessions[19]);
+				events[0].addSession(sessions[20]);
+				events[0].addSession(sessions[21]);
+				events[0].addSession(sessions[22]);
+				events[0].addSession(sessions[23]);
+				events[0].addSession(sessions[24]);
+				events[0].addSession(sessions[25]);
+				events[0].addSession(sessions[26]);
 
-				events[1].addSession(sessions[3]);
-				events[1].addSession(sessions[4]);
-				events[1].addSession(sessions[5]);
+				events[1].addSession(sessions[27]);
+				events[1].addSession(sessions[28]);
+				events[1].addSession(sessions[29]);
 
+				_.each(sessions, function(session) {
+					if(_.isUndefined(session.collection)) {
+						logger.info("found undefined collection for name: " + session.get("name"));
+					}
+				});
+
+				logger.info("sessions: " + sessions.length);
 
 				async.series(_.map(_.union(events, sessions), function(model) {
+
 					return function(callback) {
+						// logger.info("saving " + JSON.stringify(model.collection));
 						model.save(null, {success:function() {
 							callback();
 						}});
@@ -72,8 +103,7 @@ exports.run = function(dbId, redis, callback) {
 
 
 if(require.main === module) 
-{ 
-	
+{
     logger = new (winston.Logger)({
 		transports: [
 		new (winston.transports.Console)(
