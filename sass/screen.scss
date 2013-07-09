@@ -383,3 +383,49 @@ body {
 		margin-right: auto;
 	}
 }
+
+.event {
+	.title, .description {
+		float: left;
+	}
+
+	.title {
+		font-weight: bold;
+		font-size: 1.6em;
+	}
+
+	.description {
+		width: 800px;
+	}
+
+	.date {
+		float: left;
+		width: 100px;
+		margin-right: 20px;
+
+		.day, .time {
+			text-align: center;
+			background-color: $primary;
+			color: white;
+			padding: 3px;
+		}
+
+		.number {
+			box-sizing: border-box;
+
+			color: $primary;
+			font-size: 3em;
+			font-weight: bold;
+			text-align: center;
+			height: 50px;
+			padding-top: 15px;
+			border-right: 1px solid $primary;
+			border-left: 1px solid $primary;
+		}
+
+		.time {
+			background-color: $primary;
+			color: white;
+		}
+	}
+}
