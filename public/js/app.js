@@ -209,6 +209,17 @@ $(document).ready(function() {
 			case "join-ack":
 				console.log("joined!");
 				break;
+
+			case "attend-ack":
+				setTimeout(function() {
+					app.vent.trigger("sessions-button");
+					$("#sessions-nav").tooltip("show");
+					setTimeout(function() {
+						$("#sessions-nav").tooltip("hide");
+					}, 5000);
+
+				}, 500);
+				break;
 		}
 	};
 
