@@ -133,6 +133,10 @@ body {
 	
 	border: 2px solid $primary;
 
+	.label {
+		margin-left: 5px;
+	}
+
 	h3 {
 		background-color: $primary;
 		color: white;
@@ -153,7 +157,7 @@ body {
 		left: 0px;
 		
 		/*height: 40px;*/
-		min-height: 30px;
+		min-height: 50px;
 	}
 	
 	.description {
