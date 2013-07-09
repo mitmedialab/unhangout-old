@@ -177,6 +177,25 @@ describe('unhangout server', function() {
 			});
 		});
 	});
+
+	describe('POST /subscribe', function() {
+		beforeEach(mockSetup);
+		afterEach(standardShutdown);
+
+		it('should accept email addresses', function(done) {
+			request.post('http://localhost:7777/subscribe')
+			.send("email=email@example.com")
+			.end(function(res) {
+				res.status.should.equal(200);
+
+				redis.lrange("global:subscriptions", -1, 1, function(err, res) {
+					if(res=="email@example.com") {
+						done();
+					}
+				});
+			});
+		});
+	});
 	
 	describe('sock (mock)', function() {
 		beforeEach(mockSetup);

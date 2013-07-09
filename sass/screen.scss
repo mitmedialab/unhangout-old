@@ -360,3 +360,77 @@ body {
 		background-color: #aaa;
 	}
 }
+
+
+/*---------------------------- INDEX STYLES ---------------------------*/
+.jumbotron {
+	color: white;
+	background-image: url('/public/img/dots.png');
+	height: 200px;
+	width: 100%;
+
+	background-size: 1400px;
+	margin-top: -20px;
+
+	h1 {
+		padding-top: 75px;
+		margin-top: 0px;
+	}
+
+	h1,  h3{
+		width: 940px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.event {
+	.title, .description {
+		float: left;
+	}
+
+	.title {
+		font-weight: bold;
+		font-size: 1.6em;
+	}
+
+	.description {
+		width: 800px;
+	}
+
+	.date {
+		float: left;
+		width: 100px;
+		margin-right: 20px;
+
+		.day, .time {
+			text-align: center;
+			background-color: $primary;
+			color: white;
+			padding: 3px;
+		}
+
+		.number {
+			box-sizing: border-box;
+
+			color: $primary;
+			font-size: 3em;
+			font-weight: bold;
+			text-align: center;
+			height: 50px;
+			padding-top: 15px;
+			border-right: 1px solid $primary;
+			border-left: 1px solid $primary;
+		}
+
+		.time {
+			background-color: $primary;
+			color: white;
+		}
+	}
+}
+
+.footer {
+	margin-top: 50px;
+	color: #aaa;
+}

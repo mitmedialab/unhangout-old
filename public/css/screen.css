@@ -335,3 +335,75 @@ body {
 #video-embed .player {
   background-color: #aaa;
 }
+
+/*---------------------------- INDEX STYLES ---------------------------*/
+/* line 366, ../../sass/screen.scss */
+.jumbotron {
+  color: white;
+  background-image: url("/public/img/dots.png");
+  height: 200px;
+  width: 100%;
+  background-size: 1400px;
+  margin-top: -20px;
+}
+/* line 375, ../../sass/screen.scss */
+.jumbotron h1 {
+  padding-top: 75px;
+  margin-top: 0px;
+}
+/* line 380, ../../sass/screen.scss */
+.jumbotron h1, .jumbotron h3 {
+  width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* line 388, ../../sass/screen.scss */
+.event .title, .event .description {
+  float: left;
+}
+/* line 392, ../../sass/screen.scss */
+.event .title {
+  font-weight: bold;
+  font-size: 1.6em;
+}
+/* line 397, ../../sass/screen.scss */
+.event .description {
+  width: 800px;
+}
+/* line 401, ../../sass/screen.scss */
+.event .date {
+  float: left;
+  width: 100px;
+  margin-right: 20px;
+}
+/* line 406, ../../sass/screen.scss */
+.event .date .day, .event .date .time {
+  text-align: center;
+  background-color: #2f3732;
+  color: white;
+  padding: 3px;
+}
+/* line 413, ../../sass/screen.scss */
+.event .date .number {
+  box-sizing: border-box;
+  color: #2f3732;
+  font-size: 3em;
+  font-weight: bold;
+  text-align: center;
+  height: 50px;
+  padding-top: 15px;
+  border-right: 1px solid #2f3732;
+  border-left: 1px solid #2f3732;
+}
+/* line 426, ../../sass/screen.scss */
+.event .date .time {
+  background-color: #2f3732;
+  color: white;
+}
+
+/* line 433, ../../sass/screen.scss */
+.footer {
+  margin-top: 50px;
+  color: #aaa;
+}
