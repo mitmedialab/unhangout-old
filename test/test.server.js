@@ -402,7 +402,7 @@ describe('unhangout server', function() {
 			it("should accept an UNATTEND request with the user.id of an attending user", function(done) {
 				// manipulate internal state to do an attend.
 				var user = s.users.at(0);
-				var event = s.events.at(1);
+				var event = s.events.get(1);
 				var session = event.get("sessions").at(0);
 				
 				session.addAttendee(user);
@@ -423,7 +423,7 @@ describe('unhangout server', function() {
 			it("should reject an UNATTEND request if that user.id is not attending", function(done) {
 				// manipulate internal state to do an attend.
 				var user = s.users.at(0);
-				var event = s.events.at(1);
+				var event = s.events.get(1);
 				var session = event.get("sessions").at(0);
 				
 				sock.on("data", function(message) {
@@ -441,7 +441,7 @@ describe('unhangout server', function() {
 			
 			it("should send an UNATTEND message to all connected users in that event", function(done) {
 				var user = s.users.at(0);
-				var event = s.events.at(1);
+				var event = s.events.get(1);
 				var session = event.get("sessions").at(0);
 				
 				session.addAttendee(user);
@@ -462,7 +462,7 @@ describe('unhangout server', function() {
 			it("should send a FIRST-ATTENDEE (null) message if we remove the only attendee", function(done) {
 				// manipulate internal state to do an attend.
 				var user = s.users.at(0);
-				var event = s.events.at(1);
+				var event = s.events.get(1);
 				var session = event.get("sessions").at(0);
 				
 				session.addAttendee(user);
@@ -505,7 +505,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				sock.write(JSON.stringify({type:"start", args:{id:s.events.at(1).get("sessions").at(0).id}}));
+				sock.write(JSON.stringify({type:"start", args:{id:s.events.get(1).get("sessions").at(0).id}}));
 			});
 			
 			it("should accept start messages from admins", function(done) {
@@ -520,7 +520,7 @@ describe('unhangout server', function() {
 				
 				s.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"start", args:{id:s.events.at(1).get("sessions").at(0).id}}));
+				sock.write(JSON.stringify({type:"start", args:{id:s.events.get(1).get("sessions").at(0).id}}));
 			});
 		});
 		
