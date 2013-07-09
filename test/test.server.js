@@ -348,7 +348,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				sock.write(JSON.stringify({type:"attend", args:{id:4}}));
+				sock.write(JSON.stringify({type:"attend", args:{id:28}}));
 			});
 			
 			it('should reject an ATTEND request with an invalid session id', function(done) {
@@ -361,7 +361,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				sock.write(JSON.stringify({type:"attend", args:{id:4}}));
+				sock.write(JSON.stringify({type:"attend", args:{id:100}}));
 			});
 			
 			it('should increment attendee count', function(done) {
