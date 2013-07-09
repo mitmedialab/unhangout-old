@@ -335,3 +335,25 @@ body {
 #video-embed .player {
   background-color: #aaa;
 }
+
+/*---------------------------- INDEX STYLES ---------------------------*/
+/* line 366, ../../sass/screen.scss */
+.jumbotron {
+  color: white;
+  background-image: url("/public/img/dots.png");
+  height: 200px;
+  width: 100%;
+  background-size: 1400px;
+  margin-top: -20px;
+}
+/* line 375, ../../sass/screen.scss */
+.jumbotron h1 {
+  padding-top: 75px;
+  margin-top: 0px;
+}
+/* line 380, ../../sass/screen.scss */
+.jumbotron h1, .jumbotron h3 {
+  width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}

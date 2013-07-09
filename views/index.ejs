@@ -1,21 +1,12 @@
 <% include header.ejs %>
+	<div class="jumbotron">
+		<h1>The Unhangout Project</h1>
+		<h3>An unconference-inspired platform large-scale online events.</h3>
+	</div>
+
+<div class="container">
 <div id="home" class="section">
-		<h1>Welcome to Unhangout!</h1>
-		<p>A platform for running large scale online un-conference-style events using Google Hangouts for many simultaneous small sessions.</p>
-		
-		<h2>Upcoming and Live Events</h2>
-		<% events.each(function(event) {%>
-		<div class="event" id="event-<%=event.id%>">
-		<h3><%=event.get("title")%></h3>
-		<div class="organizer"><%=event.get("organizer")%></div>
-		<div class="description"><%=event.get("description")%></div>
-		<% if(event.isLive()) {%>
-		<a class="btn btn-primary" href="/event/<%=event.id%>">Join!</a>
-		<% } else { %>
-		<div class="start-time"><%= event.getStartTimeFormatted() %></div>
-		<% } %>
-		</div>
-		<% }); %>
+
 </div>
 
 

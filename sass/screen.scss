@@ -360,3 +360,26 @@ body {
 		background-color: #aaa;
 	}
 }
+
+
+/*---------------------------- INDEX STYLES ---------------------------*/
+.jumbotron {
+	color: white;
+	background-image: url('/public/img/dots.png');
+	height: 200px;
+	width: 100%;
+
+	background-size: 1400px;
+	margin-top: -20px;
+
+	h1 {
+		padding-top: 75px;
+		margin-top: 0px;
+	}
+
+	h1,  h3{
+		width: 940px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
