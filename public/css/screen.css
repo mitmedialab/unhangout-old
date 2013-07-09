@@ -270,30 +270,37 @@ body {
   font-weight: bold;
 }
 
-/* line 294, ../../sass/screen.scss */
+/* line 295, ../../sass/screen.scss */
+#user-list h2 {
+  padding-left: 12px;
+  font-weight: lighter;
+  font-size: 1.6em;
+}
+
+/* line 303, ../../sass/screen.scss */
 #global {
   position: absolute;
   z-index: 1000;
 }
 
-/* line 299, ../../sass/screen.scss */
+/* line 308, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
   left: 700px;
   top: 350px;
   box-shadow: 3px 3px 5px #aaa;
 }
-/* line 306, ../../sass/screen.scss */
+/* line 315, ../../sass/screen.scss */
 #video-embed .header {
   background-color: #bbb;
   cursor: move;
   padding: 5px;
 }
-/* line 311, ../../sass/screen.scss */
+/* line 320, ../../sass/screen.scss */
 #video-embed .header .btn-group {
   float: right;
 }
-/* line 316, ../../sass/screen.scss */
+/* line 325, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
 }
