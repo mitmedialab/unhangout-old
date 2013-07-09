@@ -3,7 +3,7 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
-$primary: #3d594a;
+$primary: #2F3732;
 $background: #c9c8c8;
 
 body {
@@ -126,8 +126,13 @@ body {
 	background-color: #e6e7e6;
 	position: relative;
 
-	margin-bottom: 50px;
+	padding-bottom: 30px;
+	margin-bottom: 20px;
+
+	box-sizing: border-box;
 	
+	border: 2px solid $primary;
+
 	h3 {
 		background-color: $primary;
 		color: white;
@@ -135,8 +140,10 @@ body {
 		
 		font-weight: normal;
 		font-size: 1.3em;
-		
-		padding: 0px 10px 0px 10px;
+
+		line-height: 20px;
+
+		padding: 10px 10px 5px 10px;
 		
 		i {
 			margin-right: 5px;
@@ -145,7 +152,8 @@ body {
 		right: 0px;
 		left: 0px;
 		
-		height: 40px;
+		/*height: 40px;*/
+		min-height: 30px;
 	}
 	
 	.description {

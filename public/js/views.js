@@ -72,10 +72,13 @@ var SessionView = Marionette.ItemView.extend({
 
 		if(this.model.isAttending(USER_ID)) {
 			this.ui.attend.addClass("active");
-			this.ui.attend.find(".text").text("JOINED");
+			// this.ui.attend.find(".text").text("JOINED");
+			this.$el.addClass("joined");
 		} else {
 			this.ui.attend.removeClass("active");
-			this.ui.attend.find(".text").text("JOIN");
+			this.$el.removeClass("joined");
+
+			// this.ui.attend.find(".text").text("JOIN");
 		}
 
 		if(this.model.get("started")) {
