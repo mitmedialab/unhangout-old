@@ -401,3 +401,9 @@ body {
   background-color: #2f3732;
   color: white;
 }
+
+/* line 433, ../../sass/screen.scss */
+.footer {
+  margin-top: 50px;
+  color: #aaa;
+}
