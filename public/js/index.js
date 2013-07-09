@@ -7,4 +7,18 @@ $(document).on('ready', function() {
 		$(".section").hide();
 		$(aEl.attr("href")).show();
 	});
+
+	$("#subscribe").click(function() {
+		var email = $("#email").val();
+
+		$.ajax({
+			url:"/subscribe",
+			type:"POST",
+			data: {email:email}
+		}).done(function() {
+			console.log("posted email");
+		});
+
+		$("#email").val("");
+	});
 });
