@@ -52,12 +52,12 @@ describe("SESSION", function() {
 			var session = new client_models.Session();
 			session.addAttendee(new client_models.User({id:0}));
 
-			try {
-				session.addAttendee(new client_models.User({id:1}));
-			} catch (e) {
+			var err = session.addAttendee(new client_models.User({id:1}));
+
+			if(err) {
 				client_models.Session.prototype.MAX_ATTENDEES = 10;
-				done();
-			} 
+				done();				
+			}
 		})
 	});	
 });

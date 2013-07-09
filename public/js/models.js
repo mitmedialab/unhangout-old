@@ -137,7 +137,6 @@ models.Session = Backbone.Model.extend({
 		var attendeeIds = _.clone(this.get("attendeeIds"));
 		
 		var index = attendeeIds.indexOf(user.id);
-		
 		if(index==-1) {
 			return new Error("user not attending this session");
 		} else {

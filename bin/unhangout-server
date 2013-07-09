@@ -34,3 +34,7 @@ s.on("inited", function() {
 });
 
 s.init(_.extend(env, {"level":"debug", "transport":"console", "mock-auth":false}));
+
+process.on('uncaughtException', function(err) {
+  logger.error(err.stack);
+});
