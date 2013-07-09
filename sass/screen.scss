@@ -250,6 +250,24 @@ body {
 			border-radius: 0px;
 		}
 	}
+
+	.outer {
+		position: relative;
+		z-index: 10000;
+
+		.attend-count {
+			margin-left: 5px;
+		}
+	}
+
+	.attendance {
+		position: absolute;
+		top: -1px;
+		left: 0px;
+		height: 30px;
+		width: 50%;
+		background-color: rgba(66, 94, 97, 0.5);
+	}
 }
 
 #user-column {

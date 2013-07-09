@@ -103,38 +103,35 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.attending.show();	
 
 
-			if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
-				this.$el.find(".full").show();
-			} else {
-				this.$el.find(".full").hide();			
-			}
+			// if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
+			// 	this.$el.find(".full").show();
+			// } else {
+			// 	this.$el.find(".full").hide();			
+			// }
 
-			if(!_.isNull(this.firstUserView)) {
-				if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
-					this.$el.find(".first").append(this.firstUserView.render().el);
-				}
+			// if(!_.isNull(this.firstUserView)) {
+			// 	if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
+			// 		this.$el.find(".first").append(this.firstUserView.render().el);
+			// 	}
 			
-				var count = 0;
-				this.$el.find(".attending").children().each(function(index, el) {
-					if(count < numAttendees) {
-						$(el).addClass("selected");
-					} else {
-						$(el).removeClass("selected");
-					}
+			// 	var count = 0;
+			// 	this.$el.find(".attending").children().each(function(index, el) {
+			// 		if(count < numAttendees) {
+			// 			$(el).addClass("selected");
+			// 		} else {
+			// 			$(el).removeClass("selected");
+			// 		}
 				
-					count ++;
-				});
-			}
-
-			var numAttendees = this.model.numAttendees();
-			if(numAttendees==0) {
-				this.$el.find(".attending").hide();
-				this.$el.find(".empty").show();
-			} else {
-				this.$el.find(".attending").show();
-				this.$el.find(".empty").hide();
-			}
+			// 		count ++;
+			// 	});
+			// }
 		}
+
+		var numAttendees = this.model.numAttendees();
+
+		this.$el.find(".attend-count").text("(" + numAttendees + " of " + this.model.MAX_ATTENDEES + ")");
+		this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");
+
 	},
 
 	destroy: function() {
@@ -167,8 +164,9 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	headerClick: function() {
-		this.mini = !this.mini;
-		this.render();
+		// for now disabling the macro style view entirely
+		// this.mini = !this.mini;
+		// this.render();
 	}
 });
 
