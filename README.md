@@ -46,7 +46,7 @@ The `package.json` file provides a number of scripts to help with running the un
  * `npm run-script forever-list` - list the forever processes currently running
  * `npm run-script forever-stop` - stop the background instance of the server.
 
- The `forever-*` commands depend on the forever tool. You can install it with `[sudo] npm install forever -g`. The forever commands run in a sudo context because in most production situations you'll want to be running on port 80. It would be nice to shed these priveleges after binding to 80, but we don't support that yet. If you're super concerned about it, you could run the server behind a websocket-friendly proxy like HAProxy.
+The `forever-*` commands depend on the forever tool. You can install it with `[sudo] npm install forever -g`. The forever commands run in a sudo context because in most production situations you'll want to be running on port 80. It would be nice to shed these priveleges after binding to 80, but we don't support that yet. If you're super concerned about it, you could run the server behind a websocket-friendly proxy like HAProxy.
 
 
 Notes on Hangout Creation
