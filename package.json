@@ -13,7 +13,7 @@
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
     "test": "mocha",
-    "forever-start": "sudo -E forever start -a -l unhangout.log -o out.log -e err.log bin/unhangout-server --minUptime 1000 --spinSleepTime 1000",
+    "forever-start": "sudo -E forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o out.log -e err.log bin/unhangout-server",
     "forever-stop": "sudo -E forever stop bin/unhangout-server",
     "forever-list": "sudo -E forever list"
   },
