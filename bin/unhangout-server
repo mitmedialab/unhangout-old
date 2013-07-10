@@ -2,7 +2,8 @@
 
 var winston = require('winston'),
 	_ = require('underscore')._,
-	server = require('../lib/unhangout-server.js');
+	server = require('../lib/unhangout-server.js'),
+	fs = require('fs');
 
 // TODO switch this to a file. Had trouble with getting that working, though.
 var logger= new (winston.Logger)({
@@ -18,15 +19,20 @@ logger.cli();
 
 logger.info("Starting unhangout-server.");
 
+// load config from conf.json
+var configFile = fs.readFileSync("conf.json", {encoding:"ascii"});
+
+var config = JSON.parse(configFile);
+
 // show all related env variables
 var env = {};
-_.each(process.env, function(value, key) {
+_.each(config, function(value, key) {
 	if(key.indexOf("UNHANGOUT_")!=-1) {
 		env[key.slice(10)] = value;
 	}
 });
 
-logger.info("env: " + JSON.stringify(env));
+logger.info("config: " + JSON.stringify(env));
 
 var s = new server.UnhangoutServer();
 s.on("inited", function() {
