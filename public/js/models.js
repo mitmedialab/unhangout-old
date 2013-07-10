@@ -128,6 +128,7 @@ models.Session = Backbone.Model.extend({
 			attendeeIds.push(user.id);
 			this.set("attendeeIds", attendeeIds);
 			this.trigger("change");
+			this.trigger("change:attendeeIds");
 		} else {
 			return new Error("user already attending session");
 		}
@@ -143,6 +144,7 @@ models.Session = Backbone.Model.extend({
 			attendeeIds.splice(index, 1);
 			this.set("attendeeIds", attendeeIds);
 			this.trigger("change");
+			this.trigger("change:attendeeIds");
 		}
 	},
 	

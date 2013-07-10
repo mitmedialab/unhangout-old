@@ -1,6 +1,18 @@
 
 
 models.ClientSessionList = models.SessionList.extend({	
+
+	initialize: function(options) {
+		models.SessionList.prototype.initialize.call(this, options);
+
+		this.on("add", _.bind(function(session) {
+			session.on("change:attendeeIds", _.bind(function() {
+				this.sort();
+				this.trigger("change");
+			}, this));
+		}, this));
+	},
+
 	comparator: function(a, b) {
 		if(a.isAttending(USER_ID)) {
 			return -1;
