@@ -21,8 +21,8 @@ $(document).ready(function() {
 	}
 
 	console.log("Starting app!");
-	
-	curEvent = new models.Event(EVENT_ATTRS);
+
+	curEvent = new models.ClientEvent(EVENT_ATTRS);
 	
 	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 	

@@ -98,8 +98,7 @@ var SessionView = Marionette.ItemView.extend({
 		} else {
 			this.ui.description.show();
 			this.ui.empty.show();
-			this.ui.attending.show();	
-
+			this.ui.attending.show();
 
 			// if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
 			// 	this.$el.find(".full").show();
