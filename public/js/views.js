@@ -54,8 +54,6 @@ var SessionView = Marionette.ItemView.extend({
 	
 
 	onRender: function() {
-		console.log("on render FOR SESSION ");
-		console.log(this);
 		// things to do here:
 		// 1. Hide attending if no one is attending
 		// 2. If numAttending > 0, pick the first person and put their icon in .first
@@ -358,15 +356,12 @@ var VideoEmbedView = Marionette.ItemView.extend({
 	},
 
 	onDomRefresh: function() {
-		console.log("rendering EMBED");
-
 		if(_.isNull(this.model.get("youtubeEmbed")) || this.model.get("youtubeEmbed").length!=11) {
 			this.$el.hide();
 		} else {
 			this.$el.show();
 			this.$el.draggable();
 			// do the actual YT embed code here
-			console.log("about to embed the player: "+ this.model.get("youtubeEmbed"));
 			this.player = new YT.Player('player', {
 				height: this.dimensions['small'].height,
 				width: this.dimensions['small'].width,
@@ -386,8 +381,6 @@ var VideoEmbedView = Marionette.ItemView.extend({
 	},
 
 	click: function(e) {
-		console.log("click!: " + e.target.id);
-		
 		if(e.target.id in this.dimensions) {
 			var dim = this.dimensions[e.target.id];
 			
