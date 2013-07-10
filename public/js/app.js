@@ -4,6 +4,8 @@ var curEvent, users, messages;
 
 var app;
 
+var curSession = null;
+
 // handle IE not having console.log
 if (typeof console === "undefined" || typeof console.log === "undefined") {
      console = {};
@@ -25,6 +27,14 @@ $(document).ready(function() {
 	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
+
+	if(SINGLE_SESSION_RSVP) {
+		curEvent.get("sessions").each(function(session) {
+			if(session.isAttending(USER_ID)) {
+				curSession = session.id;
+			}
+		})
+	}
 
 	$("#sessions-nav").find("a").text("Sessions (" + curEvent.get("sessions").length + ")");
 	
@@ -149,6 +159,16 @@ $(document).ready(function() {
 			case "attend":
 				curEvent.get("sessions").get(msg.args.id).addAttendee(msg.args.user);
 				console.log("added attendee to a session");
+
+				if(SINGLE_SESSION_RSVP && msg.args.user.id==USER_ID) {
+
+					if(!_.isNull(curSession)) {
+						var message = {type:"unattend", args:{id:curSession}};
+						sock.send(JSON.stringify(message));				
+					}
+
+					curSession = msg.args.id;
+				}
 				break;
 			
 			case "first-attendee":
