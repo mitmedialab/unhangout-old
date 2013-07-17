@@ -118,14 +118,12 @@ $(document).ready(function() {
 		console.log("Initialized app.");
 	});
 
-	app.vent.on("sessions-button", _.bind(function() {
-		// if(this.top.currentView==this.sessionListView && this.topShown) {
-		// 	// in this case, treat it as a dismissal.
-		// 	this.hideTop();
-		// } else {
-		// 	this.top.show(this.sessionListView);
-		// 	this.showTop();
-		// }
+	app.vent.on("sessions-nav", _.bind(function() {
+		this.main.show(this.sessionListView);
+	}, app));
+
+	app.vent.on("video-nav", _.bind(function() {
+		this.main.show(this.youtubeEmbedView);
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {
@@ -133,18 +131,14 @@ $(document).ready(function() {
 	}, app));
 	
 	app.start();
-	app.vent.trigger("sessions-button");
-	
-	$("#sessions-nav").click(function() {
-		console.log("CLICK");
-		if($(this).hasClass("active")) {
-			$(this).removeClass("active");
-		} else {
-			$(this).addClass("active");
-		}
-		
-		app.vent.trigger("sessions-button");
-	});
+	app.vent.trigger("sessions-nav");
+
+	$("#video-nav, #sessions-nav").click(function() {
+		$(".nav .active").removeClass("active");
+		$(this).addClass("active");
+		console.log("triggering: " + $(this).attr("id"));
+		app.vent.trigger($(this).attr("id"));
+	})
 	
 	console.log("Setup regions.");
 

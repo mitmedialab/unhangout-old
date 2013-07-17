@@ -115,13 +115,6 @@
 			</script>			
 			
 			<script type="text/template" id="video-embed-template">
-			<div class="header clearfix">
-				<div class="btn-group" data-toggle="buttons-radio">
-					<button id="large" class="btn">L</button>
-					<button id="medium" class="btn">M</button>
-					<button id="small" class="btn active">S</button>
-				</div>
-			</div>
 			<div id="player" class="player"></div>
 			</script>
 
@@ -168,7 +161,8 @@
 				<a class="brand" href="/#">Unhangout</a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-						<li class="active" id="sessions-nav"  rel="tooltip" data-placement="bottom" data-toggle="tooltip" title="Update your session selection here!" data-trigger="manual"><a href="#sessions-nav">Sessions</a></li>
+						<li class="active" id="sessions-nav"  rel="tooltip" data-placement="bottom"><a href="#sessions-nav">Sessions</a></li>
+						<li class="active" id="video-nav"  rel="tooltip" data-placement="bottom" data-toggle="tooltip" title="Update your session selection here!" data-trigger="manual"><a href="#video-nav">Video</a></li>
 					</ul>
 					<div class="nav pull-right identity">
 					<% if(!user) {%>
