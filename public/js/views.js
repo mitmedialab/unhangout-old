@@ -190,6 +190,7 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 var UserView = Marionette.ItemView.extend({
 	template: '#user-template',
 	className: 'user',
+	tagName: "li",
 
 	events: {
 		'click' : 'click'
@@ -206,6 +207,7 @@ var UserView = Marionette.ItemView.extend({
 	onRender: function() {
 		// add in the tooltip attributes
 		this.$el.attr("data-toggle", "tooltip");
+		this.$el.attr("data-placement", "left");
 		this.$el.attr("title", this.model.get("displayName"));
 		this.$el.tooltip();
 	}
@@ -292,6 +294,31 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	}
 });
 
+var ChatLayout = Backbone.Marionette.Layout.extend({
+	template: '#chat-layout',
+	id: 'chat',
+	className: "full-size-container",
+
+	regions: {
+		chat:'#chat-container',
+		presence: '#presence-gutter'
+	},
+
+	initialize: function() {
+		this.chatView = new ChatView({collection:this.options.messages});
+		this.userListView = new UserListView({collection:this.options.users});
+
+		console.log("initializing chat layout with: " + JSON.stringify(this.options.messages));
+		console.log("and users: " + JSON.stringify(this.options.users));
+	},
+
+	onRender: function() {
+		this.chat.show(this.chatView);
+		this.presence.show(this.userListView);
+	},
+
+})
+
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
 	className: 'chat-message'
@@ -301,23 +328,19 @@ var ChatView = Marionette.CompositeView.extend({
 	template: '#chat-template',
 	itemView: ChatMessageView,
 	itemViewContainer: "#chat-list-container",
-	id: "chat",
-
-	ui: {
-		chatInput: "#chat-input"
-	},
+	id: "chat-container",
 
 	events: {
 		'submit form':'chat'
 	},
 
+	ui: {
+		chatInput: "#chat-input"
+	},
+
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 	},
-
-	update: function() {
-		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
-	},	
 
 	chat: function(e) {
 		var msg = this.ui.chatInput.val();
@@ -325,6 +348,10 @@ var ChatView = Marionette.CompositeView.extend({
 		this.ui.chatInput.val("");
 		e.preventDefault();
 		return false;
+	},
+
+	update: function() {
+		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
 	}
 });
 

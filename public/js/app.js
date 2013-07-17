@@ -67,8 +67,7 @@ $(document).ready(function() {
 	    }, this);
 		
 		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
-		this.userColumnLayout = new UserColumnLayout({users: users});
-		this.chatView = new ChatView({collection:messages});
+		this.chatView = new ChatLayout({messages:messages, users:users});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		this.dialogView = new DialogView();
 
