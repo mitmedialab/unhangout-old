@@ -130,9 +130,21 @@ $(document).ready(function() {
 		console.log("YOUTUBE READY");
 		// this.global.show(this.youtubeEmbedView);
 	}, app));
+
+	app.vent.on("video-live", _.bind(function() {
+		$("#video-nav .label").removeClass("hide");
+	}, app));
 	
+	app.vent.on("video-off", _.bind(function() {
+		$("#video-nav .label").addClass("hide");
+	}, app));
+
 	app.start();
 	app.vent.trigger("sessions-nav");
+
+	if(curEvent.get("youtubeEmbed").length > 0) {
+		app.vent.trigger("video-live");
+	}
 
 	$("#video-nav, #sessions-nav").click(function() {
 		$(".nav .active").removeClass("active");
@@ -201,6 +213,15 @@ $(document).ready(function() {
 			case "embed":
 				curEvent.setEmbed(msg.args.ytId);
 				console.log("added yt embed id");
+
+				if(msg.args.ytId.length > 0) {
+					// if it's a non-empty yt embed, show the live tag.
+					app.vent.trigger("video-live");
+				} else {
+					// if it's empty, hide the live tag.
+					app.vent.trigger("video-off");
+				}
+
 				break;
 				
 			case "start":
