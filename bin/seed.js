@@ -42,8 +42,8 @@ exports.run = function(dbId, redis, callback) {
 				var sessions = [];
 				
 
-				for(var i=0; i<30; i++) {
-					sessions.push(new models.ServerSession({name:"Session #" + i}));
+				for(var i=0; i<12; i++) {
+					sessions.push(new models.ServerSession({title:"Session #" + i}));
 				}
 
 				events[0].addSession(sessions[0]);
@@ -56,27 +56,10 @@ exports.run = function(dbId, redis, callback) {
 				events[0].addSession(sessions[7]);
 				events[0].addSession(sessions[8]);
 				events[0].addSession(sessions[9]);
-				events[0].addSession(sessions[10]);
-				events[0].addSession(sessions[11]);
-				events[0].addSession(sessions[12]);
-				events[0].addSession(sessions[13]);
-				events[0].addSession(sessions[14]);
-				events[0].addSession(sessions[15]);
-				events[0].addSession(sessions[16]);
-				events[0].addSession(sessions[17]);
-				events[0].addSession(sessions[18]);
-				events[0].addSession(sessions[19]);
-				events[0].addSession(sessions[20]);
-				events[0].addSession(sessions[21]);
-				events[0].addSession(sessions[22]);
-				events[0].addSession(sessions[23]);
-				events[0].addSession(sessions[24]);
-				events[0].addSession(sessions[25]);
-				events[0].addSession(sessions[26]);
 
-				events[1].addSession(sessions[27]);
-				events[1].addSession(sessions[28]);
-				events[1].addSession(sessions[29]);
+				events[1].addSession(sessions[10]);
+				events[1].addSession(sessions[11]);
+				events[1].addSession(sessions[12]);
 
 				_.each(sessions, function(session) {
 					if(_.isUndefined(session.collection)) {
