@@ -396,23 +396,14 @@ body {
 
 #video-embed {
 	position: absolute;
-	left: 700px;
-	top: 350px;
+	left: 0px;
+	right: 0px;
 	
-	box-shadow: 3px 3px 5px #aaa;
-	
-	.header {
-		background-color: #bbb;
-		cursor: move;
-		padding: 5px;
+	/*box-shadow: 3px 3px 5px #aaa;*/
 		
-		.btn-group {
-			float: right;
-		}
-	}
-	
 	.player {
 		background-color: #aaa;
+		width: 100%;
 	}
 }
 

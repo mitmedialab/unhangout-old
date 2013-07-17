@@ -127,7 +127,8 @@ $(document).ready(function() {
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {
-		this.global.show(this.youtubeEmbedView);
+		console.log("YOUTUBE READY");
+		// this.global.show(this.youtubeEmbedView);
 	}, app));
 	
 	app.start();

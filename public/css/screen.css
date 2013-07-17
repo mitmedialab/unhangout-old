@@ -365,27 +365,18 @@ body {
 /* line 397, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
-  left: 700px;
-  top: 350px;
-  box-shadow: 3px 3px 5px #aaa;
+  left: 0px;
+  right: 0px;
+  /*box-shadow: 3px 3px 5px #aaa;*/
 }
 /* line 404, ../../sass/screen.scss */
-#video-embed .header {
-  background-color: #bbb;
-  cursor: move;
-  padding: 5px;
-}
-/* line 409, ../../sass/screen.scss */
-#video-embed .header .btn-group {
-  float: right;
-}
-/* line 414, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
+  width: 100%;
 }
 
 /*---------------------------- INDEX STYLES ---------------------------*/
-/* line 421, ../../sass/screen.scss */
+/* line 412, ../../sass/screen.scss */
 .jumbotron {
   color: white;
   background-image: url("/public/img/dots.png");
@@ -394,45 +385,45 @@ body {
   background-size: 1400px;
   margin-top: -20px;
 }
-/* line 430, ../../sass/screen.scss */
+/* line 421, ../../sass/screen.scss */
 .jumbotron h1 {
   padding-top: 75px;
   margin-top: 0px;
 }
-/* line 435, ../../sass/screen.scss */
+/* line 426, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* line 443, ../../sass/screen.scss */
+/* line 434, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
 }
-/* line 447, ../../sass/screen.scss */
+/* line 438, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
   font-size: 1.6em;
 }
-/* line 452, ../../sass/screen.scss */
+/* line 443, ../../sass/screen.scss */
 .event .description {
   width: 800px;
 }
-/* line 456, ../../sass/screen.scss */
+/* line 447, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 461, ../../sass/screen.scss */
+/* line 452, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 468, ../../sass/screen.scss */
+/* line 459, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -444,13 +435,13 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 481, ../../sass/screen.scss */
+/* line 472, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 488, ../../sass/screen.scss */
+/* line 479, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;

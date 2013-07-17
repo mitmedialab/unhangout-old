@@ -360,26 +360,10 @@ var VideoEmbedView = Marionette.ItemView.extend({
 	template: '#video-embed-template',
 	id: 'video-embed',
 
-	ui: {
-		large: ".large",
-		medium: ".medium",
-		small: ".small"
-	},
-
-	events: {
-		'click .btn':'click'
-	},
-
 	player: null,
 
 	initialize: function() {
 		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
-
-		this.dimensions = {
-			"small":{width:284, height:160},
-			"medium":{width:400, height:225},
-			"large":{width:533, height:300},
-		};	
 	},
 
 	onDomRefresh: function() {
@@ -390,8 +374,8 @@ var VideoEmbedView = Marionette.ItemView.extend({
 			this.$el.draggable();
 			// do the actual YT embed code here
 			this.player = new YT.Player('player', {
-				height: this.dimensions['small'].height,
-				width: this.dimensions['small'].width,
+				// height: this.dimensions['small'].height,
+				// width: this.dimensions['small'].width,
 				videoId: this.model.get("youtubeEmbed"),
 				events: {
 					"onReady": function(args) {
@@ -402,18 +386,8 @@ var VideoEmbedView = Marionette.ItemView.extend({
 					}
 				}
 			});
-	
-			this.$el.css("height", this.dimensions['small'].height + 40);
-		}
-	},
 
-	click: function(e) {
-		if(e.target.id in this.dimensions) {
-			var dim = this.dimensions[e.target.id];
-			
-			this.$el.find(".player").attr("height", dim.height);
-			this.$el.find(".player").attr("width", dim.width);
-			this.$el.css("height", dim.height + 40);
+			// this.$el.css("height", this.dimensions['small'].height + 40);
 		}
 	}
 });
