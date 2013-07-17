@@ -100,6 +100,14 @@ body {
 	border-left: 1px solid #aaa;
 	box-shadow: -3px 0px 3px #aaa;
 	background-color: white;
+
+	.tooltip-inner {
+		white-space: nowrap;
+	}
+
+	.tooltip {
+		left: -70px !important;
+	}
 }
 	
 .identity {

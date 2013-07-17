@@ -208,6 +208,7 @@ var UserView = Marionette.ItemView.extend({
 		// add in the tooltip attributes
 		this.$el.attr("data-toggle", "tooltip");
 		this.$el.attr("data-placement", "left");
+		this.$el.attr("data-container", "#presence-gutter");
 		this.$el.attr("title", this.model.get("displayName"));
 		this.$el.tooltip();
 	}
