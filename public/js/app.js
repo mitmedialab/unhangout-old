@@ -45,7 +45,7 @@ $(document).ready(function() {
 	app = new Backbone.Marionette.Application();
 	
 	app.addRegions({
-		top: '#top',
+		// top: '#top',
 		right: '#main-right',
 		main: '#main-left',
 		global: '#global'
@@ -69,54 +69,54 @@ $(document).ready(function() {
 		this.chatView = new ChatView({collection:messages});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		
-		this.top.show(this.sessionListView);
-		this.right.show(this.userColumnLayout);
-		this.main.show(this.chatView);
+		// this.top.show(this.sessionListView);
+		this.right.show(this.chatView);
+		this.main.show(this.sessionListView);
 		
 		// set up some extra methods for managing show/hide of top region.
-		this.topShown = false;
+		// this.topShown = false;
 		
-		this.hideTop = _.bind(function() {
-			this.top.$el.animate({
-				top: -this.top.$el.outerHeight(),
-			}, 500, "swing", _.bind(function() {
-					this.topShown = false;
-				}, this));
+		// this.hideTop = _.bind(function() {
+		// 	this.top.$el.animate({
+		// 		top: -this.top.$el.outerHeight(),
+		// 	}, 500, "swing", _.bind(function() {
+		// 			this.topShown = false;
+		// 		}, this));
 				
-			this.main.$el.find("#chat-container").animate({
-				top: 0
-			}, 500, "swing")
+		// 	this.main.$el.find("#chat-container").animate({
+		// 		top: 0
+		// 	}, 500, "swing")
 				
-		}, this);
+		// }, this);
 		
-		this.showTop = _.bind(function() {
-			this.top.$el.animate({
-				top: 0,
-			}, 500, "swing", _.bind(function() {
-				this.topShown = true;
-			}, this));
+		// this.showTop = _.bind(function() {
+		// 	this.top.$el.animate({
+		// 		top: 0,
+		// 	}, 500, "swing", _.bind(function() {
+		// 		this.topShown = true;
+		// 	}, this));
 			
-			// hardcoded a bit, but we don't use main for anything else right now.
-			this.main.$el.find("#chat-container").animate({
-				top: this.top.$el.outerHeight()
-			}, 500, "swing")
+		// 	// hardcoded a bit, but we don't use main for anything else right now.
+		// 	this.main.$el.find("#chat-container").animate({
+		// 		top: this.top.$el.outerHeight()
+		// 	}, 500, "swing")
 			
-		}, this);
+		// }, this);
 				
-		// start sessions open, but triggering it properly.
-		this.top.$el.css("top", -this.top.$el.outerHeight());
+		// // start sessions open, but triggering it properly.
+		// this.top.$el.css("top", -this.top.$el.outerHeight());
 				
 		console.log("Initialized app.");
 	});
 
 	app.vent.on("sessions-button", _.bind(function() {
-		if(this.top.currentView==this.sessionListView && this.topShown) {
-			// in this case, treat it as a dismissal.
-			this.hideTop();
-		} else {
-			this.top.show(this.sessionListView);
-			this.showTop();
-		}
+		// if(this.top.currentView==this.sessionListView && this.topShown) {
+		// 	// in this case, treat it as a dismissal.
+		// 	this.hideTop();
+		// } else {
+		// 	this.top.show(this.sessionListView);
+		// 	this.showTop();
+		// }
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {

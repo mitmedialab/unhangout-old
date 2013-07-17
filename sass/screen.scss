@@ -55,6 +55,7 @@ body {
 }
 
 #main-right {
+	position: relative;
 /*	border: 1px solid green;*/
 	height: 100%;
 	background-color: #eeeeee;
@@ -297,7 +298,7 @@ body {
 		bottom: 40px;
 		top: 0px;
 		left: 0px;
-		right: 240px;
+		right: 0px;
 		position: absolute;
 		
 		overflow: auto;
@@ -308,7 +309,7 @@ body {
 			height: auto;
 			width: auto;
 
-			margin: 0px 300px 0px 0px;
+			margin: 0px 0px 0px 0px;
 
 			.chat-message {
 
