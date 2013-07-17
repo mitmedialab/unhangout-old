@@ -87,9 +87,14 @@ body {
 	
 .identity {
 	height: 40px;
+	width: 200px;
+
+	div {
+		float: right;
+	}
 }
 
- .username {
+ .username, .admin-button {
 	display: block;
 	font-size: 14px;
 	color: #999;

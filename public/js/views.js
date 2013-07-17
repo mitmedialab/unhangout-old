@@ -211,6 +211,26 @@ var UserView = Marionette.ItemView.extend({
 	}
 });
 
+var AdminButtonView = Backbone.Marionette.Layout.extend({
+	template: "#admin-button-template",
+
+	id: "admin-button",
+
+	events: {
+		'click #start-all':'startAll',
+		'click #set-embed':'setEmbed'
+	},
+
+	startAll: function() {
+		console.log("start all!");
+	},
+
+	setEmbed: function() {
+		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
+		sock.send(JSON.stringify(message));
+	}
+});
+
 var UserColumnLayout = Backbone.Marionette.Layout.extend({
 	template: "#user-column-layout-template",
 
@@ -313,19 +333,7 @@ var AdminView = Marionette.ItemView.extend({
 		startAll: '#start-all'
 	},
 
-	events: {
-		'click #start-all':'startAll',
-		'click #set-embed':'setEmbed'
-	},
 
-	startAll: function() {
-		console.log("start all!");
-	},
-
-	setEmbed: function() {
-		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
-		sock.send(JSON.stringify(message));
-	}
 });
 
 var VideoEmbedView = Marionette.ItemView.extend({

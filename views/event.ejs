@@ -140,6 +140,18 @@
 			</div>
 			<div id="player" class="player"></div>
 			</script>
+
+			<script type="text/template" id="admin-button-template">
+				<div class="dropdown">
+					<a class="dropdown-toggle admin-button" data-toggle="dropdown" href="#">admin</a>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<li role="presentation">
+							<a role="menuitem" tabindex="-1" id="set-embed">set embed</a>
+							<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>
+						</li>
+					</ul>
+				</div>
+			</script>
 </head>
 <body>
 	<% if(user.isAdmin()) {%>
@@ -172,6 +184,7 @@
 							</ul>
 						</div>
 					<% } %>
+					<div id="admin-region"></div>
 					</div>
 				</div><!--/.nav-collapse -->
 			</div>

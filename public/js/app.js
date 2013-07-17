@@ -48,7 +48,8 @@ $(document).ready(function() {
 		// top: '#top',
 		right: '#main-right',
 		main: '#main-left',
-		global: '#global'
+		global: '#global',
+		admin: '#admin-region'
 	});
 	
 	app.addInitializer(function(options) {
@@ -68,11 +69,17 @@ $(document).ready(function() {
 		this.userColumnLayout = new UserColumnLayout({users: users});
 		this.chatView = new ChatView({collection:messages});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
-		
+
 		// this.top.show(this.sessionListView);
 		this.right.show(this.chatView);
 		this.main.show(this.sessionListView);
 		
+		if(IS_ADMIN) {
+			this.adminButtonView = new AdminButtonView();
+			this.admin.show(this.adminButtonView);
+		}
+
+
 		// set up some extra methods for managing show/hide of top region.
 		// this.topShown = false;
 		
