@@ -92,6 +92,10 @@ body {
 	& > div {
 		float: right;
 	}
+
+	.admin-button:hover, .admin-button:visited, .admin-button:active {
+		color: orange;
+	}
 }
 
  .username, .admin-button {

@@ -247,7 +247,6 @@ var UserColumnLayout = Backbone.Marionette.Layout.extend({
 	id: "user-column",
 
 	userListView: null,
-	adminControlsView: null,
 
 	regions: {
 		userList: "#user-list",
@@ -256,15 +255,10 @@ var UserColumnLayout = Backbone.Marionette.Layout.extend({
 
 	initialize: function() {
 		this.userListView = new UserListView({collection:this.options.users});
-		this.adminControls = new AdminView();
 	},
 
 	onRender: function() {
 		this.userList.show(this.userListView);
-
-		if(IS_ADMIN) {
-			this.footer.show(this.adminControls);
-		}
 	},
 });
 
@@ -332,18 +326,6 @@ var ChatView = Marionette.CompositeView.extend({
 		e.preventDefault();
 		return false;
 	}
-});
-
-var AdminView = Marionette.ItemView.extend({
-	template: '#admin-controls-template',
-
-	id: 'admin-controls',
-
-	ui: {
-		startAll: '#start-all'
-	},
-
-
 });
 
 var VideoEmbedView = Marionette.ItemView.extend({
