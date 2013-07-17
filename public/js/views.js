@@ -366,7 +366,7 @@ var VideoEmbedView = Marionette.ItemView.extend({
 		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
 	},
 
-	onDomRefresh: function() {
+	onShow: function() {
 		if(_.isNull(this.model.get("youtubeEmbed")) || this.model.get("youtubeEmbed").length!=11) {
 			this.$el.hide();
 		} else {
