@@ -176,7 +176,7 @@ body {
 	}
 
 	.full-size-container {
-		top: 150px;
+		top: 175px;
 	}
 }
 
@@ -190,6 +190,12 @@ body {
 	box-sizing: border-box;
 	
 	border: 2px solid $primary;
+
+	width: 200px;
+
+	float: left;
+
+	margin-left: 20px;
 
 	.label {
 		margin-left: 5px;
@@ -351,7 +357,7 @@ body {
 		padding-left: 5px;
 
 		bottom: 40px;
-		
+		margin-left: 0px;
 		
 		#chat-list-container {
 			overflow: auto;

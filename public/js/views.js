@@ -1,7 +1,7 @@
 
 var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
-	className: 'session span3',
+	className: 'session',
 	firstUserView: null,
 	mini: true,
 
