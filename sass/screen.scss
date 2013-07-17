@@ -63,6 +63,7 @@ body {
 
 #main-left {
 	height: 100%;
+	position: relative;
 }
 
 #main {
@@ -124,6 +125,17 @@ body {
 
 	p {
 		margin-left: 20px;
+	}
+
+	.header {
+		margin-top: 10px;
+		height: 140px;
+		position: aboslute;
+		top: 0px;
+	}
+
+	.full-size-container {
+		top: 150px;
 	}
 }
 
@@ -287,6 +299,16 @@ body {
 	}
 }
 
+.full-size-container {
+		top: 0px;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		position: absolute;
+		
+		overflow: auto;	
+}
+
 #chat {
 	input {
 		position: absolute;
@@ -296,12 +318,6 @@ body {
 	#chat-container {
 		
 		bottom: 40px;
-		top: 0px;
-		left: 0px;
-		right: 0px;
-		position: absolute;
-		
-		overflow: auto;
 		
 		
 		#chat-list-container {
