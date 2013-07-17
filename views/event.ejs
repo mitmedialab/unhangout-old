@@ -146,13 +146,28 @@
 					<a class="dropdown-toggle admin-button" data-toggle="dropdown" href="#">admin</a>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 						<li role="presentation">
-							<a role="menuitem" tabindex="-1" id="set-embed">set embed</a>
+							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">embed</a>
 							<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>
 						</li>
 					</ul>
 				</div>
+
 			</script>
-</head>
+
+			<script type="text/template" id="dialogs-template">
+				<div id="embed-modal" class="modal hide fade">
+					<div class="modal-header">
+						<h3>SET EMBED ID</h3>
+					</div>
+					<div class="modal-body">
+						<label for="youtube_id">Youtube Id</label><input type="text" name="youtube_id" value="" id="youtube_id">
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn btn-primary" id="set-embed">Set Embed</a>
+					</div>
+				</div>
+			</script>
+		</head>
 <body>
 	<% if(user.isAdmin()) {%>
 		<div class="admin-header">
@@ -193,8 +208,10 @@
 
 	<div class="container">
 <div id="app">
+
 	<div class="row">
 	<div id="global"></div>
+	<div id="dialogs"></div>
 	</div>
 	
 	<!-- Not totally sure why this row needs to be fluid for a 9+3 to fit, but it seems to. -->

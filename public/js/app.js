@@ -49,6 +49,7 @@ $(document).ready(function() {
 		right: '#main-right',
 		main: '#main-left',
 		global: '#global',
+		dialogs: '#dialogs',
 		admin: '#admin-region'
 	});
 	
@@ -69,10 +70,12 @@ $(document).ready(function() {
 		this.userColumnLayout = new UserColumnLayout({users: users});
 		this.chatView = new ChatView({collection:messages});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
+		this.dialogView = new DialogView();
 
 		// this.top.show(this.sessionListView);
 		this.right.show(this.chatView);
 		this.main.show(this.sessionListView);
+		this.dialogs.show(this.dialogView);
 		
 		if(IS_ADMIN) {
 			this.adminButtonView = new AdminButtonView();

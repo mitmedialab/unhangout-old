@@ -84,7 +84,7 @@ body {
   width: 200px;
 }
 /* line 92, ../../sass/screen.scss */
-.identity div {
+.identity > div {
   float: right;
 }
 

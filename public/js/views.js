@@ -211,23 +211,33 @@ var UserView = Marionette.ItemView.extend({
 	}
 });
 
+var DialogView = Backbone.Marionette.Layout.extend({
+	template: "#dialogs-template",
+
+	id: "dialogs",
+
+	events: {
+		'click #set-embed':'setEmbed'
+	},
+
+	setEmbed: function() {
+		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
+		sock.send(JSON.stringify(message));
+	}
+
+})
+
 var AdminButtonView = Backbone.Marionette.Layout.extend({
 	template: "#admin-button-template",
 
 	id: "admin-button",
 
 	events: {
-		'click #start-all':'startAll',
-		'click #set-embed':'setEmbed'
+		'click #start-all':'startAll'
 	},
 
 	startAll: function() {
 		console.log("start all!");
-	},
-
-	setEmbed: function() {
-		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
-		sock.send(JSON.stringify(message));
 	}
 });
 
