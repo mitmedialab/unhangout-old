@@ -63,17 +63,6 @@
 			<div class="admin">
 			<div class="start btn btn-warning">START</div>
 			</div>
-			
-			<div class="modal hide fade started-modal">
-			  <div class="modal-header">
-			    <h3>'{{=title}}' IS STARTING</h3>
-			  </div>
-			  <div class="modal-body">
-				<p>It is time to join your session!</p>
-				<a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
-			  </div>
-			</div>
-			
 			</script>
 			
 			<script type="text/template" id="session-list-template">
@@ -153,7 +142,16 @@
 					<div class="modal-footer">
 						<a href="#" class="btn btn-primary" id="set-embed">Set Embed</a>
 					</div>
-				</div>				
+				</div>
+				<div class="modal hide fade started-modal">
+					<div class="modal-header">
+					<h3></h3>
+					</div>
+					<div class="modal-body">
+						<p>It is time to join your session!</p>
+						<a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
+					</div>
+				</div>	
 			</script>
 		</head>
 <body>

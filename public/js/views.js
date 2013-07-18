@@ -8,7 +8,6 @@ var SessionView = Marionette.ItemView.extend({
 	ui: {
 		attend: '.attend',
 		start:'.start',
-		joinDialog:'.started-modal',
 		attending: '.attending',
 		empty: '.empty',
 		description: '.description'
@@ -17,7 +16,6 @@ var SessionView = Marionette.ItemView.extend({
 	events: {
 		'click .attend':'attend',
 		'click .start':'start',
-		'click a.join-chosen-session':'joined',
 		'click h3':'headerClick'
 	},
 
@@ -41,8 +39,10 @@ var SessionView = Marionette.ItemView.extend({
 			}
 			
 			console.log("got start message!");
-			this.ui.joinDialog.find("a").attr("href", "/session/" + this.model.get("session-key"));
-			this.ui.joinDialog.modal('show');
+			$(".started-modal").find("a").attr("href", "/session/" + this.model.get("session-key"));
+			$(".started-modal").find("h3").text(this.model.get("title") + " IS STARTING");
+			$(".started-modal").modal('show');
+
 			setTimeout(_.bind(function() {
 				console.log("running hide");
 				$(".modal.in").modal("hide");
@@ -99,29 +99,6 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.description.show();
 			this.ui.empty.show();
 			this.ui.attending.show();
-
-			// if(this.model.numAttendees()==this.model.MAX_ATTENDEES) {
-			// 	this.$el.find(".full").show();
-			// } else {
-			// 	this.$el.find(".full").hide();			
-			// }
-
-			// if(!_.isNull(this.firstUserView)) {
-			// 	if(!_.isUndefined(this.firstUserView.model.get("picture"))) {
-			// 		this.$el.find(".first").append(this.firstUserView.render().el);
-			// 	}
-			
-			// 	var count = 0;
-			// 	this.$el.find(".attending").children().each(function(index, el) {
-			// 		if(count < numAttendees) {
-			// 			$(el).addClass("selected");
-			// 		} else {
-			// 			$(el).removeClass("selected");
-			// 		}
-				
-			// 		count ++;
-			// 	});
-			// }
 		}
 
 		var numAttendees = this.model.numAttendees();
@@ -159,12 +136,6 @@ var SessionView = Marionette.ItemView.extend({
 	start: function() {
 		sock.send(JSON.stringify({type:"start", args:{id:this.model.id}}));
 	},
-
-	headerClick: function() {
-		// for now disabling the macro style view entirely
-		// this.mini = !this.mini;
-		// this.render();
-	}
 });
 
 var SessionListView = Backbone.Marionette.CollectionView.extend({
