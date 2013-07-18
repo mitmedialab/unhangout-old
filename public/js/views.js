@@ -297,13 +297,31 @@ var ChatView = Marionette.CompositeView.extend({
 
 	chat: function(e) {
 		var msg = this.ui.chatInput.val();
-		sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
+		sock.send(JSON.stringify({type:"chat", args:{text: this.linkify(msg)}}));
 		this.ui.chatInput.val("");
 		e.preventDefault();
 		return false;
-	}
-});
+	},
 
+	linkify: function(msg) {
+		var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+    	//URLs starting with http://, https://, or ftp://
+    	replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    	replacedText = msg.replace(replacePattern1, "<a href='$1' target='_new'>$1</a>");
+
+    	//URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    	replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    	replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_new'>$2</a>");
+
+    	//Change email addresses to mailto:: links.
+    	replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
+    	replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
+
+    	return replacedText;
+	},
+});
+http://www.google.co.in/
 var AdminView = Marionette.ItemView.extend({
 	template: '#admin-controls-template',
 
