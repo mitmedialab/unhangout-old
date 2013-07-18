@@ -136,11 +136,13 @@ $(document).ready(function() {
 			videoShown = false;
 
 			this.main.$el.css("top", 0);
+			this.sessionListView.updateDisplay();
 		} else {
 			this.top.show(this.youtubeEmbedView);
 			videoShown = true;
 
 			this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+			this.sessionListView.updateDisplay();
 			this.top.$el.css("z-index", 50);
 		}
 	}, app));

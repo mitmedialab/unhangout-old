@@ -75,10 +75,10 @@ body {
 	z-index: 10;
 
 	right: 20px;
+
 }
 
 #main-left {
-	height: 100%;
 	position: absolute;
 
 	box-sizing: border-box;
@@ -90,6 +90,8 @@ body {
 
 	bottom: 0px;
 	top: 0px;
+
+	overflow: hidden;
 }
 
 #main {

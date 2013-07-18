@@ -181,6 +181,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 	initialize: function() {
 		console.log("INITIALIZE");
+		setTimeout(_.bind(this.updateDisplay, this), 100);
 	},
 
 	previous: function() {
@@ -198,13 +199,31 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		this.render();
 	},
 
-	onRender: function() {
-		console.log("ON RENDER");
-		var template = _.template($("#pagination-template").text(), this.collection);
+	updateDisplay: function() {
+		// figure out how tall a session is.
+		var exampleSessionHeight = this.$el.find(".session").first().outerHeight()
 
+		// figure out how many we can fit safely, rounding down
+		var height = this.$el.parent().innerHeight() - 75;
+
+		var sessionsPerPage = Math.floor(height / exampleSessionHeight) * 2;
+
+		console.log("SETTING SESSIONS PER PAGE: " + sessionsPerPage);
+
+		if(this.collection.perPage != sessionsPerPage) {
+			this.collection.howManyPer(sessionsPerPage);
+			this.render();
+		}
+	},
+
+	onRender: function() {
 		this.$el.find(".footer").remove();
-		this.$el.append(template);
-		this.delegateEvents();
+		if(this.collection.info().pageSet.length >1) {
+			var template = _.template($("#pagination-template").text(), this.collection);
+
+			this.$el.append(template);
+			this.delegateEvents();
+		}
 	}
 })
 
