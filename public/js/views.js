@@ -47,11 +47,9 @@ var SessionView = Marionette.ItemView.extend({
 				console.log("running hide");
 				$(".modal.in").modal("hide");
 				// this.ui.joinDialog.modal('hide');
-			}, this), 10000);
-			
+			}, this), 10000);		
 		}, this);		
 	},
-	
 
 	onRender: function() {
 		// things to do here:

@@ -139,6 +139,24 @@ $(document).ready(function() {
 		$("#video-nav .label").addClass("hide");
 	}, app));
 
+	app.vent.on("show-bar", _.bind(function() {
+
+		this.bar.show(new SessionLiveView());
+		$(this.bar.el).show();
+
+		$("#top-left, #main-right, #main-left").addClass("bar");
+
+		// 30 minutes later hide the bar(?)
+		setTimeout(function() {
+			app.vent.trigger("hide-bar");
+		}, 60*1000*30);
+	}, app));
+
+	app.vent.on("hide-bar", _.bind(function() {
+
+		$("#top-left, #main-right, #main-left").removeClass("bar");
+	}, app));
+
 	app.start();
 
 	if(curEvent.hasEmbed()) {
@@ -237,7 +255,9 @@ $(document).ready(function() {
 					session.set("session-key", msg.args.key);
 					session.start();
 				}, timeout);
-				
+
+				app.vent.trigger("show-bar");
+
 				break;
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));

@@ -474,7 +474,25 @@ body {
 	right: 0px;
 
 	height: 30px;
-	background-color: #555;
+	background-color: #efefef;
+
+	padding: 5px;
+
+	border-right: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+
+	z-index: 500;
+
+	div {
+		float: left;
+	}
+	.btn {
+		float: left;
+		margin-left: 15px;
+	}
+
+	box-shadow: 3px 3px 3px #aaa;
 }
 
 /*---------------------------- INDEX STYLES ---------------------------*/
