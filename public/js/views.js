@@ -182,6 +182,10 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 	initialize: function() {
 		console.log("INITIALIZE");
 		setTimeout(_.bind(this.updateDisplay, this), 100);
+
+		$(window).resize(_.bind(function() {
+			this.updateDisplay();
+		}, this));
 	},
 
 	previous: function() {
