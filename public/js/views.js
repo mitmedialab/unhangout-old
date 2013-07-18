@@ -173,21 +173,24 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 	itemViewContainer: '#session-list-container',
 	id: "session-list",
 
+	events: {
+		'click #prev':"previous",
+		'click #next':"next"
+	},
+
 	initialize: function() {
 		console.log("INITIALIZE");
 	},
 
-	// templateHelpers: {
-	// 	pagination: function() {
-	// 		this.collection.info();
-	// 	}
-	// }
+	previous: function() {
+		this.collection.prevPage();
+		this.render();
+	},
 
-	// serializeData: function() {
-	// 	console.log("SERIALIZE DATA!");
-
-	// 	return Backbone.Marionette.CompositeView.prototype.serializeData.call(this);
-	// }
+	next: function() {
+		this.collection.nextPage();
+		this.render();
+	},
 
 	onRender: function() {
 		console.log("ON RENDER");
@@ -195,6 +198,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 		this.$el.find(".footer").remove();
 		this.$el.append(template);
+		this.delegateEvents();
 	}
 })
 
