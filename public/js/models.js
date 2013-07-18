@@ -172,6 +172,18 @@ models.SessionList = Backbone.Collection.extend({
 	}
 });
 
+models.PaginatedSessionList = Backbone.Paginator.clientPager.extend({
+	model:models.Session,
+
+	paginator_ui: {
+		firstPage: 1,
+
+		currentPage: 1,
+		perPage: 6,
+		totalPages: 10,
+		pagesInRange: 4
+	}
+});
 
 models.User = Backbone.Model.extend({
 

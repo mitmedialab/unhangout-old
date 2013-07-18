@@ -171,20 +171,7 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 	template: "#session-list-template",
 	itemView: SessionView,
 	itemViewContainer: '#session-list-container',
-	id: "session-list",
-
-	initialize: function() {
-		this.listenTo(this.collection, 'all', this.update, this);
-	},
-
-	onRender: function() {
-		this.update();
-	},
-
-	update: function() {
-		// ?? don't think we need this.
-		console.log("update");
-	},
+	id: "session-list"
 })
 
 var UserView = Marionette.ItemView.extend({

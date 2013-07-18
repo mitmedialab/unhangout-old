@@ -67,7 +67,11 @@ $(document).ready(function() {
 			this.vent.trigger("youtube-ready");
 	    }, this);
 		
-		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
+	    this.paginatedSessions = new models.PaginatedSessionList(curEvent.get("sessions").models);
+	    this.paginatedSessions.bootstrap();
+
+
+		this.sessionListView = new SessionListView({collection: this.paginatedSessions});
 		this.chatView = new ChatLayout({messages:messages, users:users});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		this.dialogView = new DialogView();
