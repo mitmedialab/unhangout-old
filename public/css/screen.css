@@ -62,10 +62,10 @@ body {
   height: 100%;
   box-sizing: border-box;
   background-color: #f5f5f5;
-  margin-left: 0px;
   padding-left: 10px;
   z-index: 10;
   right: 20px;
+  left: 440px;
 }
 
 /* line 81, ../../sass/screen.scss */
