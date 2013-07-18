@@ -374,9 +374,10 @@ var VideoEmbedView = Marionette.ItemView.extend({
 			this.$el.draggable();
 			// do the actual YT embed code here
 			this.player = new YT.Player('player', {
-				// height: this.dimensions['small'].height,
+				height: 200,
 				// width: this.dimensions['small'].width,
 				videoId: this.model.get("youtubeEmbed"),
+				controls: 0,
 				events: {
 					"onReady": function(args) {
 						console.log("video ready!");

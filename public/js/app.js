@@ -48,6 +48,7 @@ $(document).ready(function() {
 		// top: '#top',
 		right: '#main-right',
 		main: '#main-left',
+		top: '#top-left',
 		global: '#global',
 		dialogs: '#dialogs',
 		admin: '#admin-region'
@@ -122,8 +123,22 @@ $(document).ready(function() {
 		this.main.show(this.sessionListView);
 	}, app));
 
+	var videoShown = false;
 	app.vent.on("video-nav", _.bind(function() {
-		this.main.show(this.youtubeEmbedView);
+		if(videoShown) {
+			this.top.$el.css("z-index", -10);
+
+			this.top.reset();
+			videoShown = false;
+
+			this.main.$el.css("top", 0);
+		} else {
+			this.top.show(this.youtubeEmbedView);
+			videoShown = true;
+
+			this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+			this.top.$el.css("z-index", 50);
+		}
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {
