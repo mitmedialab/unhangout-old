@@ -84,13 +84,15 @@
 
 			<script type="text/template" id="pagination-template">
 			<div class="footer">
+			<div id="prev">prev</div>
 			{{ _.each(info().pageSet, function(page) { }}
 				{{ if(page==currentPage) { }}
-					<div class="active">{{= page }}</div>
+					<div class="active page">{{= page }}</div>
 				{{ } else { }}
-					<div>{{= page }}</div>
+					<div class="page">{{= page }}</div>
 				{{ } }}
 			{{ }) }}
+			<div id="next">next</div>
 			</div>
 			</script>
 			

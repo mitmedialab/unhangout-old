@@ -181,6 +181,8 @@ body {
 }
 
 #session-list {	
+	padding-top: 10px;
+
 	ul, li {
 		margin: 0px;
 	}
@@ -191,6 +193,34 @@ body {
 
 	.full-size-container {
 		top: 10px;
+	}
+
+	.footer {
+		margin-top: 0px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 15px;
+		width: 200px;
+
+		div {
+			float: left;
+			color: black;
+				padding: 5px;
+
+			&:hover {
+				cursor: pointer;
+				background-color: #ddd;
+			}
+
+			&.active {
+				border: 1px solid #aaa;
+			}
+
+			&.page {
+				margin-left: 5px;
+				margin-right: 5px;
+			}
+		}
 	}
 }
 
