@@ -165,7 +165,7 @@ $(document).ready(function() {
 	app.start();
 	app.vent.trigger("sessions-nav");
 
-	if(curEvent.get("youtubeEmbed").length > 0) {
+	if(curEvent.has("youtubeEmbed") && curEvent.get("youtubeEmbed").length > 0) {
 		app.vent.trigger("video-live");
 	}
 
