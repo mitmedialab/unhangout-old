@@ -137,6 +137,7 @@ $(document).ready(function() {
 
 			this.main.$el.css("top", 0);
 			this.sessionListView.updateDisplay();
+			$("#video-nav").removeClass("active");
 		} else {
 			this.top.show(this.youtubeEmbedView);
 			videoShown = true;
@@ -144,6 +145,7 @@ $(document).ready(function() {
 			this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
 			this.sessionListView.updateDisplay();
 			this.top.$el.css("z-index", 50);
+			$("#video-nav").addClass("active");
 		}
 	}, app));
 	

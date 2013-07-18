@@ -125,6 +125,12 @@ body {
 		left: -70px !important;
 	}
 }
+
+.nav {
+	li.active > a{
+		background-color: #444 !important;
+	}
+}
 	
 .identity {
 	height: 40px;
