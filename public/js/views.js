@@ -207,6 +207,10 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		// figure out how tall a session is.
 		var exampleSessionHeight = this.$el.find(".session").first().outerHeight()
 
+		if(exampleSessionHeight< 10) {
+			return;
+		}
+
 		// figure out how many we can fit safely, rounding down
 		var height = this.$el.parent().innerHeight() - 75;
 
