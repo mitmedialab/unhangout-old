@@ -12,6 +12,7 @@
 	// fake it and expect the client to understand how to deal with things.
 	var _ = require('underscore')._,
 	    Backbone = require('backbone');
+
   } else {
     models = this.models = {};
 
@@ -21,6 +22,13 @@
 	_ = window._;
   }
 
+// this is a stupid little shim to deal with not having the pagination module working.
+// there should be some way to include it here, but I can't see to work it out.
+if(server) {
+    Backbone.Paginator = {};
+
+    Backbone.Paginator.clientPager = Backbone.Collection;
+}
     
 models.Event = Backbone.Model.extend({
 	idRoot: "event",

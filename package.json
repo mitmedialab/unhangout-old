@@ -30,6 +30,7 @@
 	"underscore":  "*",
 	"node-uuid" :  "*",
 	"backbone"  :  "*",
+  "backbone.paginator":"https://github.com/backbone-paginator/backbone.paginator/tarball/master",
 	"ejs"       :  "*",
 	"async"     :  "*",
 	"passport"  :  "*",
