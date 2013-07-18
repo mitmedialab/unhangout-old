@@ -85,40 +85,6 @@ $(document).ready(function() {
 			this.adminButtonView = new AdminButtonView();
 			this.admin.show(this.adminButtonView);
 		}
-
-
-		// set up some extra methods for managing show/hide of top region.
-		// this.topShown = false;
-		
-		// this.hideTop = _.bind(function() {
-		// 	this.top.$el.animate({
-		// 		top: -this.top.$el.outerHeight(),
-		// 	}, 500, "swing", _.bind(function() {
-		// 			this.topShown = false;
-		// 		}, this));
-				
-		// 	this.main.$el.find("#chat-container").animate({
-		// 		top: 0
-		// 	}, 500, "swing")
-				
-		// }, this);
-		
-		// this.showTop = _.bind(function() {
-		// 	this.top.$el.animate({
-		// 		top: 0,
-		// 	}, 500, "swing", _.bind(function() {
-		// 		this.topShown = true;
-		// 	}, this));
-			
-		// 	// hardcoded a bit, but we don't use main for anything else right now.
-		// 	this.main.$el.find("#chat-container").animate({
-		// 		top: this.top.$el.outerHeight()
-		// 	}, 500, "swing")
-			
-		// }, this);
-				
-		// // start sessions open, but triggering it properly.
-		// this.top.$el.css("top", -this.top.$el.outerHeight());
 				
 		console.log("Initialized app.");
 	});
@@ -129,23 +95,29 @@ $(document).ready(function() {
 
 	var videoShown = false;
 	app.vent.on("video-nav", _.bind(function() {
-		if(videoShown) {
-			this.top.$el.css("z-index", -10);
+		if(curEvent.hasEmbed()) {
+			$(".nav .active").removeClass("active");
+	
+			if(videoShown) {
+				this.top.$el.css("z-index", -10);
 
-			this.top.reset();
-			videoShown = false;
+				this.top.reset();
+				videoShown = false;
 
-			this.main.$el.css("top", 0);
-			this.sessionListView.updateDisplay();
-			$("#video-nav").removeClass("active");
+				this.main.$el.css("top", 0);
+				this.sessionListView.updateDisplay();
+				$("#video-nav").removeClass("active");
+			} else {
+				this.top.show(this.youtubeEmbedView);
+				videoShown = true;
+
+				this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+				this.sessionListView.updateDisplay();
+				this.top.$el.css("z-index", 50);
+				$("#video-nav").addClass("active");
+			}
 		} else {
-			this.top.show(this.youtubeEmbedView);
-			videoShown = true;
-
-			this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
-			this.sessionListView.updateDisplay();
-			this.top.$el.css("z-index", 50);
-			$("#video-nav").addClass("active");
+			console.log("Ignoring video click; no video available.");
 		}
 	}, app));
 	
@@ -163,16 +135,12 @@ $(document).ready(function() {
 	}, app));
 
 	app.start();
-	app.vent.trigger("sessions-nav");
 
-	if(curEvent.has("youtubeEmbed") && curEvent.get("youtubeEmbed").length > 0) {
+	if(curEvent.hasEmbed()) {
 		app.vent.trigger("video-live");
 	}
 
-	$("#video-nav, #sessions-nav").click(function() {
-		$(".nav .active").removeClass("active");
-		$(this).addClass("active");
-		console.log("triggering: " + $(this).attr("id"));
+	$("#video-nav").click(function() {
 		app.vent.trigger($(this).attr("id"));
 	})
 	
@@ -279,14 +247,7 @@ $(document).ready(function() {
 				break;
 
 			case "attend-ack":
-				setTimeout(function() {
-					app.vent.trigger("sessions-button");
-					$("#sessions-nav").tooltip("show");
-					setTimeout(function() {
-						$("#sessions-nav").tooltip("hide");
-					}, 5000);
-
-				}, 500);
+				console.log("attend-ack");
 				break;
 		}
 	};

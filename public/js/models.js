@@ -100,6 +100,10 @@ models.Event = Backbone.Model.extend({
 	
 	setEmbed: function(ytId) {
 		this.set("youtubeEmbed", ytId);
+	},
+
+	hasEmbed: function() {
+		return this.has("youtubeEmbed") && this.get("youtubeEmbed").length>0;
 	}
 });
 
