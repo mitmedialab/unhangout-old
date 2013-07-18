@@ -174,8 +174,9 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 	id: "session-list",
 
 	events: {
-		'click #prev':"previous",
-		'click #next':"next"
+		'click #prev':'previous',
+		'click #next':'next',
+		'click .page':'goto'
 	},
 
 	initialize: function() {
@@ -189,6 +190,11 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 	next: function() {
 		this.collection.nextPage();
+		this.render();
+	},
+
+	goto: function(e) {
+		this.collection.goTo(parseInt($(e.target).text()));
 		this.render();
 	},
 
