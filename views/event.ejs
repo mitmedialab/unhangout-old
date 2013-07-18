@@ -78,6 +78,20 @@
 			
 			<script type="text/template" id="session-list-template">
 				<ul id="session-list-container" class="full-size-container"></ul>
+				<div class="footer">
+				</div>
+			</script>
+
+			<script type="text/template" id="pagination-template">
+			<div class="footer">
+			{{ _.each(info().pageSet, function(page) { }}
+				{{ if(page==currentPage) { }}
+					<div class="active">{{= page }}</div>
+				{{ } else { }}
+					<div>{{= page }}</div>
+				{{ } }}
+			{{ }) }}
+			</div>
 			</script>
 			
 			<script type="text/template" id="user-template">

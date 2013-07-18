@@ -167,11 +167,35 @@ var SessionView = Marionette.ItemView.extend({
 	}
 });
 
-var SessionListView = Backbone.Marionette.CompositeView.extend({
+var SessionListView = Backbone.Marionette.CollectionView.extend({
 	template: "#session-list-template",
 	itemView: SessionView,
 	itemViewContainer: '#session-list-container',
-	id: "session-list"
+	id: "session-list",
+
+	initialize: function() {
+		console.log("INITIALIZE");
+	},
+
+	// templateHelpers: {
+	// 	pagination: function() {
+	// 		this.collection.info();
+	// 	}
+	// }
+
+	// serializeData: function() {
+	// 	console.log("SERIALIZE DATA!");
+
+	// 	return Backbone.Marionette.CompositeView.prototype.serializeData.call(this);
+	// }
+
+	onRender: function() {
+		console.log("ON RENDER");
+		var template = _.template($("#pagination-template").text(), this.collection);
+
+		this.$el.find(".footer").remove();
+		this.$el.append(template);
+	}
 })
 
 var UserView = Marionette.ItemView.extend({
@@ -250,25 +274,6 @@ var UserColumnLayout = Backbone.Marionette.Layout.extend({
 	onRender: function() {
 		this.userList.show(this.userListView);
 	},
-});
-
-var SessionListView = Backbone.Marionette.CompositeView.extend({
-	template: "#session-list-template",
-	itemView: SessionView,
-	itemViewContainer: '#session-list-container',
-	id: "session-list",
-	
-	initialize: function() {
-		this.listenTo(this.collection, 'all', this.update, this);
-	},
-	
-	onRender: function() {
-		this.update();
-	},
-	
-	update: function() {
-		// ?? don't think we need this.
-	}
 });
 
 var UserListView = Backbone.Marionette.CompositeView.extend({
