@@ -109,7 +109,8 @@ body {
 	right: 0px;
 	bottom: 0px;
 
-	overflow: hidden;
+
+	overflow-x: visible;
 
 	ul {
 		margin: 0px;
@@ -394,12 +395,12 @@ body {
 		left: 0px;
 		right: 0px;
 		bottom: 0px;
-		position: absolute;
-		
-		overflow: auto;	
+		position: absolute;		
 }
 
 #chat {
+	overflow-y: hidden;
+
 	input {
 		position: absolute;
 		bottom: 0px;
@@ -414,7 +415,6 @@ body {
 		margin-left: 0px;
 		
 		#chat-list-container {
-			overflow: auto;
 			height: auto;
 			width: auto;
 
