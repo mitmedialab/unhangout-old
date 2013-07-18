@@ -356,6 +356,11 @@ var ChatView = Marionette.CompositeView.extend({
 	}
 });
 
+var SessionLiveView = Marionette.ItemView.extend({
+	template: "#session-live-bar-template",
+	id: "session-live-bar"
+});
+
 var VideoEmbedView = Marionette.ItemView.extend({
 	template: '#video-embed-template',
 	id: 'video-embed',

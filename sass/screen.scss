@@ -61,6 +61,10 @@ body {
 	box-shadow: 3px -5px 3px #aaa;
 	border-right: 1px solid #aaa;
 	box-sizing: border-box;
+
+	&.bar {
+		top: 30px;
+	}
 }
 
 #main-right {
@@ -76,6 +80,9 @@ body {
 	right: 20px;
 	left: 440px;
 
+	&.bar {
+		top: 30px;
+	}
 }
 
 #main-left {
@@ -92,6 +99,11 @@ body {
 	top: 0px;
 
 	overflow: hidden;
+
+	&.bar {
+		top: 30px;
+	}
+
 }
 
 #main {
@@ -454,6 +466,16 @@ body {
 	}
 }
 
+#bar {
+	position: absolute;
+	top: 0px;
+
+	left: 0px;
+	right: 0px;
+
+	height: 30px;
+	background-color: #555;
+}
 
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {

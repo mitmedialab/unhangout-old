@@ -51,7 +51,8 @@ $(document).ready(function() {
 		top: '#top-left',
 		global: '#global',
 		dialogs: '#dialogs',
-		admin: '#admin-region'
+		admin: '#admin-region',
+		bar:'#bar'
 	});
 	
 	app.addInitializer(function(options) {
@@ -80,6 +81,10 @@ $(document).ready(function() {
 		this.right.show(this.chatView);
 		this.main.show(this.sessionListView);
 		this.dialogs.show(this.dialogView);
+
+		// this is a little unorthodox, but not sure how else
+		// to do it.
+		$(this.bar.el).hide();
 		
 		if(IS_ADMIN) {
 			this.adminButtonView = new AdminButtonView();
