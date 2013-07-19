@@ -11,7 +11,9 @@
 	// put everything in exports and behave like a module. If it's on the client,
 	// fake it and expect the client to understand how to deal with things.
 	var _ = require('underscore')._,
-	    Backbone = require('backbone');
+	    Backbone = require('backbone'),
+	    sanitize = require('validator').sanitize;
+
   } else {
     models = this.models = {};
 
@@ -19,8 +21,16 @@
 	// Backbone isn't available in scope here. 
 	Backbone = window.Backbone;
 	_ = window._;
+	sanitize = window.sanitize;
   }
 
+// this is a stupid little shim to deal with not having the pagination module working.
+// there should be some way to include it here, but I can't see to work it out.
+if(server) {
+    Backbone.Paginator = {};
+
+    Backbone.Paginator.clientPager = Backbone.Collection;
+}
     
 models.Event = Backbone.Model.extend({
 	idRoot: "event",
@@ -92,6 +102,10 @@ models.Event = Backbone.Model.extend({
 	
 	setEmbed: function(ytId) {
 		this.set("youtubeEmbed", ytId);
+	},
+
+	hasEmbed: function() {
+		return this.has("youtubeEmbed") && this.get("youtubeEmbed").length>0;
 	}
 });
 
@@ -172,6 +186,18 @@ models.SessionList = Backbone.Collection.extend({
 	}
 });
 
+models.PaginatedSessionList = Backbone.Paginator.clientPager.extend({
+	model:models.Session,
+
+	paginator_ui: {
+		firstPage: 1,
+
+		currentPage: 1,
+		perPage: 6,
+		totalPages: 10,
+		pagesInRange: 4
+	}
+});
 
 models.User = Backbone.Model.extend({
 
@@ -225,6 +251,10 @@ models.ChatMessage = Backbone.Model.extend({
 	initialize: function() {
 		if(_.isUndefined(this.get("time"))) {
 			this.set("time", new Date().getTime());
+		}
+
+		if(this.has("text")) {
+			this.set("text", sanitize(this.get("text")).escape());
 		}
 	}
 });

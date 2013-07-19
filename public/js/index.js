@@ -2,7 +2,11 @@ $(document).on('ready', function() {
 
 	$("#about").hide();
 	$(".nav li").click(function() {
+		$(".active").removeClass("active");
+
 		var aEl = $(this).find("a");
+
+		$(this).addClass("active");
 
 		$(".section").hide();
 		$(aEl.attr("href")).show();

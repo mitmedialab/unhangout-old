@@ -61,3 +61,13 @@ describe("SESSION", function() {
 		})
 	});	
 });
+
+describe("CHATMESSAGE", function() {
+	describe("#new", function() {
+		it('should escape html in chat messages', function() {
+			var msg = new client_models.ChatMessage({text:"<h3>HEADER</h3>"});
+
+			msg.get("text").indexOf("<h3>").should.equal(-1);
+		});
+	});
+});

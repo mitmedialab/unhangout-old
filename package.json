@@ -36,6 +36,7 @@
 	"passport-google-oauth":"*",
 	"redis"     :  "*",
 	"connect-redis":"*",
+  "validator":"*",
 	
 	"moment"    : "*",
 	"googleapis": "*",

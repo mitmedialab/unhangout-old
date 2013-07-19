@@ -45,10 +45,13 @@ $(document).ready(function() {
 	app = new Backbone.Marionette.Application();
 	
 	app.addRegions({
-		top: '#top',
+		// top: '#top',
 		right: '#main-right',
 		main: '#main-left',
-		global: '#global'
+		top: '#top-left',
+		global: '#global',
+		dialogs: '#dialogs',
+		admin: '#admin-region'
 	});
 	
 	app.addInitializer(function(options) {
@@ -64,78 +67,82 @@ $(document).ready(function() {
 			this.vent.trigger("youtube-ready");
 	    }, this);
 		
-		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
-		this.userColumnLayout = new UserColumnLayout({users: users});
-		this.chatView = new ChatView({collection:messages});
+	    this.paginatedSessions = new models.PaginatedSessionList(curEvent.get("sessions").models);
+	    this.paginatedSessions.bootstrap();
+
+
+		this.sessionListView = new SessionListView({collection: this.paginatedSessions});
+		this.chatView = new ChatLayout({messages:messages, users:users});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
+		this.dialogView = new DialogView();
+
+		// this.top.show(this.sessionListView);
+		this.right.show(this.chatView);
+		this.main.show(this.sessionListView);
+		this.dialogs.show(this.dialogView);
 		
-		this.top.show(this.sessionListView);
-		this.right.show(this.userColumnLayout);
-		this.main.show(this.chatView);
-		
-		// set up some extra methods for managing show/hide of top region.
-		this.topShown = false;
-		
-		this.hideTop = _.bind(function() {
-			this.top.$el.animate({
-				top: -this.top.$el.outerHeight(),
-			}, 500, "swing", _.bind(function() {
-					this.topShown = false;
-				}, this));
-				
-			this.main.$el.find("#chat-container").animate({
-				top: 0
-			}, 500, "swing")
-				
-		}, this);
-		
-		this.showTop = _.bind(function() {
-			this.top.$el.animate({
-				top: 0,
-			}, 500, "swing", _.bind(function() {
-				this.topShown = true;
-			}, this));
-			
-			// hardcoded a bit, but we don't use main for anything else right now.
-			this.main.$el.find("#chat-container").animate({
-				top: this.top.$el.outerHeight()
-			}, 500, "swing")
-			
-		}, this);
-				
-		// start sessions open, but triggering it properly.
-		this.top.$el.css("top", -this.top.$el.outerHeight());
+		if(IS_ADMIN) {
+			this.adminButtonView = new AdminButtonView();
+			this.admin.show(this.adminButtonView);
+		}
 				
 		console.log("Initialized app.");
 	});
 
-	app.vent.on("sessions-button", _.bind(function() {
-		if(this.top.currentView==this.sessionListView && this.topShown) {
-			// in this case, treat it as a dismissal.
-			this.hideTop();
+	app.vent.on("sessions-nav", _.bind(function() {
+		this.main.show(this.sessionListView);
+	}, app));
+
+	var videoShown = false;
+	app.vent.on("video-nav", _.bind(function() {
+		if(curEvent.hasEmbed()) {
+			$(".nav .active").removeClass("active");
+	
+			if(videoShown) {
+				this.top.$el.css("z-index", -10);
+
+				this.top.reset();
+				videoShown = false;
+
+				this.main.$el.css("top", 0);
+				this.sessionListView.updateDisplay();
+				$("#video-nav").removeClass("active");
+			} else {
+				this.top.show(this.youtubeEmbedView);
+				videoShown = true;
+
+				this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+				this.sessionListView.updateDisplay();
+				this.top.$el.css("z-index", 50);
+				$("#video-nav").addClass("active");
+			}
 		} else {
-			this.top.show(this.sessionListView);
-			this.showTop();
+			console.log("Ignoring video click; no video available.");
 		}
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {
-		this.global.show(this.youtubeEmbedView);
+		console.log("YOUTUBE READY");
+		// this.global.show(this.youtubeEmbedView);
+	}, app));
+
+	app.vent.on("video-live", _.bind(function() {
+		$("#video-nav .label").removeClass("hide");
 	}, app));
 	
+	app.vent.on("video-off", _.bind(function() {
+		$("#video-nav .label").addClass("hide");
+	}, app));
+
 	app.start();
-	app.vent.trigger("sessions-button");
-	
-	$("#sessions-nav").click(function() {
-		console.log("CLICK");
-		if($(this).hasClass("active")) {
-			$(this).removeClass("active");
-		} else {
-			$(this).addClass("active");
-		}
-		
-		app.vent.trigger("sessions-button");
-	});
+
+	if(curEvent.hasEmbed()) {
+		app.vent.trigger("video-live");
+	}
+
+	$("#video-nav").click(function() {
+		app.vent.trigger($(this).attr("id"));
+	})
 	
 	console.log("Setup regions.");
 
@@ -197,6 +204,15 @@ $(document).ready(function() {
 			case "embed":
 				curEvent.setEmbed(msg.args.ytId);
 				console.log("added yt embed id");
+
+				if(msg.args.ytId.length > 0) {
+					// if it's a non-empty yt embed, show the live tag.
+					app.vent.trigger("video-live");
+				} else {
+					// if it's empty, hide the live tag.
+					app.vent.trigger("video-off");
+				}
+
 				break;
 				
 			case "start":
@@ -231,19 +247,13 @@ $(document).ready(function() {
 				break;
 
 			case "attend-ack":
-				setTimeout(function() {
-					app.vent.trigger("sessions-button");
-					$("#sessions-nav").tooltip("show");
-					setTimeout(function() {
-						$("#sessions-nav").tooltip("hide");
-					}, 5000);
-
-				}, 500);
+				console.log("attend-ack");
 				break;
 		}
 	};
 
 	sock.onclose = function() {
+		$("#msg-box-modal").modal('show');
 		console.log('close');
 	};
 });
