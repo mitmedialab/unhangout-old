@@ -17,7 +17,7 @@ node_modules
 
 .DS_Store
 
-# ignore conf.sh, so we can safely keep settings in there.
-conf.sh
+# ignore conf.json, so we can safely keep settings in there.
+conf.json
 
 .sass-cache

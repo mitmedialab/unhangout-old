@@ -11,7 +11,11 @@
   ],
   "scripts": {
     "start": "node ./bin/unhangout-server",
-    "test": "mocha"
+    "setup": "source conf.sh",
+    "test": "mocha",
+    "forever-start": "sudo forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o out.log -e err.log bin/unhangout-server",
+    "forever-stop": "sudo forever stop bin/unhangout-server",
+    "forever-list": "sudo forever list"
   },
   "main": "./lib/unhangout-server.js",
   "repository": {
@@ -32,6 +36,7 @@
 	"passport-google-oauth":"*",
 	"redis"     :  "*",
 	"connect-redis":"*",
+  "validator":"*",
 	
 	"moment"    : "*",
 	"googleapis": "*",

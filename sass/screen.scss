@@ -3,7 +3,7 @@
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
 
-$primary: #3d594a;
+$primary: #2F3732;
 $background: #c9c8c8;
 
 body {
@@ -38,30 +38,60 @@ body {
 	width: 940px;
 }
 
-#top {
+#top-left {
 	position: absolute;
-	padding-top: 30px;
+/*	padding-top: 30px;
 	padding-bottom: 60px;
 	padding-right: 30px;
-	
-	background-color: white;
-	box-shadow: 1px 1px 1px #bbb;
-	border: 1px solid #aaa;
-	z-index: 50;	
+*/	
 
-	width: 720px;
-	max-height: 400px;
-	overflow-y: scroll;
+	/*top: -250px;*/
+
+	background-color: white;
+	/*box-shadow: 1px 1px 1px #bbb;*/
+	/*border: 1px solid #aaa;*/
+	z-index: -10;
+
+	height: 210px;
+
+	/*width: 720px;*/
+	/*max-height: 400px;*/
+	/*overflow-y: scroll;*/
+
+	box-shadow: 3px -5px 3px #aaa;
+	border-right: 1px solid #aaa;
+	box-sizing: border-box;
 }
 
 #main-right {
-/*	border: 1px solid green;*/
+	position: absolute;
 	height: 100%;
-	background-color: #eeeeee;
+
+	box-sizing: border-box;
+	background-color: #f5f5f5;
+	padding-left: 10px;
+
+	z-index: 10;
+
+	right: 20px;
+	left: 440px;
+
 }
 
 #main-left {
-	height: 100%;
+	position: absolute;
+
+	box-sizing: border-box;
+
+	border-right: 1px solid #aaa;
+	box-shadow: 3px 3px 3px #aaa;
+
+	z-index: 20;
+
+	bottom: 0px;
+	top: 0px;
+
+	overflow: hidden;
 }
 
 #main {
@@ -70,12 +100,55 @@ body {
 /*	background-color: #eee;*/
 }
 
+#presence-gutter {
+	width: 45px;
+
+	position: absolute;
+	top: 0px;
+	padding: 5px;
+	right: 0px;
+	bottom: 0px;
+
+
+	overflow-x: visible;
+
+	ul {
+		margin: 0px;
+	}
+
+	border-left: 1px solid #aaa;
+	box-shadow: -3px 0px 3px #aaa;
+	background-color: white;
+
+	.tooltip-inner {
+		white-space: nowrap;
+	}
+
+	.tooltip {
+		left: -70px !important;
+	}
+}
+
+.nav {
+	li.active > a{
+		background-color: #444 !important;
+	}
+}
 	
 .identity {
 	height: 40px;
+	width: 200px;
+
+	& > div {
+		float: right;
+	}
+
+	.admin-button:hover, .admin-button:visited, .admin-button:active {
+		color: orange;
+	}
 }
 
- .username {
+ .username, .admin-button {
 	display: block;
 	font-size: 14px;
 	color: #999;
@@ -91,7 +164,9 @@ body {
 .user {
 	width: 40px;
 	height: 40px;
-	margin: 5px;
+	/*margin: 5px;*/
+
+	margin-top: 5px;
 	
 	border: 1px solid $background;
 /*	border-radius: 25px;*/
@@ -117,17 +192,70 @@ body {
 }
 
 #session-list {	
+	padding-top: 10px;
+
 	ul, li {
 		margin: 0px;
-	}	
+	}
+
+	p {
+		margin-left: 20px;
+	}
+
+	.full-size-container {
+		top: 10px;
+	}
+
+	.footer {
+		margin-top: 0px;
+		margin-left: auto;
+		margin-right: auto;
+		padding-left: 15px;
+		width: 200px;
+
+		div {
+			float: left;
+			color: black;
+				padding: 5px;
+
+			&:hover {
+				cursor: pointer;
+				background-color: #ddd;
+			}
+
+			&.active {
+				border: 1px solid #aaa;
+			}
+
+			&.page {
+				margin-left: 5px;
+				margin-right: 5px;
+			}
+		}
+	}
 }
 
 .session {
 	background-color: #e6e7e6;
 	position: relative;
 
-	margin-bottom: 50px;
+	padding-bottom: 30px;
+	margin-bottom: 20px;
+
+	box-sizing: border-box;
 	
+	border: 2px solid $primary;
+
+	width: 200px;
+
+	float: left;
+
+	margin-left: 20px;
+
+	.label {
+		margin-left: 5px;
+	}
+
 	h3 {
 		background-color: $primary;
 		color: white;
@@ -135,8 +263,10 @@ body {
 		
 		font-weight: normal;
 		font-size: 1.3em;
-		
-		padding: 0px 10px 0px 10px;
+
+		line-height: 20px;
+
+		padding: 10px 10px 5px 10px;
 		
 		i {
 			margin-right: 5px;
@@ -145,7 +275,8 @@ body {
 		right: 0px;
 		left: 0px;
 		
-		height: 40px;
+		/*height: 40px;*/
+		min-height: 50px;
 	}
 	
 	.description {
@@ -238,43 +369,56 @@ body {
 			border-radius: 0px;
 		}
 	}
+
+	.outer {
+		position: relative;
+		z-index: 10000;
+
+		.attend-count {
+			margin-left: 5px;
+		}
+	}
+
+	.attendance {
+		position: absolute;
+		top: -1px;
+		left: 0px;
+		height: 30px;
+		width: 50%;
+		background-color: rgba(66, 94, 97, 0.5);
+	}
 }
 
-#user-column {
-	position: relative;
-	height: 100%;
-	
-	#admin-controls {
-		position: absolute;
-		bottom: 20px;
-		
-		padding: 5px;
-	}
+
+.full-size-container {
+		top: 0px;
+		left: 0px;
+		right: 0px;
+		bottom: 0px;
+		position: absolute;		
 }
 
 #chat {
+	overflow-y: hidden;
+
 	input {
 		position: absolute;
 		bottom: 0px;
+
+		width: 370px;
 	}
 	
 	#chat-container {
-		
+		padding-left: 5px;
+
 		bottom: 40px;
-		top: 0px;
-		left: 0px;
-		right: 240px;
-		position: absolute;
-		
-		overflow: auto;
-		
+		margin-left: 0px;
 		
 		#chat-list-container {
-			overflow: auto;
 			height: auto;
 			width: auto;
 
-			margin: 0px 300px 0px 0px;
+			margin: 0px 0px 0px 0px;
 
 			.chat-message {
 
@@ -298,22 +442,88 @@ body {
 
 #video-embed {
 	position: absolute;
-	left: 700px;
-	top: 350px;
+	left: 0px;
+	right: 0px;
+	/*padding-top: 50px;*/
 	
-	box-shadow: 3px 3px 5px #aaa;
-	
-	.header {
-		background-color: #bbb;
-		cursor: move;
-		padding: 5px;
+	/*box-shadow: 3px 3px 5px #aaa;*/
 		
-		.btn-group {
-			float: right;
-		}
-	}
-	
 	.player {
 		background-color: #aaa;
+		width: 100%;
 	}
+}
+
+
+/*---------------------------- INDEX STYLES ---------------------------*/
+.jumbotron {
+	color: white;
+	background-image: url('/public/img/dots.png');
+	height: 200px;
+	width: 100%;
+
+	background-size: 1400px;
+	margin-top: -20px;
+
+	h1 {
+		padding-top: 75px;
+		margin-top: 0px;
+	}
+
+	h1,  h3{
+		width: 940px;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+.event {
+	.title, .description {
+		float: left;
+	}
+
+	.title {
+		font-weight: bold;
+		font-size: 1.6em;
+	}
+
+	.description {
+		width: 800px;
+	}
+
+	.date {
+		float: left;
+		width: 100px;
+		margin-right: 20px;
+
+		.day, .time {
+			text-align: center;
+			background-color: $primary;
+			color: white;
+			padding: 3px;
+		}
+
+		.number {
+			box-sizing: border-box;
+
+			color: $primary;
+			font-size: 3em;
+			font-weight: bold;
+			text-align: center;
+			height: 50px;
+			padding-top: 15px;
+			border-right: 1px solid $primary;
+			border-left: 1px solid $primary;
+		}
+
+		.time {
+			background-color: $primary;
+			color: white;
+		}
+	}
+}
+
+.footer {
+	margin-top: 50px;
+	color: #aaa;
 }

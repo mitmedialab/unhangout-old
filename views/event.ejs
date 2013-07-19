@@ -21,6 +21,7 @@
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone.js"></script>
 		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.0.0-rc4-bundled/backbone.marionette.min.js"></script>
+		<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.paginator/0.8/backbone.paginator.min.js"></script>
 		<script type="text/javascript" src="/public/js/app.js"></script>
 	
 	<script type="text/javascript" charset="utf-8">
@@ -34,6 +35,10 @@
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';
 		var IS_ADMIN = <%= user.isAdmin() %>;
+
+		// this is a little weak, but since we only want this for the first
+		// event we'll leave it like this for now.
+		var SINGLE_SESSION_RSVP = true;
 		<% } %>
 
 		<% if(!_.isUndefined(event)) { %>
@@ -42,58 +47,51 @@
 	</script>
 	
 		<script type="text/javascript" src="/public/js/models.js"></script>	
+		<script type="text/javascript" src="/public/js/client-models.js"></script>	
 		<script type="text/javascript" src="/public/js/views.js"></script>	
 
 		<!-- Templates for the backbone views go here. Sort of annoying to have to have them in this view,
 		     but that seems to be how we can make this work with express and no content_for equivalent. -->
 
 			<script type="text/template" id="session-template">
-			<h3><i class="icon-comments"></i>{{= title }}</h3>
+			<h3>{{= title }}<span class="started label label-success">live</span><span class="joined label label-info">your pick</span></h3>
 			<div class="description">{{= description }} </div>
 			<div class="empty">no one signed up yet</div>
 			<div class="attending"><div class="first"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="full">FULL</div></div>
-			<div class="attend btn btn-info" data-toggle="button"><span class="text">JOIN</span><span class="started">(live now!)</span></div>
+			<div class="attend btn btn-info" data-toggle="button"><span class="outer"><span class="text">JOIN</span><span class="attend-count"></span></span><div class="attendance"></div></div>
 			
 			<div class="admin">
 			<div class="start btn btn-warning">START</div>
 			</div>
-			
-			<div class="modal hide fade started-modal">
-			  <div class="modal-header">
-			    <h3>'{{=title}}' IS STARTING</h3>
-			  </div>
-			  <div class="modal-body">
-				<p>It is time to join your session!</p>
-				<a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
-			  </div>
-			</div>
-
-			<div class="modal hide fade started-modal" id="msg-box-modal">
-			  <div class="modal-header">
-			    <h3>Warning!</h3>
-			  </div>
-			  <div class="modal-body">
-				<p>An unexpected error has occured. Apparently there is a server issue.</p>
-				<a href="#" class="btn">Close</a>
-			  </div>
-			</div>
-			
 			</script>
 			
 			<script type="text/template" id="session-list-template">
-				<ul id="session-list-container"></ul>
+				<ul id="session-list-container" class="full-size-container"></ul>
+			</script>
+
+			<script type="text/template" id="pagination-template">
+			<div class="footer">
+			<div id="prev">prev</div>
+			{{ _.each(info().pageSet, function(page) { }}
+				{{ if(page==currentPage) { }}
+					<div class="active page">{{= page }}</div>
+				{{ } else { }}
+					<div class="page">{{= page }}</div>
+				{{ } }}
+			{{ }) }}
+			<div id="next">next</div>
+			</div>
 			</script>
 			
 			<script type="text/template" id="user-template">
 				{{ if(picture=="") { }}
 				<i class="icon-user icon-3x"></i>
 				{{ } else { }}
-				<a href="{{=link}}"><img src="{{=picture}}"></a>
+				<a href="{{=link}}" target="_new"><img src="{{=picture}}"></a>
 				{{ } }}
 			</script>
 			
 			<script type="text/template" id="user-list-template">
-			<h2></h2>
 			<ul id="user-list-container"></ul>
 			</script>
 			
@@ -101,47 +99,70 @@
 			<span class="from">{{=user.displayName}}</span>{{=text}}
 			</script>
 			
+			<script type="text/template" id="chat-layout">
+			<div id="chat-container" class="span5"></div>
+			<div id="presence-gutter"></div>
+			</script>
+
 			<script type="text/template" id="chat-template">
-			<div id="chat-container">
 			<ul id="chat-list-container"></ul>
-			</div>
-			<form><input type="text" id="chat-input" class="span9"></input></form>
+			<form><input type="text" id="chat-input" class="span5"></input></form>
 			</script>
 			
 			<script type="text/template" id="user-column-layout-template">
 			<div id="user-list"></div>
 			<div id="footer"></div>
-			</script>
-			
-			<script type="text/template" id="admin-controls-template">
-			<a href="#embed-modal" role="button" class="btn btn-warning" data-toggle="modal">embed</a>
-			<a role="button" class="btn btn-warning" id="start-all">start all</a>
-			
-			<div id="embed-modal" class="modal hide fade">
-			  <div class="modal-header">
-			    <h3>SET EMBED ID</h3>
-			  </div>
-			  <div class="modal-body">
-				<label for="youtube_id">Youtube Id</label><input type="text" name="youtube_id" value="" id="youtube_id">
-			  </div>
-			  <div class="modal-footer">
-			    <a href="#" class="btn btn-primary" id="set-embed">Set Embed</a>
-			  </div>
-			</div>
-			</script>
-			
+			</script>			
 			
 			<script type="text/template" id="video-embed-template">
-			<div class="header clearfix">
-				<div class="btn-group" data-toggle="buttons-radio">
-					<button id="large" class="btn">L</button>
-					<button id="medium" class="btn">M</button>
-					<button id="small" class="btn active">S</button>
-				</div>
-			</div>
 			<div id="player" class="player"></div>
 			</script>
-</head>
+
+			<script type="text/template" id="admin-button-template">
+				<div class="dropdown">
+					<a class="dropdown-toggle admin-button" data-toggle="dropdown" href="#">Admin</a>
+					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+						<li role="presentation">
+							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">embed</a>
+							<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>
+						</li>
+					</ul>
+				</div>
+
+			</script>
+
+			<script type="text/template" id="dialogs-template">
+				<div id="embed-modal" class="modal hide fade">
+					<div class="modal-header">
+						<h3>SET EMBED ID</h3>
+					</div>
+					<div class="modal-body">
+						<label for="youtube_id">Youtube Id</label><input type="text" name="youtube_id" value="" id="youtube_id">
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn btn-primary" id="set-embed">Set Embed</a>
+					</div>
+				</div>
+				<div class="modal hide fade started-modal">
+					<div class="modal-header">
+					<h3></h3>
+					</div>
+					<div class="modal-body">
+						<p>It is time to join your session!</p>
+						<a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
+					</div>
+				</div>	
+				<div class="modal hide fade started-modal" id="msg-box-modal">
+					<div class="modal-header">
+					<h3>Warning!</h3>
+					</div>
+					<div class="modal-body">
+						<p>An unexpected error has occured. Apparently there is a server issue.</p>
+						<a href="#" class="btn">Close</a>
+					</div>
+				</div>
+			</script>
+		</head>
 <body>
 	<% if(user.isAdmin()) {%>
 		<div class="admin-header">
@@ -158,7 +179,7 @@
 				<a class="brand" href="/#">Unhangout</a>
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-						<li class="active" id="sessions-nav"><a href="#sessions-nav">Sessions</a></li>
+						<li class="" id="video-nav"  rel="tooltip" data-placement="bottom" data-toggle="tooltip" title="Update your session selection here!" data-trigger="manual"><a href="#video-nav">Video <span class="label label-success hide">live</span></a></li>
 					</ul>
 					<div class="nav pull-right identity">
 					<% if(!user) {%>
@@ -173,6 +194,7 @@
 							</ul>
 						</div>
 					<% } %>
+					<div id="admin-region"></div>
 					</div>
 				</div><!--/.nav-collapse -->
 			</div>
@@ -181,18 +203,20 @@
 
 	<div class="container">
 <div id="app">
+
 	<div class="row">
 	<div id="global"></div>
-	<div id="top">
-	</div>
+	<div id="dialogs"></div>
 	</div>
 	
 	<!-- Not totally sure why this row needs to be fluid for a 9+3 to fit, but it seems to. -->
 	<div class="row" id="main">
-	<div id="main-left" class="span9">
+	<div id="top-left" class="span6">
+	</div>
+	<div id="main-left" class="span6">
 	</div>
 	
-	<div id="main-right" class="span3">
+	<div id="main-right" class="span6">
 	</div>
 	</div>
 </div>

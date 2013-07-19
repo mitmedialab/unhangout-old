@@ -4,6 +4,8 @@ var curEvent, users, messages;
 
 var app;
 
+var curSession = null;
+
 // handle IE not having console.log
 if (typeof console === "undefined" || typeof console.log === "undefined") {
      console = {};
@@ -19,12 +21,20 @@ $(document).ready(function() {
 	}
 
 	console.log("Starting app!");
-	
-	curEvent = new models.Event(EVENT_ATTRS);
+
+	curEvent = new models.ClientEvent(EVENT_ATTRS);
 	
 	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
+
+	if(SINGLE_SESSION_RSVP) {
+		curEvent.get("sessions").each(function(session) {
+			if(session.isAttending(USER_ID)) {
+				curSession = session.id;
+			}
+		})
+	}
 
 	$("#sessions-nav").find("a").text("Sessions (" + curEvent.get("sessions").length + ")");
 	
@@ -35,10 +45,13 @@ $(document).ready(function() {
 	app = new Backbone.Marionette.Application();
 	
 	app.addRegions({
-		top: '#top',
+		// top: '#top',
 		right: '#main-right',
 		main: '#main-left',
-		global: '#global'
+		top: '#top-left',
+		global: '#global',
+		dialogs: '#dialogs',
+		admin: '#admin-region'
 	});
 	
 	app.addInitializer(function(options) {
@@ -54,78 +67,82 @@ $(document).ready(function() {
 			this.vent.trigger("youtube-ready");
 	    }, this);
 		
-		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
-		this.userColumnLayout = new UserColumnLayout({users: users});
-		this.chatView = new ChatView({collection:messages});
+	    this.paginatedSessions = new models.PaginatedSessionList(curEvent.get("sessions").models);
+	    this.paginatedSessions.bootstrap();
+
+
+		this.sessionListView = new SessionListView({collection: this.paginatedSessions});
+		this.chatView = new ChatLayout({messages:messages, users:users});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
+		this.dialogView = new DialogView();
+
+		// this.top.show(this.sessionListView);
+		this.right.show(this.chatView);
+		this.main.show(this.sessionListView);
+		this.dialogs.show(this.dialogView);
 		
-		this.top.show(this.sessionListView);
-		this.right.show(this.userColumnLayout);
-		this.main.show(this.chatView);
-		
-		// set up some extra methods for managing show/hide of top region.
-		this.topShown = false;
-		
-		this.hideTop = _.bind(function() {
-			this.top.$el.animate({
-				top: -this.top.$el.outerHeight(),
-			}, 500, "swing", _.bind(function() {
-					this.topShown = false;
-				}, this));
-				
-			this.main.$el.find("#chat-container").animate({
-				top: 0
-			}, 500, "swing")
-				
-		}, this);
-		
-		this.showTop = _.bind(function() {
-			this.top.$el.animate({
-				top: 0,
-			}, 500, "swing", _.bind(function() {
-				this.topShown = true;
-			}, this));
-			
-			// hardcoded a bit, but we don't use main for anything else right now.
-			this.main.$el.find("#chat-container").animate({
-				top: this.top.$el.outerHeight()
-			}, 500, "swing")
-			
-		}, this);
-				
-		// start sessions open, but triggering it properly.
-		this.top.$el.css("top", -this.top.$el.outerHeight());
+		if(IS_ADMIN) {
+			this.adminButtonView = new AdminButtonView();
+			this.admin.show(this.adminButtonView);
+		}
 				
 		console.log("Initialized app.");
 	});
 
-	app.vent.on("sessions-button", _.bind(function() {
-		if(this.top.currentView==this.sessionListView && this.topShown) {
-			// in this case, treat it as a dismissal.
-			this.hideTop();
+	app.vent.on("sessions-nav", _.bind(function() {
+		this.main.show(this.sessionListView);
+	}, app));
+
+	var videoShown = false;
+	app.vent.on("video-nav", _.bind(function() {
+		if(curEvent.hasEmbed()) {
+			$(".nav .active").removeClass("active");
+	
+			if(videoShown) {
+				this.top.$el.css("z-index", -10);
+
+				this.top.reset();
+				videoShown = false;
+
+				this.main.$el.css("top", 0);
+				this.sessionListView.updateDisplay();
+				$("#video-nav").removeClass("active");
+			} else {
+				this.top.show(this.youtubeEmbedView);
+				videoShown = true;
+
+				this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+				this.sessionListView.updateDisplay();
+				this.top.$el.css("z-index", 50);
+				$("#video-nav").addClass("active");
+			}
 		} else {
-			this.top.show(this.sessionListView);
-			this.showTop();
+			console.log("Ignoring video click; no video available.");
 		}
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {
-		this.global.show(this.youtubeEmbedView);
+		console.log("YOUTUBE READY");
+		// this.global.show(this.youtubeEmbedView);
+	}, app));
+
+	app.vent.on("video-live", _.bind(function() {
+		$("#video-nav .label").removeClass("hide");
 	}, app));
 	
+	app.vent.on("video-off", _.bind(function() {
+		$("#video-nav .label").addClass("hide");
+	}, app));
+
 	app.start();
-	app.vent.trigger("sessions-button");
-	
-	$("#sessions-nav").click(function() {
-		console.log("CLICK");
-		if($(this).hasClass("active")) {
-			$(this).removeClass("active");
-		} else {
-			$(this).addClass("active");
-		}
-		
-		app.vent.trigger("sessions-button");
-	});
+
+	if(curEvent.hasEmbed()) {
+		app.vent.trigger("video-live");
+	}
+
+	$("#video-nav").click(function() {
+		app.vent.trigger($(this).attr("id"));
+	})
 	
 	console.log("Setup regions.");
 
@@ -149,6 +166,16 @@ $(document).ready(function() {
 			case "attend":
 				curEvent.get("sessions").get(msg.args.id).addAttendee(msg.args.user);
 				console.log("added attendee to a session");
+
+				if(SINGLE_SESSION_RSVP && msg.args.user.id==USER_ID) {
+
+					if(!_.isNull(curSession)) {
+						var message = {type:"unattend", args:{id:curSession}};
+						sock.send(JSON.stringify(message));				
+					}
+
+					curSession = msg.args.id;
+				}
 				break;
 			
 			case "first-attendee":
@@ -177,6 +204,15 @@ $(document).ready(function() {
 			case "embed":
 				curEvent.setEmbed(msg.args.ytId);
 				console.log("added yt embed id");
+
+				if(msg.args.ytId.length > 0) {
+					// if it's a non-empty yt embed, show the live tag.
+					app.vent.trigger("video-live");
+				} else {
+					// if it's empty, hide the live tag.
+					app.vent.trigger("video-off");
+				}
+
 				break;
 				
 			case "start":
@@ -208,6 +244,10 @@ $(document).ready(function() {
 				
 			case "join-ack":
 				console.log("joined!");
+				break;
+
+			case "attend-ack":
+				console.log("attend-ack");
 				break;
 		}
 	};
