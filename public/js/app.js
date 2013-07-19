@@ -253,6 +253,7 @@ $(document).ready(function() {
 	};
 
 	sock.onclose = function() {
+		$("#msg-box-modal").modal('show');
 		console.log('close');
 	};
 });
