@@ -239,14 +239,18 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	id: "dialogs",
 
 	events: {
-		'click #set-embed':'setEmbed'
+		'click #set-embed':'setEmbed',
+		'click #disconnected-modal a':'closeDisconnected'
 	},
 
 	setEmbed: function() {
 		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
 		sock.send(JSON.stringify(message));
-	}
+	},
 
+	closeDisconnected: function() {
+		$("#disconnected-modal").modal('hide');
+	}
 })
 
 var AdminButtonView = Backbone.Marionette.Layout.extend({
