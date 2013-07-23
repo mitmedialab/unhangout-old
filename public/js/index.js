@@ -20,6 +20,7 @@ $(document).on('ready', function() {
 			type:"POST",
 			data: {email:email}
 		}).done(function() {
+			$('#subscription-modal').modal('show');
 			console.log("posted email");
 		});
 

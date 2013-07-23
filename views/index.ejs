@@ -27,8 +27,20 @@
 <div class="input-append offset2">
   <input class="span6" id="email" type="email">
   <button id="subscribe" class="btn" type="button">Subscribe</button>
+
 </div>
 
+<div class="modal hide fade subscription-modal" id="subscription-modal">
+  	<div class="modal-header">
+		<h3>Subscribed!</h3>
+	</div>
+	<div class="modal-body">
+		<p>You have been subscribed to this event. We will send you an email reminder 24 hours before the event and 5 minutes before it starts.</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>
 </div>
 
 </div>
@@ -36,7 +48,15 @@
 
 <div id="about" class="section">
 <h1>About</h1>
-<p><strong>Unhangout</strong> is an open source platform for running large scale online un-conference-style events using Google Hangouts to create many simultaneous small sessions. Think of it like a classroom with infinitely many breakout rooms. We provide a text-based chat experience that can support hundreds of participants chatting or watching a live video stream together. When you want to create more opportunity for participation, you can break out into up-to-ten person Google Hangout sessions that create opportunities for peer learning instead of just top-down information transfer that is typical in large scale online education.</p>
+<p><strong>Unhangout</strong> is an open source platform for running large scale online un-conference-style events using Google Hangouts<div class="modal hide fade disconnected-modal" id="disconnected-modal">
+					<div class="modal-header">
+					<h3>Warning!</h3>
+					</div>
+					<div class="modal-body">
+						<p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+						<a href="#" class="btn">Close</a>
+					</div>
+				</div> to create many simultaneous small sessions. Think of it like a classroom with infinitely many breakout rooms. We provide a text-based chat experience that can support hundreds of participants chatting or watching a live video stream together. When you want to create more opportunity for participation, you can break out into up-to-ten person Google Hangout sessions that create opportunities for peer learning instead of just top-down information transfer that is typical in large scale online education.</p>
 
 <h3>Open Source</h3>
 <p><strong>Unhangout</strong> is an open source project. You can find the code in <a href="https://github.com/drewww/unhangout">our repository on GitHub</a>. Please let us know if you're interested in hosting your own unhangout events - we would be happy to help you get this set up on your own servers. In some situations, we might be able to host your event on our installation, too.<p>
