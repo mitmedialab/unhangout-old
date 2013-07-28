@@ -95,19 +95,23 @@ $(document).ready(function() {
 
 	var videoShown = false;
 	app.vent.on("video-nav", _.bind(function() {
-		if(curEvent.hasEmbed()) {
+		console.log("handling video-nav event");
+
+		// regardless of whether there's a current embed, hide the video if
+		// it's currently showon.	
+		if(videoShown) {
+			this.top.$el.css("z-index", -10);
+
+			this.top.reset();
+			videoShown = false;
+
+			this.main.$el.css("top", 0);
+			this.sessionListView.updateDisplay();
+			$("#video-nav").removeClass("active");
+		} else if(curEvent.hasEmbed()) {
 			$(".nav .active").removeClass("active");
 	
-			if(videoShown) {
-				this.top.$el.css("z-index", -10);
-
-				this.top.reset();
-				videoShown = false;
-
-				this.main.$el.css("top", 0);
-				this.sessionListView.updateDisplay();
-				$("#video-nav").removeClass("active");
-			} else {
+			if(!videoShown) {
 				this.top.show(this.youtubeEmbedView);
 				videoShown = true;
 
@@ -118,12 +122,16 @@ $(document).ready(function() {
 			}
 		} else {
 			console.log("Ignoring video click; no video available.");
-		}
+		}			
+
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {
 		console.log("YOUTUBE READY");
-		// this.global.show(this.youtubeEmbedView);
+
+		if(curEvent.hasEmbed()) {
+			app.vent.trigger("video-nav");
+		}
 	}, app));
 
 	app.vent.on("video-live", _.bind(function() {
@@ -138,6 +146,7 @@ $(document).ready(function() {
 
 	if(curEvent.hasEmbed()) {
 		app.vent.trigger("video-live");
+		// app.vent.trigger("video-nav");
 	}
 
 	$("#video-nav").click(function() {
@@ -202,15 +211,22 @@ $(document).ready(function() {
 				break;
 			
 			case "embed":
+				var originalYoutubeId = curEvent.get("youtubeEmbed");
+
 				curEvent.setEmbed(msg.args.ytId);
 				console.log("added yt embed id");
 
 				if(msg.args.ytId.length > 0) {
 					// if it's a non-empty yt embed, show the live tag.
 					app.vent.trigger("video-live");
+
+					if(originalYoutubeId.length==0) {
+						app.vent.trigger("video-nav");
+					}
 				} else {
 					// if it's empty, hide the live tag.
 					app.vent.trigger("video-off");
+					app.vent.trigger("video-nav");
 				}
 
 				break;

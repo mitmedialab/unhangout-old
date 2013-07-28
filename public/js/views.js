@@ -400,6 +400,10 @@ var VideoEmbedView = Marionette.ItemView.extend({
 	player: null,
 
 	initialize: function() {
+		// TODO
+		// we need to be more clever about this. if the player is loaded already,
+		// just send it to a different youtube id. reloading it entirely doesn't
+		// seem to work. In the meantime, just zero videos out between their inclusion.
 		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
 	},
 
