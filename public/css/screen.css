@@ -390,7 +390,7 @@ body {
 #chat #chat-container #chat-list-container {
   height: auto;
   width: auto;
-  margin: 0px 0px 0px 0px;
+  margin: 0px 0px 50px 0px;
 }
 /* line 432, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
