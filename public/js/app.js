@@ -96,19 +96,22 @@ $(document).ready(function() {
 	var videoShown = false;
 	app.vent.on("video-nav", _.bind(function() {
 		console.log("handling video-nav event");
-		if(curEvent.hasEmbed()) {
+
+		// regardless of whether there's a current embed, hide the video if
+		// it's currently showon.	
+		if(videoShown) {
+			this.top.$el.css("z-index", -10);
+
+			this.top.reset();
+			videoShown = false;
+
+			this.main.$el.css("top", 0);
+			this.sessionListView.updateDisplay();
+			$("#video-nav").removeClass("active");
+		} else if(curEvent.hasEmbed()) {
 			$(".nav .active").removeClass("active");
 	
-			if(videoShown) {
-				this.top.$el.css("z-index", -10);
-
-				this.top.reset();
-				videoShown = false;
-
-				this.main.$el.css("top", 0);
-				this.sessionListView.updateDisplay();
-				$("#video-nav").removeClass("active");
-			} else {
+			if(!videoShown) {
 				this.top.show(this.youtubeEmbedView);
 				videoShown = true;
 
@@ -119,7 +122,8 @@ $(document).ready(function() {
 			}
 		} else {
 			console.log("Ignoring video click; no video available.");
-		}
+		}			
+
 	}, app));
 	
 	app.vent.on("youtube-ready", _.bind(function() {
