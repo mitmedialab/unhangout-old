@@ -389,7 +389,7 @@ var ChatView = Marionette.CompositeView.extend({
 	},
 
 	update: function() {
-		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
+		this.$el.scrollTop(this.$el[0].scrollHeight);
 	}
 });
 

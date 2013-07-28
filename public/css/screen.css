@@ -371,7 +371,7 @@ body {
 #chat input {
   position: absolute;
   bottom: 0px;
-  left: 0px;
+  left: 10px;
   width: 370px;
 }
 /* line 413, ../../sass/screen.scss */
