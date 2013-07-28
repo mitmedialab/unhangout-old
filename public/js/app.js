@@ -95,6 +95,7 @@ $(document).ready(function() {
 
 	var videoShown = false;
 	app.vent.on("video-nav", _.bind(function() {
+		console.log("handling video-nav event");
 		if(curEvent.hasEmbed()) {
 			$(".nav .active").removeClass("active");
 	
@@ -123,7 +124,10 @@ $(document).ready(function() {
 	
 	app.vent.on("youtube-ready", _.bind(function() {
 		console.log("YOUTUBE READY");
-		// this.global.show(this.youtubeEmbedView);
+
+		if(curEvent.hasEmbed()) {
+			app.vent.trigger("video-nav");
+		}
 	}, app));
 
 	app.vent.on("video-live", _.bind(function() {
@@ -138,6 +142,7 @@ $(document).ready(function() {
 
 	if(curEvent.hasEmbed()) {
 		app.vent.trigger("video-live");
+		// app.vent.trigger("video-nav");
 	}
 
 	$("#video-nav").click(function() {
@@ -208,9 +213,11 @@ $(document).ready(function() {
 				if(msg.args.ytId.length > 0) {
 					// if it's a non-empty yt embed, show the live tag.
 					app.vent.trigger("video-live");
+					app.vent.trigger("video-nav");
 				} else {
 					// if it's empty, hide the live tag.
 					app.vent.trigger("video-off");
+					app.vent.trigger("video-nav");
 				}
 
 				break;
