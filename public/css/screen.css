@@ -371,25 +371,32 @@ body {
 #chat input {
   position: absolute;
   bottom: 0px;
+  left: 0px;
   width: 370px;
 }
-/* line 411, ../../sass/screen.scss */
+/* line 413, ../../sass/screen.scss */
 #chat #chat-container {
   padding-left: 5px;
   bottom: 40px;
   margin-left: 0px;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 45px;
+  overflow-y: scroll;
 }
-/* line 417, ../../sass/screen.scss */
+/* line 426, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   height: auto;
   width: auto;
   margin: 0px 0px 0px 0px;
 }
-/* line 423, ../../sass/screen.scss */
+/* line 432, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 427, ../../sass/screen.scss */
+/* line 436, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
@@ -397,13 +404,13 @@ body {
   font-weight: bold;
 }
 
-/* line 438, ../../sass/screen.scss */
+/* line 447, ../../sass/screen.scss */
 #global {
   position: absolute;
   z-index: 1000;
 }
 
-/* line 443, ../../sass/screen.scss */
+/* line 452, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
   left: 0px;
@@ -411,14 +418,14 @@ body {
   /*padding-top: 50px;*/
   /*box-shadow: 3px 3px 5px #aaa;*/
 }
-/* line 451, ../../sass/screen.scss */
+/* line 460, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
   width: 100%;
 }
 
 /*---------------------------- INDEX STYLES ---------------------------*/
-/* line 459, ../../sass/screen.scss */
+/* line 468, ../../sass/screen.scss */
 .jumbotron {
   color: white;
   background-image: url("/public/img/dots.png");
@@ -427,45 +434,45 @@ body {
   background-size: 1400px;
   margin-top: -20px;
 }
-/* line 468, ../../sass/screen.scss */
+/* line 477, ../../sass/screen.scss */
 .jumbotron h1 {
   padding-top: 75px;
   margin-top: 0px;
 }
-/* line 473, ../../sass/screen.scss */
+/* line 482, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* line 481, ../../sass/screen.scss */
+/* line 490, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
 }
-/* line 485, ../../sass/screen.scss */
+/* line 494, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
   font-size: 1.6em;
 }
-/* line 490, ../../sass/screen.scss */
+/* line 499, ../../sass/screen.scss */
 .event .description {
   width: 800px;
 }
-/* line 494, ../../sass/screen.scss */
+/* line 503, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 499, ../../sass/screen.scss */
+/* line 508, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 506, ../../sass/screen.scss */
+/* line 515, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -477,13 +484,13 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 519, ../../sass/screen.scss */
+/* line 528, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 526, ../../sass/screen.scss */
+/* line 535, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;

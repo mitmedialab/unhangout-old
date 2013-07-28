@@ -404,16 +404,25 @@ body {
 	input {
 		position: absolute;
 		bottom: 0px;
-
+		left: 0px;
 		width: 370px;
 	}
+
+
 	
 	#chat-container {
 		padding-left: 5px;
 
 		bottom: 40px;
 		margin-left: 0px;
-		
+
+		position: absolute;
+		top: 0px;
+		bottom: 0px;
+		left: 0px;
+		right: 45px;
+		overflow-y: scroll;
+
 		#chat-list-container {
 			height: auto;
 			width: auto;
