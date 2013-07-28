@@ -211,13 +211,18 @@ $(document).ready(function() {
 				break;
 			
 			case "embed":
+				var originalYoutubeId = curEvent.get("youtubeEmbed");
+
 				curEvent.setEmbed(msg.args.ytId);
 				console.log("added yt embed id");
 
 				if(msg.args.ytId.length > 0) {
 					// if it's a non-empty yt embed, show the live tag.
 					app.vent.trigger("video-live");
-					app.vent.trigger("video-nav");
+
+					if(originalYoutubeId.length==0) {
+						app.vent.trigger("video-nav");
+					}
 				} else {
 					// if it's empty, hide the live tag.
 					app.vent.trigger("video-off");
