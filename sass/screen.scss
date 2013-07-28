@@ -77,6 +77,7 @@ body {
 	right: 20px;
 	left: 440px;
 
+	overflow: hidden;
 }
 
 #main-left {
@@ -102,7 +103,7 @@ body {
 }
 
 #presence-gutter {
-	width: 45px;
+	width: 58px;
 
 	position: absolute;
 	top: 0px;
@@ -110,8 +111,6 @@ body {
 	right: 0px;
 	bottom: 0px;
 
-
-	overflow-x: visible;
 	overflow-y: auto;
 
 	ul {
@@ -128,6 +127,11 @@ body {
 
 	.tooltip {
 		left: -70px !important;
+	}
+
+	#user-list {
+		overflow-y: visible;
+		overflow-x: visible;
 	}
 }
 
@@ -416,6 +420,7 @@ body {
 
 #chat {
 	overflow-y: hidden;
+	overflow-x: visible;
 
 	
 	#chat-container {
@@ -428,7 +433,7 @@ body {
 		top: 0px;
 		bottom: 0px;
 		left: 0px;
-		right: 60px;
+		right: 75px;
 		overflow-y: auto;
 
 		#chat-list-container {
