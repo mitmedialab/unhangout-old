@@ -416,6 +416,10 @@ body {
 		padding-left: 10px;
 
 		background-color: $background-light;
+
+		input {
+			width: 360px;
+		}
 }
 
 #chat {

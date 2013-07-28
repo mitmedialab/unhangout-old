@@ -380,13 +380,17 @@ body {
   padding-left: 10px;
   background-color: whitesmoke;
 }
+/* line 420, ../../sass/screen.scss */
+#chat-input-region input {
+  width: 360px;
+}
 
-/* line 421, ../../sass/screen.scss */
+/* line 425, ../../sass/screen.scss */
 #chat {
   overflow-y: hidden;
   overflow-x: visible;
 }
-/* line 426, ../../sass/screen.scss */
+/* line 430, ../../sass/screen.scss */
 #chat #chat-container {
   padding-left: 5px;
   bottom: 40px;
@@ -398,17 +402,17 @@ body {
   right: 75px;
   overflow-y: auto;
 }
-/* line 439, ../../sass/screen.scss */
+/* line 443, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   height: auto;
   width: auto;
   margin: 0px 0px 45px 0px;
 }
-/* line 445, ../../sass/screen.scss */
+/* line 449, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 449, ../../sass/screen.scss */
+/* line 453, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
@@ -416,13 +420,13 @@ body {
   font-weight: bold;
 }
 
-/* line 460, ../../sass/screen.scss */
+/* line 464, ../../sass/screen.scss */
 #global {
   position: absolute;
   z-index: 1000;
 }
 
-/* line 465, ../../sass/screen.scss */
+/* line 469, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
   left: 0px;
@@ -430,14 +434,14 @@ body {
   /*padding-top: 50px;*/
   /*box-shadow: 3px 3px 5px #aaa;*/
 }
-/* line 473, ../../sass/screen.scss */
+/* line 477, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
   width: 100%;
 }
 
 /*---------------------------- INDEX STYLES ---------------------------*/
-/* line 481, ../../sass/screen.scss */
+/* line 485, ../../sass/screen.scss */
 .jumbotron {
   color: white;
   background-image: url("/public/img/dots.png");
@@ -446,45 +450,45 @@ body {
   background-size: 1400px;
   margin-top: -20px;
 }
-/* line 490, ../../sass/screen.scss */
+/* line 494, ../../sass/screen.scss */
 .jumbotron h1 {
   padding-top: 75px;
   margin-top: 0px;
 }
-/* line 495, ../../sass/screen.scss */
+/* line 499, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* line 503, ../../sass/screen.scss */
+/* line 507, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
 }
-/* line 507, ../../sass/screen.scss */
+/* line 511, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
   font-size: 1.6em;
 }
-/* line 512, ../../sass/screen.scss */
+/* line 516, ../../sass/screen.scss */
 .event .description {
   width: 800px;
 }
-/* line 516, ../../sass/screen.scss */
+/* line 520, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 521, ../../sass/screen.scss */
+/* line 525, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 528, ../../sass/screen.scss */
+/* line 532, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -496,13 +500,13 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 541, ../../sass/screen.scss */
+/* line 545, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 548, ../../sass/screen.scss */
+/* line 552, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
