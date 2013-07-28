@@ -112,7 +112,7 @@ body {
 
 
 	overflow-x: visible;
-	overflow-y: scroll;
+	overflow-y: auto;
 
 	ul {
 		margin: 0px;
@@ -428,8 +428,8 @@ body {
 		top: 0px;
 		bottom: 0px;
 		left: 0px;
-		right: 55px;
-		overflow-y: scroll;
+		right: 60px;
+		overflow-y: auto;
 
 		#chat-list-container {
 			height: auto;

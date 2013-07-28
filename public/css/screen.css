@@ -96,7 +96,7 @@ body {
   right: 0px;
   bottom: 0px;
   overflow-x: visible;
-  overflow-y: scroll;
+  overflow-y: auto;
   border-left: 1px solid #aaa;
   box-shadow: -3px 0px 3px #aaa;
   background-color: white;
@@ -389,8 +389,8 @@ body {
   top: 0px;
   bottom: 0px;
   left: 0px;
-  right: 55px;
-  overflow-y: scroll;
+  right: 60px;
+  overflow-y: auto;
 }
 /* line 434, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
