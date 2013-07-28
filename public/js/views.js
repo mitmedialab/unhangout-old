@@ -305,13 +305,15 @@ var ChatLayout = Backbone.Marionette.Layout.extend({
 	className: "full-size-container",
 
 	regions: {
-		chat:'#chat-container',
-		presence: '#presence-gutter'
+		chat:'#chat-container-region',
+		presence: '#presence-gutter',
+		chatInput: '#chat-input-region'
 	},
 
 	initialize: function() {
 		this.chatView = new ChatView({collection:this.options.messages});
 		this.userListView = new UserListView({collection:this.options.users});
+		this.chatInputView = new ChatInputView();
 
 		console.log("initializing chat layout with: " + JSON.stringify(this.options.messages));
 		console.log("and users: " + JSON.stringify(this.options.users));
@@ -320,9 +322,33 @@ var ChatLayout = Backbone.Marionette.Layout.extend({
 	onRender: function() {
 		this.chat.show(this.chatView);
 		this.presence.show(this.userListView);
+		this.chatInput.show(this.chatInputView);
+	},
+})
+
+var ChatInputView = Marionette.ItemView.extend({
+	template: '#chat-input-template',
+
+	events: {
+		'submit form':'chat'
 	},
 
-})
+	ui: {
+		chatInput: "#chat-input"
+	},
+
+	initialize: function(options) {
+		Marionette.View.prototype.initialize.call(this, options);
+	},
+
+	chat: function(e) {
+		var msg = this.ui.chatInput.val();
+		sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
+		this.ui.chatInput.val("");
+		e.preventDefault();
+		return false;
+	}
+});
 
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
@@ -357,28 +383,13 @@ var ChatView = Marionette.CompositeView.extend({
 	itemViewContainer: "#chat-list-container",
 	id: "chat-container",
 
-	events: {
-		'submit form':'chat'
-	},
-
-	ui: {
-		chatInput: "#chat-input"
-	},
 
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 	},
 
-	chat: function(e) {
-		var msg = this.ui.chatInput.val();
-		sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
-		this.ui.chatInput.val("");
-		e.preventDefault();
-		return false;
-	},
-
 	update: function() {
-		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
+		this.$el.scrollTop(this.$el[0].scrollHeight);
 	}
 });
 
