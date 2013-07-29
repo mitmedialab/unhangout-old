@@ -511,7 +511,7 @@ describe('unhangout server', function() {
 			})
 		});
 		
-		describe("START", function() {
+		describe("START/STOP", function() {
 			beforeEach(joinEventSetup);
 			
 			it("should reject start messages from non-admins", function(done) {
@@ -541,6 +541,10 @@ describe('unhangout server', function() {
 				
 				sock.write(JSON.stringify({type:"start", args:{id:s.events.get(1).get("sessions").at(0).id}}));
 			});
+
+			it("should accept a stop-all message");
+			it("should stop any running session, but not stop non-running sessions");
+			it("should send stop messages for running sessions to clients");
 		});
 		
 		describe("EMBED", function() {
