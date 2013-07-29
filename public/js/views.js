@@ -270,6 +270,7 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 
 	stopAll: function() {
 		console.log("stop all!");
+		sock.send(JSON.stringify({type:"stop-all", args:{}}));
 	}
 });
 
