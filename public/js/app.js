@@ -160,6 +160,9 @@ $(document).ready(function() {
 
 		$("#top-left, #main-right, #main-left").addClass("bar");
 
+		// set the hangout link.
+		this.bar.$el.find("a").attr("href", "/session/" + curEvent.get("sessions").get(curSession).get("session-key"));
+
 		// 30 minutes later hide the bar(?)
 		setTimeout(function() {
 			app.vent.trigger("hide-bar");
