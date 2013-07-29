@@ -167,8 +167,19 @@ $(document).ready(function() {
 	}, app));
 
 	app.vent.on("hide-bar", _.bind(function() {
-		this.bar.hide();
+		this.bar.close();
+		this.bar.$el.hide();
+
 		$("#top-left, #main-right, #main-left").removeClass("bar");
+
+		// we need to do a special check for main-left, which has custom
+		// style adjustement on it.  
+		if(videoShown) {
+			this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+		} else {
+			this.main.$el.css("top", "");
+		}
+
 	}, app));
 
 	app.start();
