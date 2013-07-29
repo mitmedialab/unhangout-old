@@ -190,7 +190,7 @@ $(document).ready(function() {
 	if(curSession) {
 		var curSessionObj = curEvent.get("sessions").get(curSession);
 
-		if(curSessionObj.get("started")) {
+		if(curSessionObj.isLive()) {
 			app.vent.trigger("show-bar");
 		} 
 	}
@@ -302,6 +302,10 @@ $(document).ready(function() {
 
 				app.vent.trigger("show-bar");
 
+				break;
+			case "stop":
+				var session = curEvent.get("sessions").get(msg.args.id);
+				session.stop();
 				break;
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
