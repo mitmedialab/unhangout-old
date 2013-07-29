@@ -86,8 +86,11 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.attend.removeClass("btn-info");			
 			this.ui.attend.removeClass("active");
 			this.ui.attend.addClass("btn-success");
+
+			this.ui.attend.find(".text").text("JOIN");
 		} else {
 			this.$el.find(".started").hide();			
+			this.ui.attend.find(".text").text("SIGN UP");
 		}
 
 		// check and see if we're in mini mode. If we are, hide the description and attendee counting in large form.
