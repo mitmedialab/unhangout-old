@@ -12,11 +12,12 @@
 <div class="date">
 <div class="day">Monday, July</div>
 <div class="number">29</div>
-<div class="time">10:00 AM EDT</div>
+<div class="time">1:00 PM EDT</div>
 </div>
 
-<div class="title"><a href="/event/1">National Writing Project</a></div>
-<div class="description lead">We'll be exploring themes of writing and teaching, broadly construed. The director of NWP will provide the opening address, at which point we'll split up into small groups for detailed discussions.</div>
+<!--<div class="title"><a href="/event/1">National Writing Project</a></div>-->
+<div class="title">National Writing Project</div><br/><br/>
+<div class="description lead">Throughout July, NWP partnered with Connected Learning TV to host a webinar series called <a href="http://connectedlearning.tv/writers-work-making-and-connected-learning"><i>Writers at Work: Making and Connected Learning.</i></a> As a wrap-up to our series we invite you to regroup here to debrief with us, test and tinker with this new unHangout tool, and continue the great conversations that have been started! We will start with a whole group kick-off and then split up into smaller group discussions, based on themes and topics raised by the seminar series. Please be aware that this is a “beta-test webinar” so your adventurous spirit is welcome. </div>
 </div>
 
 <div class="signup">
@@ -26,8 +27,20 @@
 <div class="input-append offset2">
   <input class="span6" id="email" type="email">
   <button id="subscribe" class="btn" type="button">Subscribe</button>
+
 </div>
 
+<div class="modal hide fade subscription-modal" id="subscription-modal">
+  	<div class="modal-header">
+		<h3>Subscribed!</h3>
+	</div>
+	<div class="modal-body">
+		<p>You have been subscribed to this event. We will send you an email reminder 24 hours before the event and 5 minutes before it starts.</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+	</div>
+</div>
 </div>
 
 </div>
@@ -35,7 +48,15 @@
 
 <div id="about" class="section">
 <h1>About</h1>
-<p><strong>Unhangout</strong> is an open source platform for running large scale online un-conference-style events using Google Hangouts to create many simultaneous small sessions. Think of it like a classroom with infinitely many breakout rooms. We provide a text-based chat experience that can support hundreds of participants chatting or watching a live video stream together. When you want to create more opportunity for participation, you can break out into up-to-ten person Google Hangout sessions that create opportunities for peer learning instead of just top-down information transfer that is typical in large scale online education.</p>
+<p><strong>Unhangout</strong> is an open source platform for running large scale online un-conference-style events using Google Hangouts<div class="modal hide fade disconnected-modal" id="disconnected-modal">
+					<div class="modal-header">
+					<h3>Warning!</h3>
+					</div>
+					<div class="modal-body">
+						<p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+						<a href="#" class="btn">Close</a>
+					</div>
+				</div> to create many simultaneous small sessions. Think of it like a classroom with infinitely many breakout rooms. We provide a text-based chat experience that can support hundreds of participants chatting or watching a live video stream together. When you want to create more opportunity for participation, you can break out into up-to-ten person Google Hangout sessions that create opportunities for peer learning instead of just top-down information transfer that is typical in large scale online education.</p>
 
 <h3>Open Source</h3>
 <p><strong>Unhangout</strong> is an open source project. You can find the code in <a href="https://github.com/drewww/unhangout">our repository on GitHub</a>. Please let us know if you're interested in hosting your own unhangout events - we would be happy to help you get this set up on your own servers. In some situations, we might be able to host your event on our installation, too.<p>

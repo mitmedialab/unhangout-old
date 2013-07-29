@@ -47,7 +47,7 @@ var SessionView = Marionette.ItemView.extend({
 				console.log("running hide");
 				$(".modal.in").modal("hide");
 				// this.ui.joinDialog.modal('hide');
-			}, this), 10000);		
+			}, this), 60000);
 		}, this);		
 	},
 
@@ -84,8 +84,11 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.attend.removeClass("btn-info");			
 			this.ui.attend.removeClass("active");
 			this.ui.attend.addClass("btn-success");
+
+			this.ui.attend.find(".text").text("JOIN");
 		} else {
 			this.$el.find(".started").hide();			
+			this.ui.attend.find(".text").text("SIGN UP");
 		}
 
 		// check and see if we're in mini mode. If we are, hide the description and attendee counting in large form.
@@ -237,14 +240,18 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	id: "dialogs",
 
 	events: {
-		'click #set-embed':'setEmbed'
+		'click #set-embed':'setEmbed',
+		'click #disconnected-modal a':'closeDisconnected'
 	},
 
 	setEmbed: function() {
 		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
 		sock.send(JSON.stringify(message));
-	}
+	},
 
+	closeDisconnected: function() {
+		$("#disconnected-modal").modal('hide');
+	}
 })
 
 var AdminButtonView = Backbone.Marionette.Layout.extend({
@@ -299,13 +306,15 @@ var ChatLayout = Backbone.Marionette.Layout.extend({
 	className: "full-size-container",
 
 	regions: {
-		chat:'#chat-container',
-		presence: '#presence-gutter'
+		chat:'#chat-container-region',
+		presence: '#presence-gutter',
+		chatInput: '#chat-input-region'
 	},
 
 	initialize: function() {
 		this.chatView = new ChatView({collection:this.options.messages});
 		this.userListView = new UserListView({collection:this.options.users});
+		this.chatInputView = new ChatInputView();
 
 		console.log("initializing chat layout with: " + JSON.stringify(this.options.messages));
 		console.log("and users: " + JSON.stringify(this.options.users));
@@ -314,20 +323,12 @@ var ChatLayout = Backbone.Marionette.Layout.extend({
 	onRender: function() {
 		this.chat.show(this.chatView);
 		this.presence.show(this.userListView);
+		this.chatInput.show(this.chatInputView);
 	},
-
 })
 
-var ChatMessageView = Marionette.ItemView.extend({
-	template: '#chat-message-template',
-	className: 'chat-message'
-});
-
-var ChatView = Marionette.CompositeView.extend({
-	template: '#chat-template',
-	itemView: ChatMessageView,
-	itemViewContainer: "#chat-list-container",
-	id: "chat-container",
+var ChatInputView = Marionette.ItemView.extend({
+	template: '#chat-input-template',
 
 	events: {
 		'submit form':'chat'
@@ -337,8 +338,8 @@ var ChatView = Marionette.CompositeView.extend({
 		chatInput: "#chat-input"
 	},
 
-	initialize: function() {
-		this.listenTo(this.collection, 'all', this.update, this);
+	initialize: function(options) {
+		Marionette.View.prototype.initialize.call(this, options);
 	},
 
 	chat: function(e) {
@@ -347,10 +348,58 @@ var ChatView = Marionette.CompositeView.extend({
 		this.ui.chatInput.val("");
 		e.preventDefault();
 		return false;
+	}
+});
+
+var ChatMessageView = Marionette.ItemView.extend({
+	template: '#chat-message-template',
+	className: 'chat-message',
+
+	initialize: function() {
+		this.model.set("text", this.linkify(this.model.get("text")));
+	},
+
+	linkify: function(msg) {
+		var replacedText, replacePattern1, replacePattern2, replacePattern3;
+
+    	//URLs starting with http://, https://, or ftp://
+    	replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+    	replacedText = msg.replace(replacePattern1, "<a href='$1' target='_new'>$1</a>");
+
+    	//URLs starting with "www." (without // before it, or it'd re-link the ones done above).
+    	replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+    	replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_new'>$2</a>");
+
+    	//Change email addresses to mailto:: links.
+    	replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
+    	replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
+
+    	return replacedText;
+	},
+
+	serializeData: function() {
+		var model = this.model.toJSON();
+
+		var tempUser = new models.User(this.model.get("user"));
+
+		model.user["shortDisplayName"] = tempUser.getShortDisplayName();
+		return model;
+	}
+});
+
+var ChatView = Marionette.CompositeView.extend({
+	template: '#chat-template',
+	itemView: ChatMessageView,
+	itemViewContainer: "#chat-list-container",
+	id: "chat-container",
+
+
+	initialize: function() {
+		this.listenTo(this.collection, 'all', this.update, this);
 	},
 
 	update: function() {
-		this.$el.find("#chat-container").scrollTop($("#chat-container")[0].scrollHeight);
+		this.$el.scrollTop(this.$el[0].scrollHeight);
 	}
 });
 
@@ -366,6 +415,10 @@ var VideoEmbedView = Marionette.ItemView.extend({
 	player: null,
 
 	initialize: function() {
+		// TODO
+		// we need to be more clever about this. if the player is loaded already,
+		// just send it to a different youtube id. reloading it entirely doesn't
+		// seem to work. In the meantime, just zero videos out between their inclusion.
 		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
 	},
 

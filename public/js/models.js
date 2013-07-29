@@ -223,6 +223,32 @@ models.User = Backbone.Model.extend({
 	
 	isAdmin: function() {
 		return this.get("admin");
+	},
+
+	getShortDisplayName: function() {
+		// the goal here is to return first name, last initial
+		// minor catch: we want to special handle last names that are hyphenated and turn
+		// Alice-Bob -> A-B
+
+		var names = this.get("displayName").split(" ");
+
+		var shortDisplayName = names[0];
+
+		_.each(names.slice(1, names.length), function(name) {
+
+			if(name.indexOf("-")==-1) {
+				// if we don't find a dash, just take the first letter
+				shortDisplayName = shortDisplayName + " " + name.slice(0, 1);				
+			} else {
+				// if we do find a dash, then split on the dash and take the first letter of 
+				// each.
+				var hyphenatedNames = name.split("-");
+
+				shortDisplayName = shortDisplayName + " " + hyphenatedNames[0].slice(0, 1) + "-" + hyphenatedNames[1].slice(0, 1);
+			}
+		});
+
+		return shortDisplayName;
 	}
 });
 

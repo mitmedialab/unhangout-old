@@ -58,7 +58,7 @@
 			<div class="description">{{= description }} </div>
 			<div class="empty">no one signed up yet</div>
 			<div class="attending"><div class="first"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="full">FULL</div></div>
-			<div class="attend btn btn-info" data-toggle="button"><span class="outer"><span class="text">JOIN</span><span class="attend-count"></span></span><div class="attendance"></div></div>
+			<div class="attend btn btn-info" data-toggle="button"><span class="outer"><span class="text">SIGN UP</span><span class="attend-count"></span></span><div class="attendance"></div></div>
 			
 			<div class="admin">
 			<div class="start btn btn-warning">START</div>
@@ -96,17 +96,21 @@
 			</script>
 			
 			<script type="text/template" id="chat-message-template">
-			<span class="from">{{=user.displayName}}</span>{{=text}}
+			<span class="from">{{=user.shortDisplayName}}</span>{{=text}}
 			</script>
 			
 			<script type="text/template" id="chat-layout">
-			<div id="chat-container" class="span5"></div>
+			<div id="chat-container-region" class="span5"></div>
 			<div id="presence-gutter"></div>
+			<div id="chat-input-region"></div>
+			</script>
+
+			<script type="text/template" id="chat-input-template">
+			<form><input type="text" id="chat-input" autocomplete="off"></input></form>
 			</script>
 
 			<script type="text/template" id="chat-template">
 			<ul id="chat-list-container"></ul>
-			<form><input type="text" id="chat-input" class="span5"></input></form>
 			</script>
 			
 			<script type="text/template" id="user-column-layout-template">
@@ -155,6 +159,15 @@
 						<a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
 					</div>
 				</div>	
+				<div class="modal hide fade disconnected-modal" id="disconnected-modal">
+					<div class="modal-header">
+					<h3>Warning!</h3>
+					</div>
+					<div class="modal-body">
+						<p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+						<a href="#" class="btn">Close</a>
+					</div>
+				</div>
 			</script>
 		</head>
 <body>
