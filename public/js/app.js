@@ -306,6 +306,11 @@ $(document).ready(function() {
 			case "stop":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.stop();
+
+				if(session.id==curSession) {
+					app.vent.trigger("hide-bar");
+				}
+
 				break;
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
