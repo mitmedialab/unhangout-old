@@ -185,6 +185,29 @@ $(document).ready(function() {
 
 	}, app));
 
+	var queuedAttend = false;
+
+	app.vent.on("attend", _.bind(function(sessionId) {
+		console.log("VENT ATTEND: " + sessionId);
+		// we have to manage attend logic here in the single_session_rsvp case so
+		// we can send unattend messages first, and then attend messages.
+
+		// if they're the same, just ignore it.
+		if(curSession && curSession!=sessionId) {
+
+			queuedAttend = function() {
+				var message = {type:"attend", args:{id:sessionId}};
+				sock.send(JSON.stringify(message));				
+			}
+
+			var message = {type:"unattend", args:{id:curSession}};
+			sock.send(JSON.stringify(message));
+		} else if(!curSession) {
+			var message = {type:"attend", args:{id:sessionId}};
+			sock.send(JSON.stringify(message));				
+		}
+	}));
+
 	app.start();
 
 	if(curSession) {
@@ -246,6 +269,14 @@ $(document).ready(function() {
 			case "unattend"	:
 				curEvent.get("sessions").get(msg.args.id).removeAttendee(msg.args.user);
 				console.log("removed attendee from a session");
+
+				curSession = null;
+
+				if(queuedAttend) {
+					queuedAttend.call();
+					queuedAttend = false;
+				}
+
 				break;
 			
 			case "join":

@@ -127,8 +127,7 @@ var SessionView = Marionette.ItemView.extend({
 				var message = {type:"unattend", args:{id:this.model.id}};
 				sock.send(JSON.stringify(message));				
 			} else {
-				var message = {type:"attend", args:{id:this.model.id}};
-				sock.send(JSON.stringify(message));	
+				app.vent.trigger("attend", this.model.id);
 			}		
 		}
 
