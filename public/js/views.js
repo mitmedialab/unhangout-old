@@ -260,11 +260,16 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	id: "admin-button",
 
 	events: {
-		'click #start-all':'startAll'
+		'click #start-all':'startAll',
+		'click #stop-all':'stopAll'
 	},
 
 	startAll: function() {
 		console.log("start all!");
+	},
+
+	stopAll: function() {
+		console.log("stop all!");
 	}
 });
 
