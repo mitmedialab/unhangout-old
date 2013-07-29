@@ -512,13 +512,24 @@ body {
 
 	z-index: 500;
 
-	div {
-		float: left;
+	#session-live-bar {
+		width: 400px;
+		margin-left: auto;
+		margin-right: auto;
+
+		div {
+			float: left;
+			font-weight: bold;
+			font-size: 1.6em;
+			padding-top: 5px;
+		}
+
+		.btn {
+			float: left;
+			margin-left: 15px;
+		}
 	}
-	.btn {
-		float: left;
-		margin-left: 15px;
-	}
+
 
 	box-shadow: 3px 3px 3px #aaa;
 }

@@ -468,17 +468,26 @@ body {
   box-shadow: 3px 3px 3px #aaa;
 }
 /* line 515, ../../sass/screen.scss */
-#bar div {
-  float: left;
+#bar #session-live-bar {
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
 }
-/* line 518, ../../sass/screen.scss */
-#bar .btn {
+/* line 520, ../../sass/screen.scss */
+#bar #session-live-bar div {
+  float: left;
+  font-weight: bold;
+  font-size: 1.6em;
+  padding-top: 5px;
+}
+/* line 527, ../../sass/screen.scss */
+#bar #session-live-bar .btn {
   float: left;
   margin-left: 15px;
 }
 
 /*---------------------------- INDEX STYLES ---------------------------*/
-/* line 527, ../../sass/screen.scss */
+/* line 538, ../../sass/screen.scss */
 .jumbotron {
   color: white;
   background-image: url("/public/img/dots.png");
@@ -487,45 +496,45 @@ body {
   background-size: 1400px;
   margin-top: -20px;
 }
-/* line 536, ../../sass/screen.scss */
+/* line 547, ../../sass/screen.scss */
 .jumbotron h1 {
   padding-top: 75px;
   margin-top: 0px;
 }
-/* line 541, ../../sass/screen.scss */
+/* line 552, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* line 549, ../../sass/screen.scss */
+/* line 560, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
 }
-/* line 553, ../../sass/screen.scss */
+/* line 564, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
   font-size: 1.6em;
 }
-/* line 558, ../../sass/screen.scss */
+/* line 569, ../../sass/screen.scss */
 .event .description {
   width: 800px;
 }
-/* line 562, ../../sass/screen.scss */
+/* line 573, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 567, ../../sass/screen.scss */
+/* line 578, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 574, ../../sass/screen.scss */
+/* line 585, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -537,13 +546,13 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 587, ../../sass/screen.scss */
+/* line 598, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 594, ../../sass/screen.scss */
+/* line 605, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
