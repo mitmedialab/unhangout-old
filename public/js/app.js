@@ -120,7 +120,13 @@ $(document).ready(function() {
 				this.top.show(this.youtubeEmbedView);
 				videoShown = true;
 
-				this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+				var mainHeight = this.youtubeEmbedView.$el.outerHeight()-5;
+
+				if(this.main.$el.hasClass("bar")) {
+					mainHeight += 40;
+				}
+
+				this.main.$el.css("top", mainHeight);
 				this.sessionListView.updateDisplay();
 				this.top.$el.css("z-index", 50);
 				$("#video-nav").addClass("active");
@@ -161,11 +167,19 @@ $(document).ready(function() {
 	}, app));
 
 	app.vent.on("hide-bar", _.bind(function() {
-
+		this.bar.hide();
 		$("#top-left, #main-right, #main-left").removeClass("bar");
 	}, app));
 
 	app.start();
+
+	if(curSession) {
+		var curSessionObj = curEvent.get("sessions").get(curSession);
+
+		if(curSessionObj.get("started")) {
+			app.vent.trigger("show-bar");
+		} 
+	}
 
 	if(curEvent.hasEmbed()) {
 		app.vent.trigger("video-live");
