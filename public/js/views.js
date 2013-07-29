@@ -375,6 +375,15 @@ var ChatMessageView = Marionette.ItemView.extend({
 
     	return replacedText;
 	},
+
+	serializeData: function() {
+		var model = this.model.toJSON();
+
+		var tempUser = new models.User(this.model.get("user"));
+
+		model.user["shortDisplayName"] = tempUser.getShortDisplayName();
+		return model;
+	}
 });
 
 var ChatView = Marionette.CompositeView.extend({
