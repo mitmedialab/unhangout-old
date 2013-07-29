@@ -42,8 +42,8 @@ exports.run = function(dbId, redis, callback) {
 				var sessions = [];
 				
 				sessions.push(new models.ServerSession({title:"Writing as Making/Making as Writing", description: "This webinar featured both inside and outside of school educators and media makers to discuss the impact of thinking about what happens when you put the learner front and enter in the role of producer. Facilitated by Elyse Eidman-Aadahl, NWP."}));
-				sessions.push(new models.ServerSession({title:"Interest Driven", description:"This webinar featured both inside and outside of school educators and researchers discussing what interest-driven means and what it looks like in connected learning. Facilitated by Stephanie West-Puckett, TRWP"}));
-				sessions.push(new models.ServerSession({title: "What we've been learning in #clmooc", description:"Not yet a webinar but actually a MOOC (“Massively Open Online Collaboration”) that the NWP also hosted throughout the month of July, this webinar is an opportunity to see what’s been made and what’s been learned. Facilitated by Paul Oh, NWP."}));
+				sessions.push(new models.ServerSession({title:"What does interest-driven look like?", description:"This webinar featured both inside and outside of school educators and researchers discussing what interest-driven means and what it looks like in connected learning. Facilitated by Stephanie West-Puckett, TRWP"}));
+				sessions.push(new models.ServerSession({title:"What we've been learning in #clmooc", description:"Not yet a webinar but actually a MOOC (“Massively Open Online Collaboration”) that the NWP also hosted throughout the month of July, this webinar is an opportunity to see what’s been made and what’s been learned. Facilitated by Paul Oh, NWP."}));
 				sessions.push(new models.ServerSession({title:"From Expression to Impact: Youth Civic Engagement Enacted", description:"This webinar explored how are educators fostering civic engagement in Connected Learning environments, how these contexts are changing and how best to support educators in doing this work with their students. Facilitated by Antero Garcia, CSUWP"}));
 				sessions.push(new models.ServerSession({title:"Connected Learning TV now and into the future", description:"Connected Learning TV is in the middle of a 12-month experiment where we take 1 month at a time to focus on key connected learning communities and topics/themes. What have you found most useful about this format? What do you wish was different? What would make it easier for you (and your peers) to get involved in the series and the Connected Learning community? Facilitated by Jon Barilone, CLTV"}));
 
@@ -52,7 +52,7 @@ exports.run = function(dbId, redis, callback) {
 				events[0].addSession(sessions[2]);
 				events[0].addSession(sessions[3]);
 				events[0].addSession(sessions[4]);
-				
+
 				// events[0].addSession(sessions[5]);
 				// events[0].addSession(sessions[6]);
 				// events[0].addSession(sessions[7]);
