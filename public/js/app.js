@@ -211,10 +211,10 @@ $(document).ready(function() {
 				break;
 			
 			case "embed":
-				var originalYoutubeId = curEvent.get("youtubeEmbed");
+				var originalYoutubeId = curEvent.get("youtubeEmbed") || "";
 
 				curEvent.setEmbed(msg.args.ytId);
-				console.log("added yt embed id");
+				console.log("added yt embed id: " + JSON.stringify(msg.args));
 
 				if(msg.args.ytId.length > 0) {
 					// if it's a non-empty yt embed, show the live tag.
