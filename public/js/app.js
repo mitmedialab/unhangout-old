@@ -51,7 +51,8 @@ $(document).ready(function() {
 		top: '#top-left',
 		global: '#global',
 		dialogs: '#dialogs',
-		admin: '#admin-region'
+		admin: '#admin-region',
+		bar:'#bar'
 	});
 	
 	app.addInitializer(function(options) {
@@ -80,6 +81,10 @@ $(document).ready(function() {
 		this.right.show(this.chatView);
 		this.main.show(this.sessionListView);
 		this.dialogs.show(this.dialogView);
+
+		// this is a little unorthodox, but not sure how else
+		// to do it.
+		$(this.bar.el).hide();
 		
 		if(IS_ADMIN) {
 			this.adminButtonView = new AdminButtonView();
@@ -115,7 +120,13 @@ $(document).ready(function() {
 				this.top.show(this.youtubeEmbedView);
 				videoShown = true;
 
-				this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+				var mainHeight = this.youtubeEmbedView.$el.outerHeight()-5;
+
+				if(this.main.$el.hasClass("bar")) {
+					mainHeight += 40;
+				}
+
+				this.main.$el.css("top", mainHeight);
 				this.sessionListView.updateDisplay();
 				this.top.$el.css("z-index", 50);
 				$("#video-nav").addClass("active");
@@ -142,7 +153,47 @@ $(document).ready(function() {
 		$("#video-nav .label").addClass("hide");
 	}, app));
 
+	app.vent.on("show-bar", _.bind(function() {
+
+		this.bar.show(new SessionLiveView());
+		$(this.bar.el).show();
+
+		$("#top-left, #main-right, #main-left").addClass("bar");
+
+		// set the hangout link.
+		this.bar.$el.find("a").attr("href", "/session/" + curEvent.get("sessions").get(curSession).get("session-key"));
+
+		// 30 minutes later hide the bar(?)
+		setTimeout(function() {
+			app.vent.trigger("hide-bar");
+		}, 60*1000*30);
+	}, app));
+
+	app.vent.on("hide-bar", _.bind(function() {
+		this.bar.close();
+		this.bar.$el.hide();
+
+		$("#top-left, #main-right, #main-left").removeClass("bar");
+
+		// we need to do a special check for main-left, which has custom
+		// style adjustement on it.  
+		if(videoShown) {
+			this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
+		} else {
+			this.main.$el.css("top", "");
+		}
+
+	}, app));
+
 	app.start();
+
+	if(curSession) {
+		var curSessionObj = curEvent.get("sessions").get(curSession);
+
+		if(curSessionObj.isLive()) {
+			app.vent.trigger("show-bar");
+		} 
+	}
 
 	if(curEvent.hasEmbed()) {
 		app.vent.trigger("video-live");
@@ -248,7 +299,18 @@ $(document).ready(function() {
 					session.set("session-key", msg.args.key);
 					session.start();
 				}, timeout);
-				
+
+				app.vent.trigger("show-bar");
+
+				break;
+			case "stop":
+				var session = curEvent.get("sessions").get(msg.args.id);
+				session.stop();
+
+				if(session.id==curSession) {
+					app.vent.trigger("hide-bar");
+				}
+
 				break;
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));

@@ -121,7 +121,8 @@ models.Session = Backbone.Model.extend({
 			description: "This session is really wonderful.",
 			attendeeIds: [],
 			firstAttendee: null,
-			started: false
+			started: false,
+			stopped: false
 		};
 	},
 	
@@ -172,7 +173,16 @@ models.Session = Backbone.Model.extend({
 	start: function() {
 		this.set("started", new Date().getTime());
 		this.trigger("start");
-	}	
+	},
+
+	stop: function() {
+		this.set("stopped", new Date().getTime());
+		this.trigger("stopped");
+	},
+
+	isLive: function() {
+		return this.get("started") && !this.get("stopped");
+	}
 });
 
 models.SessionList = Backbone.Collection.extend({

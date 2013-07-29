@@ -128,11 +128,15 @@
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 						<li role="presentation">
 							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">embed</a>
-							<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>
+							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
+							<a role="menuitem" tabindex="-1" id="stop-all">stop all sessions</a>
 						</li>
 					</ul>
 				</div>
+			</script>
 
+			<script type="text/template" id="session-live-bar-template">
+			<div>Your session is now live!</div><a class="btn btn-success" target="_blank">Join Hangout!</a>
 			</script>
 
 			<script type="text/template" id="dialogs-template">
@@ -213,8 +217,8 @@
 	<div id="dialogs"></div>
 	</div>
 	
-	<!-- Not totally sure why this row needs to be fluid for a 9+3 to fit, but it seems to. -->
 	<div class="row" id="main">
+	<div id="bar"></div>
 	<div id="top-left" class="span6">
 	</div>
 	<div id="main-left" class="span6">

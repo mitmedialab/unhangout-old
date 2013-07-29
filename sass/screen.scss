@@ -62,6 +62,10 @@ body {
 	box-shadow: 3px -5px 3px #aaa;
 	border-right: 1px solid #aaa;
 	box-sizing: border-box;
+
+	&.bar {
+		top: 40px;
+	}
 }
 
 #main-right {
@@ -76,6 +80,10 @@ body {
 
 	right: 20px;
 	left: 440px;
+
+	&.bar {
+		top: 40px;
+	}
 
 	overflow: hidden;
 }
@@ -94,6 +102,11 @@ body {
 	top: 0px;
 
 	overflow: hidden;
+
+	&.bar {
+		top: 40px;
+	}
+
 }
 
 #main {
@@ -481,6 +494,45 @@ body {
 	}
 }
 
+#bar {
+	position: absolute;
+	top: 0px;
+
+	left: 0px;
+	right: 0px;
+
+	height: 30px;
+	background-color: #efefef;
+
+	padding: 5px;
+
+	border-right: 1px solid #aaa;
+	border-left: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;
+
+	z-index: 500;
+
+	#session-live-bar {
+		width: 400px;
+		margin-left: auto;
+		margin-right: auto;
+
+		div {
+			float: left;
+			font-weight: bold;
+			font-size: 1.6em;
+			padding-top: 5px;
+		}
+
+		.btn {
+			float: left;
+			margin-left: 15px;
+		}
+	}
+
+
+	box-shadow: 3px 3px 3px #aaa;
+}
 
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {

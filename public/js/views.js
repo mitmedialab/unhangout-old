@@ -48,10 +48,8 @@ var SessionView = Marionette.ItemView.extend({
 				$(".modal.in").modal("hide");
 				// this.ui.joinDialog.modal('hide');
 			}, this), 60000);
-			
 		}, this);		
 	},
-	
 
 	onRender: function() {
 		// things to do here:
@@ -78,7 +76,7 @@ var SessionView = Marionette.ItemView.extend({
 			// this.ui.attend.find(".text").text("JOIN");
 		}
 
-		if(this.model.get("started")) {
+		if(this.model.isLive()) {
 			this.$el.find(".started").show();
 
 			// remove the toggle-ness of the button once the event starts.
@@ -118,7 +116,7 @@ var SessionView = Marionette.ItemView.extend({
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
 
-		if(this.model.get("started")) {
+		if(this.model.isLive()) {
 			// if the event has started, button presses should attempt to join
 			// the hangout.
 			var url = "/session/" + this.model.get("session-key");
@@ -262,11 +260,17 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	id: "admin-button",
 
 	events: {
-		'click #start-all':'startAll'
+		'click #start-all':'startAll',
+		'click #stop-all':'stopAll'
 	},
 
 	startAll: function() {
 		console.log("start all!");
+	},
+
+	stopAll: function() {
+		console.log("stop all!");
+		sock.send(JSON.stringify({type:"stop-all", args:{}}));
 	}
 });
 
@@ -403,6 +407,11 @@ var ChatView = Marionette.CompositeView.extend({
 	update: function() {
 		this.$el.scrollTop(this.$el[0].scrollHeight);
 	}
+});
+
+var SessionLiveView = Marionette.ItemView.extend({
+	template: "#session-live-bar-template",
+	id: "session-live-bar"
 });
 
 var VideoEmbedView = Marionette.ItemView.extend({
