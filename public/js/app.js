@@ -31,6 +31,7 @@ $(document).ready(function() {
 	if(SINGLE_SESSION_RSVP) {
 		curEvent.get("sessions").each(function(session) {
 			if(session.isAttending(USER_ID)) {
+				console.log("SETTING CUR SESSION: " + session.id);
 				curSession = session.id;
 			}
 		})
@@ -153,7 +154,7 @@ $(document).ready(function() {
 		$("#video-nav .label").addClass("hide");
 	}, app));
 
-	app.vent.on("show-bar", _.bind(function() {
+	app.vent.on("show-bar", _.bind(function(sessionKey) {
 
 		this.bar.show(new SessionLiveView());
 		$(this.bar.el).show();
@@ -161,7 +162,7 @@ $(document).ready(function() {
 		$("#top-left, #main-right, #main-left").addClass("bar");
 
 		// set the hangout link.
-		this.bar.$el.find("a").attr("href", "/session/" + curEvent.get("sessions").get(curSession).get("session-key"));
+		this.bar.$el.find("a").attr("href", "/session/" + sessionKey);
 
 		// 30 minutes later hide the bar(?)
 		setTimeout(function() {
@@ -214,7 +215,7 @@ $(document).ready(function() {
 		var curSessionObj = curEvent.get("sessions").get(curSession);
 
 		if(curSessionObj.isLive()) {
-			app.vent.trigger("show-bar");
+			app.vent.trigger("show-bar", curSessionObj.get("session-key"));
 		} 
 	}
 
@@ -326,12 +327,13 @@ $(document).ready(function() {
 					timeout = 60*1000;
 				}
 				
+
 				setTimeout(function() {
 					session.set("session-key", msg.args.key);
 					session.start();
 				}, timeout);
 
-				app.vent.trigger("show-bar");
+				app.vent.trigger("show-bar", msg.args.key);
 
 				break;
 			case "stop":
