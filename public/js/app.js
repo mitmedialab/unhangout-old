@@ -305,7 +305,7 @@ $(document).ready(function() {
 				break;
 			
 			case "leave":
-				users.remove(users.get(msg.args.user.ytId));
+				users.remove(users.get(msg.args.user.id));
 				break;
 				
 			case "chat":
