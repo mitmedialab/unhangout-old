@@ -94,6 +94,25 @@ $(document).ready(function() {
 				
 		console.log("Initialized app.");
 	});
+	
+	var isIntervalRunning = false;
+	var interval = 0;
+
+	app.vent.on("new-chat-message", _.bind(function() {
+		isIntervalRunning = true;
+
+		if(isIntervalRunning)
+			interval = window.setTimeout(showFlashTitle, 1000);
+	}, app));
+
+	function showFlashTitle() {
+		if(window.document.title == 'Unhangout')
+			window.document.title = 'New Message ...';
+		else
+			window.document.title = 'Unhangout';
+
+		interval = window.setTimeout(showFlashTitle, 1000);
+	}
 
 	app.vent.on("sessions-nav", _.bind(function() {
 		this.main.show(this.sessionListView);
@@ -286,11 +305,12 @@ $(document).ready(function() {
 				break;
 			
 			case "leave":
-				users.remove(users.get(msg.args.user.id));
+				users.remove(users.get(msg.args.user.ytId));
 				break;
 				
 			case "chat":
 				messages.add(new models.ChatMessage(msg.args));
+				app.vent.trigger("new-chat-message");
 				break;
 			
 			case "embed":
