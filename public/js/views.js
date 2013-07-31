@@ -377,13 +377,7 @@ var ChatMessageView = Marionette.ItemView.extend({
 
     	//Change email addresses to mailto:: links.
     	replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
-    //	replacePattern3 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    //	replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
-
-    	replacePattern3 = /^[+a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
 		replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
-
-		
 
     	return replacedText;
 	},
