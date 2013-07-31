@@ -93,7 +93,49 @@ $(document).ready(function() {
 		}
 				
 		console.log("Initialized app.");
+
+		$(window).blur(function() {
+			isIntervalRunning = true ;
+			windowBlurred = true ;
+			messageShown = true ;
+		})
+
+		$(window).focus(function() {
+			isIntervalRunning = false;
+			windowBlurred = false;
+			messageShown = false ;
+			clearInterval(interval);
+			window.document.title = 'Unhangout';
+		})
+
 	});
+
+	app.showFlashTitle = function () {
+		if(isIntervalRunning && !messageShown) {
+			if(window.document.title == 'Unhangout')
+				window.document.title = 'New Message ...';
+			else
+				window.document.title = 'Unhangout';
+
+			interval = window.setTimeout(app.showFlashTitle , 1000);
+		}
+	};
+	
+	var interval = 0;
+	var messageShown = false ;
+	var windowBlurred = false ;
+	var isIntervalRunning = false;
+
+	app.vent.on("new-chat-message", _.bind(function() {
+		if(windowBlurred)
+			messageShown = false ;
+		else 
+			messageShown = true ;
+
+		if(!messageShown && isIntervalRunning && windowBlurred)
+			interval = window.setTimeout(this.showFlashTitle, 1000);
+
+	}, app));
 
 	app.vent.on("sessions-nav", _.bind(function() {
 		this.main.show(this.sessionListView);
@@ -291,6 +333,8 @@ $(document).ready(function() {
 				
 			case "chat":
 				messages.add(new models.ChatMessage(msg.args));
+				app.vent.trigger("new-chat-message");
+				
 				break;
 			
 			case "embed":
