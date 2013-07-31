@@ -95,23 +95,45 @@ $(document).ready(function() {
 		console.log("Initialized app.");
 	});
 	
-	var isIntervalRunning = false;
 	var interval = 0;
+	var messageShown = false ;
+	var windowBlurred = false ;
+	var isIntervalRunning = false;
 
 	app.vent.on("new-chat-message", _.bind(function() {
-		isIntervalRunning = true;
+		if(windowBlurred)
+			messageShown = false ;
+		else 
+			messageShown = true ;
 
-		if(isIntervalRunning)
+		if(!messageShown && isIntervalRunning && windowBlurred)
 			interval = window.setTimeout(showFlashTitle, 1000);
+
 	}, app));
 
-	function showFlashTitle() {
-		if(window.document.title == 'Unhangout')
-			window.document.title = 'New Message ...';
-		else
-			window.document.title = 'Unhangout';
+	window.onblur = _.bind(function() {
+		isIntervalRunning = true ;
+		windowBlurred = true ;
+		messageShown = true ;
+	} , app);
 
-		interval = window.setTimeout(showFlashTitle, 1000);
+	window.onfocus = _.bind(function() {
+		isIntervalRunning = false;
+		windowBlurred = false;
+		messageShown = false ;
+		clearInterval(interval);
+		window.document.title = 'Unhangout';
+	} , app);
+
+	function showFlashTitle() {
+		if(isIntervalRunning && !messageShown) {
+			if(window.document.title == 'Unhangout')
+				window.document.title = 'New Message ...';
+			else
+				window.document.title = 'Unhangout';
+
+			interval = window.setTimeout(showFlashTitle, 1000);
+		}
 	}
 
 	app.vent.on("sessions-nav", _.bind(function() {
@@ -311,6 +333,7 @@ $(document).ready(function() {
 			case "chat":
 				messages.add(new models.ChatMessage(msg.args));
 				app.vent.trigger("new-chat-message");
+				
 				break;
 			
 			case "embed":
