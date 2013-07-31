@@ -227,7 +227,7 @@ var UserView = Marionette.ItemView.extend({
 		// add in the tooltip attributes
 		this.$el.attr("data-toggle", "tooltip");
 		this.$el.attr("data-placement", "left");
-		this.$el.attr("data-container", "#presence-gutter");
+		this.$el.attr("data-container", "#chat-container-region");
 		this.$el.attr("title", this.model.get("displayName"));
 		this.$el.tooltip();
 	}
@@ -377,7 +377,13 @@ var ChatMessageView = Marionette.ItemView.extend({
 
     	//Change email addresses to mailto:: links.
     	replacePattern3 = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
-    	replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
+    //	replacePattern3 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    //	replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
+
+    	replacePattern3 = /^[+a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+		replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
+
+		
 
     	return replacedText;
 	},
