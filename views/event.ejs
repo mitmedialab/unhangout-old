@@ -55,35 +55,6 @@
 		<% if(!_.isUndefined(event)) { %>
 		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
 		<% } %>
-
-		var IS_INTERVAL_RUNNING = false;
-		var interval = 0;
-
-		window.onblur = function() { 
-			IS_INTERVAL_RUNNING = true; 
-
-			if(IS_INTERVAL_RUNNING)
-				interval = setInterval("flashTitle('Unhangout', 'New message...')", 800);
-		}
-
-		window.onfocus = function()  {
-			IS_INTERVAL_RUNNING = false ;
-
-			if(IS_INTERVAL_RUNNING == false) {
-				clearInterval(interval);
-				document.title = "Unhangout"; 
-			}
-			
-		}
-
-		function flashTitle(pageTitle, newMessageTitle)
-		{	
-    		if (document.title == pageTitle)
-        		document.title = newMessageTitle;
-    		else
-        		document.title = pageTitle;
-		}
-
 	</script>
 	
 		<script type="text/javascript" src="/public/js/models.js"></script>	

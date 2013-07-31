@@ -93,7 +93,33 @@ $(document).ready(function() {
 		}
 				
 		console.log("Initialized app.");
+
+		$(window).blur(function() {
+			isIntervalRunning = true ;
+			windowBlurred = true ;
+			messageShown = true ;
+		})
+
+		$(window).focus(function() {
+			isIntervalRunning = false;
+			windowBlurred = false;
+			messageShown = false ;
+			clearInterval(interval);
+			window.document.title = 'Unhangout';
+		})
+
 	});
+
+	app.showFlashTitle = function () {
+		if(isIntervalRunning && !messageShown) {
+			if(window.document.title == 'Unhangout')
+				window.document.title = 'New Message ...';
+			else
+				window.document.title = 'Unhangout';
+
+			interval = window.setTimeout(app.showFlashTitle , 1000);
+		}
+	};
 	
 	var interval = 0;
 	var messageShown = false ;
@@ -107,34 +133,9 @@ $(document).ready(function() {
 			messageShown = true ;
 
 		if(!messageShown && isIntervalRunning && windowBlurred)
-			interval = window.setTimeout(showFlashTitle, 1000);
+			interval = window.setTimeout(this.showFlashTitle, 1000);
 
 	}, app));
-
-	window.onblur = _.bind(function() {
-		isIntervalRunning = true ;
-		windowBlurred = true ;
-		messageShown = true ;
-	} , app);
-
-	window.onfocus = _.bind(function() {
-		isIntervalRunning = false;
-		windowBlurred = false;
-		messageShown = false ;
-		clearInterval(interval);
-		window.document.title = 'Unhangout';
-	} , app);
-
-	function showFlashTitle() {
-		if(isIntervalRunning && !messageShown) {
-			if(window.document.title == 'Unhangout')
-				window.document.title = 'New Message ...';
-			else
-				window.document.title = 'Unhangout';
-
-			interval = window.setTimeout(showFlashTitle, 1000);
-		}
-	}
 
 	app.vent.on("sessions-nav", _.bind(function() {
 		this.main.show(this.sessionListView);
