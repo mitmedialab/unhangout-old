@@ -258,6 +258,8 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 
 	id: "admin-button",
 
+	firstRun: true,
+
 	events: {
 		'click #start-all':'startAll',
 		'click #stop-all':'stopAll'
@@ -270,6 +272,16 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	stopAll: function() {
 		console.log("stop all!");
 		sock.send(JSON.stringify({type:"stop-all", args:{}}));
+	},
+
+	onRender: function() {
+		if(this.firstRun && NUM_HANGOUTS_FARMED==0) {
+			$("#no-urls-warning").modal('show');
+		}
+	},
+
+	serializeData: function() {
+		return {numFarmedHangouts:NUM_HANGOUTS_FARMED};
 	}
 });
 
