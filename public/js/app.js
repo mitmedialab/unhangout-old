@@ -369,15 +369,17 @@ $(document).ready(function() {
 				
 				if(!(session.isAttending(USER_ID))) {
 					timeout = 60*1000;
-				}
-				
+				}				
 
 				setTimeout(function() {
 					session.set("session-key", msg.args.key);
 					session.start();
+
+					if(session.isattending(USER_ID)) {
+						app.vent.trigger("show-bar", msg.args.key);
+					}
 				}, timeout);
 
-				app.vent.trigger("show-bar", msg.args.key);
 
 				break;
 			case "stop":
