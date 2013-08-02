@@ -147,6 +147,22 @@ body {
 		overflow-y: visible;
 		overflow-x: visible;
 	}
+
+	.header {
+		width: 100%;
+		background-color: $primary;
+		text-align: center;
+		margin-left: -5px;
+		margin-right: -5px;
+		margin-top: -5px;
+
+		color: white;
+		font-weight: bold;
+
+		.icon-user {
+			margin-left: 3px;
+		}
+	}
 }
 
 .nav {
