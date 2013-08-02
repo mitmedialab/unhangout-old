@@ -343,6 +343,11 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	itemViewContainer: "#user-list-container",
 	id: "user-list",
 
+	events: {
+		'click .pageUp':'pageUp',
+		'click .pageDown':'pageDown'
+	},
+
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
 
@@ -385,6 +390,14 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 			this.render();
 		}
 	},
+
+	pageUp: function() {
+		console.log("page up");
+	},
+
+	pageDown: function() {
+		console.log("page down");
+	}
 });
 
 var ChatLayout = Backbone.Marionette.Layout.extend({
