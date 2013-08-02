@@ -284,6 +284,7 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	firstRun: true,
 
 	events: {
+		'click #show-embed-modal':'showEmbedModal',
 		'click #start-all':'startAll',
 		'click #stop-all':'stopAll'
 	},
@@ -295,6 +296,10 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	stopAll: function() {
 		console.log("stop all!");
 		sock.send(JSON.stringify({type:"stop-all", args:{}}));
+	},
+
+	showEmbedModal: function() {
+		$("#youtube_id").val(curEvent.get("youtubeEmbed"));
 	},
 
 	onRender: function() {
