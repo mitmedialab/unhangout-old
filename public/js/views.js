@@ -213,6 +213,10 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 		var sessionsPerPage = Math.floor(height / exampleSessionHeight) * 2;
 		
+		if(sessionsPerPage < 2) {
+			sessionsPerPage = 2;
+		}
+
 		if(this.collection.perPage != sessionsPerPage) {
 			this.collection.howManyPer(sessionsPerPage);
 			this.render();
