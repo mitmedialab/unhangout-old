@@ -89,6 +89,9 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.attend.addClass("btn-success");
 
 			this.ui.attend.find(".text").text("JOIN");
+
+			// don't show the x of 10 when it's live (at least until we have live data for that)
+			this.ui.attend.find(".attend-count").hide();
 		} else {
 			this.$el.find(".started").hide();			
 			this.ui.attend.find(".text").text("SIGN UP");
@@ -209,9 +212,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		var height = this.$el.parent().innerHeight() - 75;
 
 		var sessionsPerPage = Math.floor(height / exampleSessionHeight) * 2;
-
-		console.log("SETTING SESSIONS PER PAGE: " + sessionsPerPage);
-
+		
 		if(this.collection.perPage != sessionsPerPage) {
 			this.collection.howManyPer(sessionsPerPage);
 			this.render();
@@ -340,9 +341,63 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	itemViewContainer: "#user-list-container",
 	id: "user-list",
 
+	events: {
+		'click .pageUp':'pageUp',
+		'click .pageDown':'pageDown'
+	},
+
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
-	}
+
+		$(window).resize(_.bind(function() {
+			this.updateDisplay();
+		}, this));
+	},
+
+	serializeData: function() {
+		var data = {};
+
+		data = this.collection.toJSON();
+
+		data["numUsers"] = this.collection.info().totalRecords;
+
+		return data;
+	},
+
+	update: function() {
+		this.render();
+	},
+
+	updateDisplay: function() {
+		// figure out how tall a session is.
+		var exampleUserHeight = this.$el.find(".user").first().outerHeight();
+
+		if(exampleUserHeight< 10) {
+			return;
+		}
+
+		// figure out how many we can fit safely, rounding down
+		var height = this.$el.parent().innerHeight() - 75;
+
+		var userPerPage = Math.floor(height / exampleUserHeight);
+
+		if(this.collection.perPage != userPerPage) {
+			this.collection.howManyPer(userPerPage);
+			this.render();
+		}
+	},
+
+	pageUp: function() {
+		console.log("page up");
+		this.collection.prevPage();
+		this.render();
+	},
+
+	pageDown: function() {
+		console.log("page down");
+		this.collection.nextPage();
+		this.render();
+	},
 });
 
 var ChatLayout = Backbone.Marionette.Layout.extend({
