@@ -355,6 +355,10 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 		data["numUsers"] = this.collection.length;
 
 		return data;
+	},
+
+	update: function() {
+		this.render();
 	}
 });
 
