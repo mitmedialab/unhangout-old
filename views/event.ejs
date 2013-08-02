@@ -47,6 +47,10 @@
 		var USER_ID = '<%= user.id %>';
 		var IS_ADMIN = <%= user.isAdmin() %>;
 
+		<% if(user.isAdmin()) { %>
+		var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
+		<% } %>
+
 		// this is a little weak, but since we only want this for the first
 		// event we'll leave it like this for now.
 		var SINGLE_SESSION_RSVP = true;
@@ -141,6 +145,7 @@
 							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">embed</a>
 							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
 							<a role="menuitem" tabindex="-1" id="stop-all">stop all sessions</a>
+							<a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
 						</li>
 					</ul>
 				</div>
@@ -180,6 +185,19 @@
 						<a href="#" class="btn">Close</a>
 					</div>
 				</div>
+				<div id="no-urls-warning" class="modal hide fade">
+					<div class="modal-header">
+						<h3>NO HANGOUT URLS AVAILABLE</h3>
+					</div>
+					<div class="modal-body">
+						<p>There are currently no hangout urls available on the server. Sessions started when there are no urls available will fall back to the callback method of hangout starting, which requires the first person to join a session to create the hangout. This is not desireable; we strongly recommend you farm some hangout urls by clicking "farm" below. For this process to work, your google acount must have "create video calls for events" set in your google calendar account settings.
+					</div>
+					<div class="modal-footer">
+						<a class="btn btn-success" id="farm-urls" href="/hangout-farming" target="_blank">Farm</a>
+						<a href="#" class="btn btn-primary" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
+					</div>
+				</div>
+
 			</script>
 		</head>
 <body>
