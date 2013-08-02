@@ -48,7 +48,10 @@ var SessionView = Marionette.ItemView.extend({
 				$(".modal.in").modal("hide");
 				// this.ui.joinDialog.modal('hide');
 			}, this), 60000);
-		}, this);		
+		}, this);	
+
+		// this.listenTo(this.model, 'stopped', this)
+
 	},
 
 	onRender: function() {
@@ -100,6 +103,26 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.description.show();
 			this.ui.empty.show();
 			this.ui.attending.show();
+		}
+
+		if(this.model.get("stopped")) {
+			this.ui.attend.attr("disabled", true);
+			this.ui.attend.addClass("disabled");
+
+			this.$el.undelegate('.attend', 'click');
+
+			this.$el.find(".start").hide();
+
+			this.ui.attend.find(".text").text("SESSION FINISHED");
+			this.ui.attend.find(".attend-count").hide();
+
+		} else {
+			this.$el.find(".attend").attr("disabled", false);
+			this.$el.find(".attend").removeClass("disabled");
+
+			this.$el.delegate('.attend', 'click');
+
+			this.$el.find(".start").show();
 		}
 
 		var numAttendees = this.model.numAttendees();
