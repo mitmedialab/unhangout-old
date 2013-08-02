@@ -89,6 +89,9 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.attend.addClass("btn-success");
 
 			this.ui.attend.find(".text").text("JOIN");
+
+			// don't show the x of 10 when it's live (at least until we have live data for that)
+			this.ui.attend.find(".attend-count").hide();
 		} else {
 			this.$el.find(".started").hide();			
 			this.ui.attend.find(".text").text("SIGN UP");
@@ -342,6 +345,16 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
+	},
+
+	serializeData: function() {
+		var data = {};
+
+		data = this.collection.toJSON();
+
+		data["numUsers"] = this.collection.length;
+
+		return data;
 	}
 });
 
