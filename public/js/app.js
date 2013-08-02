@@ -24,7 +24,8 @@ $(document).ready(function() {
 
 	curEvent = new models.ClientEvent(EVENT_ATTRS);
 	
-	users = new models.UserList(EVENT_ATTRS.connectedUsers);
+	users = new models.PaginatedUserList(EVENT_ATTRS.connectedUsers);
+	users.bootstrap();
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 
