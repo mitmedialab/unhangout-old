@@ -345,6 +345,10 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 	initialize: function() {
 		this.listenTo(this.collection, 'all', this.update, this);
+
+		$(window).resize(_.bind(function() {
+			this.updateDisplay();
+		}, this));
 	},
 
 	serializeData: function() {
@@ -359,7 +363,28 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 	update: function() {
 		this.render();
-	}
+	},
+
+	updateDisplay: function() {
+		// figure out how tall a session is.
+		var exampleUserHeight = this.$el.find(".user").first().outerHeight();
+
+		if(exampleUserHeight< 10) {
+			return;
+		}
+
+		// figure out how many we can fit safely, rounding down
+		var height = this.$el.parent().innerHeight() - 75;
+
+		var userPerPage = Math.floor(height / exampleUserHeight);
+
+		console.log("SETTING USER PER PAGE: " + userPerPage);
+
+		if(this.collection.perPage != exampleUserHeight) {
+			this.collection.howManyPer(exampleUserHeight);
+			this.render();
+		}
+	},
 });
 
 var ChatLayout = Backbone.Marionette.Layout.extend({
