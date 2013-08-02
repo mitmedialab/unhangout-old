@@ -177,8 +177,17 @@ body {
 	}
 
 	.pageDown {
+		position: absolute;
+
+		bottom: 3px;
+
 		clear: left;
 		padding-top: -5px;
+
+		i {
+			position: relative;
+			top: -5px;
+		}
 	}
 }
 
