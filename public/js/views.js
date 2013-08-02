@@ -359,7 +359,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 		data = this.collection.toJSON();
 
-		data["numUsers"] = this.collection.length;
+		data["numUsers"] = this.collection.info().totalRecords;
 
 		return data;
 	},
