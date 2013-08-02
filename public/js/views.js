@@ -212,9 +212,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		var height = this.$el.parent().innerHeight() - 75;
 
 		var sessionsPerPage = Math.floor(height / exampleSessionHeight) * 2;
-
-		console.log("SETTING SESSIONS PER PAGE: " + sessionsPerPage);
-
+		
 		if(this.collection.perPage != sessionsPerPage) {
 			this.collection.howManyPer(sessionsPerPage);
 			this.render();
@@ -383,21 +381,23 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 		var userPerPage = Math.floor(height / exampleUserHeight);
 
-		console.log("SETTING USER PER PAGE: " + userPerPage);
-
-		if(this.collection.perPage != exampleUserHeight) {
-			this.collection.howManyPer(exampleUserHeight);
+		if(this.collection.perPage != userPerPage) {
+			this.collection.howManyPer(userPerPage);
 			this.render();
 		}
 	},
 
 	pageUp: function() {
 		console.log("page up");
+		this.collection.prevPage();
+		this.render();
 	},
 
 	pageDown: function() {
 		console.log("page down");
-	}
+		this.collection.nextPage();
+		this.render();
+	},
 });
 
 var ChatLayout = Backbone.Marionette.Layout.extend({
