@@ -241,12 +241,23 @@ body {
 	
 	border: 1px solid $background;
 /*	border-radius: 25px;*/
+	box-sizing: border-box;
 	
 	background-color: white;
 	
 	float: left;
 	
 	overflow: hidden;
+
+	&.admin {
+		border: 3px solid $background;
+		border-color: orange;
+
+		img {
+			position: relative;
+			top: -3px;
+		}
+	}
 
 	img {
 		width: 40px;
@@ -522,6 +533,10 @@ body {
 					float: left;
 					display: block;	
 					font-weight: bold;
+
+					&.admin {
+						color: orange;					
+					}
 				}
 			}
 		}
