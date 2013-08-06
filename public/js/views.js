@@ -365,7 +365,30 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	},
 
 	initialize: function() {
-		this.listenTo(this.collection, 'all', this.update, this);
+		this.listenTo(this.collection, 'add remove', function() {
+			// going to manually update the current user counter because
+			// doing it during render doesn't seem to work. There's some 
+			// voodoo in how marionette decides how much of the view to
+			// re-render on events, and it seems to excludethe piece out-
+			// side the item-view-container, assuming it doesn't have
+			// reactive bits.
+			// I would also expect this to be .totalRecords, but for
+			// some reason totalRecords doesn't decrease when records
+			// are removed, but totalUnfilteredRecords does. Could
+			// be a bug.
+
+			// Other side note: be aware that there is some magic in
+			// marionette around adding to collections. It apparently
+			// tries to just auto-add the new record to the 
+			// itemViewContainer. This is a little weird when
+			// combined with the pagination system, which doesn't 
+			// necessarily show all incoming models. Just something
+			// to keep an eye on. More info here:
+			// https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.compositeview.md#model-and-collection-rendering
+
+			this.$el.find(".header .contents").text(this.collection.info().totalUnfilteredRecords);
+		}, this);
+
 
 		$(window).resize(_.bind(function() {
 			this.updateDisplay();
@@ -379,10 +402,12 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 		data["numUsers"] = this.collection.info().totalRecords;
 
+		console.log("running user list serialize data");
 		return data;
 	},
 
 	update: function() {
+		console.log("rendering UserListView");
 		this.render();
 	},
 
@@ -404,6 +429,10 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 			this.render();
 		}
 	},
+
+	// onRender: function() {
+	// 	console.log("post render");
+	// },
 
 	pageUp: function() {
 		console.log("page up");
@@ -554,7 +583,6 @@ var VideoEmbedView = Marionette.ItemView.extend({
 			} else {
 				this.player.loadVideoById(youtubeEmbed);
 			}
-
 		}, this);
 	},
 
