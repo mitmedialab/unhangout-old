@@ -1,17 +1,21 @@
 Filtering content from the log file 
 ===================================
 
-- cat filename.txt| grep regex | cut -d ':' -f 7 
+cat filename.txt| grep regex | cut -d ':' -f 7 
+----------------------------------------------
   
-    Combination of cat, grep and cut command is used to filter data from a log file.
-    Cat command opens file and outputs its content to pipe '|'. After that grep reads from pipe and tries to match with
-    the regular expression regex in the file. Cut command looks for a character following the delimiter (-d) in the 
-    file and removes sections from each line of files. 
+   - Combination of cat, grep and cut command is used to filter data from a log file.
+     Cat command opens file and outputs its content to pipe '|'. After that grep reads from pipe and tries to match with
+     the regular expression regex in the file. Cut command looks for a character following the delimiter (-d) in the 
+     file and removes sections from each line of files. 
     
     
-- To further filter the content, file can be opened with vim editor and regex command can be applied.
+Regular Expression :%s//}g 
+--------------------------
+
+    - To further filter the content, file can be opened with vim editor and regex command can be applied.
     
-    Regular expression used to retrieve chat data : :%s//}g 
+      Regular expression used to retrieve chat data : :%s//}g 
     
-    This expression looks for a '}' character in the entire file and wherever it finds a character matching 
-    similar regular expression it removes it from the file. 
+      This expression looks for a '}' character in the entire file and wherever it finds a character matching 
+      similar regular expression it removes it from the file. 
