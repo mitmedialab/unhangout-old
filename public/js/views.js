@@ -277,8 +277,17 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	},
 
 	setEmbed: function() {
-		var message = {type:"embed", args:{ytId:$("#youtube_id").val()}};
-		sock.send(JSON.stringify(message));
+		var newId = $("#youtube_id").val();
+
+		if(newId.length!=11) {
+			this.$el.find("#embed-modal p.text-warning").removeClass("hide");
+			this.$el.find("#embed-modal .control-group").addClass("error");
+		} else {
+			this.$el.find("#embed-modal p.text-warning").addClass("hide");
+			this.$el.find("#embed-modal .control-group").removeClass("error");
+			var message = {type:"embed", args:{ytId:newId}};
+			sock.send(JSON.stringify(message));
+		}
 	},
 
 	closeDisconnected: function() {
