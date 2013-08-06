@@ -1,7 +1,7 @@
 Filtering content from the log file 
------------------------------------
+===================================
 
---> cat filename.txt| grep regex | cut -d ':' -f 7 
+- cat filename.txt| grep regex | cut -d ':' -f 7 
   
     Combination of cat, grep and cut command is used to filter data from a log file.
     Cat command opens file and outputs its content to pipe '|'. After that grep reads from pipe and tries to match with
@@ -9,7 +9,7 @@ Filtering content from the log file
     file and removes sections from each line of files. 
     
     
---> To further filter the content, file can be opened with vim editor and regex command can be applied.
+- To further filter the content, file can be opened with vim editor and regex command can be applied.
     
     Regular expression used to retrieve chat data : :%s//}g 
     
