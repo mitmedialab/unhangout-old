@@ -253,6 +253,11 @@ var UserView = Marionette.ItemView.extend({
 
 	onRender: function() {
 		// add in the tooltip attributes
+
+		if(this.model.isAdmin()) {
+			this.$el.addClass("admin");
+		}
+
 		this.$el.attr("data-toggle", "tooltip");
 		this.$el.attr("data-placement", "left");
 		this.$el.attr("data-container", "#chat-container-region");
@@ -488,6 +493,12 @@ var ChatMessageView = Marionette.ItemView.extend({
 
 		model.user["shortDisplayName"] = tempUser.getShortDisplayName();
 		return model;
+	},
+
+	onRender: function() {
+		if(this.model.get("user").admin) {
+			this.$el.find(".from").addClass("admin");
+		}
 	}
 });
 
