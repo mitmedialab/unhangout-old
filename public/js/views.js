@@ -20,18 +20,8 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	initialize: function() {
-		console.log("initializing session view, model: " + JSON.stringify(this.model));
-		if(!_.isNull(this.model.get("firstAttendee"))) {
-			console.log("setting up first user view");
-			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
-		} else {
-			console.log("Missing first attendee.");
-		}
 
 		this.listenTo(this.model, 'change', this.render, this);
-		this.listenTo(this.model, 'change:firstAttendee', function() {
-			this.firstUserView = new UserView({model:new models.User(this.model.get("firstAttendee"))});
-		}, this);
 		this.listenTo(this.model, 'change:session-key', function() {
 			if(!this.model.isAttending(USER_ID)) {
 				console.log("skipping dialog for a non-attending user");
@@ -57,8 +47,7 @@ var SessionView = Marionette.ItemView.extend({
 	onRender: function() {
 		// things to do here:
 		// 1. Hide attending if no one is attending
-		// 2. If numAttending > 0, pick the first person and put their icon in .first
-		// 3. manage the counter bars for the rest of the count.
+		// 2. manage the counter bars for the rest of the count.
 
 		if(IS_ADMIN) {
 			// show the admin UI. obviously, requests generated here are authenticated
@@ -607,8 +596,6 @@ var VideoEmbedView = Marionette.ItemView.extend({
 					}
 				}
 			});
-
-			// this.$el.css("height", this.dimensions['small'].height + 40);
 		}
 	}
 });

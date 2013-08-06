@@ -120,7 +120,6 @@ models.Session = Backbone.Model.extend({
 			title: "Great Session",
 			description: "This session is really wonderful.",
 			attendeeIds: [],
-			firstAttendee: null,
 			started: false,
 			stopped: false
 		};
@@ -164,12 +163,7 @@ models.Session = Backbone.Model.extend({
 	isAttending: function(userId) {
 		return this.get("attendeeIds").indexOf(userId)!=-1;
 	},
-	
-	setFirstAttendee: function(user) {
-		this.set("firstAttendee", user);
-		this.trigger("change");
-	},
-	
+		
 	start: function() {
 		this.set("started", new Date().getTime());
 		this.trigger("start");
