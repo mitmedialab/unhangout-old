@@ -543,7 +543,19 @@ var VideoEmbedView = Marionette.ItemView.extend({
 		// we need to be more clever about this. if the player is loaded already,
 		// just send it to a different youtube id. reloading it entirely doesn't
 		// seem to work. In the meantime, just zero videos out between their inclusion.
-		this.listenTo(this.model, "change:youtubeEmbed", this.render, this);
+		this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
+			// two cases. if the old attribute was empty or null, then just render.
+			// if the old attribute is a valid youtube id (ie 11 chars long) then
+			// we need to do a YT JS API dance.
+
+			var previous = model.previous("youtubeEmbed");
+			if(_.isNull(previous) || previous.length!=11) {
+				this.render();
+			} else {
+				this.player.loadVideoById(youtubeEmbed);
+			}
+
+		}, this);
 	},
 
 	onShow: function() {
