@@ -12,6 +12,7 @@
       "email": "srishakatux@gmail.com"
     }
   ],
+  "license":"MIT",
   "scripts": {
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
