@@ -99,6 +99,9 @@ $(document).ready(function() {
 			isIntervalRunning = true ;
 			windowBlurred = true ;
 			messageShown = true ;
+
+			var message = {type:"blur", args:{id:USER_ID}};
+			sock.send(JSON.stringify(message));	
 		})
 
 		$(window).focus(function() {
@@ -107,6 +110,9 @@ $(document).ready(function() {
 			messageShown = false ;
 			clearInterval(interval);
 			window.document.title = 'Unhangout';
+
+			var message = {type:"focus", args:{id:USER_ID}};
+			sock.send(JSON.stringify(message));	
 		})
 
 	});

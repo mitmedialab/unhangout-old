@@ -227,6 +227,7 @@ var UserView = Marionette.ItemView.extend({
 	template: '#user-template',
 	className: 'user',
 	tagName: "li",
+	isBlurred: false, 
 
 	events: {
 		'click' : 'click'
