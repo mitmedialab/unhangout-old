@@ -138,12 +138,6 @@ $(document).ready(function() {
 
 	}, app));
 
-	app.vent.on("reload-page", _.bind(function() {
-			setTimeout(function() {
-				window.location.reload();
-			}, 5000);
-	}, app));
-
 	app.vent.on("sessions-nav", _.bind(function() {
 		this.main.show(this.sessionListView);
 	}, app));
@@ -280,9 +274,7 @@ $(document).ready(function() {
 	console.log("Setup regions.");
 
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
-	sock.onopen = function() {
-		console.log('open');
-		
+	sock.onopen = function() {		
 		var AUTH = {type:"auth", args:{key:SOCK_KEY, id:USER_ID}};
 		
 		sock.send(JSON.stringify(AUTH));
@@ -420,6 +412,19 @@ $(document).ready(function() {
 		$('#disconnected-modal').modal('show');
 		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
 		
-		app.vent.trigger("reload-page");
+		setTimeout(function() {
+			var ping = document.location;
+			
+			$.ajax({
+ 				url: ping,
+ 				cache: false,
+ 				async : false,
+
+ 				success: function(html){
+          		// reload window when ajax call is successful
+          		window.location.reload();
+      		}
+		});
+		}, 5000);	
 	};
 });
