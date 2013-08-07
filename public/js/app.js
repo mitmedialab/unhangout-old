@@ -144,12 +144,6 @@ $(document).ready(function() {
 
 	}, app));
 
-	app.vent.on("reload-page", _.bind(function() {
-			setTimeout(function() {
-				window.location.reload();
-			}, 5000);
-	}, app));
-
 	app.vent.on("sessions-nav", _.bind(function() {
 		this.main.show(this.sessionListView);
 	}, app));
@@ -425,7 +419,6 @@ $(document).ready(function() {
 	sock.onclose = function() {
 		$('#disconnected-modal').modal('show');
 		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
-		
-		app.vent.trigger("reload-page");
+		console.log("close");
 	};
 });
