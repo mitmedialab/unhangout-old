@@ -531,9 +531,55 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session", description:"This is a description."}}));
 			});
 
-			it("should reject create session messages without name")
-			it("should reject create session messages without description")
-			it("should broadcast a create-session message to clients");
+			it("should reject create session messages without name", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="create-session-ack") {
+						should.fail();
+					} else if(msg.type=="create-session-err") {
+						done();
+					}
+				});
+
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session"}}));
+			});
+
+			it("should reject create session messages without description", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="create-session-ack") {
+					} else if(msg.type=="create-session-err") {
+						done();
+					}
+				});
+
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"create-session", args:{description:"This is a description."}}));
+			});
+
+			it("should broadcast a create-session message to clients", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+
+					// note create-session not create-session-ack
+					if(msg.type=="create-session") {
+						msg.args.name.should.equal("New Session");
+						msg.args.description.should.equal("This is a description.");
+						done();
+					} else if(msg.type=="create-session-err") {
+						should.fail();
+					}
+				});
+
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session", description:"This is a description."}}));
+			});
 		});
 		
 		describe("EMBED", function() {
