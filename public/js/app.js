@@ -274,9 +274,7 @@ $(document).ready(function() {
 	console.log("Setup regions.");
 
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
-	sock.onopen = function() {
-		console.log('open');
-		
+	sock.onopen = function() {		
 		var AUTH = {type:"auth", args:{key:SOCK_KEY, id:USER_ID}};
 		
 		sock.send(JSON.stringify(AUTH));
@@ -335,7 +333,7 @@ $(document).ready(function() {
 			case "chat":
 				messages.add(new models.ChatMessage(msg.args));
 				app.vent.trigger("new-chat-message");
-				
+
 				break;
 			
 			case "embed":
@@ -413,6 +411,26 @@ $(document).ready(function() {
 	sock.onclose = function() {
 		$('#disconnected-modal').modal('show');
 		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
-		console.log('close');
+		
+		var checkIfServerUp = function () {
+		 	var ping = document.location;
+			
+		 	$.ajax({
+ 	 			url: ping,
+ 	 			cache: false,
+ 	 			async : false,
+
+ 	 			success: function(msg){
+           		// reload window when ajax call is successful
+           			window.location.reload();
+       			},
+
+       			error: function(msg) {
+       			 	timeout = setTimeout(checkIfServerUp, 250);
+       			}
+		 	});
+		};
+
+		checkIfServerUp();
 	};
 });
