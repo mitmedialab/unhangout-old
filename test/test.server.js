@@ -502,7 +502,35 @@ describe('unhangout server', function() {
 		describe("CREATE-SESSION", function() {
 			beforeEach(joinEventSetup);
 
-			it("should accept create session messages");
+			it("should accept create session messages", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+
+					if(msg.type=="create-session-ack") {
+						done();
+					} else if(msg.type=="create-session-err") {
+						should.fail();
+					}
+				});
+
+				s.users.at(0).set("admin", true);
+				
+				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session", description:"This is a description."}}));
+			});
+
+			it("should reject messages from non-admins", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="create-session-ack") {
+						should.fail();
+					} else if(msg.type=="create-session-err") {
+						done();
+					}
+				});
+				
+				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session", description:"This is a description."}}));
+			});
+
 			it("should reject create session messages without name")
 			it("should reject create session messages without description")
 			it("should broadcast a create-session message to clients");
