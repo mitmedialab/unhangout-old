@@ -412,10 +412,7 @@ $(document).ready(function() {
 		$('#disconnected-modal').modal('show');
 		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
 		
-		 var timeout = 0;
-		 timeout = setTimeout(refresh, 10);	
-
-		 function refresh() {
+		var checkIfServerUp = function () {
 		 	var ping = document.location;
 			
 		 	$.ajax({
@@ -426,13 +423,14 @@ $(document).ready(function() {
  	 			success: function(msg){
            		// reload window when ajax call is successful
            			window.location.reload();
-           			clearInterval(timeout);
        			},
 
        			error: function(msg) {
-       			 	timeout = setTimeout(refresh, 10);
+       			 	timeout = setTimeout(checkIfServerUp, 250);
        			}
 		 	});
-		}
+		};
+
+		checkIfServerUp();
 	};
 });
