@@ -233,6 +233,10 @@ models.User = Backbone.Model.extend({
 		return this.get("isBlurred");
 	},
 
+	setBlurred: function(blurred) {
+		this.set("isBlurred", blurred);
+	},
+
 	getShortDisplayName: function() {
 		// the goal here is to return first name, last initial
 		// minor catch: we want to special handle last names that are hyphenated and turn
