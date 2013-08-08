@@ -262,7 +262,8 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 	events: {
 		'click #set-embed':'setEmbed',
-		'click #disconnected-modal a':'closeDisconnected'
+		'click #disconnected-modal a':'closeDisconnected',
+		'click #create-session':'createSession'
 	},
 
 	setEmbed: function() {
@@ -279,6 +280,16 @@ var DialogView = Backbone.Marionette.Layout.extend({
 		}
 	},
 
+	createSession: function() {
+		var name = $("#session_name").val();
+		var desc = $("#session_desc").val();
+
+		console.log("create session: " + name + ": " + desc);
+
+		$("#create-session-modal").modal('hide');
+	},
+
+
 	closeDisconnected: function() {
 		$("#disconnected-modal").modal('hide');
 	}
@@ -294,7 +305,7 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	events: {
 		'click #show-embed-modal':'showEmbedModal',
 		'click #start-all':'startAll',
-		'click #stop-all':'stopAll'
+		'click #stop-all':'stopAll',
 	},
 
 	startAll: function() {
