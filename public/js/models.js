@@ -114,7 +114,7 @@ models.EventList = Backbone.Collection.extend({
 models.Session = Backbone.Model.extend({
 	idRoot: "session",
 	MAX_ATTENDEES: 10,
-	
+
 	defaults: function() {
 		return {
 			title: "Great Session",
