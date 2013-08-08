@@ -498,6 +498,15 @@ describe('unhangout server', function() {
 			it("should stop any running session, but not stop non-running sessions");
 			it("should send stop messages for running sessions to clients");
 		});
+
+		describe("CREATE-SESSION", function() {
+			beforeEach(joinEventSetup);
+
+			it("should accept create session messages");
+			it("should reject create session messages without name")
+			it("should reject create session messages without description")
+			it("should broadcast a create-session message to clients");
+		});
 		
 		describe("EMBED", function() {
 			beforeEach(joinEventSetup);
