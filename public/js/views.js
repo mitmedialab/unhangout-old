@@ -165,13 +165,17 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		'click .page':'goto'
 	},
 
-	initialize: function() {
-		console.log("INITIALIZE");
+	initialize: function(args) {
+		// Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
 		setTimeout(_.bind(this.updateDisplay, this), 100);
 
 		$(window).resize(_.bind(function() {
 			this.updateDisplay();
 		}, this));
+
+		this.listenTo(this.collection, "add", function() {
+			console.log("ADD");
+		}, this);
 	},
 
 	previous: function() {
@@ -284,7 +288,10 @@ var DialogView = Backbone.Marionette.Layout.extend({
 		var name = $("#session_name").val();
 		var desc = $("#session_desc").val();
 
+		sock.send(JSON.stringify({type:"create-session", args:{name:name, description:desc}}));
+
 		console.log("create session: " + name + ": " + desc);
+
 
 		$("#create-session-modal").modal('hide');
 	},

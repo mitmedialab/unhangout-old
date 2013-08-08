@@ -390,6 +390,12 @@ $(document).ready(function() {
 				}
 
 				break;
+
+			case "create-session":
+				var session = new models.Session(msg.args);
+				curEvent.addSession(session);
+				break;
+
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;
