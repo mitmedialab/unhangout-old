@@ -412,19 +412,27 @@ $(document).ready(function() {
 		$('#disconnected-modal').modal('show');
 		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
 		
-		setTimeout(function() {
-			var ping = document.location;
-			
-			$.ajax({
- 				url: ping,
- 				cache: false,
- 				async : false,
+		 var timeout = 0;
+		 timeout = setTimeout(refresh, 10);	
 
- 				success: function(html){
-          		// reload window when ajax call is successful
-          		window.location.reload();
-      		}
-		});
-		}, 5000);	
+		 function refresh() {
+		 	var ping = document.location;
+			
+		 	$.ajax({
+ 	 			url: ping,
+ 	 			cache: false,
+ 	 			async : false,
+
+ 	 			success: function(msg){
+           		// reload window when ajax call is successful
+           			window.location.reload();
+           			clearInterval(timeout);
+       			},
+
+       			error: function(msg) {
+       			 	timeout = setTimeout(refresh, 10);
+       			}
+		 	});
+		}
 	};
 });
