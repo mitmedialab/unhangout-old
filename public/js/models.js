@@ -204,7 +204,7 @@ models.PaginatedSessionList = Backbone.Paginator.clientPager.extend({
 models.User = Backbone.Model.extend({
 
 	default: function() {
-		return {picture: "", admin:false}
+		return {picture: "", admin:false, isBlurred: false}
 	},
 	
 	initialize: function() {
@@ -227,6 +227,10 @@ models.User = Backbone.Model.extend({
 	
 	isAdmin: function() {
 		return this.get("admin");
+	},
+
+	isBlurred: function() {
+		return this.get("isBlurred");
 	},
 
 	getShortDisplayName: function() {
