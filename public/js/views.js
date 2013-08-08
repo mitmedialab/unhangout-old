@@ -227,7 +227,6 @@ var UserView = Marionette.ItemView.extend({
 	template: '#user-template',
 	className: 'user',
 	tagName: "li",
-	isBlurred: false,
 
 	events: {
 		'click' : 'click'
@@ -246,6 +245,12 @@ var UserView = Marionette.ItemView.extend({
 
 		if(this.model.isAdmin()) {
 			this.$el.addClass("admin");
+		}
+
+		if(this.model.isBlurred()) {
+			this.$el.addClass("blur");
+		} else {
+			this.$el.addClass("focus");
 		}
 
 		this.$el.attr("data-toggle", "tooltip");
