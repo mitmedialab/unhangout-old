@@ -145,6 +145,9 @@
 					<a class="dropdown-toggle admin-button" data-toggle="dropdown" href="#">Admin</a>
 					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 						<li role="presentation">
+							<a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">create session</a>
+							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
+
 							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">embed</a>
 							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
 							<a role="menuitem" tabindex="-1" id="stop-all">stop all sessions</a>
@@ -159,6 +162,20 @@
 			</script>
 
 			<script type="text/template" id="dialogs-template">
+				<div id="create-session-modal" class="modal hide fade">
+					<div class="modal-header">
+						<h3>CREATE SESSION</h3>
+					</div>
+					<div class="modal-body">
+						<div class="control-group">
+							<label for="session_name">SESSION NAME</label><input type="text" name="session_name" value="" id="session_name">
+							<label for="session_desc">SESSION DESCRIPTION</label><input type="text" name="session_desc" value="" id="session_desc">
+						</div>
+					</div>
+					<div class="modal-footer">
+						<a href="#" class="btn btn-primary" id="create-session">Create Session</a>
+					</div>
+				</div>
 				<div id="embed-modal" class="modal hide fade">
 					<div class="modal-header">
 						<h3>SET EMBED ID</h3>

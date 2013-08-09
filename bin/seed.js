@@ -47,11 +47,11 @@ exports.run = function(dbId, redis, callback) {
 				sessions.push(new models.ServerSession({title:"From Expression to Impact: Youth Civic Engagement Enacted", description:"This webinar explored how are educators fostering civic engagement in Connected Learning environments, how these contexts are changing and how best to support educators in doing this work with their students. Facilitated by Antero Garcia, CSUWP"}));
 				sessions.push(new models.ServerSession({title:"Connected Learning TV now and into the future", description:"Connected Learning TV is in the middle of a 12-month experiment where we take 1 month at a time to focus on key connected learning communities and topics/themes. What have you found most useful about this format? What do you wish was different? What would make it easier for you (and your peers) to get involved in the series and the Connected Learning community? Facilitated by Jon Barilone, CLTV"}));
 
-				events[0].addSession(sessions[0]);
-				events[0].addSession(sessions[1]);
-				events[0].addSession(sessions[2]);
-				events[0].addSession(sessions[3]);
-				events[0].addSession(sessions[4]);
+				events[0].addSession(sessions[0], true);
+				events[0].addSession(sessions[1], true);
+				events[0].addSession(sessions[2], true);
+				events[0].addSession(sessions[3], true);
+				events[0].addSession(sessions[4], true);
 
 				// events[0].addSession(sessions[5]);
 				// events[0].addSession(sessions[6]);
