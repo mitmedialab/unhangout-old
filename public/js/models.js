@@ -235,6 +235,8 @@ models.User = Backbone.Model.extend({
 
 	setBlurred: function(blurred) {
 		this.set("isBlurred", blurred);
+		this.trigger("change");
+		this.trigger("change:isBlurred");
 	},
 
 	getShortDisplayName: function() {

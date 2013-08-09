@@ -234,6 +234,7 @@ var UserView = Marionette.ItemView.extend({
 
 	initialize: function() {
 		this.listenTo(this.model, 'change', this.render, this);
+		this.listenTo(this.model, 'change:isBlurred', this.render, this);
 	},	
 
 	click: function() {
@@ -242,7 +243,6 @@ var UserView = Marionette.ItemView.extend({
 
 	onRender: function() {
 		// add in the tooltip attributes
-
 		if(this.model.isAdmin()) {
 			this.$el.addClass("admin");
 		}
