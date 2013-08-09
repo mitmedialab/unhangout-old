@@ -95,13 +95,20 @@ $(document).ready(function() {
 				
 		console.log("Initialized app.");
 
+		var isAlreadyBlurred; 
+
 		$(window).blur(function() {
+			if(isAlreadyBlurred)
+				return ;
+
 			isIntervalRunning = true ;
 			windowBlurred = true ;
 			messageShown = true ;
 
 			var message = {type:"blur", args:{id:USER_ID}};
 			sock.send(JSON.stringify(message));	
+
+			isAlreadyBlurred = true; 
 		})
 
 		$(window).focus(function() {
@@ -113,6 +120,8 @@ $(document).ready(function() {
 
 			var message = {type:"focus", args:{id:USER_ID}};
 			sock.send(JSON.stringify(message));	
+
+			isAlreadyBlurred = false;
 		})
 
 	});
