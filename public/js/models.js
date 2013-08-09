@@ -83,6 +83,7 @@ models.Event = Backbone.Model.extend({
 	
 	addSession: function(session) {
 		this.get("sessions").add(session);
+		this.get("sessions").trigger("add");
 	},
 	
 	getStartTimeFormatted: function() {

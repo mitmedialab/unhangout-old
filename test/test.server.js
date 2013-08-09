@@ -515,7 +515,7 @@ describe('unhangout server', function() {
 
 				s.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session", description:"This is a description."}}));
+				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session", description:"This is a description."}}));
 			});
 
 			it("should reject messages from non-admins", function(done) {
@@ -528,7 +528,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session", description:"This is a description."}}));
+				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session", description:"This is a description."}}));
 			});
 
 			it("should reject create session messages without name", function(done) {
@@ -544,7 +544,7 @@ describe('unhangout server', function() {
 
 				s.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session"}}));
+				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session"}}));
 			});
 
 			it("should reject create session messages without description", function(done) {
@@ -568,7 +568,7 @@ describe('unhangout server', function() {
 
 					// note create-session not create-session-ack
 					if(msg.type=="create-session") {
-						msg.args.name.should.equal("New Session");
+						msg.args.title.should.equal("New Session");
 						msg.args.description.should.equal("This is a description.");
 						done();
 					} else if(msg.type=="create-session-err") {
@@ -578,7 +578,7 @@ describe('unhangout server', function() {
 
 				s.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"create-session", args:{name: "New Session", description:"This is a description."}}));
+				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session", description:"This is a description."}}));
 			});
 		});
 		
