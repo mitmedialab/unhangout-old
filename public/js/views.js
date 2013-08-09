@@ -174,7 +174,8 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		}, this));
 
 		this.listenTo(this.collection, "add", function() {
-			console.log("ADD");
+			this.updateDisplay();
+			this.render();
 		}, this);
 	},
 
@@ -292,7 +293,6 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 		$("#create-session-modal").modal('hide');
 	},
-
 
 	closeDisconnected: function() {
 		$("#disconnected-modal").modal('hide');

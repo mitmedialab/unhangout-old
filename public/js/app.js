@@ -393,7 +393,13 @@ $(document).ready(function() {
 
 			case "create-session":
 				var session = new models.Session(msg.args);
-				curEvent.addSession(session);
+
+				// this is sort of ugly to have to edit both. 
+				// i'm not sure the former one is critical, but it is definitely
+				// important that we add it to the special paginated sessions list.
+				// after startup, we have to edit it directly.
+				curEvent.get("sessions").add(session);
+				app.paginatedSessions.add(session);
 				break;
 
 			case "auth-ack":
