@@ -352,6 +352,15 @@ $(document).ready(function() {
 				app.vent.trigger("new-chat-message");
 
 				break;
+
+			case "blur":
+				var blurredUser = users.get(msg.args.id);
+				blurredUser.setBlurred(true);
+				break;
+			case "focus":
+				var blurredUser = users.get(msg.args.id);
+				blurredUser.setBlurred(false);
+				break;
 			
 			case "embed":
 				var originalYoutubeId = curEvent.get("youtubeEmbed") || "";
