@@ -176,6 +176,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		this.listenTo(this.collection, "add", function() {
 			this.updateDisplay();
 			this.render();
+			this.collection.goTo(this.colleciton.currentPage);
 		}, this);
 	},
 
