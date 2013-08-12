@@ -289,9 +289,7 @@ $(document).ready(function() {
 	console.log("Setup regions.");
 
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
-	sock.onopen = function() {
-		console.log('open');
-		
+	sock.onopen = function() {		
 		var AUTH = {type:"auth", args:{key:SOCK_KEY, id:USER_ID}};
 		
 		sock.send(JSON.stringify(AUTH));
@@ -416,6 +414,18 @@ $(document).ready(function() {
 				}
 
 				break;
+
+			case "create-session":
+				var session = new models.Session(msg.args);
+
+				// this is sort of ugly to have to edit both. 
+				// i'm not sure the former one is critical, but it is definitely
+				// important that we add it to the special paginated sessions list.
+				// after startup, we have to edit it directly.
+				curEvent.get("sessions").add(session);
+				app.paginatedSessions.add(session);
+				break;
+
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;
@@ -437,6 +447,26 @@ $(document).ready(function() {
 	sock.onclose = function() {
 		$('#disconnected-modal').modal('show');
 		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
-		console.log("close");
+		
+		var checkIfServerUp = function () {
+		 	var ping = document.location;
+			
+		 	$.ajax({
+ 	 			url: ping,
+ 	 			cache: false,
+ 	 			async : false,
+
+ 	 			success: function(msg){
+           		// reload window when ajax call is successful
+           			window.location.reload();
+       			},
+
+       			error: function(msg) {
+       			 	timeout = setTimeout(checkIfServerUp, 250);
+       			}
+		 	});
+		};
+
+		checkIfServerUp();
 	};
 });

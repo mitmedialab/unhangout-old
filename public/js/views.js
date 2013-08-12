@@ -165,13 +165,19 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		'click .page':'goto'
 	},
 
-	initialize: function() {
-		console.log("INITIALIZE");
+	initialize: function(args) {
+		// Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
 		setTimeout(_.bind(this.updateDisplay, this), 100);
 
 		$(window).resize(_.bind(function() {
 			this.updateDisplay();
 		}, this));
+
+		this.listenTo(this.collection, "add", function() {
+			this.updateDisplay();
+			this.render();
+			this.collection.goTo(this.colleciton.currentPage);
+		}, this);
 	},
 
 	previous: function() {
@@ -270,7 +276,8 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 	events: {
 		'click #set-embed':'setEmbed',
-		'click #disconnected-modal a':'closeDisconnected'
+		'click #disconnected-modal a':'closeDisconnected',
+		'click #create-session':'createSession'
 	},
 
 	setEmbed: function() {
@@ -285,6 +292,18 @@ var DialogView = Backbone.Marionette.Layout.extend({
 			var message = {type:"embed", args:{ytId:newId}};
 			sock.send(JSON.stringify(message));
 		}
+	},
+
+	createSession: function() {
+		var title = $("#session_name").val();
+		var desc = $("#session_desc").val();
+
+		sock.send(JSON.stringify({type:"create-session", args:{title:title, description:desc}}));
+
+		$("#session_name").val("");
+		$("#session_desc").val("");
+
+		$("#create-session-modal").modal('hide');
 	},
 
 	closeDisconnected: function() {
@@ -302,7 +321,7 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	events: {
 		'click #show-embed-modal':'showEmbedModal',
 		'click #start-all':'startAll',
-		'click #stop-all':'stopAll'
+		'click #stop-all':'stopAll',
 	},
 
 	startAll: function() {
