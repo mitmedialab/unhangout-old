@@ -320,47 +320,51 @@ body {
 }
 
 .session {
-	background-color: #e6e7e6;
+	// background-color: #e6e7e6;
 	position: relative;
 
-	padding-bottom: 30px;
-	margin-bottom: 20px;
+	margin-bottom: 5px;
 
 	box-sizing: border-box;
 	
-	border: 2px solid $primary;
+	// border: 2px solid $primary;
+	// border-bottom: 1px solid #ddd;
 
-	width: 200px;
+	width: 430px;
 
 	float: left;
 
 	margin-left: 20px;
+
+	padding: 3px;
 
 	.label {
 		margin-left: 5px;
 	}
 
 	h3 {
-		background-color: $primary;
-		color: white;
+		// background-color: $primary;
+		// color: white;
+		color: $primary;
 		margin: 0px;
 		
 		font-weight: normal;
-		font-size: 1.3em;
+		font-size: 1.0em;
 
-		line-height: 20px;
+		line-height: 15px;
 
-		padding: 10px 10px 5px 10px;
+		// padding: 10px 10px 5px 10px;
 		
 		i {
 			margin-right: 5px;
 		}
 		
-		right: 0px;
 		left: 0px;
 		
 		/*height: 40px;*/
-		min-height: 85px;
+		min-height: 45px;
+
+		width: 260px;
 	}
 	
 	.description {
@@ -372,8 +376,11 @@ body {
 		border-radius: 0px;
 		
 		position: absolute;
+		top: 0px;
 		right: 0px;
-		left: 0px;
+		bottom: 10px;
+
+		width: 130px;
 	}
 	.empty {
 		height: 40px;
@@ -387,9 +394,18 @@ body {
 		margin-left: 5px;
 	}
 	
+	&:nth-child(odd) {
+		background-color: #efefef;
+	}
+
+	&:nth-child(even) {
+		background-color: white;
+	}
+
 	.attending {
 		height: 50px;
 		padding: 5px;
+		padding-top: 15px;
 		
 		.first {
 			width: 50px;
@@ -448,6 +464,9 @@ body {
 	
 	.admin {
 		position: absolute;
+
+		bottom: 10px;
+		right: 0px;
 		
 		.btn {
 			border-radius: 0px;
@@ -467,7 +486,7 @@ body {
 		position: absolute;
 		top: -1px;
 		left: 0px;
-		height: 30px;
+		height: 35px;
 		width: 50%;
 		background-color: rgba(66, 94, 97, 0.5);
 	}
