@@ -69,6 +69,8 @@ var SessionView = Marionette.ItemView.extend({
 		}
 
 		if(this.model.isLive()) {
+			this.$el.addClass("live");
+
 			this.$el.find(".started").show();
 
 			// remove the toggle-ness of the button once the event starts.
@@ -82,6 +84,8 @@ var SessionView = Marionette.ItemView.extend({
 			// don't show the x of 10 when it's live (at least until we have live data for that)
 			this.ui.attend.find(".attend-count").hide();
 		} else {
+			this.$el.removeClass("live");
+
 			this.$el.find(".started").hide();			
 			this.ui.attend.find(".text").text("SIGN UP");
 		}

@@ -390,12 +390,24 @@ body {
 		padding-top: 20px;
 	}
 
-	.started {
+	.started.label {
 		margin-left: 5px;
+	}
+
+	&.live {
+		&:nth-child(odd) {
+			background-color: #ECFFF0;
+
+		}
+
+		&:nth-child(even) {
+			background-color: #D5EBD9;
+		}
 	}
 	
 	&:nth-child(odd) {
 		background-color: #efefef;
+
 	}
 
 	&:nth-child(even) {
