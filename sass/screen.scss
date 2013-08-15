@@ -331,6 +331,7 @@ body {
 	// border-bottom: 1px solid #ddd;
 
 	width: 430px;
+	height: 35px;
 
 	float: left;
 
@@ -361,8 +362,7 @@ body {
 		
 		left: 0px;
 		
-		/*height: 40px;*/
-		min-height: 45px;
+		height: 40px;
 
 		width: 260px;
 	}
@@ -378,7 +378,7 @@ body {
 		position: absolute;
 		top: 0px;
 		right: 0px;
-		bottom: 10px;
+		bottom: 00px;
 
 		width: 130px;
 	}
@@ -465,11 +465,16 @@ body {
 	.admin {
 		position: absolute;
 
-		bottom: 10px;
+		bottom: 00px;
 		right: 0px;
+		top: 0px;
 		
 		.btn {
 			border-radius: 0px;
+			top: 0px;
+			bottom: 0px;
+			position: absolute;
+			right: 0px;
 		}
 	}
 
