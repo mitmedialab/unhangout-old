@@ -22,6 +22,10 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js" ></script>
 	<script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
 <script>
+
+var baseServerUrl;
+var sessionId;
+
 function init() {
 	console.log("init running");
 	gapi.hangout.onApiReady.add(
@@ -39,19 +43,34 @@ function init() {
 			console.log(appData);
 			var appDataPieces = appData.split(":");
 			
-			var url = "http://" + appDataPieces[0] + ":" + appDataPieces[1] + "/session/hangout/" + appDataPieces[2];
+			baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1] + "/";
+			sessionId = appDataPieces[2];
 			
-			$.post(url, {
+			$.post(baseServerUrl + "/session/hangout/" + sessionId, {
+				type: "new-hangout-url",
 				url: gapi.hangout.getHangoutUrl()
 			}).done(function() {
 				console.log("success!");
 			}).fail(function() {
 				console.log("failure");
 			});
-			
-			console.log(gapi.hangout.getHangoutUrl());
     	}
       });
+
+    gapi.hangout.onParticipantsChanged.add(
+    	function(eventObj) {
+    		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
+
+    		$.post(baseServerUrl + "/session/hangout/" + sessionId, {
+				type: "participants",
+				participants: eventObj.participants
+			}).done(function() {
+				console.log("success!");
+			}).fail(function() {
+				console.log("failure");
+			});
+    	}
+    );
 }
 
 // Wait for gadget to load.                                                       
