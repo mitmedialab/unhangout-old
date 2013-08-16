@@ -28,49 +28,51 @@ var sessionId;
 
 function init() {
 	console.log("init running");
-	gapi.hangout.onApiReady.add(
-      function(eventObj) {
-        if (eventObj.isApiReady) {
-		  // When API is ready...                                                         
-			console.log("READY!");
-			gapi.hangout.hideApp();
-			
-			// now, phone home.
-			// we expect that appData has format:
-			// host:port:sessionid
-			// unpack that and post it back to the server.
-			var appData = gadgets.views.getParams()['appData'];
-			console.log(appData);
-			var appDataPieces = appData.split(":");
-			
-			baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
-			sessionId = appDataPieces[2];
-			
-			$.post(baseServerUrl + "/session/hangout/" + sessionId, {
-				type: "new-hangout-url",
-				url: gapi.hangout.getHangoutUrl()
-			}).done(function() {
-				console.log("success!");
-			}).fail(function() {
-				console.log("failure");
-			});
-    	}
-      });
 
-    gapi.hangout.onParticipantsChanged.add(
-    	function(eventObj) {
-    		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
+		// we expect that appData has format:
+		// host:port:sessionid
+		// unpack that and post it back to the server.
+		var appData = gadgets.views.getParams()['appData'];
+		console.log(appData);
+		var appDataPieces = appData.split(":");
+		
+		baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
+		sessionId = appDataPieces[2];
 
-    		$.post(baseServerUrl + "/session/hangout/" + sessionId, {
-				type: "participants",
-				participants: eventObj.participants
-			}).done(function() {
-				console.log("success!");
-			}).fail(function() {
-				console.log("failure");
-			});
-    	}
-    );
+		gapi.hangout.onApiReady.add(
+	      function(eventObj) {
+	        if (eventObj.isApiReady) {
+			  // When API is ready...                                                         
+				console.log("READY!");
+				gapi.hangout.hideApp();
+				
+				// now, phone home.
+				
+				$.post(baseServerUrl + "/session/hangout/" + sessionId, {
+					type: "new-hangout-url",
+					url: gapi.hangout.getHangoutUrl()
+				}).done(function() {
+					console.log("success!");
+				}).fail(function() {
+					console.log("failure");
+				});
+	    	}
+	      });
+
+	    gapi.hangout.onParticipantsChanged.add(
+	    	function(eventObj) {
+	    		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
+
+	    		$.post(baseServerUrl + "/session/hangout/" + sessionId, {
+					type: "participants",
+					participants: eventObj.participants
+				}).done(function() {
+					console.log("success!");
+				}).fail(function() {
+					console.log("failure");
+				});
+	    	}
+	    );
 }
 
 // Wait for gadget to load.                                                       
