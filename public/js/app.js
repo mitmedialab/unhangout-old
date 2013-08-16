@@ -426,6 +426,13 @@ $(document).ready(function() {
 				app.paginatedSessions.add(session);
 				break;
 
+			case "session-participants":
+
+				var session = curEvent.get("sessions").get(msg.args.id);
+				session.setConnectedParticipantIds(msg.args.participantIds);
+
+				break;
+
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;
