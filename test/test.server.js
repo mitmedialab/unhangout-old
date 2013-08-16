@@ -196,6 +196,14 @@ describe('unhangout server', function() {
 			});
 		});
 	});
+
+	describe('POST /session/hangout/:id', function() {
+		it('should handle new-hangout-url properly');
+		it('should handle participants properly');
+		it('should handle heartbeat properly');
+		it('should ignore requests without an id in the url');
+		it('should ignore requests without a type in the body');
+	});
 	
 	describe('sock (mock)', function() {
 		beforeEach(mockSetup);
