@@ -235,7 +235,6 @@ body {
 .user {
 	width: 40px;
 	height: 40px;
-	/*margin: 5px;*/
 
 	margin-top: 5px;
 	
@@ -269,6 +268,14 @@ body {
 		height: 40px;
 		line-height: 40px;
 		padding-left: 5px;
+	}
+
+	&.blur {
+		opacity: 0.4;
+	}
+
+	&.focus {
+		opacity: 1.0;
 	}
 }
 

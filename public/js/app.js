@@ -95,10 +95,20 @@ $(document).ready(function() {
 				
 		console.log("Initialized app.");
 
+		var isAlreadyBlurred; 
+
 		$(window).blur(function() {
+			if(isAlreadyBlurred)
+				return ;
+
 			isIntervalRunning = true ;
 			windowBlurred = true ;
 			messageShown = true ;
+
+			var message = {type:"blur", args:{id:USER_ID}};
+			sock.send(JSON.stringify(message));	
+
+			isAlreadyBlurred = true; 
 		})
 
 		$(window).focus(function() {
@@ -107,6 +117,11 @@ $(document).ready(function() {
 			messageShown = false ;
 			clearInterval(interval);
 			window.document.title = 'Unhangout';
+
+			var message = {type:"focus", args:{id:USER_ID}};
+			sock.send(JSON.stringify(message));	
+
+			isAlreadyBlurred = false;
 		})
 
 	});
@@ -334,6 +349,15 @@ $(document).ready(function() {
 				messages.add(new models.ChatMessage(msg.args));
 				app.vent.trigger("new-chat-message");
 
+				break;
+
+			case "blur":
+				var blurredUser = users.get(msg.args.id);
+				blurredUser.setBlurred(true);
+				break;
+			case "focus":
+				var blurredUser = users.get(msg.args.id);
+				blurredUser.setBlurred(false);
 				break;
 			
 			case "embed":
