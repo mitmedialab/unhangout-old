@@ -240,7 +240,6 @@ body {
 	margin-top: 5px;
 	
 	border: 1px solid $background;
-/*	border-radius: 25px;*/
 	box-sizing: border-box;
 	
 	background-color: white;
@@ -255,13 +254,13 @@ body {
 
 		img {
 			position: relative;
-			top: -3px;
+			// top: -3px;
 		}
 	}
 
 	img {
 		width: 40px;
-		height: 40px;
+		// height: 40px;
 	}
 	
 	i {
