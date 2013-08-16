@@ -323,7 +323,8 @@ body {
 	// background-color: #e6e7e6;
 	position: relative;
 
-	margin-bottom: 5px;
+	// margin-bottom: 5px;
+
 
 	box-sizing: border-box;
 	
@@ -331,13 +332,13 @@ body {
 	// border-bottom: 1px solid #ddd;
 
 	width: 430px;
-	height: 35px;
+	height: 40px;
 
 	float: left;
 
 	margin-left: 20px;
 
-	padding: 3px;
+	padding: 5px;
 
 	.label {
 		margin-left: 5px;
@@ -376,9 +377,9 @@ body {
 		border-radius: 0px;
 		
 		position: absolute;
-		top: 0px;
+		top: 4px;
 		right: 0px;
-		bottom: 00px;
+		bottom: 4px;
 
 		width: 100px;
 	}
@@ -477,9 +478,9 @@ body {
 	.admin {
 		position: absolute;
 
-		bottom: 00px;
+		bottom: 4px;
 		right: 0px;
-		top: 0px;
+		top: 4px;
 		
 		.btn {
 			border-radius: 0px;
@@ -506,7 +507,7 @@ body {
 		position: absolute;
 		top: -1px;
 		left: 0px;
-		height: 35px;
+		height: 32px;
 		width: 50%;
 		background-color: rgba(66, 94, 97, 0.5);
 	}
