@@ -43,7 +43,7 @@ function init() {
 			console.log(appData);
 			var appDataPieces = appData.split(":");
 			
-			baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1] + "/";
+			baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
 			sessionId = appDataPieces[2];
 			
 			$.post(baseServerUrl + "/session/hangout/" + sessionId, {
