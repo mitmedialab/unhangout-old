@@ -121,7 +121,8 @@ models.Session = Backbone.Model.extend({
 			description: "This session is really wonderful.",
 			attendeeIds: [],
 			started: false,
-			stopped: false
+			stopped: false,
+			connectedParticipantIds: [],
 		};
 	},
 	
@@ -176,6 +177,17 @@ models.Session = Backbone.Model.extend({
 
 	isLive: function() {
 		return this.get("started") && !this.get("stopped");
+	},
+
+	setConnectedParticipantIds: function(ids) {
+		// TODO add some validation here, probably.
+		this.set("connectedParticipantIds", ids);
+		this.trigger("change");
+		this.trigger("change:connectedParticipantIds");
+	},
+
+	getNumConnectedParticipants: function() {
+		return this.get("connectedParticipantIds").length;
 	}
 });
 
