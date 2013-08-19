@@ -10,7 +10,8 @@ var SessionView = Marionette.ItemView.extend({
 		start:'.start',
 		attending: '.attending',
 		empty: '.empty',
-		description: '.description'
+		description: '.description',
+		hangoutUsers: '.hangout-users'
 	},
 
 	events: {
@@ -126,6 +127,19 @@ var SessionView = Marionette.ItemView.extend({
 		this.$el.find(".attend-count").text("(" + numAttendees + " of " + this.model.MAX_ATTENDEES + ")");
 		this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");
 
+		// now check and see if the hangout is communicating properly with the server. if it is, show
+		// the hangout-users div, and populate it with users.
+		if(this.model.get("hangoutConnected")) {
+			this.ui.hangoutUsers.empty();
+
+			_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
+				this.ui.hangoutUsers.append($("<span>" + id + "</span>"));
+			}, this));
+
+			this.ui.hangoutUsers.show();
+		} else {
+			this.ui.hangoutUsers.hide();
+		}
 	},
 
 	destroy: function() {
@@ -180,7 +194,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		this.listenTo(this.collection, "add", function() {
 			this.updateDisplay();
 			this.render();
-			this.collection.goTo(this.colleciton.currentPage);
+			this.collection.goTo(this.collection.currentPage);
 		}, this);
 	},
 
