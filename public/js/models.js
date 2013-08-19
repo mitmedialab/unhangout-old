@@ -188,7 +188,6 @@ models.Session = Backbone.Model.extend({
 
 		if(!this.get("hangoutConnected")) {
 			this.set("hangoutConnected", true);
-			this.trigger("change:hangoutConnected");
 		}
 	},
 
