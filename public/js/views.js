@@ -22,7 +22,7 @@ var SessionView = Marionette.ItemView.extend({
 
 	initialize: function() {
 
-		this.listenTo(this.model, 'change', this.render, this);
+		this.listenTo(this.model, 'change change:connectedParticipantIds change:hangoutConnected', this.render, this);
 		this.listenTo(this.model, 'change:session-key', function() {
 			if(!this.model.isAttending(USER_ID)) {
 				console.log("skipping dialog for a non-attending user");
@@ -130,15 +130,28 @@ var SessionView = Marionette.ItemView.extend({
 		// now check and see if the hangout is communicating properly with the server. if it is, show
 		// the hangout-users div, and populate it with users.
 		if(this.model.get("hangoutConnected")) {
+			this.$el.addClass("hangout-connected");
+
 			this.ui.hangoutUsers.empty();
 
 			_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
-				this.ui.hangoutUsers.append($("<span>" + id + "</span>"));
+				// make a new user view and append it here.
+				var user = users.get(id);
+
+				if(_.isUndefined(user)) {
+					console.log("skipping connected user, because can't find user data for them yet");
+					return;
+				}
+
+				var userView = new UserView({model:user});
+
+				this.ui.hangoutUsers.append(userView.render().el);
 			}, this));
 
 			this.ui.hangoutUsers.show();
 		} else {
 			this.ui.hangoutUsers.hide();
+			this.$el.removeClass("hangout-connected");
 		}
 	},
 
@@ -256,7 +269,9 @@ var UserView = Marionette.ItemView.extend({
 		'click' : 'click'
 	},
 
-	initialize: function() {
+	initialize: function(args) {
+		Marionette.ItemView.prototype.initialize.call(this, args);
+
 		this.listenTo(this.model, 'change', this.render, this);
 		this.listenTo(this.model, 'change:isBlurred', this.render, this);
 	},	
