@@ -427,10 +427,17 @@ $(document).ready(function() {
 				break;
 
 			case "session-participants":
-
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.setConnectedParticipantIds(msg.args.participantIds);
+				break;
 
+			case "session-hangout-connected":
+				var session = curEvent.get("sessions").get(msg.args.id);
+				session.set("hangoutConnected", true);
+				break;
+			case "session-hangout-disconnected":
+				var session = curEvent.get("sessions").get(msg.args.id);
+				session.set("hangoutConnected", false);
 				break;
 
 			case "auth-ack":
