@@ -54,7 +54,7 @@ function init() {
 				type:"heartbeat",
 				from:gapi.hangout.getLocalParticipantId()
 			}).done(function() {
-				console.log("heartbeat");
+				console.log("heartbeat success!");
 			});
 		}, HEARTBEAT_INTERVAL);
 
@@ -71,24 +71,26 @@ function init() {
 					type: "new-hangout-url",
 					url: gapi.hangout.getHangoutUrl()
 				}).done(function() {
-					console.log("success!");
+					console.log("new-hangout-url success!");
 				}).fail(function() {
-					console.log("failure");
+					console.log("new-hangout-url failure");
 				});
 	    	}
 	      });
 
 	    gapi.hangout.onParticipantsChanged.add(
 	    	function(eventObj) {
+	    		// this event seems to trigger twice early on in the life of a hangout. once on load,
+	    		// and then again about 5 minutes later. Not sure why that is.
 	    		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
 
 	    		$.post(serverUrl, {
 					type: "participants",
 					participants: eventObj.participants
 				}).done(function() {
-					console.log("success!");
+					console.log("participants success!");
 				}).fail(function() {
-					console.log("failure");
+					console.log("participants failure");
 				});
 	    	}
 	    );
