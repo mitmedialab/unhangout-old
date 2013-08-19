@@ -262,7 +262,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 var UserView = Marionette.ItemView.extend({
 	template: '#user-template',
-	className: 'user',
+	className: 'user focus',
 	tagName: "li",
 
 	events: {
