@@ -203,6 +203,8 @@ describe('unhangout server', function() {
 		it('should handle heartbeat properly');
 		it('should ignore requests without an id in the url');
 		it('should ignore requests without a type in the body');
+
+		it("should accept heartbeat type messages");
 	});
 	
 	describe('sock (mock)', function() {

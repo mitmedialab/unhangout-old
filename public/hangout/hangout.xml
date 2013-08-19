@@ -25,6 +25,11 @@
 
 var baseServerUrl;
 var sessionId;
+var interval;
+var serverUrl
+
+// ten seconds is a reasonable starting time.
+var HEARTBEAT_INTERVAL = 5000;
 
 function init() {
 	console.log("init running");
@@ -34,10 +39,24 @@ function init() {
 		// unpack that and post it back to the server.
 		var appData = gadgets.views.getParams()['appData'];
 		console.log(appData);
+
+		// TODO if the app is started without app data, note it in the logs.
 		var appDataPieces = appData.split(":");
 		
 		baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
 		sessionId = appDataPieces[2];
+		serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
+
+		// setup a heartbeat call so the server can tell when hangouts close.
+		interval = setInterval(function() {
+			console.log("heartbeat SENT");
+			$.post(serverUrl, {
+				type:"heartbeat",
+				from:gapi.hangout.getLocalParticipantId()
+			}).done(function() {
+				console.log("heartbeat");
+			});
+		}, HEARTBEAT_INTERVAL);
 
 		gapi.hangout.onApiReady.add(
 	      function(eventObj) {
@@ -48,7 +67,7 @@ function init() {
 				
 				// now, phone home.
 				
-				$.post(baseServerUrl + "/session/hangout/" + sessionId, {
+				$.post(serverUrl, {
 					type: "new-hangout-url",
 					url: gapi.hangout.getHangoutUrl()
 				}).done(function() {
@@ -63,7 +82,7 @@ function init() {
 	    	function(eventObj) {
 	    		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
 
-	    		$.post(baseServerUrl + "/session/hangout/" + sessionId, {
+	    		$.post(serverUrl, {
 					type: "participants",
 					participants: eventObj.participants
 				}).done(function() {
