@@ -26,7 +26,9 @@
 var baseServerUrl;
 var sessionId;
 var interval;
-var serverUrl
+var serverUrl;
+
+var heartbeatRetryCount = 0;
 
 // ten seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
@@ -49,13 +51,7 @@ function init() {
 
 		// setup a heartbeat call so the server can tell when hangouts close.
 		interval = setInterval(function() {
-			console.log("heartbeat SENT");
-			$.post(serverUrl, {
-				type:"heartbeat",
-				from:gapi.hangout.getLocalParticipantId()
-			}).done(function() {
-				console.log("heartbeat success!");
-			});
+			sendHeartbeat();
 		}, HEARTBEAT_INTERVAL);
 
 		gapi.hangout.onApiReady.add(
@@ -94,6 +90,25 @@ function init() {
 				});
 	    	}
 	    );
+
+	function sendHeartbeat() {
+		$.post(serverUrl, {
+			type:"heartbeat",
+			from:gapi.hangout.getLocalParticipantId()
+		}).done(function() {
+			console.log("heartbeat success!");
+			heartbeatRetryCount = 0;
+		}).fail(function() {
+			console.log("heartbeat fail, retry");
+			heartbeatRetryCount++;
+
+			if(heartbeatRetryCount > 5) {
+				console.log("Retried heartbeat 5 times w/ no successes!");
+			} else {
+				setTimeout(sendHeartbeat(), 500);
+			}
+		});
+	}
 }
 
 // Wait for gadget to load.                                                       
