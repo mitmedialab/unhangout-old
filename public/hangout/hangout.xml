@@ -28,8 +28,6 @@ var sessionId;
 var interval;
 var serverUrl;
 
-var heartbeatRetryCount = 0;
-
 // ten seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
 
@@ -97,16 +95,8 @@ function init() {
 			from:gapi.hangout.getLocalParticipantId()
 		}).done(function() {
 			console.log("heartbeat success!");
-			heartbeatRetryCount = 0;
 		}).fail(function() {
-			console.log("heartbeat fail, retry");
-			heartbeatRetryCount++;
-
-			if(heartbeatRetryCount > 5) {
-				console.log("Retried heartbeat 5 times w/ no successes!");
-			} else {
-				setTimeout(sendHeartbeat(), 500);
-			}
+			console.log("heartbeat fail");
 		});
 	}
 }
