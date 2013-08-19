@@ -31,7 +31,7 @@ var serverUrl;
 var heartbeatRetryCount = 0;
 
 // ten seconds is a reasonable starting time.
-var HEARTBEAT_INTERVAL = 1000;
+var HEARTBEAT_INTERVAL = 5000;
 
 function init() {
 	console.log("init running");
@@ -51,15 +51,7 @@ function init() {
 
 		// setup a heartbeat call so the server can tell when hangouts close.
 		interval = setInterval(function() {
-			console.log("trying to send debug message");
-			$.post(serverUrl, {
-				type:"debug",
-				time: new Date().getTime()
-			}).done(function() {
-				console.log("+++++DEBUG DONE");
-			}).fail(function() {
-				console.log("-----DEBUG fail");
-			});
+			sendHeartbeat();
 		}, HEARTBEAT_INTERVAL);
 
 		gapi.hangout.onApiReady.add(
