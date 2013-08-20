@@ -28,7 +28,7 @@ var sessionId;
 var interval;
 var serverUrl;
 
-// ten seconds is a reasonable starting time.
+// five seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
 
 function init() {
@@ -47,11 +47,6 @@ function init() {
 		sessionId = appDataPieces[2];
 		serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
 
-		// setup a heartbeat call so the server can tell when hangouts close.
-		interval = setInterval(function() {
-			sendHeartbeat();
-		}, HEARTBEAT_INTERVAL);
-
 		gapi.hangout.onApiReady.add(
 	      function(eventObj) {
 	        if (eventObj.isApiReady) {
@@ -60,36 +55,54 @@ function init() {
 				gapi.hangout.hideApp();
 				
 				// now, phone home.
-				
-				$.post(serverUrl, {
-					type: "new-hangout-url",
-					url: gapi.hangout.getHangoutUrl()
-				}).done(function() {
-					console.log("new-hangout-url success!");
-				}).fail(function() {
-					console.log("new-hangout-url failure");
-				});
+				registerHangoutUrl(eventObj);		
+
+				takeControl();		
 	    	}
 	      });
+}
 
-	    gapi.hangout.onParticipantsChanged.add(
-	    	function(eventObj) {
-	    		// this event seems to trigger twice early on in the life of a hangout. once on load,
-	    		// and then again about 5 minutes later. Not sure why that is.
-	    		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
+	// This function sets up all the callbacks necessary to keep the unhangout-server 
+	// aprised of the activity in the hangout. This should be called when this client is
+	// convinced that it should be in charge of that communication.
+	function takeControl() {
 
-	    		$.post(serverUrl, {
-					type: "participants",
-					participants: eventObj.participants
-				}).done(function() {
-					console.log("participants success!");
-				}).fail(function() {
-					console.log("participants failure");
-				});
-	    	}
-	    );
+		// setup a heartbeat call so the server can tell when hangouts close.	
+		interval = setInterval(function() {
+			sendHeartbeat();
+		}, HEARTBEAT_INTERVAL);		
 
-	function sendHeartbeat() {
+	    gapi.hangout.onParticipantsChanged.add(sendParticipantsUpdate);
+	}
+
+
+	function registerHangoutUrl(eventObj) {
+		$.post(serverUrl, {
+			type: "new-hangout-url",
+			url: gapi.hangout.getHangoutUrl()
+		}).done(function() {
+			console.log("new-hangout-url success!");
+		}).fail(function() {
+			console.log("new-hangout-url failure");
+		});
+	}
+
+	function sendParticipantsUpdate(eventObj) {
+		// this event seems to trigger twice early on in the life of a hangout. once on load,
+		// and then again about 5 minutes later. Not sure why that is.
+		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
+
+		$.post(serverUrl, {
+			type: "participants",
+			participants: eventObj.participants
+		}).done(function() {
+			console.log("participants success!");
+		}).fail(function() {
+			console.log("participants failure");
+		});
+	}
+
+	function sendHeartbeat(eventObj) {
 		$.post(serverUrl, {
 			type:"heartbeat",
 			from:gapi.hangout.getLocalParticipantId()
@@ -99,7 +112,7 @@ function init() {
 			console.log("heartbeat fail");
 		});
 	}
-}
+
 
 // Wait for gadget to load.                                                       
 gadgets.util.registerOnLoadHandler(init);
