@@ -22,37 +22,222 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js" ></script>
 	<script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
 <script>
+
+var baseServerUrl;
+var sessionId;
+var interval;
+var serverUrl;
+
+var localGoogleId;
+var isLeader = false;
+
+// five seconds is a reasonable starting time.
+var HEARTBEAT_INTERVAL = 5000;
+
 function init() {
 	console.log("init running");
-	gapi.hangout.onApiReady.add(
-      function(eventObj) {
-        if (eventObj.isApiReady) {
-		  // When API is ready...                                                         
-			console.log("READY!");
-			gapi.hangout.hideApp();
-			
-			// now, phone home.
-			// we expect that appData has format:
-			// host:port:sessionid
-			// unpack that and post it back to the server.
-			var appData = gadgets.views.getParams()['appData'];
-			console.log(appData);
-			var appDataPieces = appData.split(":");
-			
-			var url = "http://" + appDataPieces[0] + ":" + appDataPieces[1] + "/session/hangout/" + appDataPieces[2];
-			
-			$.post(url, {
-				url: gapi.hangout.getHangoutUrl()
-			}).done(function() {
-				console.log("success!");
-			}).fail(function() {
-				console.log("failure");
-			});
-			
-			console.log(gapi.hangout.getHangoutUrl());
-    	}
-      });
+
+
+		gapi.hangout.onApiReady.add(
+	      function(eventObj) {
+	        if (eventObj.isApiReady) {
+			  // When API is ready...                                                         
+				console.log("READY!");
+				gapi.hangout.hideApp();
+
+
+				// we expect that appData has format:
+				// host:port:sessionid
+				// unpack that and post it back to the server.
+				var appData = gadgets.views.getParams()['appData'];
+
+				// it's not clear if this actually helps. It seems like in any situation I can create where the app is actually 
+				// loaded, the appData is present in the views params. Leaving the code present but knocked out
+				// in case we find a need for it in the future.
+
+				//if(_.isUndefined(appData)) {
+				//	// try to pull it from the hangout data store.
+				//	appData = gapi.hangout.data.getValue("appData");
+				//	console.log("No app data present in view params, loaded from datastore: " + appData);
+				//} else {
+				//	gapi.hangout.data.setValue("appData", appData);
+				//}
+				// console.log(appData);
+
+				// TODO if the app is started without app data, note it in the logs.
+				var appDataPieces = appData.split(":");
+				
+				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
+				sessionId = appDataPieces[2];
+				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
+
+
+
+				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
+
+				// add this participant id to the shared state list of participants.
+				// this lets us know who is actually running the app, for elections.
+
+				var participantIds;
+				var initializedIdsRaw = gapi.hangout.data.getValue("initializedUserIds");
+				if(!_.isUndefined(initializedIdsRaw) && initializedIdsRaw !="undefined") {
+					participantIds = JSON.parse(initializedIdsRaw);
+				} else {
+					participantIds = [];
+				}
+
+				participantIds.push(localGoogleId);
+				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
+
+				// now, phone home.
+				loaded(eventObj);		
+
+				performElection();
+
+				// all clients should perform the election check on every participant changed event, on top of
+				// whatever other listener gets added if they decide they're the leader.
+				gapi.hangout.onParticipantsChanged.add(performElection);
+		    	}
+	      });
+
 }
+
+	// This function sets up all the callbacks necessary to keep the unhangout-server 
+	// aprised of the activity in the hangout. This should be called when this client is
+	// convinced that it should be in charge of that communication.
+	function takeControl() {
+		console.log("TAKE CONTROL");
+		// setup a heartbeat call so the server can tell when hangouts close.	
+		interval = setInterval(function() {
+			sendHeartbeat();
+		}, HEARTBEAT_INTERVAL);		
+
+	    gapi.hangout.onParticipantsChanged.add(sendParticipantsUpdate);
+
+	    // trigger an update immediately in case we missed the change event for our own entry.
+	    // this is actually the default situation. For whatever reason, onParticipantsChanged
+	    // will fire BEFORE onApiReady in basically all conditions I've seen. So if we wait until
+	    // after apiReady to takeControl(), then we won't send a participant message. 
+	    // As a result, we force an update immediately using the current full list just to make
+	    // sure we're up to date. This also helps around control handoffs, where someone
+	    // could conceivably join in the gap between 
+	    sendParticipantsUpdate({participants:gapi.hangout.getParticipants()});
+
+	    isLeader = true;
+	}
+
+	// the inverse of take control. stops sending heartbeats, and stops watching for
+	// participants joining/leaving.
+	function releaseControl() {
+		console.log("RELEASE CONTROL");
+		clearInterval(interval);
+
+		gapi.hangout.onParticipantsChanged.remove(sendParticipantsUpdate);
+
+		isLeader = false;
+	}
+
+
+	function loaded(eventObj) {
+		$.post(serverUrl, {
+			type: "loaded",
+			url: gapi.hangout.getHangoutUrl(),
+			participant: localGoogleId
+		}).done(function() {
+			console.log("loaded success!");
+		}).fail(function() {
+			console.log("loaded failure");
+		});
+	}
+
+	function sendParticipantsUpdate(eventObj) {
+		console.log(JSON.stringify(eventObj));
+
+		// this event seems to trigger twice early on in the life of a hangout. once on load,
+		// and then again about 5 minutes later. Not sure why that is.
+		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
+
+		$.post(serverUrl, {
+			type: "participants",
+			participants: eventObj.participants
+		}).done(function() {
+			console.log("participants success!");
+		}).fail(function() {
+			console.log("participants failure");
+		});
+	}
+
+	function sendHeartbeat(eventObj) {
+		$.post(serverUrl, {
+			type:"heartbeat",
+			from:gapi.hangout.getLocalParticipantId()
+		}).done(function() {
+			console.log("heartbeat success!");
+		}).fail(function() {
+			console.log("heartbeat fail");
+		});
+	}
+
+	function compareGoogleIds(a, b) {
+		// google ids are too long to treat as integers
+		// so, split them up and basically do two sucessive
+		// comparisons.
+
+		var aLeft = parseInt(a.slice(0, 11));
+		var bLeft = praseInt(b.slice(0, 11));
+		if( aLeft != bLeft) {
+			return aLeft > bLeft ? 1 : -1;
+		} else {
+			// if they're the same, return comparison on the lsb.
+			return parseInt(a.slice(11, 22)) > parseInt(b.slice(11, 22)) ? 1 : -1;
+		}
+	}
+
+	function getLeaderId() {
+		// get a list of participants, filter it out to just be ids. then sort it.
+
+		// pull from the shared state, so we don't accidentally nominate someone who
+		// isn't running the hangout app.
+
+
+		var rawParticipants = gapi.hangout.data.getValue("initializedUserIds");
+		var participants;
+		if(rawParticipants=="undefined" || _.isUndefined(rawParticipants)) {
+			participants = [localGoogleId];
+		} else {
+			participants = JSON.parse(rawParticipants);
+		}
+
+		// because this happens so soon after we call setValue, our localId isn't
+		// necessarily included.
+		if(participants.indexOf(localGoogleId)==-1) {
+			participants.push(localGoogleId);
+		}
+
+		// TODO consider trying the native lexographic search. It might actually work fine on long strings since they
+		// have a fixed length.
+		participants.sort(compareGoogleIds);
+		participants.reverse();
+
+		return participants[0];
+	}
+
+	function performElection() {
+		console.log("PERFORMING ELECTION");
+		if(getLeaderId() == localGoogleId) {
+			if(isLeader) {
+				// already the leader, and supposed to be the leader.
+				return;
+			} else {
+				takeControl();
+			}
+		} else {
+			if(isLeader) {
+				// we're not supposed to be the leader anymore. abdicate!
+				releaseControl();
+			}
+		}
+	}
 
 // Wait for gadget to load.                                                       
 gadgets.util.registerOnLoadHandler(init);

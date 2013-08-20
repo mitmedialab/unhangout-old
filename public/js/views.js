@@ -10,7 +10,8 @@ var SessionView = Marionette.ItemView.extend({
 		start:'.start',
 		attending: '.attending',
 		empty: '.empty',
-		description: '.description'
+		description: '.description',
+		hangoutUsers: '.hangout-users'
 	},
 
 	events: {
@@ -21,7 +22,7 @@ var SessionView = Marionette.ItemView.extend({
 
 	initialize: function() {
 
-		this.listenTo(this.model, 'change', this.render, this);
+		this.listenTo(this.model, 'change change:connectedParticipantIds change:hangoutConnected', this.render, this);
 		this.listenTo(this.model, 'change:session-key', function() {
 			if(!this.model.isAttending(USER_ID)) {
 				console.log("skipping dialog for a non-attending user");
@@ -126,6 +127,32 @@ var SessionView = Marionette.ItemView.extend({
 		this.$el.find(".attend-count").text("(" + numAttendees + " of " + this.model.MAX_ATTENDEES + ")");
 		this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");
 
+		// now check and see if the hangout is communicating properly with the server. if it is, show
+		// the hangout-users div, and populate it with users.
+		if(this.model.get("hangoutConnected")) {
+			this.$el.addClass("hangout-connected");
+
+			this.ui.hangoutUsers.empty();
+
+			_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
+				// make a new user view and append it here.
+				var user = users.get(id);
+
+				if(_.isUndefined(user)) {
+					console.log("skipping connected user, because can't find user data for them yet");
+					return;
+				}
+
+				var userView = new UserView({model:user});
+
+				this.ui.hangoutUsers.append(userView.render().el);
+			}, this));
+
+			this.ui.hangoutUsers.show();
+		} else {
+			this.ui.hangoutUsers.hide();
+			this.$el.removeClass("hangout-connected");
+		}
 	},
 
 	destroy: function() {
@@ -180,7 +207,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		this.listenTo(this.collection, "add", function() {
 			this.updateDisplay();
 			this.render();
-			this.collection.goTo(this.colleciton.currentPage);
+			this.collection.goTo(this.collection.currentPage);
 		}, this);
 	},
 
@@ -235,14 +262,16 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 var UserView = Marionette.ItemView.extend({
 	template: '#user-template',
-	className: 'user',
+	className: 'user focus',
 	tagName: "li",
 
 	events: {
 		'click' : 'click'
 	},
 
-	initialize: function() {
+	initialize: function(args) {
+		Marionette.ItemView.prototype.initialize.call(this, args);
+
 		this.listenTo(this.model, 'change', this.render, this);
 		this.listenTo(this.model, 'change:isBlurred', this.render, this);
 	},	
