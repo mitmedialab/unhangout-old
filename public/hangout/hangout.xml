@@ -28,6 +28,8 @@ var sessionId;
 var interval;
 var serverUrl;
 
+var localGoogleId;
+
 // five seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
 
@@ -57,11 +59,11 @@ function init() {
 				// now, phone home.
 				loaded(eventObj);		
 
-				takeControl();		
+				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
 
-				console.log("PARTICIPANT: " + gapi.hangout.getLocalParticipantId());
-				console.log("all participants: " + JSON.stringify(gapi.hangout.getParticipants()));
-				console.log("by id: " + JSON.stringify(gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId())));
+				if(localGoogleId == getLeaderId()) {
+					takeControl();		
+				}
 	    	}
 	      });
 
@@ -103,7 +105,7 @@ function init() {
 		$.post(serverUrl, {
 			type: "loaded",
 			url: gapi.hangout.getHangoutUrl(),
-			participant: gapi.hangout.getLocalParticipantId()
+			participant: localGoogleId
 		}).done(function() {
 			console.log("loaded success!");
 		}).fail(function() {
@@ -139,6 +141,35 @@ function init() {
 		});
 	}
 
+	function compareGoogleIds(a, b) {
+		// google ids are too long to treat as integers
+		// so, split them up and basically do two sucessive
+		// comparisons.
+
+		var aLeft = parseInt(a.slice(0, 11));
+		var bLeft = praseInt(b.slice(0, 11));
+		if( aLeft != bLeft) {
+			return aLeft > bLeft ? 1 : -1;
+		} else {
+			// if they're the same, return comparison on the lsb.
+			return parseInt(a.slice(11, 22)) > parseInt(b.slice(11, 22)) ? 1 : -1;
+		}
+	}
+
+	function getLeaderId() {
+		// get a list of participants, filter it out to just be ids. then sort it.
+
+		var participants = _.map(gapi.hangout.getParticipants(), function(participant) {
+			return participant.person.id;
+		});
+
+		// TODO consider trying the native lexographic search. It might actually work fine on long strings since they
+		// have a fixed length.
+		participants.sort(compareGoogleIds);
+		participants.reverse();
+
+		return participants[0];
+	}
 
 // Wait for gadget to load.                                                       
 gadgets.util.registerOnLoadHandler(init);
