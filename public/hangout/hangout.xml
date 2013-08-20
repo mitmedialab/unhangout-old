@@ -71,11 +71,25 @@ function init() {
 				sessionId = appDataPieces[2];
 				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
 
-				
+
 				// now, phone home.
 				loaded(eventObj);		
 
 				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
+
+				// add this participant id to the shared state list of participants.
+				// this lets us know who is actually running the app, for elections.
+
+				var participantIds;
+				var initializedIdsRaw = gapi.hangout.data.getValue("initializedUserIds");
+				if(!_.isUndefined(initializedIdsRaw) && initializedIdsRaw !="undefined") {
+					participantIds = JSON.parse(initializedIdsRaw);
+				} else {
+					participantIds = [];
+				}
+
+				participantIds.push(localGoogleId);
+				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
 
 				performElection();
 
@@ -181,9 +195,23 @@ function init() {
 	function getLeaderId() {
 		// get a list of participants, filter it out to just be ids. then sort it.
 
-		var participants = _.map(gapi.hangout.getParticipants(), function(participant) {
-			return participant.person.id;
-		});
+		// pull from the shared state, so we don't accidentally nominate someone who
+		// isn't running the hangout app.
+
+
+		var rawParticipants = gapi.hangout.data.getValue("initializedUserIds");
+		var participants;
+		if(rawParticipants=="undefined" || _.isUndefined(rawParticipants)) {
+			participants = [localGoogleId];
+		} else {
+			participants = JSON.parse(rawParticipants);
+		}
+		
+		// because this happens so soon after we call setValue, our localId isn't
+		// necessarily included.
+		if(participants.indexOf(localGoogleId)==-1) {
+			participants.push(localGoogleId);
+		}
 
 		// TODO consider trying the native lexographic search. It might actually work fine on long strings since they
 		// have a fixed length.
