@@ -37,18 +37,6 @@ var HEARTBEAT_INTERVAL = 5000;
 function init() {
 	console.log("init running");
 
-		// we expect that appData has format:
-		// host:port:sessionid
-		// unpack that and post it back to the server.
-		var appData = gadgets.views.getParams()['appData'];
-		console.log(appData);
-
-		// TODO if the app is started without app data, note it in the logs.
-		var appDataPieces = appData.split(":");
-		
-		baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
-		sessionId = appDataPieces[2];
-		serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
 
 		gapi.hangout.onApiReady.add(
 	      function(eventObj) {
@@ -56,6 +44,33 @@ function init() {
 			  // When API is ready...                                                         
 				console.log("READY!");
 				gapi.hangout.hideApp();
+
+
+				// we expect that appData has format:
+				// host:port:sessionid
+				// unpack that and post it back to the server.
+				var appData = gadgets.views.getParams()['appData'];
+
+				// it's not clear if this actually helps. It seems like in any situation I can create where the app is actually 
+				// loaded, the appData is present in the views params. Leaving the code present but knocked out
+				// in case we find a need for it in the future.
+
+				//if(_.isUndefined(appData)) {
+				//	// try to pull it from the hangout data store.
+				//	appData = gapi.hangout.data.getValue("appData");
+				//	console.log("No app data present in view params, loaded from datastore: " + appData);
+				//} else {
+				//	gapi.hangout.data.setValue("appData", appData);
+				//}
+				// console.log(appData);
+
+				// TODO if the app is started without app data, note it in the logs.
+				var appDataPieces = appData.split(":");
+				
+				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
+				sessionId = appDataPieces[2];
+				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
+
 				
 				// now, phone home.
 				loaded(eventObj);		
