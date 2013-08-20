@@ -72,8 +72,6 @@ function init() {
 				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
 
 
-				// now, phone home.
-				loaded(eventObj);		
 
 				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
 
@@ -90,6 +88,9 @@ function init() {
 
 				participantIds.push(localGoogleId);
 				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
+
+				// now, phone home.
+				loaded(eventObj);		
 
 				performElection();
 
@@ -206,7 +207,7 @@ function init() {
 		} else {
 			participants = JSON.parse(rawParticipants);
 		}
-		
+
 		// because this happens so soon after we call setValue, our localId isn't
 		// necessarily included.
 		if(participants.indexOf(localGoogleId)==-1) {
