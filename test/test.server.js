@@ -228,13 +228,58 @@ describe('unhangout server', function() {
 				});
 		});
 
-		it('should handle participants properly');
-		it('should handle heartbeat properly');
-		it('should ignore requests without an id in the url');
-		it('should ignore requests without a type in the body');
-		it('should accept heartbeat type messages');
+		it('should handle participants properly', function(done) {
+			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+				.send({type:"participants", participants:[{person:{id:1}}, {person:{id:2}}]})
+				.end(function(res) {
+					res.status.should.equal(200);
 
-		it('should ignore requests for sessions that haven\'t started yet / have invalid session-keys');
+					// this indexOf check is because the actual set url has a bunch of extra
+					// url get params in it (like the hangout app gid, and startup params) 
+					// so we just make sure that it STARTS with our string.
+					session.getNumConnectedParticipants().should.equal(2);
+					done();
+				});
+		});
+
+		it('should handle heartbeat properly', function(done) {
+			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+				.send({type:"heartbeat", from:1213141235})
+				.end(function(res) {
+					res.status.should.equal(200);
+
+					session.get("last-heartbeat").should.not.equal(null);
+					done();
+				});
+		});
+
+		it('should ignore requests without an id in the url', function(done) {
+			request.post('http://localhost:7777/session/hangout/') // <--- note missing session-key in url
+				.send({type:"heartbeat", from:1213141235})
+				.end(function(res) {
+					res.status.should.equal(404);
+					done();
+				});
+		});
+
+		it('should ignore requests without a type in the body', function(done) {
+			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+				.send({from:1213141235})
+				.end(function(res) {
+					res.status.should.equal(400);
+					done();
+				});
+
+		});
+
+		it('should ignore requests for sessions that haven\'t started yet / have invalid session-keys', function(done) {
+			request.post('http://localhost:7777/session/hangout/' + "abe283917cd692387162bea283") // <--- note random session key
+				.send({type:"heartbeat", from:1213141235})
+				.end(function(res) {
+					res.status.should.equal(400);
+					done();
+				});
+		});
 	});
 	
 	describe('sock (mock)', function() {
