@@ -96,7 +96,7 @@ function init() {
 
 				// all clients should perform the election check on every participant changed event, on top of
 				// whatever other listener gets added if they decide they're the leader.
-				gapi.hangout.onParticipantsChanged.add(performElection);
+				gapi.hangout.onParticipantsChanged.add(waitForIdUpdates);
 		    	}
 	      });
 
@@ -151,11 +151,11 @@ function init() {
 	}
 
 	function sendParticipantsUpdate(eventObj) {
-		console.log(JSON.stringify(eventObj));
-
 		// this event seems to trigger twice early on in the life of a hangout. once on load,
 		// and then again about 5 minutes later. Not sure why that is.
 		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
+
+		// TODO also, check if the user who left was in the shared state userid list. 
 
 		$.post(serverUrl, {
 			type: "participants",
@@ -184,7 +184,7 @@ function init() {
 		// comparisons.
 
 		var aLeft = parseInt(a.slice(0, 11));
-		var bLeft = praseInt(b.slice(0, 11));
+		var bLeft = parseInt(b.slice(0, 11));
 		if( aLeft != bLeft) {
 			return aLeft > bLeft ? 1 : -1;
 		} else {
@@ -222,8 +222,26 @@ function init() {
 		return participants[0];
 	}
 
+	// whenever we get a participantsChanged event, we'll wait to see if
+	// initializedParticipantIds changes in shared hangout state. If it does,
+	// then perform the election on the NEW version of that list. If we wait for
+	// a second or two and no update occurs, then we know that the new user
+	// doens't have the hangout app running, and so we don't need to perform
+	// an election.
+	function waitForIdUpdates() {
+		console.log("Waiting for state changed updates");
+		// since right now there is only one potential thing that could trigger stateChanged,
+		// we can perform election on any stateChanged event.
+		gapi.hangout.data.onStateChanged.add(performElection);
+	}
+
+
 	function performElection() {
-		console.log("PERFORMING ELECTION");
+		console.log("PERFORMING ELECTION (after state changed event fired");
+
+		// remove the listener now, since we only want it to fire once.
+		gapi.hangout.data.onStateChanged.remove(performElection)
+
 		if(getLeaderId() == localGoogleId) {
 			if(isLeader) {
 				// already the leader, and supposed to be the leader.
