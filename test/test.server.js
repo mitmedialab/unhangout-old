@@ -212,11 +212,11 @@ describe('unhangout server', function() {
 
 		afterEach(standardShutdown);
 
-		it('should handle new-hangout-url properly', function(done) {
+		it('should handle loaded properly', function(done) {
 			var fakeUrl = "http://plus.google.com/hangout/_/abslkjasdlfkjasdf";
 
 			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
-				.send("type=new-hangout-url&url=" + encodeURIComponent(fakeUrl))
+				.send("type=loaded&url=" + encodeURIComponent(fakeUrl))
 				.end(function(res) {
 					res.status.should.equal(200);
 

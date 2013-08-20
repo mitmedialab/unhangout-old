@@ -55,7 +55,7 @@ function init() {
 				gapi.hangout.hideApp();
 				
 				// now, phone home.
-				registerHangoutUrl(eventObj);		
+				loaded(eventObj);		
 
 				takeControl();		
 	    	}
@@ -76,14 +76,15 @@ function init() {
 	}
 
 
-	function registerHangoutUrl(eventObj) {
+	function loaded(eventObj) {
 		$.post(serverUrl, {
-			type: "new-hangout-url",
-			url: gapi.hangout.getHangoutUrl()
+			type: "loaded",
+			url: gapi.hangout.getHangoutUrl(),
+			participant: gapi.hangout.getLocalParticipantId()
 		}).done(function() {
-			console.log("new-hangout-url success!");
+			console.log("loaded success!");
 		}).fail(function() {
-			console.log("new-hangout-url failure");
+			console.log("loaded failure");
 		});
 	}
 
