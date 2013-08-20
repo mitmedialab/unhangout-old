@@ -29,6 +29,7 @@ var interval;
 var serverUrl;
 
 var localGoogleId;
+var isLeader = false;
 
 // five seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
@@ -61,10 +62,12 @@ function init() {
 
 				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
 
-				if(localGoogleId == getLeaderId()) {
-					takeControl();		
-				}
-	    	}
+				performElection();
+
+				// all clients should perform the election check on every participant changed event, on top of
+				// whatever other listener gets added if they decide they're the leader.
+				gapi.hangout.onParticipantsChanged.add(performElection);
+		    	}
 	      });
 
 }
@@ -89,6 +92,8 @@ function init() {
 	    // sure we're up to date. This also helps around control handoffs, where someone
 	    // could conceivably join in the gap between 
 	    sendParticipantsUpdate({participants:gapi.hangout.getParticipants()});
+
+	    isLeader = true;
 	}
 
 	// the inverse of take control. stops sending heartbeats, and stops watching for
@@ -98,6 +103,8 @@ function init() {
 		clearInterval(interval);
 
 		gapi.hangout.onParticipantsChanged.remove(sendParticipantsUpdate);
+
+		isLeader = false;
 	}
 
 
@@ -169,6 +176,23 @@ function init() {
 		participants.reverse();
 
 		return participants[0];
+	}
+
+	function performElection() {
+		console.log("PERFORMING ELECTION");
+		if(getLeaderId() == localGoogleId) {
+			if(isLeader) {
+				// already the leader, and supposed to be the leader.
+				return;
+			} else {
+				takeControl();
+			}
+		} else {
+			if(isLeader) {
+				// we're not supposed to be the leader anymore. abdicate!
+				releaseControl();
+			}
+		}
 	}
 
 // Wait for gadget to load.                                                       
