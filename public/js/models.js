@@ -83,6 +83,7 @@ models.Event = Backbone.Model.extend({
 	
 	addSession: function(session) {
 		this.get("sessions").add(session);
+		session.trigger("change:collection");
 	},
 	
 	getStartTimeFormatted: function() {
@@ -121,7 +122,9 @@ models.Session = Backbone.Model.extend({
 			description: "This session is really wonderful.",
 			attendeeIds: [],
 			started: false,
-			stopped: false
+			stopped: false,
+			connectedParticipantIds: [],
+			hangoutConnected: false,
 		};
 	},
 	
@@ -176,6 +179,22 @@ models.Session = Backbone.Model.extend({
 
 	isLive: function() {
 		return this.get("started") && !this.get("stopped");
+	},
+
+	setConnectedParticipantIds: function(ids) {
+		// TODO add some validation here, probably.
+		this.set("connectedParticipantIds", ids);
+		this.trigger("change");
+		this.trigger("change:connectedParticipantIds");
+
+		if(!this.get("hangoutConnected")) {
+			// this shouldn't happen!
+			console.log("This shouldn't be happening!");
+		}
+	},
+
+	getNumConnectedParticipants: function() {
+		return this.get("connectedParticipantIds").length;
 	}
 });
 

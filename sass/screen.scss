@@ -340,6 +340,29 @@ body {
 	width: 430px;
 	height: 40px;
 
+	&.hangout-connected {
+		height: 80px;
+
+		.hangout-users {
+			position: absolute;
+			top: 40px;
+			left: 0px;
+			right: 0px;
+			height: 40px;
+
+			padding-left: 5px;
+
+			.user {
+				float: left;
+				margin-right: 5px;
+				width: 30px;
+				height: 30px;
+
+				list-style: none;
+			}
+		}
+	}
+
 	float: left;
 
 	margin-left: 20px;
@@ -385,7 +408,8 @@ body {
 		position: absolute;
 		top: 4px;
 		right: 0px;
-		bottom: 4px;
+
+		height: 23px;
 
 		width: 100px;
 	}
@@ -481,12 +505,14 @@ body {
 		}
 	}
 	
-	.admin {
+	.admin-buttons {
 		position: absolute;
 
-		bottom: 4px;
+
 		right: 0px;
 		top: 4px;
+
+		height: 33px;
 		
 		.btn {
 			border-radius: 0px;
