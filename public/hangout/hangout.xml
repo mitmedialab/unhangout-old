@@ -58,21 +58,44 @@ function init() {
 				loaded(eventObj);		
 
 				takeControl();		
+
+				console.log("PARTICIPANT: " + gapi.hangout.getLocalParticipantId());
+				console.log("all participants: " + JSON.stringify(gapi.hangout.getParticipants()));
+				console.log("by id: " + JSON.stringify(gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId())));
 	    	}
 	      });
+
 }
 
 	// This function sets up all the callbacks necessary to keep the unhangout-server 
 	// aprised of the activity in the hangout. This should be called when this client is
 	// convinced that it should be in charge of that communication.
 	function takeControl() {
-
+		console.log("TAKE CONTROL");
 		// setup a heartbeat call so the server can tell when hangouts close.	
 		interval = setInterval(function() {
 			sendHeartbeat();
 		}, HEARTBEAT_INTERVAL);		
 
 	    gapi.hangout.onParticipantsChanged.add(sendParticipantsUpdate);
+
+	    // trigger an update immediately in case we missed the change event for our own entry.
+	    // this is actually the default situation. For whatever reason, onParticipantsChanged
+	    // will fire BEFORE onApiReady in basically all conditions I've seen. So if we wait until
+	    // after apiReady to takeControl(), then we won't send a participant message. 
+	    // As a result, we force an update immediately using the current full list just to make
+	    // sure we're up to date. This also helps around control handoffs, where someone
+	    // could conceivably join in the gap between 
+	    sendParticipantsUpdate({participants:gapi.hangout.getParticipants()});
+	}
+
+	// the inverse of take control. stops sending heartbeats, and stops watching for
+	// participants joining/leaving.
+	function releaseControl() {
+		console.log("RELEASE CONTROL");
+		clearInterval(interval);
+
+		gapi.hangout.onParticipantsChanged.remove(sendParticipantsUpdate);
 	}
 
 
@@ -89,6 +112,8 @@ function init() {
 	}
 
 	function sendParticipantsUpdate(eventObj) {
+		console.log(JSON.stringify(eventObj));
+
 		// this event seems to trigger twice early on in the life of a hangout. once on load,
 		// and then again about 5 minutes later. Not sure why that is.
 		console.log("participants changed, current participants: " + JSON.stringify(eventObj.participants));
