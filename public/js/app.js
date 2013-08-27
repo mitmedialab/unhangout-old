@@ -1,3 +1,12 @@
+// app.js
+//
+// This is the main hub of the client-side application. This never runs server-side.
+//	
+// It has two primary jobs:
+//	1. configure the main application object for the client (this is a Marionette-style Application)
+//	2. connect to the sever and manage the flow of messages
+// 
+
 var sock;
 
 var curEvent, users, messages;
@@ -22,6 +31,10 @@ $(document).ready(function() {
 
 	console.log("Starting app!");
 
+	// The constants used heavily in this block (eg EVENT_ATTRS, SINGLE_SESSION_RSVP, USER_ID)
+	// come from the event.ejs file. They are the way that the server communicates the initial 
+	// state of the event to the client - in a big JSON blob. Subsequent updates all happen
+	// over the sockJS channel, but the initial state is embedded in these constants.
 	curEvent = new models.ClientEvent(EVENT_ATTRS);
 	
 	users = new models.PaginatedUserList(EVENT_ATTRS.connectedUsers);
@@ -29,6 +42,13 @@ $(document).ready(function() {
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 
+	// SINGLE_SESSION_RSVP 
+	// if true, enforces that a client can only "sign up" for one session at a time. Subsequent
+	// sign up messages will be interepreted as un-signing up ('unattend' in the protocol) from
+	// the session they're currently signed up for and signing up for the new one.
+	//
+	// This behavior is 100% optional. We used it in our first event, but there are reasons we
+	// might or might not use it in future events.
 	if(SINGLE_SESSION_RSVP) {
 		curEvent.get("sessions").each(function(session) {
 			if(session.isAttending(USER_ID)) {
