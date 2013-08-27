@@ -57,17 +57,24 @@ $(document).ready(function() {
 			}
 		})
 	}
-
-	$("#sessions-nav").find("a").text("Sessions (" + curEvent.get("sessions").length + ")");
 	
 	messages = new models.ChatMessageList();
 	
 	console.log("Inflated models.");
 
+	// documentation for Marionette applications can be found here:
+	// https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.application.md
 	app = new Backbone.Marionette.Application();
 	
+
+	// the notion of regions comes from Marionette. 
+	// https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.region.md
+	// 
+	// Basically, they give us a way to create containers in the application, that different
+	// views are added and removed from. It handles various event cleanup work on add/remove.
+	// In this app, we don't often swap stuff in and out. It's primarily just a useful 
+	// organizational abstraction.
 	app.addRegions({
-		// top: '#top',
 		right: '#main-right',
 		main: '#main-left',
 		top: '#top-left',
@@ -77,6 +84,7 @@ $(document).ready(function() {
 		bar:'#bar'
 	});
 	
+	// This is code that runs when the application initializes. 
 	app.addInitializer(function(options) {
 		
 		// include the youtube JS api per docs:
@@ -90,16 +98,29 @@ $(document).ready(function() {
 			this.vent.trigger("youtube-ready");
 	    }, this);
 		
+		// Pagination is a bit of a hairy situation. We're using a third party library
+		// to provide most of the pagination support:
+		// https://github.com/backbone-paginator/backbone.paginator
+		// The paginated list basically maintains an underlying set of all sessions,
+		// plus a sliding view of the current "page" of sessions. You can use
+		// the object like any other backbone collection, and it returns only the current
+		// page, so it's pretty transparent.
 	    this.paginatedSessions = new models.PaginatedSessionList(curEvent.get("sessions").models);
+
+	    // the pagination system sort of assumes that it's going to be loading pages
+	    // over HTTP from the server. Using it in this client-side way causes some 
+	    // issues for it. One of them is that we have to manually tell it to set itself up,
+	    // rather than letting it lazily load its contents on demand from an HTTP
+	    // endpoint.
 	    this.paginatedSessions.bootstrap();
 
-
+	    // create all the basic views
 		this.sessionListView = new SessionListView({collection: this.paginatedSessions});
 		this.chatView = new ChatLayout({messages:messages, users:users});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		this.dialogView = new DialogView();
 
-		// this.top.show(this.sessionListView);
+		// present the views in their respective regions
 		this.right.show(this.chatView);
 		this.main.show(this.sessionListView);
 		this.dialogs.show(this.dialogView);
@@ -108,6 +129,8 @@ $(document).ready(function() {
 		// to do it.
 		$(this.bar.el).hide();
 		
+		// obviously this is not secure, but any admin requests are re-authenticated on
+		// the server. Showing the admin UI is harmless if a non-admin messes with it.
 		if(IS_ADMIN) {
 			this.adminButtonView = new AdminButtonView();
 			this.admin.show(this.adminButtonView);
@@ -115,8 +138,13 @@ $(document).ready(function() {
 				
 		console.log("Initialized app.");
 
+		// This section sets up the blur/focus tracking. This serves two purposes. The first
+		// is to represent users differently in the presence gutter as well as in the
+		// session list, depending on whether or not they have the lobby window focused
+		//
+		// We also use this to decide whether or not to show new messages coming in
+		// by changing the tab title.
 		var isAlreadyBlurred; 
-
 		$(window).blur(function() {
 			if(isAlreadyBlurred)
 				return ;
@@ -146,6 +174,8 @@ $(document).ready(function() {
 
 	});
 
+	// toggles the tab title to show new messages, but only if the window
+	// is blurred (as detected above)
 	app.showFlashTitle = function () {
 		if(isIntervalRunning && !messageShown) {
 			if(window.document.title == 'Unhangout')
@@ -162,22 +192,27 @@ $(document).ready(function() {
 	var windowBlurred = false ;
 	var isIntervalRunning = false;
 
+	// All these app.vent calls are setting up app-wide event handling. The app
+	// can trigger these events in any manner it desires. We use this to abstract
+	// the logic about where the events might come from, because in some situations
+	// they're triggered by users, sometimes by the arrival of remove messages, 
+	// sometimes as side effects of other actions. 
 	app.vent.on("new-chat-message", _.bind(function() {
 		if(windowBlurred)
-			messageShown = false ;
+			messageShown = false;
 		else 
-			messageShown = true ;
+			messageShown = true;
 
 		if(!messageShown && isIntervalRunning && windowBlurred)
 			interval = window.setTimeout(this.showFlashTitle, 1000);
 
 	}, app));
 
-	app.vent.on("sessions-nav", _.bind(function() {
-		this.main.show(this.sessionListView);
-	}, app));
-
 	var videoShown = false;
+
+	// this event handles the show-hide behavior of the video embed
+	// in the upper left corner of the UI. There are lots of finnicky details here 
+	// to handle the spacing properly.
 	app.vent.on("video-nav", _.bind(function() {
 		console.log("handling video-nav event");
 
@@ -193,6 +228,9 @@ $(document).ready(function() {
 			this.sessionListView.updateDisplay();
 			$("#video-nav").removeClass("active");
 		} else if(curEvent.hasEmbed()) {
+			// we have to make sure the current event actually has an embed to show.
+			// If we're in this branch it does. Otherwise, we ignore the click.
+
 			$(".nav .active").removeClass("active");
 	
 			if(!videoShown) {
@@ -216,6 +254,9 @@ $(document).ready(function() {
 
 	}, app));
 	
+	// We have to wait for the youtube api to load for us to embed the video. This
+	// will trigger more or less on page load, so as a user you don't really see
+	// any delay. But we do need to wait.
 	app.vent.on("youtube-ready", _.bind(function() {
 		console.log("YOUTUBE READY");
 
@@ -232,6 +273,8 @@ $(document).ready(function() {
 		$("#video-nav .label").addClass("hide");
 	}, app));
 
+	// The 'bar' in this case is the "Your session is now live!" bar that appears
+	// under the nav bar when the session you RSVP'd for is currently running.
 	app.vent.on("show-bar", _.bind(function(sessionKey) {
 
 		this.bar.show(new SessionLiveView());
@@ -264,8 +307,9 @@ $(document).ready(function() {
 
 	}, app));
 
+	// This only really come into play in the SINGLE_SESSION_RSVP case. Manages
+	// the unattend/re-attend flow.
 	var queuedAttend = false;
-
 	app.vent.on("attend", _.bind(function(sessionId) {
 		console.log("VENT ATTEND: " + sessionId);
 		// we have to manage attend logic here in the single_session_rsvp case so
@@ -289,6 +333,10 @@ $(document).ready(function() {
 
 	app.start();
 
+	// if the user joining has a curSession (ie a session they have RSVP'd to)
+	// check and see if it's live. If it is, show the bar.
+	// (Not sure how this will work in the non SINGLE_SESSION_RSVP mode, because
+	//  you can RSVP to as many sessions as you like. Hmm. TODO.)
 	if(curSession) {
 		var curSessionObj = curEvent.get("sessions").get(curSession);
 
@@ -299,30 +347,52 @@ $(document).ready(function() {
 
 	if(curEvent.hasEmbed()) {
 		app.vent.trigger("video-live");
-		// app.vent.trigger("video-nav");
 	}
 
+	// Handles clicks on the video link in the nav bar.
 	$("#video-nav").click(function() {
 		app.vent.trigger($(this).attr("id"));
 	})
 	
 	console.log("Setup regions.");
 
+	//------------------------------------------------------------------------//
+	//																		  //
+	//								NETWORKING								  //
+	//																		  //
+	//------------------------------------------------------------------------//
+	// 
+	// From here down, we're mostly concerned with managing networking and 
+	// communication. 
+	//
+	// First up, create the SockJS object.
 	sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
+
+	// Register a bunch of listeners on the major events it will fire.
 	sock.onopen = function() {		
+		// on connect, send the auth message.
 		var AUTH = {type:"auth", args:{key:SOCK_KEY, id:USER_ID}};
 		
 		sock.send(JSON.stringify(AUTH));
 	};
+
+	// This is the big one - handles every incoming message. 
 	sock.onmessage = function(message) {
+
 		console.log(message);
+
+		// messages come across the wire as raw strings in the data field.
+		// parse them into a proper object here.
 		var msg = JSON.parse(message.data);
 		
 		if(msg.type.indexOf("-err")!=-1) {
 			console.log("Got an error from the server!");
 		}
 		
+		// All messages have a type field. 
 		switch(msg.type) {
+
+			// a user rsvps to a session
 			case "attend":
 				curEvent.get("sessions").get(msg.args.id).addAttendee(msg.args.user);
 				console.log("added attendee to a session");
@@ -337,12 +407,8 @@ $(document).ready(function() {
 					curSession = msg.args.id;
 				}
 				break;
-			
-			case "first-attendee":
-				curEvent.get("sessions").get(msg.args.id).setFirstAttendee(msg.args.user);
-				console.log("set first attendee");
-				break;
-			
+
+			// a user un-rsvp's to a session
 			case "unattend"	:
 				curEvent.get("sessions").get(msg.args.id).removeAttendee(msg.args.user);
 				console.log("removed attendee from a session");
@@ -356,30 +422,37 @@ $(document).ready(function() {
 
 				break;
 			
+			// join an EVENT
 			case "join":
 				console.log("join: " + JSON.stringify(msg.args));
 				users.add(new models.User(msg.args.user));
 				break;
 			
+			// leave an EVENT
 			case "leave":
 				users.remove(users.get(msg.args.user.id));
 				break;
 				
+			// chat message received
 			case "chat":
 				messages.add(new models.ChatMessage(msg.args));
 				app.vent.trigger("new-chat-message");
 
 				break;
 
+			// a user has blurred the lobby window
 			case "blur":
 				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(true);
 				break;
+
+			// a user has focused the lobby window
 			case "focus":
 				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(false);
 				break;
 			
+			// the embed for this event has been updated
 			case "embed":
 				var originalYoutubeId = curEvent.get("youtubeEmbed") || "";
 
@@ -401,6 +474,7 @@ $(document).ready(function() {
 
 				break;
 				
+			// a session has been "started" by an admin. 
 			case "start":
 				// this is a little wacky, but we want to give people who RSVP'd a chance to join first.
 				// so we're going to do two things here: 
@@ -423,8 +497,9 @@ $(document).ready(function() {
 					}
 				}, timeout);
 
-
 				break;
+
+			// Mark a session as ended
 			case "stop":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.stop();
@@ -435,6 +510,7 @@ $(document).ready(function() {
 
 				break;
 
+			// create a new session
 			case "create-session":
 				var session = new models.Session(msg.args);
 
@@ -446,20 +522,31 @@ $(document).ready(function() {
 				app.paginatedSessions.add(session);
 				break;
 
+			// update the list of a session's participants
 			case "session-participants":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.setConnectedParticipantIds(msg.args.participantIds);
 				break;
 
+			// mark a session as having its hangout connected and communicating
 			case "session-hangout-connected":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.set("hangoutConnected", true);
 				break;
+
+			// mark a session as disconnected
 			case "session-hangout-disconnected":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.set("hangoutConnected", false);
 				break;
 
+			// *-ack message types are just acknowledgmeents from the server
+			// of the receipt of a particular message type and that the
+			// message was properly formatted and accepted. 
+			//
+			// mostly we don't do anything with these messages, but
+			// in some situations we do react to them. They're used 
+			// more for testing.
 			case "auth-ack":
 				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
 				break;
@@ -467,17 +554,16 @@ $(document).ready(function() {
 			case "embed-ack":
 				$("#embed-modal").modal('hide');
 				break;
-				
-			case "join-ack":
-				console.log("joined!");
-				break;
-
-			case "attend-ack":
-				console.log("attend-ack");
-				break;
 		}
 	};
 
+	// handle losing the connection to the server. 
+	// we want to put up a notice so the user knows that they've been disconnected (in
+	// case they can do anything about it, like unpugged cable or wifi outage)
+	// at the same time, we also want to attempt to reconnect if it was a server
+	// outage and the server is restarting. So we occasionally ping the server
+	// with an http request and when it responds successfully, we reload the page
+	// which will trigger a full reconnection and state reset.
 	sock.onclose = function() {
 		$('#disconnected-modal').modal('show');
 		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
