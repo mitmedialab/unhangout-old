@@ -4,6 +4,34 @@ DEVELOPMENT
 This file contains some collected notes from development to help guide future developers in adding features or understanding why existing features work the way they do. 
 
 
+Overall Architecture
+--------------------
+
+Unhangout is more or less a traditional model-view style architecture. The models are represented in `model.js` as *Backbone.js* model objects. They're quite thin - they're basically just a slight layer on top of a basic javascript-style object with some better hooks for inheritance (via `.extend()`) and abstracting getters and setters (through `.get(key)` and `.set(key, value)`). These models are used both on the client and on the server, with some variations on the server (as extended `server-models.js`). 
+
+The unhangout-server plays a few distinct roles. First, it is an *express.js* HTTP server. In this mode, it handles requests for the front page, event pages, notification subscription, and login. It also provides HTTP endpoints for the hangout app to phone home. 
+
+It also provides *SockJS* connectivity. This is a socket-like interface for client and server that supports a reliable and fast channel for communication. This channel is used for basically all communication on _event_ pages, i.e. `/event/:id`. Every client who has currently loaded an event page has an open connection on the server.
+
+On the client side, we have a semi-traditional *Backbone.js* application (with *Marionette.js* extensions) with models and views. The major deviation from standard *Backbone.js* practice is the way we synchronize with the server. Reliable and effective generic model synchronization over a socket is a somewhat challenging prospect for many reasons, and given the prototype nature of this project we have basically elided the problem entirely. Instead, we embed a state snapshop in the page as a JSON object to bootstrap the models. Subsequent changes to those models are encoded as discrete "verbs" in the protocol (discussed in more length below) and each client is responsible for updating their models appropriately. This makes adding features to the models and protocol quite tedious, but it keeps our connection from being too chatty and makes it all quite readable. This approach is clearly not appropriate for a long term, large scale project, but works well enough here for now.
+
+
+Persistence
+-----------
+
+The persistence model in unhangout is quite straightforward. We override Backbone's built in `.sync()` method to provide for saving, only. When saving, objects write themselves to a redis key (as determined by a call to `.url()`) as JSON strings. These records are _only read on startup_. Essentially, we treat redis as a journal and operate in memory for all interactions with the model. 
+
+This model has a number of obvious deficiencies. The most problematic is that it makes moving from one server process to more than one a very difficult proposition. We have made our peace with that for now, but that sort of shift will be relatively challenging if/when the time comes. The other (potential) issue is that the server needs to load the entire data model from redis on startup. At this point, this is not an issue at all: redis is blazing fast on reads and we're not talking about that many records. Inflating the JSON record into a full model object is also not computationally challenging. Right now, loading from the database doesn't appear to be any delay at all.
+
+As a developer, this means that you mostly just interact with the data model in memory like you would any other object. You can get and set fields, call methods, whatever. You do, however, need to remember to call `model.save()` whenever you make a change that you want to persist. This is a very fast operation, but not quite as fast as in-memory.
+
+
+Protocol
+--------
+
+
+
+
 Hangout Plugins
 ---------------
 
