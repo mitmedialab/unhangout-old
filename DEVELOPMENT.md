@@ -29,7 +29,9 @@ As a developer, this means that you mostly just interact with the data model in 
 Protocol
 --------
 
+The *SockJS* based protocol is quite straightforward. Messages are encoded as JSON strings, and have one guaranteed field: `type`. Most messages also have an `args` field that contains the details of the message. All message types also have `*-err` and `*-ack` variants that the server uses to report errors or success in handling a particular messages.
 
+The contents of message payloads are not particularly formal. I don't yet have a full protocol description anywhere since it changes frequently. In general, reading the part of `unhangout-server.js` where messages are handled is the best source of documentation for what the potential fields are in `args`. In general, the message type is used to specify the verb, and `args` contains an id of the object being acted on (all messages right now only act on one kind of object, e.g. a session or a user) and some extra metadata if necessary.
 
 
 Hangout Plugins
