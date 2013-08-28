@@ -46,6 +46,12 @@ If you want to make changes to the app, it gets a little bit tricky. First, you 
 The other option, which I haven't tested, is to maintain two separate hangout app ids; one for production (which points to your production unhangout server) and one for development (which points to `localhost`). This should work too, but I haven't tested it.
 
 
+Templating
+----------
+
+There are two layers of templating in use in this app. There are templates that are processed by *Express* when a page is rendered out of the `/views` directory. There are also *Backbone*-style templates that are executed on the client side. These two varieties of template would like to use the same escape characters. Obviously, this would cause a major clash when the *Express* template tried to operate on *Backbone*'s in-view template `<script>` blocks. As a result, we operate the server-side templating with the prefix `<% ... %>` and the client-side templating uses `{{ ... }}`. 
+
+
 Hangout Creation
 ----------------
 
