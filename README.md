@@ -14,6 +14,7 @@ Full library dependencies are shown in `package.json`. The major tools this plat
  - redis
  - backbone
  - marionette
+ - mocha (for testing)
 
 Settings
 --------

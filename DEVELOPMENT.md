@@ -3,6 +3,28 @@ DEVELOPMENT
 
 This file contains some collected notes from development to help guide future developers in adding features or understanding why existing features work the way they do. 
 
+Structure
+---------
+
+/	
+	/bin - contains all files intended to be executed directly, using, e.g. `node seed.js`
+		_get-all-user-emails.js_ helper script for extracting all emails users have logged in with
+		_seed.js_  _wipes_ and populates the redis database with basic models
+		_unhangout-server_ primary executable for starting the server
+	/lib - various server-side libraries
+		_hangout-farming.js_ - support code for farming valid unhangout urls from google calendar api
+		_passport-mock.js_ - support for faking passport users during testing
+		_server-models.js_ - extensions of the core models for use on the server
+		_unhangout-server.js_ - core code for running the server
+	/logs
+	/public - all static content, served by *express* at `/public/*`
+	/sass - sass stylesheets (which generate into `/public/css`)
+	/test - mocha-style unit and integration tests
+	/views - templates for rendering HTML pages
+	package.json - dependencies + other metadata
+	config.rb - configures compass, for turning sass into css
+	conf.json.example - example config file; should be copied into conf.json and edited appropriately.
+
 
 Overall Architecture
 --------------------
