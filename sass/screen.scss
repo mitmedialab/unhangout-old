@@ -270,6 +270,11 @@ body {
 		padding-left: 5px;
 	}
 
+	&.is-in-hangout {
+		border: 3px solid $background;
+		border-color: green;
+	}
+
 	&.blur {
 		opacity: 0.4;
 	}

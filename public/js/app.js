@@ -354,7 +354,9 @@ $(document).ready(function() {
 			case "blur":
 				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(true);
+
 				break;
+
 			case "focus":
 				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(false);
@@ -429,12 +431,23 @@ $(document).ready(function() {
 			case "session-participants":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.setConnectedParticipantIds(msg.args.participantIds);
+
+				var userInHangout = users.get(msg.args.participantIds);
+				userInHangout.setIsInHangout(true);
+
+				for (var i=0; i< msg.args.participantIds.length; i++)
+				{ 
+					var user = users.get(msg.args.participantIds[i]);
+					user.setIsInHangout(true);
+				}
+
 				break;
 
 			case "session-hangout-connected":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.set("hangoutConnected", true);
 				break;
+
 			case "session-hangout-disconnected":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.set("hangoutConnected", false);

@@ -274,6 +274,7 @@ var UserView = Marionette.ItemView.extend({
 
 		this.listenTo(this.model, 'change', this.render, this);
 		this.listenTo(this.model, 'change:isBlurred', this.render, this);
+		this.listenTo(this.model, 'change:isInHangout', this.render, this);
 	},	
 
 	click: function() {
@@ -285,6 +286,10 @@ var UserView = Marionette.ItemView.extend({
 		if(this.model.isAdmin()) {
 		 	this.$el.addClass("admin");
 		}
+
+		if(this.model.isInHangout()) {
+			this.$el.addClass("is-in-hangout");
+		} 
 
 		if(this.model.isBlurred()) {
 			this.$el.addClass("blur");
