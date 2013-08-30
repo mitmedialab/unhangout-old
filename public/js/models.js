@@ -126,37 +126,50 @@ models.Session = Backbone.Model.extend({
 	},
 	
 	numAttendees: function() {
-		return this.get("attendeeIds").length;
+		return this.numAttendeesInList("attendeeIds");
 	},
 	
+	numAttendeesInList: function(type) {
+		return this.get(type).length;
+	},
+
 	addAttendee: function(user) {
-		if(this.get("attendeeIds").length==this.MAX_ATTENDEES) {
+		return this.addUserToList("attendeeIds", user);
+	},
+
+	addUserToList: function(type, user) {
+		if(this.get(type).length==this.MAX_ATTENDEES) {
 			return new Error("already at max attendees");
 		}
 		
-		var attendeeIds = _.clone(this.get("attendeeIds"));
+		var attendeeIds = _.clone(this.get(type));
 		
 		if(attendeeIds.indexOf(user.id)==-1) {
 			attendeeIds.push(user.id);
-			this.set("attendeeIds", attendeeIds);
+			this.set(type, attendeeIds);
 			this.trigger("change");
-			this.trigger("change:attendeeIds");
-		} else {
+			this.trigger("change:" + type);
+		} else {			
 			return new Error("user already attending session");
 		}
 	},
 	
 	removeAttendee: function(user) {
-		var attendeeIds = _.clone(this.get("attendeeIds"));
+		return this.removeUserFromList("attendeeIds", user);
+	},
+
+	removeUserFromList: function(type, user) {
+		var attendeeIds = _.clone(this.get(type));
 		
 		var index = attendeeIds.indexOf(user.id);
+
 		if(index==-1) {
 			return new Error("user not attending this session");
 		} else {
 			attendeeIds.splice(index, 1);
-			this.set("attendeeIds", attendeeIds);
+			this.set(type, attendeeIds);
 			this.trigger("change");
-			this.trigger("change:attendeeIds");
+			this.trigger("change:" + type);
 		}
 	},
 	
