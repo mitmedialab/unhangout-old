@@ -11,7 +11,7 @@
 	<a href="/event/<%= event.id %>"><%= event.get("title") + "(" + event.get("shortName") + ")"%></a>
 	</td>
 
-	<td class="admin-buttons"><button class="btn btn-primary">edit</button></td>
+	<td class="admin-buttons"><a href="/admin/event/<%=event.id%>" class="btn btn-primary">edit</a></td>
 </tr>
 <% }); %>
 </table>
