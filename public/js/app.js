@@ -450,8 +450,13 @@ $(document).ready(function() {
 				
 			case "join-ack":
 				console.log("joined!");
-				break;
 
+				if(!_.isNull(curEvent.get("welcomeMessage"))) {
+					// if there is a welcome message, put it in chat.
+					messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
+				}
+
+				break;
 			case "attend-ack":
 				console.log("attend-ack");
 				break;
@@ -460,7 +465,7 @@ $(document).ready(function() {
 
 	sock.onclose = function() {
 		$('#disconnected-modal').modal('show');
-		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
+		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!"}));
 		
 		var checkIfServerUp = function () {
 		 	var ping = document.location;
