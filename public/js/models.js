@@ -40,6 +40,7 @@ models.Event = Backbone.Model.extend({
 		return {
 			title: "My Great Event",
 			organizer: "MIT Media Lab",
+			shortName: "great-event",		// use this as a slug for nicer urls
 			description: "This is my description about this great event. It has wonderful sessions in it.",
 			start: new Date().getTime(),
 			end: new Date().getTime()+60*60*2*1000,
