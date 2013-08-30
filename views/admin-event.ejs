@@ -1,6 +1,46 @@
 <% include header.ejs %>
 
-<h1>Edit Event</h1>
+
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="inputTitle">Title</label>
+    <div class="controls">
+      <input type="text" id="inputTitle" placeholder="Title" value="<%=event.get("title") %>">
+    </div>
+   </div>
+
+  <div class="control-group">
+    <label class="control-label" for="inputShortName">Short name</label>
+    <div class="controls">
+      <input type="text" id="inputShortName" placeholder="Short name" value="<%=event.get("shortName") %>">
+    </div>
+  </div>
+
+<div class="control-group">
+    <label class="control-label" for="inputOrganizer">Organizer</label>
+    <div class="controls">
+      <input type="text" id="inputOrganizer" placeholder="Organizer" value="<%=event.get("organizer") %>">
+    </div>
+  </div>
+
+<div class="control-group">
+    <label class="control-label" for="inputDescription">Description</label>
+    <div class="controls">
+      <textarea rows=10 type="text" id="inputDescription" placeholder="Description"><%=event.get("description")%></textarea>
+    </div>
+  </div>
+
+<div class="control-group">
+    <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
+    <div class="controls">
+      <textarea rows=10 type="text" id="inputWelcomeMessage" placeholder="welcome message"><%=event.get("welcomeMessage")%></textarea>
+    </div>
+  </div>
+
+
+  	<button type="submit" class="btn btn-primary">Update</button>
+</form>
+
 
 <%= JSON.stringify(event) %>
 
