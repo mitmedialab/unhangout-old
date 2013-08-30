@@ -316,7 +316,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	setEmbed: function() {
 		var newId = $("#youtube_id").val();
 
-		if(newId.length!=11) {
+		if(newId.length!=11 && newId.length!=0) {
 			this.$el.find("#embed-modal p.text-warning").removeClass("hide");
 			this.$el.find("#embed-modal .control-group").addClass("error");
 		} else {
