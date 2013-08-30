@@ -1,5 +1,19 @@
 <% include header.ejs %>
 
-<h1>This is an admin page</h1>
+<h1>Admin</h1>
+
+<h3>Events</h3>
+
+<table id="events">
+<% events.forEach(function(event) { %>
+<tr>
+	<td>
+	<a href="/event/<%= event.id %>"><%= event.get("title") + "(" + event.get("shortName") + ")"%></a>
+	</td>
+
+	<td class="admin-buttons"><button class="btn btn-primary">edit</button></td>
+</tr>
+<% }); %>
+</table>
 
 <% include footer.ejs %>
