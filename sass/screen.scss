@@ -600,6 +600,24 @@ body {
 
 				padding-left: 120px;
 
+				&.system {
+					text-align: center;
+					font-style: italic;
+
+					padding-left: 0px;
+					padding-bottom: 10px;
+					padding-top: 10px;
+
+					margin-left: 20px;
+					margin-right: 20px;
+					margin-bottom: 20px;
+
+					border-bottom: 1px solid #aaa;
+					.from {
+						display: none;
+					}
+				}
+
 				span.from {
 					margin-left: -120px;
 					float: left;

@@ -41,6 +41,7 @@ models.Event = Backbone.Model.extend({
 			title: "My Great Event",
 			organizer: "MIT Media Lab",
 			description: "This is my description about this great event. It has wonderful sessions in it.",
+			welcomeMessage: null,
 			start: new Date().getTime(),
 			end: new Date().getTime()+60*60*2*1000,
 			connectedUsers: null,			// these two fields are setup in initialize
