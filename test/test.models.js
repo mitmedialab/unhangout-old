@@ -99,7 +99,13 @@ describe("SESSION", function() {
 			});
 
 		it('should remove someone who has joined a session in the last', 
-			function() {				
+			function() {			
+				var session = new client_models.Session();
+				var user = new client_models.User({id: 0});
+				
+				session.addAttendee(user);
+				session.removeAttendee(user);
+
 			});
 	});
 });
