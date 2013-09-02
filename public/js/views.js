@@ -287,16 +287,16 @@ var UserView = Marionette.ItemView.extend({
 		 	this.$el.addClass("admin");
 		}
 
-		if(this.model.isInHangout()) {
-			this.$el.addClass("is-in-hangout");
-		} 
-
 		if(this.model.isBlurred()) {
 			this.$el.addClass("blur");
 			this.$el.removeClass("focus");
 		} else {
 			this.$el.removeClass("blur");
 			this.$el.addClass("focus");
+		}
+
+		if(this.model.isInHangout()) {
+			$('.icon-facetime-video').css("visibility", "visible");
 		}
 
 		this.$el.attr("data-toggle", "tooltip");
