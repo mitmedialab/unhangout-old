@@ -8,7 +8,7 @@
 
 	"UNHANGOUT_REDIS_HOST":"localhost",
 	"UNHANGOUT_REDIS_PORT":6379,
-	"UNHANGOUT_REDIS_DB:0,
+	"UNHANGOUT_REDIS_DB":0,
 
 	"UNHANGOUT_ADMIN_EMAILS": ["user1@example.com", "user2@example.com"],
 
