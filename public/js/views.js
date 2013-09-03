@@ -297,6 +297,8 @@ var UserView = Marionette.ItemView.extend({
 
 		if(this.model.isInHangout()) {
 			$('.icon-facetime-video').css("visibility", "visible");
+		} else {
+			$('.icon-facetime-video').css("visibility", "hidden");
 		}
 
 		this.$el.attr("data-toggle", "tooltip");

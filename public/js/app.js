@@ -432,9 +432,6 @@ $(document).ready(function() {
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.setConnectedParticipantIds(msg.args.participantIds);
 
-				var userInHangout = users.get(msg.args.participantIds);
-				userInHangout.setIsInHangout(true);
-
 				for (var i=0; i< msg.args.participantIds.length; i++)
 				{ 
 					var user = users.get(msg.args.participantIds[i]);
@@ -450,7 +447,15 @@ $(document).ready(function() {
 
 			case "session-hangout-disconnected":
 				var session = curEvent.get("sessions").get(msg.args.id);
+				var connectedParticipantList = session.get("connectedParticipantIds");
+
+				for(var i =0; i< connectedParticipantList.length; i++) {
+					var user = users.get(connectedParticipantList[i]);
+					user.setIsInHangout(false);
+				}
+
 				session.set("hangoutConnected", false);
+
 				break;
 
 			case "auth-ack":
