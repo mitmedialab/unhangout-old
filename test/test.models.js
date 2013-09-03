@@ -46,7 +46,7 @@ describe("SERVEREVENT", function() {
 
 describe("SESSION", function() {
 	describe("#addAttendee", function() {
-		it('should reject a second add, when max attendees is set to 1', function(done) {
+		it('should reject a second add, when max attendees is set to 1', function() {
 			client_models.Session.prototype.MAX_ATTENDEES = 1;
 
 			var session = new client_models.Session();
@@ -54,12 +54,59 @@ describe("SESSION", function() {
 
 			var err = session.addAttendee(new client_models.User({id:1}));
 
-			if(err) {
-				client_models.Session.prototype.MAX_ATTENDEES = 10;
-				done();				
-			}
-		})
-	});	
+			client_models.Session.prototype.MAX_ATTENDEES = 10;
+
+			should.exist(err);
+		});
+
+		it('should reject a user who is already attending', function() {
+			var session = new client_models.Session();
+
+			var user = new client_models.User({id: 0});
+			session.addAttendee(user);
+
+			var err = session.addAttendee(user);
+			should.exist(err);
+
+		});
+	});
+
+	describe("#numAttendees", function() {
+		it('should report 0 if no one has joined', function() {
+			var session = new client_models.Session();
+			
+			session.numAttendees().should.equal(0);
+		});
+
+		it('should report 1 when one person has joined', function() {
+			var session = new client_models.Session();
+			session.addAttendee(new client_models.User({id: 1}));
+
+			session.numAttendees().should.equal(1);
+		});
+	});
+
+	describe("#removeAttendee", function() {
+		it('should reject an attempt to remove someone who isn\'t present', 
+			function() {
+				var session = new client_models.Session();
+				var user = new client_models.User({id: 0});
+
+				var err = session.removeAttendee(user);
+				should.exist(err);
+			});
+
+		it('should remove someone who has joined a session in the last', 
+			function() {			
+				var session = new client_models.Session();
+				var user = new client_models.User({id: 0});
+				
+				session.addAttendee(user);
+				session.removeAttendee(user);
+
+				session.numAttendees().should.equal(0);
+			});
+	});
 });
 
 describe("USER", function() {
