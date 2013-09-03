@@ -106,6 +106,8 @@ describe("SESSION", function() {
 				session.addAttendee(user);
 				session.removeAttendee(user);
 
+				var err = session.numAttendees();
+				err.should.equal(0);
 			});
 	});
 });
