@@ -6,7 +6,10 @@
 
 		$("form").submit();
 		return false;
-	})
+	});
+
+  $(".nav li.active").removeClass("active");
+  $("#admin-nav").addClass("active");
 </script>
 
 <form class="form-horizontal" action="/admin/event/<%= create ? "new":event.id%>" method="post" encoding="application/x-www-form-urlencoded">

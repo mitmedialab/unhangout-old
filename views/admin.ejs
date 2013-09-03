@@ -1,5 +1,10 @@
 <% include header.ejs %>
 
+<script>
+  $(".nav li.active").removeClass("active");
+  $("#admin-nav").addClass("active");
+</script>
+
 <h1>Admin</h1>
 
 <h3>Events <a href="/admin/event/new" class="btn brn-success">new</a></h3>
