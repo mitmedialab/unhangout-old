@@ -43,14 +43,14 @@ describe('HTTP ADMIN API', function() {
 		});
 
 		it('should accept well-formed creation request from admin', function(done) {
-			s.users.at(0).set("admin", true);
+			var user = s.users.at(0);
+			user.set("admin", true);
 
 			request.post('http://localhost:7777/admin/event/new')
 				.send({title:"Test Event", description:"Description of the test event."})
+				.redirects(0)
 				.end(function(res) {
 					res.status.should.equal(200);
-
-					console.log(JSON.stringify(s.events));
 					s.events.at(s.events.length-1).get("title").should.equal("Test Event");
 					s.events.at(s.events.length-1).get("description").should.equal("Description of the test event.");
 					done();
