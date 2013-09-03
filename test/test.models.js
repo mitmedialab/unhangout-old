@@ -75,16 +75,14 @@ describe("SESSION", function() {
 		it('should report 0 if no one has joined', function() {
 			var session = new client_models.Session();
 			
-			var err = session.numAttendees();
-			err.should.equal(0);
+			session.numAttendees().should.equal(0);
 		});
 
 		it('should report 1 when one person has joined', function() {
 			var session = new client_models.Session();
 			session.addAttendee(new client_models.User({id: 1}));
 
-			var err = session.numAttendees();
-			err.should.equal(1);
+			session.numAttendees().should.equal(1);
 		});
 	});
 
@@ -106,8 +104,7 @@ describe("SESSION", function() {
 				session.addAttendee(user);
 				session.removeAttendee(user);
 
-				var err = session.numAttendees();
-				err.should.equal(0);
+				session.numAttendees().should.equal(0);
 			});
 	});
 });
