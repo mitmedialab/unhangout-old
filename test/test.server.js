@@ -20,15 +20,28 @@ var standardSetup = function(done) {
 	});
 }
 
-var mockSetup = function(done) {
-	s = new server.UnhangoutServer();
-	s.on("inited", function() {s.start()});
-	s.on("started", done);
-	
-	seed.run(1, redis, function() {
-		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true});		
-	});
+var mockSetup = function(admin, callback) {
+	return function(done) {
+		s = new server.UnhangoutServer();
+		s.on("inited", function() {s.start()});
+		s.on("started", function() {
+			if(callback) {
+				callback(done);
+			} else {
+				done();
+			}
+		});
+		
+		if(_.isUndefined(admin)) {
+			admin = false;
+		}
+
+		seed.run(1, redis, function() {
+			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin});		
+		});
+	}
 }
+
 
 var standardShutdown = function(done) {
 	s.on("stopped", function() {
@@ -165,7 +178,7 @@ describe('unhangout server', function() {
 	});
 	
 	describe('routes (authenticated)', function() {
-		beforeEach(mockSetup);
+		beforeEach(mockSetup());
 		afterEach(standardShutdown);
 		
 		describe("GET /event/:id", function() {
@@ -180,7 +193,7 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /subscribe', function() {
-		beforeEach(mockSetup);
+		beforeEach(mockSetup());
 		afterEach(standardShutdown);
 
 		it('should accept email addresses', function(done) {
@@ -199,16 +212,14 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /session/hangout/:id', function() {
-		beforeEach(function(done) {
-			mockSetup(function() {
+		beforeEach(mockSetup(false, function(done) {
 				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
 				session = s.events.at(0).get("sessions").at(0);
 
 				session.start();
 
 				done();
-			})
-		});
+			}));
 
 		afterEach(standardShutdown);
 
@@ -341,7 +352,7 @@ describe('unhangout server', function() {
 		// });
 	
 	describe('sock (mock)', function() {
-		beforeEach(mockSetup);
+		beforeEach(mockSetup());
 		afterEach(standardShutdown);
 
 		it('should accept a connection at /sock', function(done) {
