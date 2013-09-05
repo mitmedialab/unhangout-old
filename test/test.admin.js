@@ -71,8 +71,27 @@ describe('HTTP ADMIN API', function() {
 				});
 		});
 
-		it('should reject requests that are missing required parameters');
-		it('should redirect to /admin/ on successful creation');
+		it('should reject requests that are missing required parameters', function(done) {
+			// title is missing
+			request.post('http://localhost:7777/admin/event/new')
+				.send({description:"Description of the test event."})
+				.redirects(0)
+				.end(function(res) {
+					res.status.should.equal(400);
+					done();
+				});
+		});
+
+		it('should redirect to /admin/ on successful creation', function(done) {
+			request.post('http://localhost:7777/admin/event/new')
+				.send({title:"Test Event", description:"Description of the test event."})
+				.redirects(0)
+				.end(function(res) {
+					res.status.should.equal(302);
+					res.header['location'].should.equal("/admin");
+					done();
+				});
+		});
 	});
 
 	describe('/admin/event/:id', function() {
