@@ -63,9 +63,12 @@ describe('HTTP ADMIN API', function() {
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
-					res.status.should.equal(200);
+					res.status.should.equal(302);
 					s.events.at(s.events.length-1).get("title").should.equal("Test Event");
 					s.events.at(s.events.length-1).get("description").should.equal("Description of the test event.");
+
+					res.header['location'].should.equal("/admin");
+
 					done();
 				});
 		});
