@@ -40,7 +40,7 @@ models.Event = Backbone.Model.extend({
 		return {
 			title: "My Great Event",
 			organizer: "MIT Media Lab",
-			shortName: "great-event",		// use this as a slug for nicer urls
+			shortName: null,		// use this as a slug for nicer urls
 			description: "This is my description about this great event. It has wonderful sessions in it.",
 			welcomeMessage: null,
 			start: new Date().getTime(),

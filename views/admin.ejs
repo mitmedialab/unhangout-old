@@ -1,0 +1,24 @@
+<% include header.ejs %>
+
+<script>
+  $(".nav li.active").removeClass("active");
+  $("#admin-nav").addClass("active");
+</script>
+
+<h1>Admin</h1>
+
+<h3>Events <a href="/admin/event/new" class="btn brn-success">new</a></h3>
+
+<table id="events">
+<% events.forEach(function(event) { %>
+<tr>
+	<td>
+	<a href="/event/<%= event.id %>"><%= event.get("title") + " (" + event.get("shortName") + ")"%></a>
+	</td>
+
+	<td class="admin-buttons"><a href="/admin/event/<%=event.id%>" class="btn btn-primary">edit</a></td>
+</tr>
+<% }); %>
+</table>
+
+<% include footer.ejs %>
