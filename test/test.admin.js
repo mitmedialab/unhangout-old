@@ -57,8 +57,6 @@ describe('HTTP ADMIN API', function() {
 		beforeEach(mockSetup(true));
 
 		it('should accept well-formed creation request from admin', function(done) {
-			console.log(JSON.stringify(s.users.at(0)));
-
 			request.post('http://localhost:7777/admin/event/new')
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
