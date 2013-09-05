@@ -205,9 +205,18 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		}, this));
 
 		this.listenTo(this.collection, "add", function() {
+			console.log("collection fired add");
 			this.updateDisplay();
-			this.render();
 			this.collection.goTo(this.collection.currentPage);
+
+			// really not sure why a render right here won't
+			// get rid of the double-display issue, but a timedout
+			// one will. Erg. The basic issue here is that when we ad
+			// to the paginated display it tries to be helpful
+			// and insta-append the new object to the list instead
+			// of re-rendering everything. 
+			// this.render();
+			setTimeout(this.render, 1);
 		}, this);
 	},
 
