@@ -317,12 +317,11 @@ describe('unhangout server', function() {
  			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
 			.send("type=loaded&url=" + encodeURIComponent(fakeUrl))
 			.end(function(res) {
-
 				request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
 				.send({type:"participants", participants:[{person:{id: s.users.at(0).id }}]})
 				.end(function(res) {
 					request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
-				 	.send({type:"participants", participants:[{}]})
+				 	.send({type:"participants", participants:[]})
 				 	.end(function(res) {
 
 				 		// not doing any chekcing at the moment; just make sure the tests go through.
