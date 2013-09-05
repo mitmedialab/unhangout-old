@@ -1,3 +1,19 @@
+// The views in this file define all the major pieces of the client-side UI.
+// We are using Marionette for our views, which provides some extra layers on
+// top of the basic Backbone view objects. 
+//
+// You can read more about Marionette's objects here: https://github.com/marionettejs/backbone.marionette/tree/master/docs
+//
+// Basically, each major model in the system has a corresponding view: sessions,
+// users, chat messages, etc. Events are excepted, because the main interface
+// is for the entire event. The app itself is basically the event view.
+//
+// Each view has a matching template (defined in event.ejs) that contains its 
+// markup. On top of that, it defines various events (to respond to, eg, clicks
+// on its own elements) as well as other on-render behavior to change how
+// the view looks in response to changes in its model or other application
+// state. 
+
 
 var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
@@ -22,7 +38,12 @@ var SessionView = Marionette.ItemView.extend({
 
 	initialize: function() {
 
+		// if we get a notice that someone has connected to the associated participant,
+		// re-render to show them.
 		this.listenTo(this.model, 'change change:connectedParticipantIds change:hangoutConnected', this.render, this);
+
+		// changes to session-key are basically a proxy for a session going "live", eg
+		// an organizer has marked that session was now running.
 		this.listenTo(this.model, 'change:session-key', function() {
 			if(!this.model.isAttending(USER_ID)) {
 				console.log("skipping dialog for a non-attending user");
@@ -46,9 +67,8 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	onRender: function() {
-		// things to do here:
-		// 1. Hide attending if no one is attending
-		// 2. manage the counter bars for the rest of the count.
+		// mostly just show/hide pieces of the view depending on 
+		// model state.
 
 		if(IS_ADMIN) {
 			// show the admin UI. obviously, requests generated here are authenticated
@@ -61,12 +81,10 @@ var SessionView = Marionette.ItemView.extend({
 
 		if(this.model.isAttending(USER_ID)) {
 			this.ui.attend.addClass("active");
-			// this.ui.attend.find(".text").text("JOINED");
 			this.$el.find(".joined").show();
 		} else {
 			this.ui.attend.removeClass("active");
 			this.$el.find(".joined").hide();
-			// this.ui.attend.find(".text").text("JOIN");
 		}
 
 		if(this.model.isLive()) {
@@ -184,6 +202,11 @@ var SessionView = Marionette.ItemView.extend({
 	},
 });
 
+// The list view contains all the individual session views. We don't
+// manually make the session views - all that is handled by the 
+// marionette CollectionView logic. Our primary issue in this class
+// is to deal with pagination and its associated rendering issues.
+
 var SessionListView = Backbone.Marionette.CollectionView.extend({
 	template: "#session-list-template",
 	itemView: SessionView,
@@ -243,6 +266,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 			sessionsPerPage = 1;
 		}
 
+		// tell the collection how big we want its pages to be as a result
 		if(this.collection.perPage != sessionsPerPage) {
 			this.collection.howManyPer(sessionsPerPage);
 			this.render();
@@ -259,6 +283,9 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		}
 	}
 })
+
+// UserViews are the little square profile pictures that we use throughout
+// the app to represent users.
 
 var UserView = Marionette.ItemView.extend({
 	template: '#user-template',
@@ -302,6 +329,12 @@ var UserView = Marionette.ItemView.extend({
 	}
 });
 
+// The DialogView contains all our dialog boxes. This is a little awkward, but
+// when we tried associated dialog boxes with the views that actually trigger them
+// we ran into all sorts of z-index issues, because those views were all
+// over the DOM and had different situations. Instead, we just put them
+// all in one place for easy bootstrap dialog triggering. We also house
+// the relevant events related to those dialog boxes here.
 var DialogView = Backbone.Marionette.Layout.extend({
 	template: "#dialogs-template",
 
@@ -344,6 +377,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	}
 })
 
+// Generates the admin menu items.
 var AdminButtonView = Backbone.Marionette.Layout.extend({
 	template: "#admin-button-template",
 
@@ -376,11 +410,17 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 		}
 	},
 
+	// this little hack is to make sure the hangout count
+	// is available in the template rendering.
 	serializeData: function() {
 		return {numFarmedHangouts:NUM_HANGOUTS_FARMED};
 	}
 });
 
+// The UserColumn is the gutter on the right that shows who's connected to the
+// unhangout right now. We use a layout to encapsulate it and provide the UI
+// around the core set of UserViews. You can read more about layouts in the
+// Marionette docs.
 var UserColumnLayout = Backbone.Marionette.Layout.extend({
 	template: "#user-column-layout-template",
 
@@ -402,6 +442,9 @@ var UserColumnLayout = Backbone.Marionette.Layout.extend({
 	},
 });
 
+// The actual core UserListView that manages displaying each individual user.
+// This logic is quite similar to the SessionListView, which also deals with
+// pagination in a flexible-height space.
 var UserListView = Backbone.Marionette.CompositeView.extend({
 	template: '#user-list-template',
 	itemView: UserView,
@@ -496,6 +539,9 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	},
 });
 
+// Manages chat message display. The layout piece sets up the differnt chat zones:
+// the area where we show messages, the space where we put users, and the space
+// where chat messages are entered. 
 var ChatLayout = Backbone.Marionette.Layout.extend({
 	template: '#chat-layout',
 	id: 'chat',
@@ -523,6 +569,7 @@ var ChatLayout = Backbone.Marionette.Layout.extend({
 	},
 })
 
+// The input form for sending chat messages.
 var ChatInputView = Marionette.ItemView.extend({
 	template: '#chat-input-template',
 
@@ -547,6 +594,7 @@ var ChatInputView = Marionette.ItemView.extend({
 	}
 });
 
+// The view for an individual chat message.
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
 	className: 'chat-message',
@@ -555,6 +603,8 @@ var ChatMessageView = Marionette.ItemView.extend({
 		this.model.set("text", this.linkify(this.model.get("text")));
 	},
 
+	// Finds and replaces valid urls with links to that url. Client-side only
+	// of course; all messages are sanitized on the server for malicious content.
 	linkify: function(msg) {
 		var replacedText, replacePattern1, replacePattern2, replacePattern3, replacePattern4;
 
@@ -573,6 +623,9 @@ var ChatMessageView = Marionette.ItemView.extend({
     	return replacedText;
 	},
 
+	// We want to use shortNames so we intercept this process to make the short
+	// display name visible within the template rendering, since we can't
+	// call object methods during that process.
 	serializeData: function() {
 		var model = this.model.toJSON();
 
@@ -588,6 +641,8 @@ var ChatMessageView = Marionette.ItemView.extend({
 		}
 	}
 });
+
+// This view contains all the ChatMessageViews and handles scrolling for them.
 
 var ChatView = Marionette.CompositeView.extend({
 	template: '#chat-template',
@@ -605,11 +660,13 @@ var ChatView = Marionette.CompositeView.extend({
 	}
 });
 
+// The bar that appears when your session goes live.
 var SessionLiveView = Marionette.ItemView.extend({
 	template: "#session-live-bar-template",
 	id: "session-live-bar"
 });
 
+// Manages the display of embedded videos on the upper left corner.
 var VideoEmbedView = Marionette.ItemView.extend({
 	template: '#video-embed-template',
 	id: 'video-embed',
