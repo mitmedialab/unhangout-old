@@ -288,15 +288,17 @@ describe('unhangout server', function() {
 			.send("type=loaded&url=" + encodeURIComponent(fakeUrl))
 			.end(function(res) {
  					
+ 				request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
 				.send({type:"participants", participants:[{person:{id: s.users.at(0).id }}]})
 				.end(function(res) {
 	 				res.status.should.equal(200);
 
 	 				// TODO drew to fix mock authentication
-	 				s.users.at(0).isInHangout().should.exist(true) ;
+	 				s.users.at(0).isInHangout.should.exist(true) ;
 	 				done();
 				});
  			});
+		});
 		});
 
 		it('should check if IsInHangout flag is set to false when a user leaves the hangout', function(done) {
@@ -306,9 +308,10 @@ describe('unhangout server', function() {
 			.send("type=loaded&url=" + encodeURIComponent(fakeUrl))
 			.end(function(res) {
 
+				request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
 				.send({type:"participants", participants:[{person:{id: s.users.at(0).id }}]})
 				.end(function(res) {
-
+					request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
 				 	.send({type:"participants", participants:[{}])
 				 	.end(function(res) {
 
