@@ -305,7 +305,8 @@ describe('unhangout server', function() {
 	 				res.status.should.equal(200);
 
 	 				// TODO drew to fix mock authentication
-	 				// s.users.at(0).isInHangout.should.exist(true) ;
+	 				console.log(s.users.at(0));
+				 	s.users.at(0).isInHangout().should.be.true
 	 				done();
 				});
  			});
@@ -325,8 +326,8 @@ describe('unhangout server', function() {
 				 	.end(function(res) {
 
 				 		// not doing any chekcing at the moment; just make sure the tests go through.
-				 	 	// res.status.should.equal(200);
-				 	 	// s.users.at(0).isInHangout().should.exist(false) ;
+				 	 	res.status.should.equal(200);
+				 	 	s.users.at(0).isInHangout().should.be.false
 				 	 	done();
 					});
  				});

@@ -252,7 +252,7 @@ models.User = Backbone.Model.extend({
 	},
 
 	isInHangout: function() {
-		return this.get("isInHangout");
+		return this.has("isInHangout") && this.get("isInHangout");
 	},
 
 	setIsInHangout: function(isInHangout) {
