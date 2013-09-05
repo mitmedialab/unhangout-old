@@ -291,7 +291,65 @@ describe('unhangout server', function() {
 					done();
 				});
 		});
+
+		it('should check if isInHangout is set to true when a user enters the hangout', function(done) {
+ 			var fakeUrl = "http://plus.google.com/hangout/_/abslkjasdlfkjasdf";
+
+ 			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+			.send("type=loaded&url=" + encodeURIComponent(fakeUrl))
+			.end(function(res) {
+ 					
+ 				request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+				.send({type:"participants", participants:[{person:{id: s.users.at(0).id }}]})
+				.end(function(res) {
+	 				res.status.should.equal(200);
+
+	 				// TODO drew to fix mock authentication
+	 				console.log(s.users.at(0));
+				 	s.users.at(0).isInHangout().should.be.true
+	 				done();
+				});
+ 			});
+		});
+
+		it('should check if IsInHangout flag is set to false when a user leaves the hangout', function(done) {
+ 			var fakeUrl = "http://plus.google.com/hangout/_/abslkjasdlfkjasdf";
+
+ 			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+			.send("type=loaded&url=" + encodeURIComponent(fakeUrl))
+			.end(function(res) {
+				request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+				.send({type:"participants", participants:[{person:{id: s.users.at(0).id }}]})
+				.end(function(res) {
+					request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+				 	.send({type:"participants", participants:[]})
+				 	.end(function(res) {
+
+				 		// not doing any chekcing at the moment; just make sure the tests go through.
+				 	 	res.status.should.equal(200);
+				 	 	s.users.at(0).isInHangout().should.be.false
+				 	 	done();
+					});
+ 				});
+			});
+		});
 	});
+
+
+		// it('should check it IsInHangout flag is set to false when a hangout session is disconnected', function(done) {
+		// 	request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+		// 	.send({type:"participants", participants:[{person:{id: s.users.at(0).id }}]})
+ 	//  		.end(function(res) {
+ 	//  			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
+	 // 	 			.send({type:"heartbeat", from:1213141235})
+	 // 	 			.end(function(res) {
+
+	 // 	 				res.status.should.equal(200);
+	 // 	 				s.users.at(0).isInHangout().should.exist(false);
+	 // 	 				done();
+	 // 	 			});
+		// 	});
+		// });
 	
 	describe('sock (mock)', function() {
 		beforeEach(mockSetup());

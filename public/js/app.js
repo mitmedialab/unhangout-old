@@ -354,7 +354,9 @@ $(document).ready(function() {
 			case "blur":
 				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(true);
+
 				break;
+
 			case "focus":
 				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(false);
@@ -428,16 +430,46 @@ $(document).ready(function() {
 
 			case "session-participants":
 				var session = curEvent.get("sessions").get(msg.args.id);
+				
+				var pastParticipants = session.get("connectedParticipantIds");
+				var currentParticipants = msg.args.participantIds;
+				var resultingId ;
+
+				for (var c=0; c< pastParticipants.length; c++) {
+					if(currentParticipants[pastParticipants[c]]) {
+						resultingId = pastParticipants[c];
+					}
+				}
+
+				var user = user.get(resultingId);
+				user.setIsInHangout(false);
+
 				session.setConnectedParticipantIds(msg.args.participantIds);
+
+				for (var i=0; i< msg.args.participantIds.length; i++)
+				{ 
+					var user = users.get(msg.args.participantIds[i]);
+					user.setIsInHangout(true);
+				}
+
 				break;
 
 			case "session-hangout-connected":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.set("hangoutConnected", true);
 				break;
+
 			case "session-hangout-disconnected":
 				var session = curEvent.get("sessions").get(msg.args.id);
+				var connectedParticipantList = session.get("connectedParticipantIds");
+
+				for(var i =0; i< connectedParticipantList.length; i++) {
+					var user = users.get(connectedParticipantList[i]);
+					user.setIsInHangout(false);
+				}
+
 				session.set("hangoutConnected", false);
+
 				break;
 
 			case "auth-ack":

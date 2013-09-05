@@ -274,6 +274,7 @@ var UserView = Marionette.ItemView.extend({
 
 		this.listenTo(this.model, 'change', this.render, this);
 		this.listenTo(this.model, 'change:isBlurred', this.render, this);
+		this.listenTo(this.model, 'change:isInHangout', this.render, this);
 	},	
 
 	click: function() {
@@ -292,6 +293,12 @@ var UserView = Marionette.ItemView.extend({
 		} else {
 			this.$el.removeClass("blur");
 			this.$el.addClass("focus");
+		}
+
+		if(this.model.isInHangout()) {
+			$('.icon-facetime-video').css("visibility", "visible");
+		} else {
+			$('.icon-facetime-video').css("visibility", "hidden");
 		}
 
 		this.$el.attr("data-toggle", "tooltip");

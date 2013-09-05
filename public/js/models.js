@@ -225,7 +225,8 @@ models.PaginatedSessionList = Backbone.Paginator.clientPager.extend({
 models.User = Backbone.Model.extend({
 
 	default: function() {
-		return {picture: "", admin:false, isBlurred: false}
+		return {picture: "", admin:false, isBlurred: false, 
+		isInHangout: false}
 	},
 	
 	initialize: function() {
@@ -248,6 +249,16 @@ models.User = Backbone.Model.extend({
 	
 	isAdmin: function() {
 		return this.get("admin");
+	},
+
+	isInHangout: function() {
+		return this.has("isInHangout") && this.get("isInHangout");
+	},
+
+	setIsInHangout: function(isInHangout) {
+		this.set("isInHangout", isInHangout);
+		this.trigger("change");
+		this.trigger("change:isInHangout");
 	},
 
 	isBlurred: function() {
