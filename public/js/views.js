@@ -161,6 +161,7 @@ var SessionView = Marionette.ItemView.extend({
 
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
+		console.log("model: " + JSON.stringify(this.model));
 
 		if(this.model.isLive()) {
 			// if the event has started, button presses should attempt to join
@@ -205,7 +206,6 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		}, this));
 
 		this.listenTo(this.collection, "add", function() {
-			console.log("collection fired add");
 			this.updateDisplay();
 			this.collection.goTo(this.collection.currentPage);
 
