@@ -7,20 +7,24 @@ var s;
 var sock;
 var session;
 
+var mockSetup = function(admin, callback) {
+	return function(done) {
+		s = new server.UnhangoutServer();
+		s.on("inited", function() {s.start()});
+		s.on("started", function() {
+			if(callback) {
+				callback(done);
+			} else {
+				done();
+			}
+		});
+		
+		if(_.isUndefined(admin)) {
+			admin = false;
+		}
 
-// TODO should really abstract these, if possible. Using them both in test.admin and test.server.
-var mockSetupAdmin = function(done) {
-	s = new server.UnhangoutServer();
-	s.on("inited", function() {s.start()});
-	s.on("started", done);
-	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":true});	
-}
-
-var mockSetup = function(done) {
-	s = new server.UnhangoutServer();
-	s.on("inited", function() {s.start()});
-	s.on("started", done);
-	s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":false});	
+		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin});		
+	}
 }
 
 var standardShutdown = function(done) {
@@ -36,7 +40,7 @@ describe('HTTP ADMIN API', function() {
 	afterEach(standardShutdown);
 
 	describe('/admin/event/new (non-admin)', function() {
-		beforeEach(mockSetup);
+		beforeEach(mockSetup(false));
 		it('should reject well-formed requests from non-admins', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
 				.send({title:"Test Event", description:"Description of the test event."})
@@ -50,7 +54,7 @@ describe('HTTP ADMIN API', function() {
 	});
 
 	describe('/admin/event/new (admin)', function() {
-		beforeEach(mockSetupAdmin);
+		beforeEach(mockSetup(true));
 
 		it('should accept well-formed creation request from admin', function(done) {
 			console.log(JSON.stringify(s.users.at(0)));
