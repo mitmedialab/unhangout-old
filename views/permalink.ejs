@@ -1,5 +1,7 @@
-
+<% include header.ejs %>
 
 This is a permalink page!
 
-<%= JSON.stringify(session) %>
+<a href="/session/<%= session.get("session-key") %>" class="btn btn-success btn-large">JOIN HANGOUT</a>
+
+<% include footer.ejs %>
