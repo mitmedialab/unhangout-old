@@ -127,6 +127,7 @@ models.Session = Backbone.Model.extend({
 			stopped: false,
 			connectedParticipantIds: [],
 			hangoutConnected: false,
+			shortCode: null
 		};
 	},
 	
