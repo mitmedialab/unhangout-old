@@ -1,7 +1,24 @@
 <% include header.ejs %>
 
-This is a permalink page!
+This is a permalink page! <br>
+
+The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "OFFLINE" %> <br>
+
+<% if(session.get("hangout-connected")) { %>
+live test
+<% } %>
+
+
+Currently connected participants: <br>
+
+<ul>
+	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
+	<li><%= id %></li>
+	<% }); %>
+</ul>
+
 
 <a href="/session/<%= session.get("session-key") %>" class="btn btn-success btn-large">JOIN HANGOUT</a>
 
 <% include footer.ejs %>
+
