@@ -78,13 +78,7 @@ function init() {
 				// add this participant id to the shared state list of participants.
 				// this lets us know who is actually running the app, for elections.
 
-				var participantIds;
-				var initializedIdsRaw = gapi.hangout.data.getValue("initializedUserIds");
-				if(!_.isUndefined(initializedIdsRaw) && initializedIdsRaw !="undefined") {
-					participantIds = JSON.parse(initializedIdsRaw);
-				} else {
-					participantIds = [];
-				}
+				var participantIds = getInitializedIds();
 
 				participantIds.push(localGoogleId);
 				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
@@ -96,11 +90,24 @@ function init() {
 
 				// all clients should perform the election check on every participant changed event, on top of
 				// whatever other listener gets added if they decide they're the leader.
-				gapi.hangout.onParticipantsChanged.add(waitForIdUpdates);
+				gapi.hangout.onParticipantsChanged.add(nonLeaderParticipantsChangedHandler);
 		    	}
 	      });
 
 }
+
+
+	function getInitializedIds() {
+		var initializedIdsRaw = gapi.hangout.data.getValue("initializedUserIds");
+		if(!_.isUndefined(initializedIdsRaw) && initializedIdsRaw !="undefined") {
+			participantIds = JSON.parse(initializedIdsRaw);
+		} else {
+			participantIds = [];
+		}
+
+		return participantIds;
+	}
+
 
 	// This function sets up all the callbacks necessary to keep the unhangout-server 
 	// aprised of the activity in the hangout. This should be called when this client is
@@ -198,15 +205,15 @@ function init() {
 
 		// pull from the shared state, so we don't accidentally nominate someone who
 		// isn't running the hangout app.
+		var participants = getInitializedIds();
+	
+		console.log("during election, participants: " + JSON.stringify(participants));
 
-
-		var rawParticipants = gapi.hangout.data.getValue("initializedUserIds");
-		var participants;
-		if(rawParticipants=="undefined" || _.isUndefined(rawParticipants)) {
-			participants = [localGoogleId];
-		} else {
-			participants = JSON.parse(rawParticipants);
-		}
+		// TODO these clauses may not be necessary, now that we wait for a stateChange
+		// event to fire before we run elections.		
+		if(participants.length==0) {
+			participants.push(localGoogleId);
+		}		
 
 		// because this happens so soon after we call setValue, our localId isn't
 		// necessarily included.
@@ -228,7 +235,42 @@ function init() {
 	// a second or two and no update occurs, then we know that the new user
 	// doens't have the hangout app running, and so we don't need to perform
 	// an election.
-	function waitForIdUpdates() {
+	function nonLeaderParticipantsChangedHandler() {
+
+		// a participantsChanged event fires in two cases:
+		// 1. someone joined
+		// 2. someone left
+		// If someone joined, they are responsible for adding themselves to
+		// the initializedUserIds list (if they're running the app)
+		// When someone leaves, 
+
+		// so the first step here is to figure out whether or not someone
+		// left. We'll do this by comparing the list of current participants
+		// with the list in the shared channel.
+		var initializedIds = getInitializedIds();
+
+		var allParticipantIds = _.map(gapi.hangout.getParticipants(), function(p) {
+			return p.person.id;
+		});
+
+		// now look and see if there are any ids that are in the initialized list
+		// that are no longer in the allParticipantIds list.
+		var missingId = null;
+		_.each(initializedIds, function(id) {
+			if(allParticipantIds.indexOf(id)==-1) {
+				missingId = id;
+			}
+		});
+
+		if(missingId!=null) {
+			console.log("found missing id of leaver: " + missingId);
+
+			initializedIds.splice(initializedIds.indexOf(missingId), 1);
+
+			console.log("initializedIds: " + JSON.stringify(initializedIds));
+			gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(initializedIds));
+		}
+
 		console.log("Waiting for state changed updates");
 		// since right now there is only one potential thing that could trigger stateChanged,
 		// we can perform election on any stateChanged event.

@@ -554,6 +554,22 @@ $(document).ready(function() {
 			case "embed-ack":
 				$("#embed-modal").modal('hide');
 				break;
+<<<<<<< HEAD
+=======
+				
+			case "join-ack":
+				console.log("joined!");
+
+				if(!_.isNull(curEvent.get("welcomeMessage"))) {
+					// if there is a welcome message, put it in chat.
+					messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
+				}
+
+				break;
+			case "attend-ack":
+				console.log("attend-ack");
+				break;
+>>>>>>> master
 		}
 	};
 
@@ -566,7 +582,7 @@ $(document).ready(function() {
 	// which will trigger a full reconnection and state reset.
 	sock.onclose = function() {
 		$('#disconnected-modal').modal('show');
-		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!", user:{displayName:"SERVER"}}));
+		messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!"}));
 		
 		var checkIfServerUp = function () {
 		 	var ping = document.location;

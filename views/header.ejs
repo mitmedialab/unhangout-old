@@ -44,11 +44,13 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
-				<!-- <a class="brand" href="/#">Unhangout</a> -->
 				<div class="nav-collapse collapse">
 					<ul class="nav">
-						<li class="active"><a href="#home">Home</a></li>
+						<li class="active"><a href="/#home">Home</a></li>
 						<li><a href="#about">About</a></li>
+						<% if(user && user.isAdmin()) { %>
+							<li id="admin-nav"><a href="/admin/">Admin</a></li>
+						<% } %>
 					</ul>
 					<div class="nav pull-right identity">
 					<% if(!user) {%>

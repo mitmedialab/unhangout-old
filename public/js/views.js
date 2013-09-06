@@ -179,6 +179,7 @@ var SessionView = Marionette.ItemView.extend({
 
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
+		console.log("model: " + JSON.stringify(this.model));
 
 		if(this.model.isLive()) {
 			// if the event has started, button presses should attempt to join
@@ -229,8 +230,16 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 		this.listenTo(this.collection, "add", function() {
 			this.updateDisplay();
-			this.render();
 			this.collection.goTo(this.collection.currentPage);
+
+			// really not sure why a render right here won't
+			// get rid of the double-display issue, but a timedout
+			// one will. Erg. The basic issue here is that when we ad
+			// to the paginated display it tries to be helpful
+			// and insta-append the new object to the list instead
+			// of re-rendering everything. 
+			// this.render();
+			setTimeout(this.render, 1);
 		}, this);
 	},
 
@@ -349,7 +358,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	setEmbed: function() {
 		var newId = $("#youtube_id").val();
 
-		if(newId.length!=11) {
+		if(newId.length!=11 && newId.length!=0) {
 			this.$el.find("#embed-modal p.text-warning").removeClass("hide");
 			this.$el.find("#embed-modal .control-group").addClass("error");
 		} else {
@@ -629,16 +638,30 @@ var ChatMessageView = Marionette.ItemView.extend({
 	serializeData: function() {
 		var model = this.model.toJSON();
 
-		var tempUser = new models.User(this.model.get("user"));
+		// if we have a user object (ie if we're not a system generated
+		// message) then convert its name to the short display name.
+		if(this.model.has("user")) {
+			var tempUser = new models.User(this.model.get("user"));
+			model.user["shortDisplayName"] = tempUser.getShortDisplayName();
+		} else {
+			// fill in a sort of fake empty name, just to the templating
+			// system doesn't freak out.
+			model.user = {shortDisplayName:""};
+		}
 
-		model.user["shortDisplayName"] = tempUser.getShortDisplayName();
 		return model;
 	},
 
 	onRender: function() {
-		if(this.model.get("user").admin) {
+
+		if(!this.model.has("user")) {
+			// mark this chat message as a system message, so we can
+			// display it differently.
+			this.$el.addClass("system");
+		} else if(this.model.get("user").admin) {
 			this.$el.find(".from").addClass("admin");
 		}
+
 	}
 });
 
