@@ -41,7 +41,10 @@
 		    interpolate : /\{\{=(.+?)\}\}/g,
 			evaluate: /\{\{(.+?)\}\}/g
 		};
-	
+
+		// this is where we inject a snapshot of the relevant server state to bootstrap
+		// the local models to get the client app started. These are all templated in via
+		// the express templating pass.
 		<% if(!_.isUndefined(user)) { %>
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';

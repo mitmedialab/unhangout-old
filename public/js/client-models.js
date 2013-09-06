@@ -1,4 +1,6 @@
 
+// Some slight variations on the models that run only on the client.
+// Nothing major, just some events.
 
 models.ClientSessionList = models.SessionList.extend({	
 
