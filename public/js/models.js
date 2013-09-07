@@ -198,10 +198,6 @@ models.Session = Backbone.Model.extend({
 
 	getNumConnectedParticipants: function() {
 		return this.get("connectedParticipantIds").length;
-	},
-
-	toJSON: function() {
-		
 	}
 });
 
