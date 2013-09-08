@@ -13,7 +13,7 @@ Currently connected participants: <br>
 
 <ul>
 	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
-	<li><%= users.get(id).get("displayName") %></li>
+	<li><%= users.get(id).get("displayName") %><img src="<%= users.get(id).get("image").url %>"></li>
 	<% }); %>
 </ul>
 
