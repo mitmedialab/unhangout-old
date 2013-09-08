@@ -679,3 +679,8 @@ body {
   margin-top: 50px;
   color: #aaa;
 }
+
+/* line 769, ../../sass/screen.scss */
+#permalink-create label {
+  width: 250px;
+}

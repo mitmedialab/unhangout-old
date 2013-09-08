@@ -2,8 +2,22 @@
 
 <div class="container">
 
-	This explains the permalink system!
-	
+	<p>Google Hangouts are great, but it can be tricky to figure out how to create a hangout and send a link around to people. There are some work arounds (<a href="https://support.google.com/calendar/answer/2690797?hl=en">this trick with Google Calendar</a> is particularly useful) but at the end of the day, Hangout just doesn't behave like a first class citizen of the web because its URLs are unreliable.</p>
+	<p>This service creates a permalink for a Hangout - a single URL with a Join Hangout button that take anyone who clicks it to the same hangout. As an added bonus, you can see whether other people are already in the hangout before you join it.</p>
+	<p>These Hangout Permalinks are super easy to create - just go to <pre>http://unhangout.media.mit.edu/h/<i>anything-you-like</i></pre>. That's it - your hangout permalink is created! Share it whenever and however you like!</p>
+
+	<br>
+
+	<form class="form-horizontal" id="permalink-create">
+		<div class="control-group">
+			<label class="control-label" for="permalink">http://unhangout.media.mit.edu/h/</label>
+			<div class="controls">
+				<input type="text" id="permalink-title" placeholder="permalink">
+				<submit class="btn btn-success" id="permalink-create-submit">CREATE</submit>
+			</div>
+		</div>
+	</form>
+
 </div>
 
 <% include footer.ejs %>
