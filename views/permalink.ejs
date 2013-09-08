@@ -1,22 +1,23 @@
 <% include header.ejs %>
 
 <div class="container">
-This is a permalink page! <br>
+<h3><%= session.get("shortCode") %></h3>
 
-The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "OFFLINE" %> <br>
 
-<% if(session.get("hangout-connected")) { %>
-live test
-<% } %>
+The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "currently OFFLINE. Click JOIN to start it!" %> <br><br>
 
+<% if(session.get("hangoutConnected")) { %>
 
 Currently connected participants: <br>
-
 <ul>
 	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
 	<li><%= users.get(id).get("displayName") %><img src="<%= users.get(id).get("image").url %>"></li>
 	<% }); %>
 </ul>
+
+<% } %>
+
+
 
 
 <a href="/session/<%= session.get("session-key") %>" class="btn btn-success btn-large" target="_new">JOIN HANGOUT</a>
