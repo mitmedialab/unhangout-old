@@ -1,5 +1,6 @@
 <% include header.ejs %>
 
+<div class="container">
 This is a permalink page! <br>
 
 The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "OFFLINE" %> <br>
@@ -19,6 +20,8 @@ Currently connected participants: <br>
 
 
 <a href="/session/<%= session.get("session-key") %>" class="btn btn-success btn-large" target="_new">JOIN HANGOUT</a>
+
+</div>
 
 <% include footer.ejs %>
 
