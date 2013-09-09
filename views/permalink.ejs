@@ -2,14 +2,14 @@
 
 <div class="container">
 
-<form>
+<form action="/h/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
 	<% if(session.get("first-load")) { %>
 
-	<input type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
+	<input name="creationKey" type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
 
-	<input type="text" class="large" placeholder="Title">
-	<textarea placeholder="Description"></textarea>
-	<button class="btn btn-primary" id="session-update">SET TITLE AND DESCRIPTION</button>
+	<input id="title" name="title" type="text" class="large" placeholder="Title">
+	<textarea name="description" id="description" placeholder="Description"></textarea>
+	<submit class="btn btn-primary" id="session-update">SET TITLE AND DESCRIPTION</submit>
 	<% } else { %>
 
 	<h3><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></h3>

@@ -26,6 +26,11 @@
 
 				window.location = "/h/" +encodeURIComponent(permalinkTitle);
 			});
+
+			$("submit").click(function() {
+				$("form").submit();
+				return false;
+			});
 		});
 	</script>
 </head>
