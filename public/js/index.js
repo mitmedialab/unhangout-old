@@ -26,12 +26,4 @@ $(document).on('ready', function() {
 
 		$("#email").val("");
 	});
-
-	$("#permalink-create-submit").click(function() {
-		// TODO should start doing validation on the title
-		// on a per-character basis.
-		var permalinkTitle = $("#permalink-title").val();
-
-		window.location = "/h/" +encodeURIComponent(permalinkTitle);
-	});
 });

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>Unhangout</title>
+	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
+	
+	<link href="/public/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<link href="/public/css/print.css" media="print" rel="stylesheet" type="text/css" />
+	<!--[if IE]>
+	    <link href="/public/css/ie.css" media="screen, projection" rel="stylesheet" type="text/css" />
+	<![endif]-->
+	
+	<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.js"></script>
+	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
+	<script type="text/javascript" src="/public/js/index.js"></script>
+
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$("#permalink-create-submit").click(function() {
+				// TODO should start doing validation on the title
+				// on a per-character basis.
+				var permalinkTitle = $("#permalink-title").val();
+
+				window.location = "/h/" +encodeURIComponent(permalinkTitle);
+			});
+		});
+	</script>
+</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="brand" href="#">Hangout Permalinks</a>
+				<div class="nav-collapse collapse">
+					<ul class="nav">
+						<li><a href="/h/">About</a></li>
+					</ul>
+				</div><!--/.nav-collapse -->
+			</div>
+		</div>
+	</div>
