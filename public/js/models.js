@@ -120,8 +120,8 @@ models.Session = Backbone.Model.extend({
 
 	defaults: function() {
 		return {
-			title: "Great Session",
-			description: "This session is really wonderful.",
+			title: "",
+			description: "",
 			attendeeIds: [],
 			started: false,
 			stopped: false,

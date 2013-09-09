@@ -1,8 +1,21 @@
 <% include permalink-header.ejs %>
 
 <div class="container">
-<h3><%= session.get("shortCode") %></h3>
 
+<form>
+	<% if(session.get("first-load")) { %>
+
+	<input type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
+
+	<input type="text" class="large" placeholder="Title">
+	<textarea placeholder="Description"></textarea>
+	<button class="btn btn-primary" id="session-update">SET TITLE AND DESCRIPTION</button>
+	<% } else { %>
+
+	<h3><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></h3>
+	<p><%= session.get("description") %></p>
+	<% } %>
+</form>
 
 The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "currently OFFLINE. Click JOIN to start it!" %> <br><br>
 
