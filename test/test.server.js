@@ -16,7 +16,7 @@ var standardSetup = function(done) {
 	s.on("started", done);
 	
 	seed.run(1, redis, function() {
-		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1});		
+		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "timeoutHttp":true});		
 	});
 }
 
@@ -37,7 +37,7 @@ var mockSetup = function(admin, callback) {
 		}
 
 		seed.run(1, redis, function() {
-			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin});		
+			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin, "timeoutHttp":true});		
 		});
 	}
 }
@@ -256,11 +256,10 @@ describe('unhangout server', function() {
 					request.get('http://localhost:7777/h/test')
 						.end(function(res){
 							res.text.indexOf('<input').should.equal(-1);
-						done();
+							done();
 						});
 				});
 		});
-
 	});
 
 	describe('POST /h/admin/:code', function(){
@@ -268,8 +267,8 @@ describe('unhangout server', function() {
 			request.get('http://localhost:7777/h/test')
 				.end(function(res) {
 					res.status.should.equal(200);
-				done();
-			});
+					done();
+				});
 		}));
 
 		afterEach(standardShutdown);
@@ -295,7 +294,6 @@ describe('unhangout server', function() {
 					done();
 				});
 		});
-
 	});
 
 	describe('POST /session/hangout/:id', function() {
