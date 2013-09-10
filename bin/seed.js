@@ -11,6 +11,8 @@ var logger;
 // This file populates the database with basic starter objects to make development easier and more predictable.
 // typically run like this:
 // node /bin/seed.js
+//
+// WARNING: THIS WILL FLUSH ALL CONTENTS OF THE DATABASE
 
 exports.run = function(dbId, redis, callback) {
 		redis.select(dbId, function(err) {

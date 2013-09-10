@@ -1,3 +1,5 @@
+// This code runs on the home page and does minor UI management.
+
 $(document).on('ready', function() {
 
 	$("#about").hide();

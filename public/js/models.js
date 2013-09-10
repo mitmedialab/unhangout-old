@@ -29,14 +29,19 @@ if(server) {
 
     Backbone.Paginator.clientPager = Backbone.Collection;
 }
-    
+
+
+// The base model objects in unhangout are quite straightforward. They are mostly just 
+// collections of attributes with some helper methods for editing and reading
+// those attributes in appropriate ways. Most of the complex behavior happens
+// in the server-models.js extensions of these objects.
+
+// The event model. Events are the top level object, and have many sessions within them.
 models.Event = Backbone.Model.extend({
 	idRoot: "event",
 	urlRoot: "event",
 	
 	defaults: function() {
-		// also need:
-		// 	1. Some sort of image.
 		return {
 			title: "My Great Event",
 			organizer: "MIT Media Lab",
@@ -52,10 +57,12 @@ models.Event = Backbone.Model.extend({
 	},
 	
 	initialize: function() {
+		// these are the main sub-collections of this model.
 		this.set("sessions", new models.SessionList(null, this));
 		this.set("connectedUsers", new models.UserList());
 	},
 	
+	// DEPRECATED
 	isLive: function() {
 		var curTime = new Date().getTime();
 		return curTime > this.get("start") && curTime < this.get("end");
@@ -114,6 +121,8 @@ models.EventList = Backbone.Collection.extend({
 	model:models.Event
 });
 
+// Sessions are the individual meetings that make up an event. Sessions
+// (potentially) have a hangout connected to them. 
 models.Session = Backbone.Model.extend({
 	idRoot: "session",
 	MAX_ATTENDEES: 10,
@@ -122,10 +131,10 @@ models.Session = Backbone.Model.extend({
 		return {
 			title: "",
 			description: "",
-			attendeeIds: [],
+			attendeeIds: [], // attendees are people who have signed up for the session
 			started: false,
 			stopped: false,
-			connectedParticipantIds: [],
+			connectedParticipantIds: [],	// connectedParticipants are people who the google hangout supervisor app reports are present in the hangout associated with this session
 			hangoutConnected: false,
 			shortCode: null
 		};
@@ -204,6 +213,7 @@ models.Session = Backbone.Model.extend({
 models.SessionList = Backbone.Collection.extend({
 	model:models.Session,
 	
+	// sould not ever be called.	
 	url: function() {
 		console.log("GETTING LOCAL SESSION LIST");
 		return "WAT";
@@ -235,9 +245,13 @@ models.User = Backbone.Model.extend({
 	},
 	
 	checkJSON: function() {
+		// _json (which comes from g+) has some extra stuff in it
+		// that we might want to extract for our own purposes.
 		if(this.has("_json")) {
 			var json = this.get("_json");
 
+			// some checking for situations where a user doesn't
+			// have a google+ profile picture.
 			if("picture" in json) { 
 				this.set("picture", json.picture);
 			}
