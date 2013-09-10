@@ -211,6 +211,73 @@ describe('unhangout server', function() {
 		});
 	});
 
+
+	describe('GET /h/:code', function(){
+		beforeEach(mockSetup(false));
+		afterEach(standardShutdown);
+
+		it('should direct to the landing page when there is no code', function(done){
+			request.get('http://localhost:7777/h/')
+				.end(function(res){
+					res.status.should.equal(200);
+					done();
+				});
+		});
+
+		it('if :code is new, it should create a new session on the server', function(done){
+			request.get('http://localhost:7777/h/test')
+				.redirects(0)
+				.end(function(res){
+					res.status.should.equal(302);
+					s.permalinkSessions.length.should.equal(1);
+					done();
+				});
+		});
+
+		it('if :code is active, multiple requests only create one session', function(done){
+			request.get('http://localhost:7777/h/test')
+				.redirects(0)
+				.end(function(res){
+					res.status.should.equal(302);
+					s.permalinkSessions.length.should.equal(1);
+					request.get('http://localhost:7777/h/test')
+						.end(function(res){
+							res.status.should.equal(200);
+							s.permalinkSessions.length.should.equal(1);
+							done();
+						});
+				});
+		});
+
+		xit('if :code is new, it should present the form only for first visitor', function(done){
+			request.get('http://localhost:7777/h/test')
+				.end(function(res){
+					res.body.indexOf(/*form field*/).should.not.equal(-1);
+				});
+			request.get('http://localhost:7777/h/test')
+				.end(function(res){
+					res.body.indexOf(/*form field*/).should.equal(-1);
+				});
+			done();
+		});
+
+	});
+
+	// describe('POST /h/:code', function(){
+	// 	beforeEach(mockSetup(false, function(done){
+	// 		request.get('http://localhost:7777/h/test')
+	// 			.end(function(res) {
+	// 				res.status.should.equal(200);
+	// 			done();
+	// 		});
+	// 	}));
+
+	// 	afterEach(standardShutdown);
+
+	// 	xit('shou')
+
+	// });
+
 	describe('POST /session/hangout/:id', function() {
 		beforeEach(mockSetup(false, function(done) {
 				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
