@@ -55,6 +55,10 @@ C. Cloning the Repository.
     GOOGLE_CLIENT_SECRET fields are app credentials that can be configured and obtained at 
     http://code.google.com/apis/console/
 
+    In the Google API console, you should make a "Client ID for web applications" - that will create
+    the necessary CLIENT_ID and CLIENT_SECRET you need to authenticate with Google and create
+    calendar events.
+
     $ touch conf.json <br>
     $ gedit conf.json [copy contents from conf.json.example here]
     
