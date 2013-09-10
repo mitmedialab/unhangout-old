@@ -50,16 +50,13 @@ C. Cloning the Repository.
     $ git clone http://github.com/drewww/unhangout <br>
     $ cd unhangout
     
-  - Create a file and copy the contents of conf.sh.example file in it. Name this file as conf.sh. 
-    conf.sh.example file contains environment variables to specify server settings. GOOGLE_CLIENT_ID &
+  - Create a file and copy the contents of conf.json.example file in it. Name this file conf.json. 
+    conf.json.example file contains environment variables to specify server settings. GOOGLE_CLIENT_ID &
     GOOGLE_CLIENT_SECRET fields are app credentials that can be configured and obtained at 
     http://code.google.com/apis/console/
 
-    $ touch conf.sh <br>
-    $ gedit conf.sh[copy contents from conf.sh.example here]
-    
-  - Set the environment variables to specify server settings <br>
-    $ source conf.sh 
+    $ touch conf.json <br>
+    $ gedit conf.json [copy contents from conf.json.example here]
     
   - Install data structure redis server <br>
     $ sudo apt-get install redis-server 
