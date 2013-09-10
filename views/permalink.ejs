@@ -2,8 +2,8 @@
 
 <div class="container">
 
-<form action="/h/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
-	<% if(session.get("first-load")) { %>
+<form action="/h/admin/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
+	<% if(showAdmin) { %>
 
 	<input name="creationKey" type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
 
