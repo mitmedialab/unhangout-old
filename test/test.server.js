@@ -263,20 +263,40 @@ describe('unhangout server', function() {
 
 	});
 
-	// describe('POST /h/:code', function(){
-	// 	beforeEach(mockSetup(false, function(done){
-	// 		request.get('http://localhost:7777/h/test')
-	// 			.end(function(res) {
-	// 				res.status.should.equal(200);
-	// 			done();
-	// 		});
-	// 	}));
+	describe('POST /h/admin/:code', function(){
+		beforeEach(mockSetup(false, function(done){
+			request.get('http://localhost:7777/h/test')
+				.end(function(res) {
+					res.status.should.equal(200);
+				done();
+			});
+		}));
 
-	// 	afterEach(standardShutdown);
+		afterEach(standardShutdown);
 
-	// 	xit('shou')
+		it('should reject requests without a valid creation key in the request body', function(done){
+			var session = s.permalinkSessions[0];
+			request.post('http://localhost:7777/h/admin/test')
+				.send({creationKey: 'wrong1', title: 'migrate title', description: 'something cool'})
+				.end(function(res){
+					res.status.should.equal(403);
+					done();
+				});
+		});
 
-	// });
+		it('should update session title and description when valid creation key is present', function(done){
+			var session = s.permalinkSessions.at(0);
+			request.post('http://localhost:7777/h/admin/test')
+				.send({creationKey: session.get('creationKey'), title: 'migrate title', description: 'something cool'})
+				.end(function(res){
+					res.status.should.equal(200);
+					session.get('title').should.equal('migrate title');
+					session.get('description').should.equal('something cool');
+					done();
+				});
+		});
+
+	});
 
 	describe('POST /session/hangout/:id', function() {
 		beforeEach(mockSetup(false, function(done) {
