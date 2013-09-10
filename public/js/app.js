@@ -553,10 +553,7 @@ $(document).ready(function() {
 				
 			case "embed-ack":
 				$("#embed-modal").modal('hide');
-				break;
-<<<<<<< HEAD
-=======
-				
+				break;				
 			case "join-ack":
 				console.log("joined!");
 
@@ -569,7 +566,6 @@ $(document).ready(function() {
 			case "attend-ack":
 				console.log("attend-ack");
 				break;
->>>>>>> master
 		}
 	};
 
