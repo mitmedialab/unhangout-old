@@ -24,7 +24,7 @@ The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "currently OFFLINE
 Currently connected participants: <br>
 <ul>
 	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
-	<li><%= users.get(id).get("displayName") %><img src="<%= users.get(id).get("image") ? users.get(id).get("image").url : "/" %>"></li>
+	<li><%= users.get(id).get("displayName") %><img width=100 src="<%= users.get(id).get("picture") %>"></li>
 	<% }); %>
 </ul>
 
