@@ -15,6 +15,8 @@ Full library dependencies are shown in `package.json`. The major tools this plat
  - sockjs
  - redis
  - backbone
+ - marionette
+ - mocha (for testing)
 
 Settings
 --------
@@ -47,5 +49,9 @@ The `package.json` file provides a number of scripts to help with running the un
  * `npm run-script forever-start` - starts the server as a background daemon, in a forever container that will restart it if it crashes
  * `npm run-script forever-list` - list the forever processes currently running
  * `npm run-script forever-stop` - stop the background instance of the server.
+ * `npm run-script forever-restart` - restart the background instance of the server.
+
 
 The `forever-*` commands depend on the forever tool. You can install it with `[sudo] npm install forever -g`. The forever commands run in a sudo context because in most production situations you'll want to be running on port 80. It would be nice to shed these priveleges after binding to 80, but we don't support that yet. If you're super concerned about it, you could run the server behind a websocket-friendly proxy like HAProxy.
+
+Typically, deployment means checking out the latest version on the server and then calling `forever-restart`. A running server doesn't read from any files during operation, so it's safe to replace the files out from under it without causing a problem.
