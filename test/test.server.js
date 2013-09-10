@@ -249,16 +249,16 @@ describe('unhangout server', function() {
 				});
 		});
 
-		xit('if :code is new, it should present the form only for first visitor', function(done){
+		it('if :code is new, it should present the form only for first visitor', function(done){
 			request.get('http://localhost:7777/h/test')
 				.end(function(res){
-					res.body.indexOf(/*form field*/).should.not.equal(-1);
+					res.text.indexOf('<input').should.not.equal(-1);
+					request.get('http://localhost:7777/h/test')
+						.end(function(res){
+							res.text.indexOf('<input').should.equal(-1);
+						done();
+						});
 				});
-			request.get('http://localhost:7777/h/test')
-				.end(function(res){
-					res.body.indexOf(/*form field*/).should.equal(-1);
-				});
-			done();
 		});
 
 	});
@@ -305,6 +305,8 @@ describe('unhangout server', function() {
 					done();
 				});
 		});
+
+
 
 		it('should handle participants properly', function(done) {
 			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
