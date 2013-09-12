@@ -19,12 +19,16 @@
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-			$("#permalink-create-submit").click(function() {
+			$("#permalink-create-submit").click(function(e) {
 				// TODO should start doing validation on the title
 				// on a per-character basis.
 				var permalinkTitle = $("#permalink-title").val();
 
-				window.location = "/h/" +encodeURIComponent(permalinkTitle);
+				var url = "/h/" + encodeURIComponent(permalinkTitle);
+				
+				window.location = url;
+				e.stopPropagation();
+				return false;
 			});
 
 			$("submit").click(function() {
