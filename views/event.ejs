@@ -71,6 +71,10 @@
 		<!-- Templates for the backbone views go here. Sort of annoying to have to have them in this view,
 		     but that seems to be how we can make this work with express and no content_for equivalent. -->
 
+		    <script type="text/template" id="about-event-template">
+		    {{= about}}
+		    </script>
+
 			<script type="text/template" id="session-template">
 			<h3>{{= title }}<span class="started label label-success">live</span><span class="joined label label-info">your pick</span></h3>
 			<div class="description">{{= description }} </div>
@@ -276,6 +280,8 @@
 	
 	<div class="row" id="main">
 	<div id="bar"></div>
+	<div id="top"></div>
+	
 	<div id="top-left" class="span6">
 	</div>
 	<div id="main-left" class="span6">

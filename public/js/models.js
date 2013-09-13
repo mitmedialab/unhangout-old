@@ -47,6 +47,7 @@ models.Event = Backbone.Model.extend({
 			organizer: "",
 			shortName: null,		// use this as a slug for nicer urls
 			description: "",
+			about: "This is my full about text.",
 			welcomeMessage: null,
 			start: null,
 			end: null,

@@ -77,11 +77,12 @@ $(document).ready(function() {
 	app.addRegions({
 		right: '#main-right',
 		main: '#main-left',
-		top: '#top-left',
+		topLeft: '#top-left',
 		global: '#global',
 		dialogs: '#dialogs',
 		admin: '#admin-region',
-		bar:'#bar'
+		bar:'#bar',
+		top:'#top'
 	});
 	
 	// This is code that runs when the application initializes. 
@@ -120,10 +121,13 @@ $(document).ready(function() {
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		this.dialogView = new DialogView();
 
+		this.aboutView = new AboutEventView({model:curEvent});
+
 		// present the views in their respective regions
 		this.right.show(this.chatView);
 		this.main.show(this.sessionListView);
 		this.dialogs.show(this.dialogView);
+		this.top.show(this.aboutView);
 
 		// this is a little unorthodox, but not sure how else
 		// to do it.
@@ -219,9 +223,9 @@ $(document).ready(function() {
 		// regardless of whether there's a current embed, hide the video if
 		// it's currently showon.	
 		if(videoShown) {
-			this.top.$el.css("z-index", -10);
+			this.topLeft.$el.css("z-index", -10);
 
-			this.top.reset();
+			this.topLeft.reset();
 			videoShown = false;
 
 			this.main.$el.css("top", 0);
@@ -234,7 +238,7 @@ $(document).ready(function() {
 			$(".nav .active").removeClass("active");
 	
 			if(!videoShown) {
-				this.top.show(this.youtubeEmbedView);
+				this.topLeft.show(this.youtubeEmbedView);
 				videoShown = true;
 
 				var mainHeight = this.youtubeEmbedView.$el.outerHeight()-5;
@@ -245,7 +249,7 @@ $(document).ready(function() {
 
 				this.main.$el.css("top", mainHeight);
 				this.sessionListView.updateDisplay();
-				this.top.$el.css("z-index", 50);
+				this.topLeft.$el.css("z-index", 50);
 				$("#video-nav").addClass("active");
 			}
 		} else {

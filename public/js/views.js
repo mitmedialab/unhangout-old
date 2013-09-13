@@ -689,6 +689,11 @@ var SessionLiveView = Marionette.ItemView.extend({
 	id: "session-live-bar"
 });
 
+var AboutEventView = Marionette.ItemView.extend({
+	template: "#about-event-template",
+	id: "about-event"
+});
+
 // Manages the display of embedded videos on the upper left corner.
 var VideoEmbedView = Marionette.ItemView.extend({
 	template: '#video-embed-template',
