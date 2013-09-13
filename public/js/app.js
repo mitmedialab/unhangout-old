@@ -142,6 +142,8 @@ $(document).ready(function() {
 				
 		console.log("Initialized app.");
 
+		$("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
+
 		// This section sets up the blur/focus tracking. This serves two purposes. The first
 		// is to represent users differently in the presence gutter as well as in the
 		// session list, depending on whether or not they have the lobby window focused
