@@ -43,13 +43,13 @@ models.Event = Backbone.Model.extend({
 	
 	defaults: function() {
 		return {
-			title: "My Great Event",
-			organizer: "MIT Media Lab",
+			title: "",
+			organizer: "",
 			shortName: null,		// use this as a slug for nicer urls
-			description: "This is my description about this great event. It has wonderful sessions in it.",
+			description: "",
 			welcomeMessage: null,
-			start: new Date().getTime(),
-			end: new Date().getTime()+60*60*2*1000,
+			start: null,
+			end: null,
 			connectedUsers: null,			// these two fields are setup in initialize
 			sessions: null,
 			youtubeEmbed: null
@@ -61,13 +61,7 @@ models.Event = Backbone.Model.extend({
 		this.set("sessions", new models.SessionList(null, this));
 		this.set("connectedUsers", new models.UserList());
 	},
-	
-	// DEPRECATED
-	isLive: function() {
-		var curTime = new Date().getTime();
-		return curTime > this.get("start") && curTime < this.get("end");
-	},
-		
+			
 	numUsersConnected: function() {
 		return this.get("connectedUsers").length;
 	},
@@ -94,12 +88,7 @@ models.Event = Backbone.Model.extend({
 		this.get("sessions").add(session);
 		session.trigger("change:collection");
 	},
-	
-	getStartTimeFormatted: function() {
-		var date = new Date(this.get("start"));
-		return date.toLocaleDateString() + " " + date.toLocaleTimeString();
-	},
-	
+		
 	url: function() {
 		// okay this is sort of stupid, but we want to have a fixed width 
 		// url because that makes it easier to match events from redis with
@@ -114,6 +103,30 @@ models.Event = Backbone.Model.extend({
 
 	hasEmbed: function() {
 		return this.has("youtubeEmbed") && this.get("youtubeEmbed").length>0;
+	},
+
+	isLive: function() {
+        var curTime = new Date().getTime();
+
+        var test = !_.isNull(this.get("start")) && curTime >= this.get("start") && _.isNull(this.get("end"));
+        return test;
+    },
+
+	start: function() {
+		if(this.isLive()) {
+			return new Error("Tried to start an event that was already live.");
+		} else {
+			this.set("start", new Date().getTime());
+			this.set("end", null);
+		}
+	},
+
+	stop: function() {
+		if(!this.isLive()) {
+			return new Error("Tried to stop an event that was already live.");
+		} else {
+			this.set("end", new Date().getTime());
+		}
 	}
 });
 
