@@ -263,6 +263,12 @@ $(document).ready(function() {
 		console.log("handling about-nav event");
 
 		if(aboutShown) {
+
+			if(!curEvent.isLive()) {
+				// don't let people dismiss the about screen if the event isn't live.
+				return;
+			}
+
 			this.top.$el.animate({"top":-500});
 
 			aboutShown = false;

@@ -691,7 +691,15 @@ var SessionLiveView = Marionette.ItemView.extend({
 
 var AboutEventView = Marionette.ItemView.extend({
 	template: "#about-event-template",
-	id: "about-event"
+	id: "about-event",
+
+	onRender: function() {
+		if(this.model.isLive()) {
+			this.$el.find(".footer").hide();
+		} else {
+			this.$el.find(".footer").show();
+		}
+	}
 });
 
 // Manages the display of embedded videos on the upper left corner.

@@ -690,18 +690,27 @@ body {
 }
 
 /* line 784, ../../sass/screen.scss */
+#about-event .footer {
+  color: #ccc;
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  font-style: italic;
+}
+
+/* line 795, ../../sass/screen.scss */
 .admin-table-buttons .btn {
   float: left;
   margin-top: 5px;
 }
 
-/* line 790, ../../sass/screen.scss */
+/* line 801, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
 }
 
-/* line 796, ../../sass/screen.scss */
+/* line 807, ../../sass/screen.scss */
 #permalink-create label {
   width: 250px;
 }
