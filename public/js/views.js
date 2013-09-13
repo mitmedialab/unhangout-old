@@ -600,6 +600,16 @@ var ChatInputView = Marionette.ItemView.extend({
 		this.ui.chatInput.val("");
 		e.preventDefault();
 		return false;
+	},
+
+	onRender: function() {
+		if(!curEvent.isLive()) {
+			this.$el.find("#chat-input").attr("disabled", true);
+			this.$el.find("#chat-input").addClass("disabled");			
+		} else {
+			this.$el.find("#chat-input").removeAttr("disabled");
+			this.$el.find("#chat-input").removeClass("disabled");			
+		}
 	}
 });
 
