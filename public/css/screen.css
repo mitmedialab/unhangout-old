@@ -674,13 +674,19 @@ body {
   color: white;
 }
 
-/* line 763, ../../sass/screen.scss */
+/* line 764, ../../sass/screen.scss */
+.admin-table-buttons .btn {
+  float: left;
+  margin-top: 5px;
+}
+
+/* line 770, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
 }
 
-/* line 769, ../../sass/screen.scss */
+/* line 776, ../../sass/screen.scss */
 #permalink-create label {
   width: 250px;
 }
