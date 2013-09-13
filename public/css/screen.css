@@ -36,6 +36,21 @@ body {
 }
 
 /* line 42, ../../sass/screen.scss */
+#top {
+  position: absolute;
+  background-color: white;
+  box-shadow: 3px 3px 3px #aaa;
+  border: 1px solid #aaa;
+  box-sizing: border-box;
+  z-index: 50;
+  left: 0px;
+  right: 0px;
+  top: -400px;
+  height: 400px;
+  padding: 10px;
+}
+
+/* line 62, ../../sass/screen.scss */
 #top-left {
   position: absolute;
   /*	padding-top: 30px;
@@ -55,12 +70,12 @@ body {
   border-right: 1px solid #aaa;
   box-sizing: border-box;
 }
-/* line 66, ../../sass/screen.scss */
+/* line 86, ../../sass/screen.scss */
 #top-left.bar {
   top: 40px;
 }
 
-/* line 71, ../../sass/screen.scss */
+/* line 91, ../../sass/screen.scss */
 #main-right {
   position: absolute;
   height: 100%;
@@ -73,7 +88,7 @@ body {
   overflow: hidden;
 }
 
-/* line 91, ../../sass/screen.scss */
+/* line 111, ../../sass/screen.scss */
 #main-left {
   position: absolute;
   box-sizing: border-box;
@@ -84,19 +99,19 @@ body {
   top: 0px;
   overflow: hidden;
 }
-/* line 106, ../../sass/screen.scss */
+/* line 126, ../../sass/screen.scss */
 #main-left.bar {
   top: 40px;
 }
 
-/* line 112, ../../sass/screen.scss */
+/* line 132, ../../sass/screen.scss */
 #main {
   /*	border: 1px solid purple;*/
   height: 100%;
   /*	background-color: #eee;*/
 }
 
-/* line 118, ../../sass/screen.scss */
+/* line 138, ../../sass/screen.scss */
 #presence-gutter {
   width: 58px;
   position: absolute;
@@ -109,24 +124,24 @@ body {
   box-shadow: -3px 0px 3px #aaa;
   background-color: white;
 }
-/* line 130, ../../sass/screen.scss */
+/* line 150, ../../sass/screen.scss */
 #presence-gutter ul {
   margin: 0px;
 }
-/* line 138, ../../sass/screen.scss */
+/* line 158, ../../sass/screen.scss */
 #presence-gutter .tooltip-inner {
   white-space: nowrap;
 }
-/* line 142, ../../sass/screen.scss */
+/* line 162, ../../sass/screen.scss */
 #presence-gutter .tooltip {
   left: -70px !important;
 }
-/* line 146, ../../sass/screen.scss */
+/* line 166, ../../sass/screen.scss */
 #presence-gutter #user-list {
   overflow-y: visible;
   overflow-x: visible;
 }
-/* line 151, ../../sass/screen.scss */
+/* line 171, ../../sass/screen.scss */
 #presence-gutter .header {
   width: 100%;
   background-color: #2f3732;
@@ -138,11 +153,11 @@ body {
   font-weight: bold;
   margin-bottom: 5px;
 }
-/* line 162, ../../sass/screen.scss */
+/* line 182, ../../sass/screen.scss */
 #presence-gutter .header .icon-user {
   margin-left: 3px;
 }
-/* line 169, ../../sass/screen.scss */
+/* line 189, ../../sass/screen.scss */
 #presence-gutter .pageUp, #presence-gutter .pageDown {
   background-color: #2f3732;
   color: white;
@@ -152,47 +167,47 @@ body {
   height: 15px;
   cursor: pointer;
 }
-/* line 179, ../../sass/screen.scss */
+/* line 199, ../../sass/screen.scss */
 #presence-gutter .pageUp:hover, #presence-gutter .pageDown:hover {
   background-color: #47524b;
 }
-/* line 183, ../../sass/screen.scss */
+/* line 203, ../../sass/screen.scss */
 #presence-gutter .pageUp:active, #presence-gutter .pageDown:active {
   background-color: #181c19;
 }
-/* line 188, ../../sass/screen.scss */
+/* line 208, ../../sass/screen.scss */
 #presence-gutter .pageDown {
   position: absolute;
   bottom: 3px;
   clear: left;
   padding-top: -5px;
 }
-/* line 196, ../../sass/screen.scss */
+/* line 216, ../../sass/screen.scss */
 #presence-gutter .pageDown i {
   position: relative;
   top: -5px;
 }
 
-/* line 204, ../../sass/screen.scss */
+/* line 224, ../../sass/screen.scss */
 .nav li.active > a {
   background-color: #444 !important;
 }
 
-/* line 209, ../../sass/screen.scss */
+/* line 229, ../../sass/screen.scss */
 .identity {
   height: 40px;
   width: 200px;
 }
-/* line 213, ../../sass/screen.scss */
+/* line 233, ../../sass/screen.scss */
 .identity > div {
   float: right;
 }
-/* line 217, ../../sass/screen.scss */
+/* line 237, ../../sass/screen.scss */
 .identity .admin-button:hover, .identity .admin-button:visited, .identity .admin-button:active {
   color: orange;
 }
 
-/* line 222, ../../sass/screen.scss */
+/* line 242, ../../sass/screen.scss */
 .username, .admin-button {
   display: block;
   font-size: 14px;
@@ -200,13 +215,13 @@ body {
   padding: 10px 15px 10px 15px;
   line-height: 20px;
 }
-/* line 229, ../../sass/screen.scss */
+/* line 249, ../../sass/screen.scss */
 .username:hover, .username:active, .username:visited, .admin-button:hover, .admin-button:active, .admin-button:visited {
   color: white;
   text-decoration: none;
 }
 
-/* line 235, ../../sass/screen.scss */
+/* line 255, ../../sass/screen.scss */
 .user {
   width: 40px;
   height: 40px;
@@ -217,20 +232,20 @@ body {
   float: left;
   overflow: hidden;
 }
-/* line 250, ../../sass/screen.scss */
+/* line 270, ../../sass/screen.scss */
 .user.admin {
   border: 3px solid #c9c8c8;
   border-color: orange;
 }
-/* line 254, ../../sass/screen.scss */
+/* line 274, ../../sass/screen.scss */
 .user.admin img {
   position: relative;
 }
-/* line 260, ../../sass/screen.scss */
+/* line 280, ../../sass/screen.scss */
 .user img {
   width: 40px;
 }
-/* line 265, ../../sass/screen.scss */
+/* line 285, ../../sass/screen.scss */
 .user i {
   font-size: 40px;
   width: 40px;
@@ -238,32 +253,32 @@ body {
   line-height: 40px;
   padding-left: 5px;
 }
-/* line 273, ../../sass/screen.scss */
+/* line 293, ../../sass/screen.scss */
 .user.blur {
   opacity: 0.4;
 }
-/* line 277, ../../sass/screen.scss */
+/* line 297, ../../sass/screen.scss */
 .user.focus {
   opacity: 1.0;
 }
 
-/* line 282, ../../sass/screen.scss */
+/* line 302, ../../sass/screen.scss */
 #session-list {
   padding-top: 10px;
 }
-/* line 285, ../../sass/screen.scss */
+/* line 305, ../../sass/screen.scss */
 #session-list ul, #session-list li {
   margin: 0px;
 }
-/* line 289, ../../sass/screen.scss */
+/* line 309, ../../sass/screen.scss */
 #session-list p {
   margin-left: 20px;
 }
-/* line 293, ../../sass/screen.scss */
+/* line 313, ../../sass/screen.scss */
 #session-list .full-size-container {
   top: 10px;
 }
-/* line 297, ../../sass/screen.scss */
+/* line 317, ../../sass/screen.scss */
 #session-list .footer {
   margin-top: 0px;
   margin-left: auto;
@@ -272,28 +287,28 @@ body {
   width: 200px;
   clear: left;
 }
-/* line 306, ../../sass/screen.scss */
+/* line 326, ../../sass/screen.scss */
 #session-list .footer div {
   float: left;
   color: black;
   padding: 5px;
 }
-/* line 311, ../../sass/screen.scss */
+/* line 331, ../../sass/screen.scss */
 #session-list .footer div:hover {
   cursor: pointer;
   background-color: #ddd;
 }
-/* line 316, ../../sass/screen.scss */
+/* line 336, ../../sass/screen.scss */
 #session-list .footer div.active {
   border: 1px solid #aaa;
 }
-/* line 320, ../../sass/screen.scss */
+/* line 340, ../../sass/screen.scss */
 #session-list .footer div.page {
   margin-left: 5px;
   margin-right: 5px;
 }
 
-/* line 328, ../../sass/screen.scss */
+/* line 348, ../../sass/screen.scss */
 .session {
   position: relative;
   box-sizing: border-box;
@@ -303,11 +318,11 @@ body {
   margin-left: 20px;
   padding: 5px;
 }
-/* line 343, ../../sass/screen.scss */
+/* line 363, ../../sass/screen.scss */
 .session.hangout-connected {
   height: 80px;
 }
-/* line 346, ../../sass/screen.scss */
+/* line 366, ../../sass/screen.scss */
 .session.hangout-connected .hangout-users {
   position: absolute;
   top: 40px;
@@ -316,7 +331,7 @@ body {
   height: 40px;
   padding-left: 5px;
 }
-/* line 355, ../../sass/screen.scss */
+/* line 375, ../../sass/screen.scss */
 .session.hangout-connected .hangout-users .user {
   float: left;
   margin-right: 5px;
@@ -324,11 +339,11 @@ body {
   height: 30px;
   list-style: none;
 }
-/* line 372, ../../sass/screen.scss */
+/* line 392, ../../sass/screen.scss */
 .session .label {
   margin-left: 5px;
 }
-/* line 376, ../../sass/screen.scss */
+/* line 396, ../../sass/screen.scss */
 .session h3 {
   color: #2f3732;
   margin: 0px;
@@ -339,15 +354,15 @@ body {
   height: 40px;
   width: 260px;
 }
-/* line 389, ../../sass/screen.scss */
+/* line 409, ../../sass/screen.scss */
 .session h3 i {
   margin-right: 5px;
 }
-/* line 400, ../../sass/screen.scss */
+/* line 420, ../../sass/screen.scss */
 .session .description {
   padding: 5px;
 }
-/* line 404, ../../sass/screen.scss */
+/* line 424, ../../sass/screen.scss */
 .session .attend.btn {
   color: white;
   border-radius: 0px;
@@ -357,7 +372,7 @@ body {
   height: 23px;
   width: 100px;
 }
-/* line 416, ../../sass/screen.scss */
+/* line 436, ../../sass/screen.scss */
 .session .empty {
   height: 40px;
   text-align: center;
@@ -365,57 +380,57 @@ body {
   font-style: italic;
   padding-top: 20px;
 }
-/* line 424, ../../sass/screen.scss */
+/* line 444, ../../sass/screen.scss */
 .session .started.label {
   margin-left: 5px;
 }
-/* line 429, ../../sass/screen.scss */
+/* line 449, ../../sass/screen.scss */
 .session.live:nth-child(odd) {
   background-color: #ECFFF0;
 }
-/* line 434, ../../sass/screen.scss */
+/* line 454, ../../sass/screen.scss */
 .session.live:nth-child(even) {
   background-color: #D5EBD9;
 }
-/* line 439, ../../sass/screen.scss */
+/* line 459, ../../sass/screen.scss */
 .session:nth-child(odd) {
   background-color: #efefef;
 }
-/* line 444, ../../sass/screen.scss */
+/* line 464, ../../sass/screen.scss */
 .session:nth-child(even) {
   background-color: white;
 }
-/* line 448, ../../sass/screen.scss */
+/* line 468, ../../sass/screen.scss */
 .session .attending {
   height: 50px;
   padding: 5px;
   padding-top: 15px;
 }
-/* line 453, ../../sass/screen.scss */
+/* line 473, ../../sass/screen.scss */
 .session .attending .first {
   width: 50px;
   height: 50px;
   background-color: #c9c8c8;
   float: left;
 }
-/* line 460, ../../sass/screen.scss */
+/* line 480, ../../sass/screen.scss */
 .session .attending .first .user {
   margin: 0px;
   width: 50px;
   height: 50px;
   border: 0px;
 }
-/* line 467, ../../sass/screen.scss */
+/* line 487, ../../sass/screen.scss */
 .session .attending .first .user img, .session .attending .first .user i {
   width: 50px;
   height: 50px;
   line-height: 50px;
 }
-/* line 473, ../../sass/screen.scss */
+/* line 493, ../../sass/screen.scss */
 .session .attending .first .user i {
   margin-left: 5px;
 }
-/* line 480, ../../sass/screen.scss */
+/* line 500, ../../sass/screen.scss */
 .session .attending .counter {
   background-color: #c9c8c8;
   width: 12px;
@@ -423,11 +438,11 @@ body {
   margin-left: 5px;
   float: left;
 }
-/* line 489, ../../sass/screen.scss */
+/* line 509, ../../sass/screen.scss */
 .session .attending .counter.selected {
   background-color: #2f3732;
 }
-/* line 494, ../../sass/screen.scss */
+/* line 514, ../../sass/screen.scss */
 .session .attending .full {
   background-color: #F85863;
   color: white;
@@ -438,14 +453,14 @@ body {
   padding-top: 15px;
   margin-left: 5px;
 }
-/* line 508, ../../sass/screen.scss */
+/* line 528, ../../sass/screen.scss */
 .session .admin-buttons {
   position: absolute;
   right: 0px;
   top: 4px;
   height: 33px;
 }
-/* line 517, ../../sass/screen.scss */
+/* line 537, ../../sass/screen.scss */
 .session .admin-buttons .btn {
   border-radius: 0px;
   top: 0px;
@@ -455,16 +470,16 @@ body {
   padding-left: 5px;
   padding-right: 5px;
 }
-/* line 529, ../../sass/screen.scss */
+/* line 549, ../../sass/screen.scss */
 .session .outer {
   position: relative;
   z-index: 10000;
 }
-/* line 533, ../../sass/screen.scss */
+/* line 553, ../../sass/screen.scss */
 .session .outer .attend-count {
   margin-left: 5px;
 }
-/* line 538, ../../sass/screen.scss */
+/* line 558, ../../sass/screen.scss */
 .session .attendance {
   position: absolute;
   top: -1px;
@@ -474,7 +489,7 @@ body {
   background-color: rgba(66, 94, 97, 0.5);
 }
 
-/* line 549, ../../sass/screen.scss */
+/* line 569, ../../sass/screen.scss */
 .full-size-container {
   top: 0px;
   left: 0px;
@@ -483,7 +498,7 @@ body {
   position: absolute;
 }
 
-/* line 557, ../../sass/screen.scss */
+/* line 577, ../../sass/screen.scss */
 #chat-input-region {
   position: absolute;
   bottom: 0px;
@@ -494,17 +509,17 @@ body {
   padding-left: 10px;
   background-color: whitesmoke;
 }
-/* line 570, ../../sass/screen.scss */
+/* line 590, ../../sass/screen.scss */
 #chat-input-region input {
   width: 360px;
 }
 
-/* line 575, ../../sass/screen.scss */
+/* line 595, ../../sass/screen.scss */
 #chat {
   overflow-y: hidden;
   overflow-x: visible;
 }
-/* line 580, ../../sass/screen.scss */
+/* line 600, ../../sass/screen.scss */
 #chat #chat-container {
   padding-left: 5px;
   bottom: 40px;
@@ -516,17 +531,17 @@ body {
   right: 75px;
   overflow-y: auto;
 }
-/* line 593, ../../sass/screen.scss */
+/* line 613, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container {
   height: auto;
   width: auto;
   margin: 0px 0px 45px 0px;
 }
-/* line 599, ../../sass/screen.scss */
+/* line 619, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 603, ../../sass/screen.scss */
+/* line 623, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message.system {
   text-align: center;
   font-style: italic;
@@ -538,29 +553,29 @@ body {
   margin-bottom: 20px;
   border-bottom: 1px solid #aaa;
 }
-/* line 616, ../../sass/screen.scss */
+/* line 636, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message.system .from {
   display: none;
 }
-/* line 621, ../../sass/screen.scss */
+/* line 641, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
   display: block;
   font-weight: bold;
 }
-/* line 627, ../../sass/screen.scss */
+/* line 647, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from.admin {
   color: orange;
 }
 
-/* line 636, ../../sass/screen.scss */
+/* line 656, ../../sass/screen.scss */
 #global {
   position: absolute;
   z-index: 1000;
 }
 
-/* line 641, ../../sass/screen.scss */
+/* line 661, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
   left: 0px;
@@ -568,13 +583,13 @@ body {
   /*padding-top: 50px;*/
   /*box-shadow: 3px 3px 5px #aaa;*/
 }
-/* line 649, ../../sass/screen.scss */
+/* line 669, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
   width: 100%;
 }
 
-/* line 655, ../../sass/screen.scss */
+/* line 675, ../../sass/screen.scss */
 #bar {
   position: absolute;
   top: 0px;
@@ -589,27 +604,27 @@ body {
   z-index: 500;
   box-shadow: 3px 3px 3px #aaa;
 }
-/* line 673, ../../sass/screen.scss */
+/* line 693, ../../sass/screen.scss */
 #bar #session-live-bar {
   width: 400px;
   margin-left: auto;
   margin-right: auto;
 }
-/* line 678, ../../sass/screen.scss */
+/* line 698, ../../sass/screen.scss */
 #bar #session-live-bar div {
   float: left;
   font-weight: bold;
   font-size: 1.6em;
   padding-top: 5px;
 }
-/* line 685, ../../sass/screen.scss */
+/* line 705, ../../sass/screen.scss */
 #bar #session-live-bar .btn {
   float: left;
   margin-left: 15px;
 }
 
 /*---------------------------- INDEX STYLES ---------------------------*/
-/* line 696, ../../sass/screen.scss */
+/* line 716, ../../sass/screen.scss */
 .jumbotron {
   color: white;
   background-image: url("/public/img/dots.png");
@@ -618,45 +633,45 @@ body {
   background-size: 1400px;
   margin-top: -20px;
 }
-/* line 705, ../../sass/screen.scss */
+/* line 725, ../../sass/screen.scss */
 .jumbotron h1 {
   padding-top: 75px;
   margin-top: 0px;
 }
-/* line 710, ../../sass/screen.scss */
+/* line 730, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* line 718, ../../sass/screen.scss */
+/* line 738, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
 }
-/* line 722, ../../sass/screen.scss */
+/* line 742, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
   font-size: 1.6em;
 }
-/* line 727, ../../sass/screen.scss */
+/* line 747, ../../sass/screen.scss */
 .event .description {
   width: 800px;
 }
-/* line 731, ../../sass/screen.scss */
+/* line 751, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 736, ../../sass/screen.scss */
+/* line 756, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 743, ../../sass/screen.scss */
+/* line 763, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -668,19 +683,34 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 756, ../../sass/screen.scss */
+/* line 776, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 763, ../../sass/screen.scss */
+/* line 784, ../../sass/screen.scss */
+#about-event .footer {
+  color: #ccc;
+  width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+  font-style: italic;
+}
+
+/* line 795, ../../sass/screen.scss */
+.admin-table-buttons .btn {
+  float: left;
+  margin-top: 5px;
+}
+
+/* line 801, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
 }
 
-/* line 769, ../../sass/screen.scss */
+/* line 807, ../../sass/screen.scss */
 #permalink-create label {
   width: 250px;
 }

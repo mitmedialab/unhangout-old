@@ -12,9 +12,20 @@
   $("#admin-nav").addClass("active");
 </script>
 
+
+
+
 <form class="form-horizontal" action="/admin/event/<%= create ? "new":event.id%>" method="post" encoding="application/x-www-form-urlencoded">
 
 	<input type="hidden" name="create" value="<%= create %>">
+
+  <div class="control-group">
+    <label class="control-label">Link</label>
+    <div class="controls">
+      <a href="/event/<%= event.id%>">EVENT PAGE</a>
+      <%= event.isLive() ? " LIVE" : "" %>
+    </div>
+  </div>
 
   <div class="control-group">
     <label class="control-label" for="inputTitle">Title</label>

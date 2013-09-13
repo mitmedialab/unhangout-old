@@ -39,6 +39,26 @@ body {
 	width: 940px;
 }
 
+#top {
+	position: absolute;
+	background-color: white;
+
+	box-shadow: 3px 3px 3px #aaa;
+	border: 1px solid #aaa;
+
+	box-sizing: border-box;
+
+	z-index: 50;
+	left: 0px;
+	right: 0px;
+	top: -400px;
+
+
+	height: 400px;
+
+	padding: 10px;
+}
+
 #top-left {
 	position: absolute;
 /*	padding-top: 30px;
@@ -757,6 +777,24 @@ body {
 			background-color: $primary;
 			color: white;
 		}
+	}
+}
+
+#about-event {
+	.footer {
+		color: #ccc;
+		width: 400px;
+		margin-left: auto;
+		margin-right: auto;
+
+		font-style: italic;
+	}
+}
+
+.admin-table-buttons {
+	.btn {
+		float: left;
+		margin-top: 5px;
 	}
 }
 
