@@ -213,6 +213,7 @@ $(document).ready(function() {
 	}, app));
 
 	var videoShown = false;
+	var aboutShown = false;
 
 	// this event handles the show-hide behavior of the video embed
 	// in the upper left corner of the UI. There are lots of finnicky details here 
@@ -258,6 +259,23 @@ $(document).ready(function() {
 
 	}, app));
 	
+	app.vent.on("about-nav", _.bind(function() {
+		console.log("handling about-nav event");
+
+		if(aboutShown) {
+			this.top.$el.animate({"top":-500});
+
+			aboutShown = false;
+			$("#about-nav").removeClass("active");
+		} else {
+			this.top.$el.animate({"top":0});
+			aboutShown = true;
+
+			$("#about-nav").addClass("active");
+		}
+
+	}, app));
+
 	// We have to wait for the youtube api to load for us to embed the video. This
 	// will trigger more or less on page load, so as a user you don't really see
 	// any delay. But we do need to wait.
@@ -353,10 +371,15 @@ $(document).ready(function() {
 		app.vent.trigger("video-live");
 	}
 
-	// Handles clicks on the video link in the nav bar.
-	$("#video-nav").click(function() {
+	// if the event isn't live yet, force the about page to show.
+	if(!curEvent.isLive()) {
+		app.vent.trigger("about-nav");
+	}
+
+	// Handles clicks on the nav bar links.
+	$("#video-nav, #about-nav").click(function() {
 		app.vent.trigger($(this).attr("id"));
-	})
+	});
 	
 	console.log("Setup regions.");
 
