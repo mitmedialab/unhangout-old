@@ -107,7 +107,6 @@ models.Event = Backbone.Model.extend({
 
 	isLive: function() {
         var curTime = new Date().getTime();
-
         var test = !_.isNull(this.get("start")) && curTime >= this.get("start") && _.isNull(this.get("end"));
         return test;
     },

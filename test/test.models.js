@@ -45,13 +45,41 @@ describe("SERVEREVENT", function() {
 	});
 
 	describe("#start", function() {
-		it('should start if stopped');
-		it('should return an error if started while already live');
+		it('should start if stopped', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			var err = event.start();
+
+			should.not.exist(err);
+		});
+
+		it('should return an error if started while already live', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+			event.start();
+			var err = event.start();
+			err.should.be.instanceOf(Error);
+		});
 	});
 	
 	describe("#stop", function() {
-		it('should stop if started already');
-		it('should return an error if stopped while already stopped');
+		it('should stop if started already', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.start();
+			var err = event.stop();
+
+			should.not.exist(err);
+		});
+
+		it('should return an error if stopped while already stopped', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.start();
+			event.stop();
+			var err = event.stop();
+
+			err.should.be.instanceOf(Error);
+		});
 	});
 
 	describe("#userConnected", function() {
