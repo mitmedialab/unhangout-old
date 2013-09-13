@@ -72,6 +72,9 @@
 		     but that seems to be how we can make this work with express and no content_for equivalent. -->
 
 		    <script type="text/template" id="about-event-template">
+		    <h1>{{=title}}</h1>
+		    <h4>hosted by {{=organizer}}</h4>
+
 		    {{= about}}
 		    </script>
 
@@ -281,7 +284,7 @@
 	<div class="row" id="main">
 	<div id="bar"></div>
 	<div id="top"></div>
-	
+
 	<div id="top-left" class="span6">
 	</div>
 	<div id="main-left" class="span6">
