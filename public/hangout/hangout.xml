@@ -27,6 +27,9 @@ var baseServerUrl;
 var sessionId;
 var interval;
 var serverUrl;
+var title;
+var description;
+var shortURL;
 
 var localGoogleId;
 var isLeader = false;
@@ -70,7 +73,9 @@ function init() {
 				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
 				sessionId = appDataPieces[2];
 				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
-
+        title = appDataPieces[3];
+        description = appDataPieces[4];
+        shortURL = appDataPieces[5];
 
 
 				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
@@ -93,6 +98,37 @@ function init() {
 				gapi.hangout.onParticipantsChanged.add(nonLeaderParticipantsChangedHandler);
 		    	}
 	      });
+
+    // Underscore Templates for Hangouts Views
+
+      _.templateSettings = {
+      interpolate : /\{\{(.+?)\}\}/g
+    };
+
+    var welcome = _.template("
+      <h1 class='title'>{{ title }}</h1>
+
+      <h3 class='description'>{{ description }}</h3>
+
+      <p>This service creates a permalink for a Hangout - a single URL with a Join Hangout button that take anyone who clicks it to the same hangout. As an added bonus, you can see whether other people are already in the hangout before you join it.  Below is the unique link for this Hangout for you to copy and share.</p>
+
+      <form>
+        <input type='text' detault=shortURL>
+      </form>
+
+    ");
+
+    $('body').append(welcome({
+      title : title,
+      description : description,
+      shortURL : shortURL
+    }));
+
+    var footer = _.template("
+      <div class="footer">This service is part of the <a href="/"><b>Unhangout Project</b></a> from the MIT Media Lab and MacArthur Foundation. Source available at <a href="http://github.com/drewww/unhangout">Github</a>.</div>
+    ");
+
+    $('body').append(footer());
 
 }
 
@@ -302,8 +338,28 @@ function init() {
 // Wait for gadget to load.                                                       
 gadgets.util.registerOnLoadHandler(init);
 </script>
+
+  <style>
+
+    .title {
+      
+    }
+
+    .footer {
+      margin-top: 0px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 15px;
+      width: 200px;
+
+      clear: left;
+
+
+  </style>
+
 <body>
-	<p>This hangout extension doesn't have any UI - no need to show this pane!</p>
+
+
 </body>
 ]]>
 </Content>
