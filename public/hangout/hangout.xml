@@ -96,7 +96,8 @@ function init() {
     				//} else {
     				//	gapi.hangout.data.setValue("appData", appData);
     				//}
-    				// console.log(appData);
+
+    				console.log(appData);
 
     				// TODO if the app is started without app data, note it in the logs.
     				var appDataPieces = appData.split(":");
@@ -112,6 +113,7 @@ function init() {
 
 		            console.log("eventTitle: " + eventTitle);
 		            console.log("title: " + title);
+		            console.log("isPermalink: " + isPermalink);
 
 
     				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
