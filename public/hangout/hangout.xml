@@ -21,6 +21,23 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js" ></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js" ></script>
 	<script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
+
+<script type="text/template" id="welcome-template">
+    <h1 class='title'>{{ title }}</h1>
+
+    <h3 class='description'>{{ description }}</h3>
+
+    <p>This service creates a permalink for a Hangout - a single URL with a Join Hangout button that take anyone who clicks it to the same hangout. As an added bonus, you can see whether other people are already in the hangout before you join it.  Below is the unique link for this Hangout for you to copy and share.</p>
+
+    <form>
+      <input type='text' placeholder={{ shortURL }}>
+    </form>
+</script>
+
+<script type="text/template" id="footer-template">
+  <div class="footer">This service is part of the <b>Unhangout Project</b> from the MIT Media Lab and MacArthur Foundation. Source available at <a href="http://github.com/drewww/unhangout">Github</a>.</div>
+</script>
+
 <script>
 
 var baseServerUrl;
@@ -44,93 +61,81 @@ function init() {
 		gapi.hangout.onApiReady.add(
 	      function(eventObj) {
 	        if (eventObj.isApiReady) {
-			  // When API is ready...                                                         
-				console.log("READY!");
-				gapi.hangout.hideApp();
+    			  // When API is ready...                                                         
+    				console.log("READY!");
+    				gapi.hangout.hideApp();
 
 
-				// we expect that appData has format:
-				// host:port:sessionid
-				// unpack that and post it back to the server.
-				var appData = gadgets.views.getParams()['appData'];
+    				// we expect that appData has format:
+    				// host:port:sessionid
+    				// unpack that and post it back to the server.
+    				var appData = gadgets.views.getParams()['appData'];
 
-				// it's not clear if this actually helps. It seems like in any situation I can create where the app is actually 
-				// loaded, the appData is present in the views params. Leaving the code present but knocked out
-				// in case we find a need for it in the future.
+    				// it's not clear if this actually helps. It seems like in any situation I can create where the app is actually 
+    				// loaded, the appData is present in the views params. Leaving the code present but knocked out
+    				// in case we find a need for it in the future.
 
-				//if(_.isUndefined(appData)) {
-				//	// try to pull it from the hangout data store.
-				//	appData = gapi.hangout.data.getValue("appData");
-				//	console.log("No app data present in view params, loaded from datastore: " + appData);
-				//} else {
-				//	gapi.hangout.data.setValue("appData", appData);
-				//}
-				// console.log(appData);
+    				//if(_.isUndefined(appData)) {
+    				//	// try to pull it from the hangout data store.
+    				//	appData = gapi.hangout.data.getValue("appData");
+    				//	console.log("No app data present in view params, loaded from datastore: " + appData);
+    				//} else {
+    				//	gapi.hangout.data.setValue("appData", appData);
+    				//}
+    				// console.log(appData);
 
-				// TODO if the app is started without app data, note it in the logs.
-				var appDataPieces = appData.split(":");
-				
-				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
-				sessionId = appDataPieces[2];
-				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
-        title = appDataPieces[3];
-        description = appDataPieces[4];
-        shortURL = appDataPieces[5];
+    				// TODO if the app is started without app data, note it in the logs.
+    				var appDataPieces = appData.split(":");
+    				
+    				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
+    				sessionId = appDataPieces[2];
+    				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
+            title = appDataPieces[3];
+            description = appDataPieces[4];
+            shortURL = appDataPieces[5];
 
 
-				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
+    				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
 
-				// add this participant id to the shared state list of participants.
-				// this lets us know who is actually running the app, for elections.
+    				// add this participant id to the shared state list of participants.
+    				// this lets us know who is actually running the app, for elections.
 
-				var participantIds = getInitializedIds();
+    				var participantIds = getInitializedIds();
 
-				participantIds.push(localGoogleId);
-				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
+    				participantIds.push(localGoogleId);
+    				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
 
-				// now, phone home.
-				loaded(eventObj);		
+    				// now, phone home.
+    				loaded(eventObj);		
 
-				performElection();
+    				performElection();
 
-				// all clients should perform the election check on every participant changed event, on top of
-				// whatever other listener gets added if they decide they're the leader.
-				gapi.hangout.onParticipantsChanged.add(nonLeaderParticipantsChangedHandler);
-		    	}
-	      });
+    				// all clients should perform the election check on every participant changed event, on top of
+    				// whatever other listener gets added if they decide they're the leader.
+    				gapi.hangout.onParticipantsChanged.add(nonLeaderParticipantsChangedHandler);
+            // Underscore Templates for Hangouts Views
 
-    // Underscore Templates for Hangouts Views
+            _.templateSettings = {
+              interpolate : /\{\{(.+?)\}\}/g
+            };
 
-      _.templateSettings = {
-      interpolate : /\{\{(.+?)\}\}/g
-    };
+            var welcome = _.template($("#welcome-template").html());
 
-    var welcome = _.template("
-      <h1 class='title'>{{ title }}</h1>
+            $('body').append(welcome({
+              title : title,
+              description : description,
+              shortURL : shortURL
+            }));
 
-      <h3 class='description'>{{ description }}</h3>
+            var footer = _.template($('#footer-template').html());
 
-      <p>This service creates a permalink for a Hangout - a single URL with a Join Hangout button that take anyone who clicks it to the same hangout. As an added bonus, you can see whether other people are already in the hangout before you join it.  Below is the unique link for this Hangout for you to copy and share.</p>
+            $('body').append(footer());
 
-      <form>
-        <input type='text' detault=shortURL>
-      </form>
+          }  // End of IF block
 
-    ");
+      }); // End of handler
 
-    $('body').append(welcome({
-      title : title,
-      description : description,
-      shortURL : shortURL
-    }));
-
-    var footer = _.template("
-      <div class="footer">This service is part of the <a href="/"><b>Unhangout Project</b></a> from the MIT Media Lab and MacArthur Foundation. Source available at <a href="http://github.com/drewww/unhangout">Github</a>.</div>
-    ");
-
-    $('body').append(footer());
-
-}
+} // End of Init
 
 
 	function getInitializedIds() {
