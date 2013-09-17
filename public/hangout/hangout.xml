@@ -44,6 +44,12 @@
 	</div>
 </script>
 
+<script type="text/template" id="welcome-unhangout-template">
+    <h1 class='title'>{{ title }}</h1>
+    <h2 class='event'>Part of '{{ eventTitle }}'</he>
+</script>
+
+
 <script type="text/template" id="footer-template">
   <div class="footer">powered by <a href="http://unhangout.media.mit.edu/">unhangout</a>, from the MIT Media Lab</div>
 </script>
@@ -57,6 +63,8 @@ var serverUrl;
 var title;
 var description;
 var shortURL;
+var isPermalink;
+var eventTitle;
 
 var localGoogleId;
 var isLeader = false;
@@ -101,6 +109,11 @@ function init() {
 		            title = appDataPieces[3];
 		            description = appDataPieces[4];
 		            shortURL = appDataPieces[5];
+		            isPermalink = appDataPieces[6]=="true";
+		            eventTitle = appDataPieces[7];
+
+		            console.log("eventTitle: " + eventTitle);
+		            console.log("title: " + title);
 
 
     				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
@@ -127,14 +140,24 @@ function init() {
               interpolate : /\{\{(.+?)\}\}/g
             };
 
-            var welcome = _.template($("#welcome-template").html());
+            if(isPermalink) {
+            	console.log("displaying permalink page");
+	            var welcome = _.template($("#welcome-template").html());
 
-            $('body').append(welcome({
-              title : title,
-              description : description,
-              shortURL : shortURL,
-              baseURL:baseServerUrl
-            }));
+	            $('body').append(welcome({
+	              title : title,
+	              description : description,
+	              shortURL : shortURL,
+	              baseURL:baseServerUrl
+	            }));
+            } else {
+            	console.log("displaying non-permalink page");
+				var welcome = _.template($("#welcome-unhangout-template").html())            ;
+				$('body').append(welcome({
+					title: title,
+					eventTitle: eventTitle
+				}));
+            }
 
             var footer = _.template($('#footer-template').html());
 
@@ -446,6 +469,12 @@ gadgets.util.registerOnLoadHandler(init);
 	.active {
 		color: white;
 		font-weight: bold;
+	}
+
+	.event {
+		font-weight: normal;
+		font-size: 16px;
+		padding: 10px;
 	}
 
   </style>
