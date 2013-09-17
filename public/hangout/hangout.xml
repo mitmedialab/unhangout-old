@@ -23,7 +23,7 @@
 	<script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
 
 <script type="text/template" id="welcome-template">
-    <h1 class='title'>{{ title }}</h1>
+    <h1 class='title'>{{ title }}<div class="hide">hide</div></h1>
     <p class='description'>{{ description }}</p>
     <hr>
     <div id="share" class="button active">SHARE</div> <div id="about" class="button">ABOUT</div>
@@ -45,7 +45,7 @@
 </script>
 
 <script type="text/template" id="welcome-unhangout-template">
-    <h1 class='title'>{{ title }}</h1>
+    <h1 class='title'>{{ title }}<div class="hide">hide</div></h1>
     <h2 class='event'>Part of '{{ eventTitle }}'</he>
 </script>
 
@@ -74,8 +74,6 @@ var HEARTBEAT_INTERVAL = 5000;
 
 function init() {
 	console.log("init running");
-
-
 		gapi.hangout.onApiReady.add(
 	      function(eventObj) {
 	        if (eventObj.isApiReady) {
@@ -175,6 +173,10 @@ function init() {
             	$(this).addClass("active");
             });
 
+            $(".hide").click(function() {
+            	console.log("Hiding app on click");
+	            gapi.hangout.hideApp();
+            });
           }  // End of IF block
 
       }); // End of handler
@@ -400,7 +402,9 @@ gadgets.util.registerOnLoadHandler(init);
 
       background-color: rgb(51, 51, 51);
 
-      padding: 10px;
+      padding: 20px;
+
+      font-size: 26px;
     }	
 
     .footer {
@@ -475,6 +479,22 @@ gadgets.util.registerOnLoadHandler(init);
 		font-weight: normal;
 		font-size: 16px;
 		padding: 10px;
+	}
+
+	.hide {
+		color: #bbb;
+		position: absolute;
+		font-size: 16px;
+		right: 10px;
+		top: 10px;
+		cursor: pointer;
+
+		font-style: italic;
+	}
+
+	.hide:hover {
+		background-color: #555;
+		color: white;
 	}
 
   </style>
