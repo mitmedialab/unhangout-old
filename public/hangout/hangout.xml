@@ -26,10 +26,22 @@
     <h1 class='title'>{{ title }}</h1>
     <p class='description'>{{ description }}</p>
     <hr>
+    <div id="share" class="button active">SHARE</div> <div id="about" class="button">ABOUT</div>
+
+    <div id="share-contents">
     <p>To share a permalink for this hangout, use the link below:</p>
     <form>
       <input type='text' value="{{ baseURL }}/h/{{ shortURL }}">
     </form>
+	</div>
+
+	<div id="about-contents">
+		<p>You are in a hangout managed by the Unhangout Permalink system. Permalink makes it easy to create and share Google Hangout links that don't expire. Plus, you can see if the hangout has started yet and who is in it without loading the Hangout yourself.</p>
+
+		<p>To make this possible, we have an app that runs inside your Hangout, called the <em>Unhangout Supervisor</em>. You should see it on the left edge of your screen. This app lets us know whether this hangout is still running and whenever someone joins or leaves. You can hide this panel if you like (by clicking on "Unhangout Supervisor" in the left gutter), but it's important that you let the app run so the Unhangout system can keep track of it for other people who might join later.</p>
+
+		<p>If you have any questions or feedback or comments about this service, please don't hesitate to message me <a href="http://twitter.com/drewwww">@drewwww</a> on Twitter, or email me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a></p>
+	</div>
 </script>
 
 <script type="text/template" id="footer-template">
@@ -86,9 +98,9 @@ function init() {
     				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
     				sessionId = appDataPieces[2];
     				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
-            title = appDataPieces[3];
-            description = appDataPieces[4];
-            shortURL = appDataPieces[5];
+		            title = appDataPieces[3];
+		            description = appDataPieces[4];
+		            shortURL = appDataPieces[5];
 
 
     				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
@@ -127,6 +139,18 @@ function init() {
             var footer = _.template($('#footer-template').html());
 
             $('body').append(footer());
+
+            $("#about-contents").hide();
+
+            var bothButtons = $("#about-contents, #share-contents");
+
+            $(".button").click(function() {
+            	bothButtons.hide();
+
+            	$("#" + this.id + "-contents").show();
+            	$(".active").removeClass("active");
+            	$(this).addClass("active");
+            });
 
           }  // End of IF block
 
@@ -348,7 +372,7 @@ gadgets.util.registerOnLoadHandler(init);
 
     .title {
       font-weight: 200;
-      color: #999;
+      color: #aaa;
       text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
 
       background-color: rgb(51, 51, 51);
@@ -376,6 +400,10 @@ gadgets.util.registerOnLoadHandler(init);
 		color: #ccc;
 	}
 
+	.footer a:hover {
+		text-decoration: underline;
+	}
+
 	.footer a:visited {
 		color: #ccc;
 	}
@@ -392,8 +420,34 @@ gadgets.util.registerOnLoadHandler(init);
 	}
 
 	hr {
-		margin: 5px;
+		margin: 15px;
 	}
+
+	.button {
+		border-radius: 5px;
+
+		background-color: rgb(51, 51, 51);
+		color: #bbb;
+
+		cursor: pointer;
+
+		float: left;
+
+		width: 130px;
+		padding: 5px;
+
+		margin-left: 10px;
+
+		text-align: center;
+
+		margin-bottom: 10px;
+	}
+
+	.active {
+		color: white;
+		font-weight: bold;
+	}
+
   </style>
 
 <body>
