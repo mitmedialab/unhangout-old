@@ -36,9 +36,9 @@
 	</div>
 
 	<div id="about-contents">
-		<p>You are in a hangout managed by the Unhangout Permalink system. Permalink makes it easy to create and share Google Hangout links that don't expire. Plus, you can see if the hangout has started yet and who is in it without loading the Hangout yourself.</p>
+		<p>You are in a hangout managed by the Unhangout Permalink system.</p>
 
-		<p>To make this possible, we have an app that runs inside your Hangout, called the <em>Unhangout Supervisor</em>. You should see it on the left edge of your screen. This app lets us know whether this hangout is still running and whenever someone joins or leaves. You can hide this panel if you like (by clicking on "Unhangout Supervisor" in the left gutter), but it's important that you let the app run so the Unhangout system can keep track of it for other people who might join later.</p>
+		<p>To help the Permalink service know when your hangout ends or when someone joins or leaves, we use an app called <em>Unhangout Supervisor</em>. You should see it on the left edge of your screen. You can hide this panel if you like (by clicking 'hide'), but it's important that you let the app run so the Permalink system can keep tabs on it.</p>
 
 		<p>If you have any questions or feedback or comments about this service, please don't hesitate to message me <a href="http://twitter.com/drewwww">@drewwww</a> on Twitter, or email me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a></p>
 	</div>
