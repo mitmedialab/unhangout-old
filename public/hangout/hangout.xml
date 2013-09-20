@@ -111,6 +111,10 @@ function init() {
 		            isPermalink = appDataPieces[6]=="true";
 		            eventTitle = appDataPieces[7];
 
+		            if(title.length < 1) {
+		            	title = shortURL;
+		            }
+
 		            console.log("eventTitle: " + eventTitle);
 		            console.log("title: " + title);
 		            console.log("isPermalink: " + isPermalink);
@@ -446,6 +450,7 @@ gadgets.util.registerOnLoadHandler(init);
 
 	p {
 		margin: 5px;
+		margin-bottom: 15px;
 	}
 
 	hr {
