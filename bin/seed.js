@@ -105,6 +105,8 @@ if(require.main === module)
 
 	logger.info("Called seeds directly; running on main redis db.");
 	
+	models.logger = logger;
+
 	var r = redis.createClient();
 	r.on("connect", function() {
 		exports.run(0, r, function() {
