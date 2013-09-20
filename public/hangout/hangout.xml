@@ -105,8 +105,8 @@ function init() {
     				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
     				sessionId = appDataPieces[2];
     				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
-		            title = appDataPieces[3];
-		            description = appDataPieces[4];
+		            title = appDataPieces[3].replace("|", ":");
+		            description = appDataPieces[4].replace("|", ":");
 		            shortURL = appDataPieces[5];
 		            isPermalink = appDataPieces[6]=="true";
 		            eventTitle = appDataPieces[7];
