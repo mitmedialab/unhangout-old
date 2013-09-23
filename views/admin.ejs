@@ -31,4 +31,16 @@
 <% }); %>
 </table>
 
+<table id="permalinks">
+	<% permalinkSessions.forEach(function(session) { %>
+	<tr>
+		<td><%= session.get("shortCode") %></td>
+		<td><%= session.get("connectedParticipantIds").length %></td>
+		<td><%= session.get("total-seconds") %></td>
+		<td><%= session.get("total-instances") %></td>
+		<td><%= session.get("user-seconds") %></td>
+	</tr>
+	<% }) %>
+</table>
+
 <% include footer.ejs %>
