@@ -224,6 +224,21 @@ body {
 	li.active > a{
 		background-color: #444 !important;
 	}
+
+	.circle {
+		background-color: #da4f49;
+		width: 6px;
+		height: 12px;
+		border-radius: 5px;
+
+		margin-left: 5px;
+
+		display: inline-block;
+
+		&.hide {
+			display: none;
+		}
+	}
 }
 	
 .identity {

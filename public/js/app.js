@@ -264,8 +264,8 @@ $(document).ready(function() {
 	app.vent.on("about-nav", _.bind(function() {
 		console.log("handling about-nav event");
 
+		$(".updated").addClass("hide");
 		if(aboutShown) {
-
 			if(!curEvent.isLive()) {
 				// don't let people dismiss the about screen if the event isn't live.
 				return;
@@ -573,6 +573,15 @@ $(document).ready(function() {
 			case "session-hangout-disconnected":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.set("hangoutConnected", false);
+				break;
+
+			// sent in cases when the event's information has been updated.
+			// includes the entire event JSON object as the server sees it.
+			// copy it into curEvent.
+			case "event-update":
+				curEvent.set(msg.args);
+
+				console.log("updated current event: " + JSON.stringify(msg.args));
 				break;
 
 			// *-ack message types are just acknowledgmeents from the server
