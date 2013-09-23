@@ -264,8 +264,8 @@ $(document).ready(function() {
 	app.vent.on("about-nav", _.bind(function() {
 		console.log("handling about-nav event");
 
+		$(".updated").addClass("hide");
 		if(aboutShown) {
-
 			if(!curEvent.isLive()) {
 				// don't let people dismiss the about screen if the event isn't live.
 				return;

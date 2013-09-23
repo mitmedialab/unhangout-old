@@ -704,7 +704,10 @@ var AboutEventView = Marionette.ItemView.extend({
 	id: "about-event",
 
 	initialize: function() {
-		this.listenTo(this.model, 'all', this.render, this);
+		this.listenTo(this.model, 'all', _.bind(function() {
+			$(".updated").removeClass("hide");
+			this.render();
+		}, this), this);
 	},
 
 	onRender: function() {
@@ -713,7 +716,7 @@ var AboutEventView = Marionette.ItemView.extend({
 		} else {
 			this.$el.find(".footer").show();
 		}
-	}
+	},
 });
 
 // Manages the display of embedded videos on the upper left corner.
