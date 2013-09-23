@@ -31,4 +31,17 @@
 <% }); %>
 </table>
 
+<table id="permalinks">
+	<tr><th>shortcode</th><th># ppl connected</th><th>total seconds active</th><th># hangouts created</th><th>user seconds active</th></tr>
+	<% permalinkSessions.forEach(function(session) { %>
+	<tr>
+		<td><a href="/h/<%= session.get("shortCode") %>"><%= session.get("shortCode") %></a></td>
+		<td><%= session.get("connectedParticipantIds").length %></td>
+		<td><%= session.get("total-seconds") %></td>
+		<td><%= session.get("total-instances") %></td>
+		<td><%= session.get("user-seconds") %></td>
+	</tr>
+	<% }) %>
+</table>
+
 <% include footer.ejs %>
