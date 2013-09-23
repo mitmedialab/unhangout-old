@@ -575,6 +575,15 @@ $(document).ready(function() {
 				session.set("hangoutConnected", false);
 				break;
 
+			// sent in cases when the event's information has been updated.
+			// includes the entire event JSON object as the server sees it.
+			// copy it into curEvent.
+			case "event-update":
+				curEvent.set(msg.args);
+
+				console.log("updated current event: " + JSON.stringify(msg.args));
+				break;
+
 			// *-ack message types are just acknowledgmeents from the server
 			// of the receipt of a particular message type and that the
 			// message was properly formatted and accepted. 

@@ -703,6 +703,10 @@ var AboutEventView = Marionette.ItemView.extend({
 	template: "#about-event-template",
 	id: "about-event",
 
+	initialize: function() {
+		this.listenTo(this.model, 'all', this.render, this);
+	},
+
 	onRender: function() {
 		if(this.model.isLive()) {
 			this.$el.find(".footer").hide();
