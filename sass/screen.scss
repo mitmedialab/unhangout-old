@@ -712,6 +712,27 @@ body {
 	box-shadow: 3px 3px 3px #aaa;
 }
 
+/*---------------------------- ADMIN STYLES ---------------------------*/
+
+
+#events {
+	float: left;
+}
+
+#permalinks {
+	float: left;
+	margin-left: 50px;
+}
+
+th {
+	padding-right: 20px;
+}
+
+tr:nth-child(even) {
+	background-color: #f1f1f1;
+}
+
+
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {
 	color: white;

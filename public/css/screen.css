@@ -623,8 +623,30 @@ body {
   margin-left: 15px;
 }
 
+/*---------------------------- ADMIN STYLES ---------------------------*/
+/* line 718, ../../sass/screen.scss */
+#events {
+  float: left;
+}
+
+/* line 722, ../../sass/screen.scss */
+#permalinks {
+  float: left;
+  margin-left: 50px;
+}
+
+/* line 727, ../../sass/screen.scss */
+th {
+  padding-right: 20px;
+}
+
+/* line 731, ../../sass/screen.scss */
+tr:nth-child(even) {
+  background-color: #f1f1f1;
+}
+
 /*---------------------------- INDEX STYLES ---------------------------*/
-/* line 716, ../../sass/screen.scss */
+/* line 737, ../../sass/screen.scss */
 .jumbotron {
   color: white;
   background-image: url("/public/img/dots.png");
@@ -633,45 +655,45 @@ body {
   background-size: 1400px;
   margin-top: -20px;
 }
-/* line 725, ../../sass/screen.scss */
+/* line 746, ../../sass/screen.scss */
 .jumbotron h1 {
   padding-top: 75px;
   margin-top: 0px;
 }
-/* line 730, ../../sass/screen.scss */
+/* line 751, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* line 738, ../../sass/screen.scss */
+/* line 759, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
 }
-/* line 742, ../../sass/screen.scss */
+/* line 763, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
   font-size: 1.6em;
 }
-/* line 747, ../../sass/screen.scss */
+/* line 768, ../../sass/screen.scss */
 .event .description {
   width: 800px;
 }
-/* line 751, ../../sass/screen.scss */
+/* line 772, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 756, ../../sass/screen.scss */
+/* line 777, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 763, ../../sass/screen.scss */
+/* line 784, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -683,13 +705,13 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 776, ../../sass/screen.scss */
+/* line 797, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 784, ../../sass/screen.scss */
+/* line 805, ../../sass/screen.scss */
 #about-event .footer {
   color: #ccc;
   width: 400px;
@@ -698,19 +720,19 @@ body {
   font-style: italic;
 }
 
-/* line 795, ../../sass/screen.scss */
+/* line 816, ../../sass/screen.scss */
 .admin-table-buttons .btn {
   float: left;
   margin-top: 5px;
 }
 
-/* line 801, ../../sass/screen.scss */
+/* line 822, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
 }
 
-/* line 807, ../../sass/screen.scss */
+/* line 828, ../../sass/screen.scss */
 #permalink-create label {
   width: 250px;
 }
