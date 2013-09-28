@@ -21,12 +21,50 @@
 	<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js" ></script>
 	<script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.1/underscore-min.js" ></script>
 	<script src="//plus.google.com/hangouts/_/api/v1/hangout.js"></script>
+
+<script type="text/template" id="welcome-template">
+    <h1 class='title'>{{ title }}<div class="hide">hide</div></h1>
+    <p class='description'>{{ description }}</p>
+    <hr>
+    <div id="share" class="button active">SHARE</div> <div id="about" class="button">ABOUT</div>
+
+    <div id="share-contents">
+    <p>To share a permalink for this hangout, use the link below:</p>
+    <form>
+      <input type='text' value="{{ baseURL }}/h/{{ shortURL }}">
+    </form>
+	</div>
+
+	<div id="about-contents">
+		<p>You are in a hangout managed by the Unhangout Permalink system.</p>
+
+		<p>To help the Permalink service know when your hangout ends or when someone joins or leaves, we use an app called <em>Unhangout Supervisor</em>. You should see it on the left edge of your screen. You can hide this panel if you like (by clicking 'hide'), but it's important that you let the app run so the Permalink system can keep tabs on it.</p>
+
+		<p>If you have any questions or feedback or comments about this service, please don't hesitate to message me <a href="http://twitter.com/drewwww">@drewwww</a> on Twitter, or email me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a></p>
+	</div>
+</script>
+
+<script type="text/template" id="welcome-unhangout-template">
+    <h1 class='title'>{{ title }}<div class="hide">hide</div></h1>
+    <h2 class='event'>Part of '{{ eventTitle }}'</he>
+</script>
+
+
+<script type="text/template" id="footer-template">
+  <div class="footer">powered by <a href="http://unhangout.media.mit.edu/">unhangout</a>, from the MIT Media Lab</div>
+</script>
+
 <script>
 
 var baseServerUrl;
 var sessionId;
 var interval;
 var serverUrl;
+var title;
+var description;
+var shortURL;
+var isPermalink;
+var eventTitle;
 
 var localGoogleId;
 var isLeader = false;
@@ -36,65 +74,120 @@ var HEARTBEAT_INTERVAL = 5000;
 
 function init() {
 	console.log("init running");
-
-
 		gapi.hangout.onApiReady.add(
 	      function(eventObj) {
 	        if (eventObj.isApiReady) {
-			  // When API is ready...                                                         
-				console.log("READY!");
-				gapi.hangout.hideApp();
+    			  // When API is ready...                                                         
+    				console.log("READY!");
+
+    				// we expect that appData has format:
+    				// host:port:sessionid
+    				// unpack that and post it back to the server.
+    				var appData = gadgets.views.getParams()['appData'];
+
+    				// it's not clear if this actually helps. It seems like in any situation I can create where the app is actually 
+    				// loaded, the appData is present in the views params. Leaving the code present but knocked out
+    				// in case we find a need for it in the future.
+
+    				//if(_.isUndefined(appData)) {
+    				//	// try to pull it from the hangout data store.
+    				//	appData = gapi.hangout.data.getValue("appData");
+    				//	console.log("No app data present in view params, loaded from datastore: " + appData);
+    				//} else {
+    				//	gapi.hangout.data.setValue("appData", appData);
+    				//}
+
+    				console.log(appData);
+
+    				// TODO if the app is started without app data, note it in the logs.
+    				var appDataPieces = appData.split(":");
+    				
+    				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
+    				sessionId = appDataPieces[2];
+    				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
+		            title = appDataPieces[3].replace("|", ":");
+		            description = appDataPieces[4].replace("|", ":");
+		            shortURL = appDataPieces[5];
+		            isPermalink = appDataPieces[6]=="true";
+		            eventTitle = appDataPieces[7];
+
+		            if(title.length < 1) {
+		            	title = shortURL;
+		            }
+
+		            console.log("eventTitle: " + eventTitle);
+		            console.log("title: " + title);
+		            console.log("isPermalink: " + isPermalink);
 
 
-				// we expect that appData has format:
-				// host:port:sessionid
-				// unpack that and post it back to the server.
-				var appData = gadgets.views.getParams()['appData'];
+    				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
 
-				// it's not clear if this actually helps. It seems like in any situation I can create where the app is actually 
-				// loaded, the appData is present in the views params. Leaving the code present but knocked out
-				// in case we find a need for it in the future.
+    				// add this participant id to the shared state list of participants.
+    				// this lets us know who is actually running the app, for elections.
 
-				//if(_.isUndefined(appData)) {
-				//	// try to pull it from the hangout data store.
-				//	appData = gapi.hangout.data.getValue("appData");
-				//	console.log("No app data present in view params, loaded from datastore: " + appData);
-				//} else {
-				//	gapi.hangout.data.setValue("appData", appData);
-				//}
-				// console.log(appData);
+    				var participantIds = getInitializedIds();
 
-				// TODO if the app is started without app data, note it in the logs.
-				var appDataPieces = appData.split(":");
-				
-				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
-				sessionId = appDataPieces[2];
-				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
+    				participantIds.push(localGoogleId);
+    				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
 
+    				// now, phone home.
+    				loaded(eventObj);		
 
+    				performElection();
 
-				localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
+    				// all clients should perform the election check on every participant changed event, on top of
+    				// whatever other listener gets added if they decide they're the leader.
+    				gapi.hangout.onParticipantsChanged.add(nonLeaderParticipantsChangedHandler);
+            // Underscore Templates for Hangouts Views
 
-				// add this participant id to the shared state list of participants.
-				// this lets us know who is actually running the app, for elections.
+            _.templateSettings = {
+              interpolate : /\{\{(.+?)\}\}/g
+            };
 
-				var participantIds = getInitializedIds();
+            if(isPermalink) {
+            	console.log("displaying permalink page");
+	            var welcome = _.template($("#welcome-template").html());
 
-				participantIds.push(localGoogleId);
-				gapi.hangout.data.setValue("initializedUserIds", JSON.stringify(participantIds));
+	            $('body').append(welcome({
+	              title : title,
+	              description : description,
+	              shortURL : shortURL,
+	              baseURL:baseServerUrl
+	            }));
+            } else {
+            	console.log("displaying non-permalink page");
+				var welcome = _.template($("#welcome-unhangout-template").html())            ;
+				$('body').append(welcome({
+					title: title,
+					eventTitle: eventTitle
+				}));
+            }
 
-				// now, phone home.
-				loaded(eventObj);		
+            var footer = _.template($('#footer-template').html());
 
-				performElection();
+            $('body').append(footer());
 
-				// all clients should perform the election check on every participant changed event, on top of
-				// whatever other listener gets added if they decide they're the leader.
-				gapi.hangout.onParticipantsChanged.add(nonLeaderParticipantsChangedHandler);
-		    	}
-	      });
+            $("#about-contents").hide();
 
-}
+            var bothButtons = $("#about-contents, #share-contents");
+
+            $(".button").click(function() {
+            	bothButtons.hide();
+
+            	$("#" + this.id + "-contents").show();
+            	$(".active").removeClass("active");
+            	$(this).addClass("active");
+            });
+
+            $(".hide").click(function() {
+            	console.log("Hiding app on click");
+	            gapi.hangout.hideApp();
+            });
+          }  // End of IF block
+
+      }); // End of handler
+
+} // End of Init
 
 
 	function getInitializedIds() {
@@ -302,8 +395,120 @@ function init() {
 // Wait for gadget to load.                                                       
 gadgets.util.registerOnLoadHandler(init);
 </script>
+
+  <style>
+  	body {
+  		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  	}
+
+    .title {
+      font-weight: 200;
+      color: #aaa;
+      text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.25);
+
+      background-color: rgb(51, 51, 51);
+
+      padding: 20px;
+
+      font-size: 26px;
+    }	
+
+    .footer {
+    	position: absolute;
+    	bottom: 0px;
+
+    	font-size: 12px;
+    	color: #999;
+    	background-color: rgb(51, 51, 51);
+
+    	width: 100%;
+
+    	padding: 10px;
+	}
+
+	.footer a {
+		text-decoration: none;
+		font-weight: bold;
+
+		color: #ccc;
+	}
+
+	.footer a:hover {
+		text-decoration: underline;
+	}
+
+	.footer a:visited {
+		color: #ccc;
+	}
+
+	input {
+		margin: 5px;
+		width: 290px;
+		height: 30px;
+		font-size: 16px;
+	}
+
+	p {
+		margin: 5px;
+		margin-bottom: 15px;
+	}
+
+	hr {
+		margin: 15px;
+	}
+
+	.button {
+		border-radius: 5px;
+
+		background-color: rgb(51, 51, 51);
+		color: #bbb;
+
+		cursor: pointer;
+
+		float: left;
+
+		width: 130px;
+		padding: 5px;
+
+		margin-left: 10px;
+
+		text-align: center;
+
+		margin-bottom: 10px;
+	}
+
+	.active {
+		color: white;
+		font-weight: bold;
+	}
+
+	.event {
+		font-weight: normal;
+		font-size: 16px;
+		padding: 10px;
+	}
+
+	.hide {
+		color: #bbb;
+		position: absolute;
+		font-size: 16px;
+		right: 10px;
+		top: 10px;
+		cursor: pointer;
+
+		font-style: italic;
+	}
+
+	.hide:hover {
+		background-color: #555;
+		color: white;
+	}
+
+  </style>
+
 <body>
-	<p>This hangout extension doesn't have any UI - no need to show this pane!</p>
+
+
 </body>
 ]]>
 </Content>

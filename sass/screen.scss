@@ -39,6 +39,23 @@ body {
 	width: 940px;
 }
 
+#top {
+	position: absolute;
+	background-color: white;
+
+	box-shadow: 3px 3px 3px #aaa;
+	border: 1px solid #aaa;
+
+	box-sizing: border-box;
+
+	z-index: 60;
+	left: 0px;
+	right: 0px;
+	top: -400px;
+
+	padding: 10px;
+}
+
 #top-left {
 	position: absolute;
 /*	padding-top: 30px;
@@ -203,6 +220,21 @@ body {
 .nav {
 	li.active > a{
 		background-color: #444 !important;
+	}
+
+	.circle {
+		background-color: #da4f49;
+		width: 6px;
+		height: 12px;
+		border-radius: 5px;
+
+		margin-left: 5px;
+
+		display: inline-block;
+
+		&.hide {
+			display: none;
+		}
 	}
 }
 	
@@ -668,7 +700,7 @@ body {
 	border-left: 1px solid #aaa;
 	border-bottom: 1px solid #aaa;
 
-	z-index: 500;
+	z-index: 59;
 
 	#session-live-bar {
 		width: 400px;
@@ -691,6 +723,27 @@ body {
 
 	box-shadow: 3px 3px 3px #aaa;
 }
+
+/*---------------------------- ADMIN STYLES ---------------------------*/
+
+
+#events {
+	float: left;
+}
+
+#permalinks {
+	float: left;
+	margin-left: 50px;
+}
+
+th {
+	padding-right: 20px;
+}
+
+tr:nth-child(even) {
+	background-color: #f1f1f1;
+}
+
 
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {
@@ -761,7 +814,31 @@ body {
 	}
 }
 
+#about-event {
+	.footer {
+		color: #ccc;
+		width: 400px;
+		margin-left: auto;
+		margin-right: auto;
+
+		font-style: italic;
+	}
+}
+
+.admin-table-buttons {
+	.btn {
+		float: left;
+		margin-top: 5px;
+	}
+}
+
 .footer {
 	margin-top: 50px;
 	color: #aaa;
+}
+
+#permalink-create {
+	label {
+		width: 250px;
+	}
 }

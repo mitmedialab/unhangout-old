@@ -13,12 +13,35 @@
 <% events.forEach(function(event) { %>
 <tr>
 	<td>
-	<a href="/event/<%= event.id %>"><%= event.get("title") + " (" + event.get("shortName") + ")"%></a>
+	<a href="/event/<%= event.id %>"><%= event.get("title") + " (" + event.get("shortName") + ")" + (event.isLive() ? " LIVE  " : "") %></a>
 	</td>
 
-	<td class="admin-buttons"><a href="/admin/event/<%=event.id%>" class="btn btn-primary">edit</a></td>
+	<td class="admin-table-buttons"><a href="/admin/event/<%=event.id%>" class="btn btn-primary">edit</a>
+
+	<% if(event.isLive()) { %>
+	<form action="/admin/event/<%=event.id%>/stop" method="post">
+		<button type="submit" class="btn btn-danger">stop</submit>
+	</form>
+	<% } else { %>
+	<form action="/admin/event/<%=event.id%>/start" method="post">
+		<button type="submit" class="btn btn-success">start</submit>
+	</form>
+	<% } %>
 </tr>
 <% }); %>
+</table>
+
+<table id="permalinks">
+	<tr><th>shortcode</th><th># ppl connected</th><th>total seconds active</th><th># hangouts created</th><th>user seconds active</th></tr>
+	<% permalinkSessions.forEach(function(session) { %>
+	<tr>
+		<td><a href="/h/<%= session.get("shortCode") %>"><%= session.get("shortCode") %></a></td>
+		<td><%= session.get("connectedParticipantIds").length %></td>
+		<td><%= session.get("total-seconds") %></td>
+		<td><%= session.get("total-instances") %></td>
+		<td><%= session.get("user-seconds") %></td>
+	</tr>
+	<% }) %>
 </table>
 
 <% include footer.ejs %>

@@ -600,6 +600,16 @@ var ChatInputView = Marionette.ItemView.extend({
 		this.ui.chatInput.val("");
 		e.preventDefault();
 		return false;
+	},
+
+	onRender: function() {
+		if(!curEvent.isLive()) {
+			this.$el.find("#chat-input").attr("disabled", true);
+			this.$el.find("#chat-input").addClass("disabled");			
+		} else {
+			this.$el.find("#chat-input").removeAttr("disabled");
+			this.$el.find("#chat-input").removeClass("disabled");			
+		}
 	}
 });
 
@@ -687,6 +697,26 @@ var ChatView = Marionette.CompositeView.extend({
 var SessionLiveView = Marionette.ItemView.extend({
 	template: "#session-live-bar-template",
 	id: "session-live-bar"
+});
+
+var AboutEventView = Marionette.ItemView.extend({
+	template: "#about-event-template",
+	id: "about-event",
+
+	initialize: function() {
+		this.listenTo(this.model, 'all', _.bind(function() {
+			$(".updated").removeClass("hide");
+			this.render();
+		}, this), this);
+	},
+
+	onRender: function() {
+		if(this.model.isLive()) {
+			this.$el.find(".footer").hide();
+		} else {
+			this.$el.find(".footer").show();
+		}
+	},
 });
 
 // Manages the display of embedded videos on the upper left corner.

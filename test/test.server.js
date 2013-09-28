@@ -16,7 +16,7 @@ var standardSetup = function(done) {
 	s.on("started", done);
 	
 	seed.run(1, redis, function() {
-		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1});		
+		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "timeoutHttp":true});		
 	});
 }
 
@@ -37,7 +37,7 @@ var mockSetup = function(admin, callback) {
 		}
 
 		seed.run(1, redis, function() {
-			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin});		
+			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin, "timeoutHttp":true});		
 		});
 	}
 }
@@ -211,6 +211,91 @@ describe('unhangout server', function() {
 		});
 	});
 
+
+	describe('GET /h/:code', function(){
+		beforeEach(mockSetup(false));
+		afterEach(standardShutdown);
+
+		it('should direct to the landing page when there is no code', function(done){
+			request.get('http://localhost:7777/h/')
+				.end(function(res){
+					res.status.should.equal(200);
+					done();
+				});
+		});
+
+		it('if :code is new, it should create a new session on the server', function(done){
+			request.get('http://localhost:7777/h/test')
+				.redirects(0)
+				.end(function(res){
+					res.status.should.equal(302);
+					s.permalinkSessions.length.should.equal(1);
+					done();
+				});
+		});
+
+		it('if :code is active, multiple requests only create one session', function(done){
+			request.get('http://localhost:7777/h/test')
+				.redirects(0)
+				.end(function(res){
+					res.status.should.equal(302);
+					s.permalinkSessions.length.should.equal(1);
+					request.get('http://localhost:7777/h/test')
+						.end(function(res){
+							res.status.should.equal(200);
+							s.permalinkSessions.length.should.equal(1);
+							done();
+						});
+				});
+		});
+
+		it('if :code is new, it should present the form only for first visitor', function(done){
+			request.get('http://localhost:7777/h/test')
+				.end(function(res){
+					res.text.indexOf('<input').should.not.equal(-1);
+					request.get('http://localhost:7777/h/test')
+						.end(function(res){
+							res.text.indexOf('<input').should.equal(-1);
+							done();
+						});
+				});
+		});
+	});
+
+	describe('POST /h/admin/:code', function(){
+		beforeEach(mockSetup(false, function(done){
+			request.get('http://localhost:7777/h/test')
+				.end(function(res) {
+					res.status.should.equal(200);
+					done();
+				});
+		}));
+
+		afterEach(standardShutdown);
+
+		it('should reject requests without a valid creation key in the request body', function(done){
+			var session = s.permalinkSessions[0];
+			request.post('http://localhost:7777/h/admin/test')
+				.send({creationKey: 'wrong1', title: 'migrate title', description: 'something cool'})
+				.end(function(res){
+					res.status.should.equal(403);
+					done();
+				});
+		});
+
+		it('should update session title and description when valid creation key is present', function(done){
+			var session = s.permalinkSessions.at(0);
+			request.post('http://localhost:7777/h/admin/test')
+				.send({creationKey: session.get('creationKey'), title: 'migrate title', description: 'something cool'})
+				.end(function(res){
+					res.status.should.equal(200);
+					session.get('title').should.equal('migrate title');
+					session.get('description').should.equal('something cool');
+					done();
+				});
+		});
+	});
+
 	describe('POST /session/hangout/:id', function() {
 		beforeEach(mockSetup(false, function(done) {
 				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
@@ -238,6 +323,8 @@ describe('unhangout server', function() {
 					done();
 				});
 		});
+
+
 
 		it('should handle participants properly', function(done) {
 			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))

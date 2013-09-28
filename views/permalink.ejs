@@ -1,0 +1,41 @@
+<% include permalink-header.ejs %>
+
+<div class="container">
+
+<form action="/h/admin/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
+	<% if(showAdmin) { %>
+
+	<input name="creationKey" type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
+
+	<input id="title" name="title" type="text" class="large" placeholder="Title">
+	<textarea name="description" id="description" placeholder="Description"></textarea>
+	<submit class="btn btn-primary" id="session-update">SET TITLE AND DESCRIPTION</submit>
+	<% } else { %>
+
+	<h3><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></h3>
+	<p><%= session.get("description") %></p>
+	<% } %>
+</form>
+
+The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "currently OFFLINE. Click JOIN to start it!" %> <br><br>
+
+<% if(session.get("hangoutConnected")) { %>
+
+Currently connected participants: <br>
+<ul>
+	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
+	<li><%= users.get(id).get("displayName") %><img width=100 src="<%= users.get(id).get("picture") %>"></li>
+	<% }); %>
+</ul>
+
+<% } %>
+
+
+
+
+<a href="/session/<%= session.get("session-key") %>" class="btn btn-success btn-large" target="_new">JOIN HANGOUT</a>
+
+</div>
+
+<% include footer.ejs %>
+
