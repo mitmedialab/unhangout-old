@@ -637,26 +637,27 @@ body {
 /* line 722, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
-  font-size: 1.6em;
+  font-size: 1.4em;
 }
 /* line 727, ../../sass/screen.scss */
 .event .description {
+  font-size: 1.4em;
   width: 800px;
 }
-/* line 731, ../../sass/screen.scss */
+/* line 732, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 736, ../../sass/screen.scss */
+/* line 737, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 743, ../../sass/screen.scss */
+/* line 744, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -668,13 +669,13 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 756, ../../sass/screen.scss */
+/* line 757, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 763, ../../sass/screen.scss */
+/* line 764, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
