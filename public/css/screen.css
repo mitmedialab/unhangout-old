@@ -686,26 +686,27 @@ tr:nth-child(even) {
 /* line 775, ../../sass/screen.scss */
 .event .title {
   font-weight: bold;
-  font-size: 1.6em;
+  font-size: 1.4em;
 }
 /* line 780, ../../sass/screen.scss */
 .event .description {
+  font-size: 1.4em;
   width: 800px;
 }
-/* line 784, ../../sass/screen.scss */
+/* line 785, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 789, ../../sass/screen.scss */
+/* line 790, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 796, ../../sass/screen.scss */
+/* line 797, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -717,13 +718,13 @@ tr:nth-child(even) {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 809, ../../sass/screen.scss */
+/* line 810, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 817, ../../sass/screen.scss */
+/* line 818, ../../sass/screen.scss */
 #about-event .footer {
   color: #ccc;
   width: 400px;
@@ -732,19 +733,19 @@ tr:nth-child(even) {
   font-style: italic;
 }
 
-/* line 828, ../../sass/screen.scss */
+/* line 829, ../../sass/screen.scss */
 .admin-table-buttons .btn {
   float: left;
   margin-top: 5px;
 }
 
-/* line 834, ../../sass/screen.scss */
+/* line 835, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
 }
 
-/* line 840, ../../sass/screen.scss */
+/* line 841, ../../sass/screen.scss */
 #permalink-create label {
   width: 250px;
 }
