@@ -330,11 +330,11 @@ var UserView = Marionette.ItemView.extend({
 			this.$el.addClass("focus");
 		}
 
-		this.$el.attr("data-toggle", "tooltip");
-		this.$el.attr("data-placement", "left");
-		this.$el.attr("data-container", "#chat-container-region");
-		this.$el.attr("title", this.model.get("displayName"));
-		this.$el.tooltip();
+		this.$el.find("img").attr("data-toggle", "tooltip");
+		this.$el.find("img").attr("data-placement", "left");
+		this.$el.find("img").attr("data-container", "#chat-container-region");
+		this.$el.find("img").attr("title", this.model.get("displayName"));
+		this.$el.find("img").tooltip();
 	}
 });
 

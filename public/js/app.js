@@ -271,7 +271,7 @@ $(document).ready(function() {
 				return;
 			}
 
-			this.top.$el.animate({"top":-500});
+			this.top.$el.animate({"top":(-1*this.top.$el.outerHeight())});
 
 			aboutShown = false;
 			$("#about-nav").removeClass("active");
@@ -382,6 +382,8 @@ $(document).ready(function() {
 	// if the event isn't live yet, force the about page to show.
 	if(!curEvent.isLive()) {
 		app.vent.trigger("about-nav");
+	} else {
+		app.top.$el.animate({"top":(-1*app.top.$el.outerHeight())});
 	}
 
 	// Handles clicks on the nav bar links.
