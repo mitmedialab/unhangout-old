@@ -383,7 +383,7 @@ $(document).ready(function() {
 	if(!curEvent.isLive()) {
 		app.vent.trigger("about-nav");
 	} else {
-		app.top.$el.animate({"top":(-1*app.top.$el.outerHeight())});
+		app.top.$el.animate({"top":(-1*app.top.$el.outerHeight() - 200)});
 	}
 
 	// Handles clicks on the nav bar links.
