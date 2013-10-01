@@ -28,31 +28,30 @@
     "url": "https://github.com/drewww/unhangout.git"
   },
   "dependencies" : {
-	"commander" :  "*",
-    "express"   :  "*",
-	"winston"   :  "*",
-	"sockjs"    :  "*",
-	"underscore":  "*",
-	"node-uuid" :  "*",
-	"backbone"  :  "*",
-	"ejs"       :  "*",
-	"async"     :  "*",
-	"passport"  :  "*",
-	"passport-google-oauth":"*",
-	"redis"     :  "*",
-	"connect-redis":"*",
-  "validator":"*",
-	
-	"moment"    : "*",
-	"googleapis": "0.4.5",
-	"gapitoken" : "*"
+  	"commander" :  "2.0.0",
+    "express"   :  "3.3.5",
+  	"winston"   :  "0.7.2",
+  	"sockjs"    :  "0.3.7",
+  	"underscore":  "1.5.1",
+  	"node-uuid" :  "1.3.3",
+  	"backbone"  :  "1.0.0",
+  	"ejs"       :  "0.8.4",
+  	"async"     :  "0.2.9",
+  	"passport"  :  "0.1.17",
+  	"passport-google-oauth":"0.1.5",
+  	"redis"     :  "0.8.4",
+  	"connect-redis":"1.4.5",
+    "validator":"1.4.0",
+  	"moment"    : "2.1.0",
+  	"googleapis": "0.4.5",
+  	"gapitoken" : "0.0.3"
   },
   "analyze": false,
   "devDependencies": {
-    "mocha"     : "*",
-	"superagent": "*",
-	"should"    : "*",
-	"sockjs-client": "*"
+    "mocha"     : "1.12.0",
+	"superagent": "0.15.4",
+	"should"    : "1.2.2",
+	"sockjs-client": "0.1.3"
   },
   "license": "BSD",
   "engines": {
