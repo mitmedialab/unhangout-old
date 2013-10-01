@@ -152,13 +152,13 @@ body {
 	box-shadow: -3px 0px 3px #aaa;
 	background-color: white;
 
-	.tooltip-inner {
-		white-space: nowrap;
-	}
+	// .tooltip-inner {
+	// 	white-space: nowrap;
+	// }
 
-	.tooltip {
-		left: -70px !important;
-	}
+	// .tooltip {
+	// 	left: -70px !important;
+	// }
 
 	#user-list {
 		overflow-y: visible;
@@ -443,7 +443,7 @@ body {
 
 		height: 23px;
 
-		width: 100px;
+		width: 130px;
 	}
 	.empty {
 		height: 40px;
