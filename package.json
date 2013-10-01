@@ -44,7 +44,7 @@
   "validator":"*",
 	
 	"moment"    : "*",
-	"googleapis": "*",
+	"googleapis": "0.4.5",
 	"gapitoken" : "*"
   },
   "analyze": false,
