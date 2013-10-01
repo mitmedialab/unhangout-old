@@ -1,0 +1,72 @@
+<% include header.ejs %>
+<script>
+
+	$("button").click(function() {
+		console.log("click");
+
+		$("form").submit();
+		return false;
+	});
+
+  $(".nav li.active").removeClass("active");
+  $("#admin-nav").addClass("active");
+</script>
+
+
+
+
+<form class="form-horizontal" action="/admin/event/<%= create ? "new":event.id%>" method="post" encoding="application/x-www-form-urlencoded">
+
+	<input type="hidden" name="create" value="<%= create %>">
+
+  <div class="control-group">
+    <label class="control-label">Link</label>
+    <div class="controls">
+    <% if(event) { %>
+      <a href="/event/<%= event.id%>">EVENT PAGE</a>
+      <% } %>
+      <%= (event &&event.isLive()) ? " LIVE" : "" %>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="inputTitle">Title</label>
+    <div class="controls">
+      <input type="text" id="inputTitle" name="title" placeholder="Title" value="<%=create ? "":event.get("title") %>">
+    </div>
+   </div>
+
+  <div class="control-group">
+    <label class="control-label" for="inputShortName">Short name</label>
+    <div class="controls">
+      <input type="text" id="inputShortName" name="shortName" placeholder="Short name" value="<%=create? "":event.get("shortName") %>">
+    </div>
+  </div>
+
+<div class="control-group">
+    <label class="control-label" for="inputOrganizer">Organizer</label>
+    <div class="controls">
+      <input type="text" id="inputOrganizer" placeholder="Organizer" name="organizer" value="<%=create? "":event.get("organizer") %>">
+    </div>
+  </div>
+
+<div class="control-group">
+    <label class="control-label" for="inputDescription">Description</label>
+    <div class="controls">
+      <textarea rows=10 type="text" id="inputDescription" name="description" placeholder="Description"><%=create? "":event.get("description")%></textarea>
+    </div>
+  </div>
+
+<div class="control-group">
+    <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
+    <div class="controls">
+      <textarea rows=10 type="text" id="inputWelcomeMessage" name="welcomeMessage" placeholder="welcome message"><%=create? "":event.get("welcomeMessage")%></textarea>
+    </div>
+  </div>
+
+
+  	<button class="btn btn-primary"><%= create? "Create": "Update" %></button>
+</form>
+
+
+<% include footer.ejs %>

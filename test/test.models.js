@@ -13,12 +13,75 @@ describe("SERVEREVENT", function() {
 	});
 	
 	describe("#isLive", function() {
-		it('should return true if start date is before now and end date is after', function() {
-			var event = new models.ServerEvent({start:new Date().getTime()-60, end:new Date().getTime()+60});
-			event.isLive().should.equal(true);
+		it('should return false before start is called on an event', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.isLive().should.be.false;
+		});
+
+		it('should return true after start is called on an event', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.start();
+			event.isLive().should.be.true;
+		});
+
+		it('should return false after end and start are called on an event', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.start();
+			event.stop();
+			event.isLive().should.be.false;
+		});
+
+		it('should return true if an event is started, stopped, and started again', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.start();
+			event.stop();
+			event.start();
+			event.isLive().should.be.true;
+		});
+	});
+
+	describe("#start", function() {
+		it('should start if stopped', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			var err = event.start();
+
+			should.not.exist(err);
+		});
+
+		it('should return an error if started while already live', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+			event.start();
+			var err = event.start();
+			err.should.be.instanceOf(Error);
 		});
 	});
 	
+	describe("#stop", function() {
+		it('should stop if started already', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.start();
+			var err = event.stop();
+
+			should.not.exist(err);
+		});
+
+		it('should return an error if stopped while already stopped', function() {
+			var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
+
+			event.start();
+			event.stop();
+			var err = event.stop();
+
+			err.should.be.instanceOf(Error);
+		});
+	});
+
 	describe("#userConnected", function() {
 		it("should add a connected user to its internal list", function() {
 			var user = new models.ServerUser();

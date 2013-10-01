@@ -33,9 +33,10 @@ exports.run = function(dbId, redis, callback) {
 
 				var events = [];
 
-				events.push(new models.ServerEvent({title:"Writers at Work", organizer: "National Writing Program & ConnectedLearning.tv",
+				events.push(new models.ServerEvent({title:"Writers at Work", shortName:"writers-at-work", organizer: "National Writing Program & ConnectedLearning.tv",
 				description: "Throughout July, NWP partnered with Connected Learning TV to host a webinar series called Writers at Work: Making and Connected Learning. As a wrap-up to our series we invite you to regroup here to debrief with us, test and tinker with this new unHangout tool, and continue the great conversations that have been started! We will start with a whole group kick-off and then split up into smaller group discussions, based on themes and topics raised by the seminar series. Please be aware that this is a “beta-test webinar” so your adventurous spirit is welcome!",
-				start: new Date().getTime(), end: new Date().getTime()+60*60*2*1000}));
+				start: new Date().getTime(), end: new Date().getTime()+60*60*2*1000,
+				welcomeMessage: "Welcome to the Writers at Work session, hosted by the National Writing Project!"}));
 
 				// events.push(new models.ServerEvent({title:"Open Source Learning Unhangout", organizer: "MIT Media Lab & ConnectedLearning.tv",
 				// description: "There are more online resources for education than ever, but how to make sense of them all? Do they have a role in a traditional classroom? For life long learners? Come share your favorite resources, discover new ones, and get inspired about how to bring open educational resources into your classroom.",
@@ -104,6 +105,8 @@ if(require.main === module)
 
 	logger.info("Called seeds directly; running on main redis db.");
 	
+	models.logger = logger;
+
 	var r = redis.createClient();
 	r.on("connect", function() {
 		exports.run(0, r, function() {

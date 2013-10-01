@@ -6,6 +6,8 @@ lib-cov
 *.out
 *.pid
 *.gz
+*.iml
+*.rdb
 
 pids
 logs
@@ -21,3 +23,4 @@ node_modules
 conf.json
 
 .sass-cache
+.idea

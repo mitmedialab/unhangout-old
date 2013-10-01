@@ -179,6 +179,7 @@ var SessionView = Marionette.ItemView.extend({
 
 	attend: function() {
 		console.log("attend pressed on " + this.model.id);
+		console.log("model: " + JSON.stringify(this.model));
 
 		if(this.model.isLive()) {
 			// if the event has started, button presses should attempt to join
@@ -229,8 +230,16 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 
 		this.listenTo(this.collection, "add", function() {
 			this.updateDisplay();
-			this.render();
 			this.collection.goTo(this.collection.currentPage);
+
+			// really not sure why a render right here won't
+			// get rid of the double-display issue, but a timedout
+			// one will. Erg. The basic issue here is that when we ad
+			// to the paginated display it tries to be helpful
+			// and insta-append the new object to the list instead
+			// of re-rendering everything. 
+			// this.render();
+			setTimeout(this.render, 1);
 		}, this);
 	},
 
@@ -321,11 +330,11 @@ var UserView = Marionette.ItemView.extend({
 			this.$el.addClass("focus");
 		}
 
-		this.$el.attr("data-toggle", "tooltip");
-		this.$el.attr("data-placement", "left");
-		this.$el.attr("data-container", "#chat-container-region");
-		this.$el.attr("title", this.model.get("displayName"));
-		this.$el.tooltip();
+		this.$el.find("img").attr("data-toggle", "tooltip");
+		this.$el.find("img").attr("data-placement", "left");
+		this.$el.find("img").attr("data-container", "#chat-container-region");
+		this.$el.find("img").attr("title", this.model.get("displayName"));
+		this.$el.find("img").tooltip();
 	}
 });
 
@@ -349,7 +358,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	setEmbed: function() {
 		var newId = $("#youtube_id").val();
 
-		if(newId.length!=11) {
+		if(newId.length!=11 && newId.length!=0) {
 			this.$el.find("#embed-modal p.text-warning").removeClass("hide");
 			this.$el.find("#embed-modal .control-group").addClass("error");
 		} else {
@@ -591,6 +600,16 @@ var ChatInputView = Marionette.ItemView.extend({
 		this.ui.chatInput.val("");
 		e.preventDefault();
 		return false;
+	},
+
+	onRender: function() {
+		if(!curEvent.isLive()) {
+			this.$el.find("#chat-input").attr("disabled", true);
+			this.$el.find("#chat-input").addClass("disabled");			
+		} else {
+			this.$el.find("#chat-input").removeAttr("disabled");
+			this.$el.find("#chat-input").removeClass("disabled");			
+		}
 	}
 });
 
@@ -629,16 +648,30 @@ var ChatMessageView = Marionette.ItemView.extend({
 	serializeData: function() {
 		var model = this.model.toJSON();
 
-		var tempUser = new models.User(this.model.get("user"));
+		// if we have a user object (ie if we're not a system generated
+		// message) then convert its name to the short display name.
+		if(this.model.has("user")) {
+			var tempUser = new models.User(this.model.get("user"));
+			model.user["shortDisplayName"] = tempUser.getShortDisplayName();
+		} else {
+			// fill in a sort of fake empty name, just to the templating
+			// system doesn't freak out.
+			model.user = {shortDisplayName:""};
+		}
 
-		model.user["shortDisplayName"] = tempUser.getShortDisplayName();
 		return model;
 	},
 
 	onRender: function() {
-		if(this.model.get("user").admin) {
+
+		if(!this.model.has("user")) {
+			// mark this chat message as a system message, so we can
+			// display it differently.
+			this.$el.addClass("system");
+		} else if(this.model.get("user").admin) {
 			this.$el.find(".from").addClass("admin");
 		}
+
 	}
 });
 
@@ -664,6 +697,26 @@ var ChatView = Marionette.CompositeView.extend({
 var SessionLiveView = Marionette.ItemView.extend({
 	template: "#session-live-bar-template",
 	id: "session-live-bar"
+});
+
+var AboutEventView = Marionette.ItemView.extend({
+	template: "#about-event-template",
+	id: "about-event",
+
+	initialize: function() {
+		this.listenTo(this.model, 'all', _.bind(function() {
+			$(".updated").removeClass("hide");
+			this.render();
+		}, this), this);
+	},
+
+	onRender: function() {
+		if(this.model.isLive()) {
+			this.$el.find(".footer").hide();
+		} else {
+			this.$el.find(".footer").show();
+		}
+	},
 });
 
 // Manages the display of embedded videos on the upper left corner.
