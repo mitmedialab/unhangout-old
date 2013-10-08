@@ -239,10 +239,15 @@ function init() {
 
 
 	function loaded(eventObj) {
+		var allParticipantIds = _.map(gapi.hangout.getParticipants(), function(p) {
+			return p.person.id;
+		});
+
 		$.post(serverUrl, {
 			type: "loaded",
 			url: gapi.hangout.getHangoutUrl(),
-			participant: localGoogleId
+			participant: localGoogleId,
+			participants: allParticipantIds,
 		}).done(function() {
 			console.log("loaded success!");
 		}).fail(function() {
