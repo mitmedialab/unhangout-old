@@ -1,6 +1,9 @@
 <% include permalink-header.ejs %>
 
 <div class="container">
+<div class="alert">
+There is going to be some instability in the server this week - you may have noticed some issues with people getting sent to the wrong hangout. We're chasing that problem down, but it requires the occasional server restart. This should be invisible to you, but in case it's not, you've been warned! Feel free to reach out to me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a> if you have questions or concerns! Thanks!
+</div>
 
 <form action="/h/admin/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
 	<% if(showAdmin) { %>
