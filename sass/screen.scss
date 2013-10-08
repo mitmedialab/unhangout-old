@@ -894,3 +894,70 @@ tr:nth-child(even) {
     text-align:center;
     background: gray;
 }
+
+/*-------------------------- PERMALINKS -------------------------------*/
+
+.permalink-title {
+	font-size: 34px;
+	color: #3c3c3c;
+}
+
+.permalink-description {
+	font-size: 18px;
+	color: #3c3c3c;
+}
+
+.participants-header {
+	font-size: 18px;
+	color: #63666a;
+}
+
+.hangout-status {
+	float: right;
+
+	.icon-facetime-video {
+		color: #57AF57;
+		font-size: 24px;
+	}
+
+	.icon-remove-sign {
+		color: #D34F3E;
+		font-size: 24px;
+	}
+
+	span {
+		margin-left: 10px;
+		font-size: 20px;
+		color: #63666a;
+	}
+}
+
+.line {
+	margin-left: 280px;
+	margin-right: 20px;
+	margin-top: -10px;
+	size: 2;
+	border-top: 1px #DfDfDf solid; 
+}
+
+.participant-info {
+		margin-top: -40px;
+
+	img {
+		border: 1px #57AF57 solid;
+		margin-right: 25px;
+		margin-top: 40px;
+		border-radius: 5px;
+	}
+
+	.overlay {
+		position: absolute;
+		color: white;
+		width: 102px;
+		margin-top: 135px;
+		margin-left: -131px;
+		text-align: center;
+		background-color: #57AF57;
+		border-radius: 3px;
+	}
+}
