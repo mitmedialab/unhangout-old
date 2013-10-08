@@ -866,3 +866,8 @@ tr:nth-child(even) {
   background-color: #57AF57;
   border-radius: 3px;
 }
+
+/* line 965, ../../sass/screen.scss */
+td form {
+  margin: 0px;
+}
