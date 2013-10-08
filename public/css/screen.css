@@ -794,3 +794,75 @@ tr:nth-child(even) {
   text-align: center;
   background: gray;
 }
+
+/*-------------------------- PERMALINKS -------------------------------*/
+/* line 900, ../../sass/screen.scss */
+.permalink-title {
+  font-size: 34px;
+  color: #3c3c3c;
+}
+
+/* line 905, ../../sass/screen.scss */
+.permalink-description {
+  font-size: 18px;
+  color: #3c3c3c;
+}
+
+/* line 910, ../../sass/screen.scss */
+.participants-header {
+  font-size: 18px;
+  color: #63666a;
+}
+
+/* line 915, ../../sass/screen.scss */
+.hangout-status {
+  float: right;
+}
+/* line 918, ../../sass/screen.scss */
+.hangout-status .icon-facetime-video {
+  color: #57AF57;
+  font-size: 24px;
+}
+/* line 923, ../../sass/screen.scss */
+.hangout-status .icon-remove-sign {
+  color: #D34F3E;
+  font-size: 24px;
+}
+/* line 928, ../../sass/screen.scss */
+.hangout-status span {
+  margin-left: 10px;
+  font-size: 20px;
+  color: #63666a;
+}
+
+/* line 935, ../../sass/screen.scss */
+.line {
+  margin-left: 280px;
+  margin-right: 20px;
+  margin-top: -10px;
+  size: 2;
+  border-top: 1px #DfDfDf solid;
+}
+
+/* line 943, ../../sass/screen.scss */
+.participant-info {
+  margin-top: -40px;
+}
+/* line 946, ../../sass/screen.scss */
+.participant-info img {
+  border: 1px #57AF57 solid;
+  margin-right: 25px;
+  margin-top: 40px;
+  border-radius: 5px;
+}
+/* line 953, ../../sass/screen.scss */
+.participant-info .overlay {
+  position: absolute;
+  color: white;
+  width: 102px;
+  margin-top: 135px;
+  margin-left: -131px;
+  text-align: center;
+  background-color: #57AF57;
+  border-radius: 3px;
+}
