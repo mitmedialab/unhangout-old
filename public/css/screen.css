@@ -617,47 +617,63 @@ body {
   width: 100%;
   background-size: 1400px;
   margin-top: -20px;
+  font-family: "open sans",arial,sans-serif;
 }
 /* line 705, ../../sass/screen.scss */
 .jumbotron h1 {
-  padding-top: 75px;
+  padding-top: 60px;
   margin-top: 0px;
+  font-weight: 200;
+  font-size: 36px;
 }
-/* line 710, ../../sass/screen.scss */
+/* line 712, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
-
 /* line 718, ../../sass/screen.scss */
+.jumbotron h3 {
+  font-weight: 200;
+  font-size: 20px;
+}
+
+/* line 724, ../../sass/screen.scss */
+.event {
+  margin-left: 20px;
+  margin-top: 20px;
+}
+/* line 728, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
+  color: #3c3c3c;
+  font-family: "open sans",arial,sans-serif;
 }
-/* line 722, ../../sass/screen.scss */
+/* line 734, ../../sass/screen.scss */
 .event .title {
-  font-weight: bold;
-  font-size: 1.4em;
+  font-weight: 200;
+  font-size: 20px;
 }
-/* line 727, ../../sass/screen.scss */
+/* line 739, ../../sass/screen.scss */
 .event .description {
-  font-size: 1.4em;
-  width: 800px;
+  margin-top: 20px;
+  font-size: 16px;
+  width: 780px;
 }
-/* line 732, ../../sass/screen.scss */
+/* line 746, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 737, ../../sass/screen.scss */
+/* line 751, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 744, ../../sass/screen.scss */
+/* line 758, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -669,13 +685,39 @@ body {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 757, ../../sass/screen.scss */
+/* line 771, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 764, ../../sass/screen.scss */
+/* line 778, ../../sass/screen.scss */
+.event-container {
+  margin-left: 0px;
+}
+/* line 781, ../../sass/screen.scss */
+.event-container h3 {
+  margin-top: 20px;
+  font-weight: 400;
+  font-size: 26px;
+  color: #444;
+}
+
+/* line 790, ../../sass/screen.scss */
+.signup h3 {
+  margin-top: 20px;
+  font-weight: 400;
+  font-size: 26px;
+  color: #444;
+}
+/* line 797, ../../sass/screen.scss */
+.signup p {
+  color: #3c3c3c;
+  font-size: 16px;
+  font-family: "open sans",arial,sans-serif;
+}
+
+/* line 804, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
