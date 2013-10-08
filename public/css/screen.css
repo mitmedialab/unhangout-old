@@ -127,14 +127,6 @@ body {
 #presence-gutter ul {
   margin: 0px;
 }
-/* line 155, ../../sass/screen.scss */
-#presence-gutter .tooltip-inner {
-  white-space: nowrap;
-}
-/* line 159, ../../sass/screen.scss */
-#presence-gutter .tooltip {
-  left: -70px !important;
-}
 /* line 163, ../../sass/screen.scss */
 #presence-gutter #user-list {
   overflow-y: visible;
@@ -748,4 +740,129 @@ tr:nth-child(even) {
 /* line 841, ../../sass/screen.scss */
 #permalink-create label {
   width: 250px;
+}
+
+/*-------------------------- HOW TO UNHANGOUT -------------------------*/
+/* line 848, ../../sass/screen.scss */
+.how-to-unhangout {
+  color: #444;
+  margin-left: 20px;
+  height: 450px;
+  font-family: "open sans",arial,sans-serif;
+}
+/* line 854, ../../sass/screen.scss */
+.how-to-unhangout h4 {
+  margin-top: 45px;
+  margin-left: 600px;
+  font-weight: 200;
+  font-size: 22px;
+}
+/* line 861, ../../sass/screen.scss */
+.how-to-unhangout img {
+  margin-left: 70px;
+  float: left;
+  width: 500px;
+  height: 433px;
+}
+/* line 868, ../../sass/screen.scss */
+.how-to-unhangout p {
+  font-size: 14px;
+  float: right;
+  width: 240px;
+}
+/* line 874, ../../sass/screen.scss */
+.how-to-unhangout .step-description {
+  float: right;
+  width: 340px;
+  margin-top: 30px;
+}
+/* line 880, ../../sass/screen.scss */
+.how-to-unhangout .step-icon {
+  color: #63666a;
+  margin-left: 20px;
+}
+
+/* line 886, ../../sass/screen.scss */
+.circle {
+  margin-bottom: -52px;
+  width: 40px;
+  height: 40px;
+  border-radius: 40px;
+  font-size: 24px;
+  color: #fff;
+  line-height: 40px;
+  text-align: center;
+  background: gray;
+}
+
+/*-------------------------- PERMALINKS -------------------------------*/
+/* line 900, ../../sass/screen.scss */
+.permalink-title {
+  font-size: 34px;
+  color: #3c3c3c;
+}
+
+/* line 905, ../../sass/screen.scss */
+.permalink-description {
+  font-size: 18px;
+  color: #3c3c3c;
+}
+
+/* line 910, ../../sass/screen.scss */
+.participants-header {
+  font-size: 18px;
+  color: #63666a;
+}
+
+/* line 915, ../../sass/screen.scss */
+.hangout-status {
+  float: right;
+}
+/* line 918, ../../sass/screen.scss */
+.hangout-status .icon-facetime-video {
+  color: #57AF57;
+  font-size: 24px;
+}
+/* line 923, ../../sass/screen.scss */
+.hangout-status .icon-remove-sign {
+  color: #D34F3E;
+  font-size: 24px;
+}
+/* line 928, ../../sass/screen.scss */
+.hangout-status span {
+  margin-left: 10px;
+  font-size: 20px;
+  color: #63666a;
+}
+
+/* line 935, ../../sass/screen.scss */
+.line {
+  margin-left: 280px;
+  margin-right: 20px;
+  margin-top: -10px;
+  size: 2;
+  border-top: 1px #DfDfDf solid;
+}
+
+/* line 943, ../../sass/screen.scss */
+.participant-info {
+  margin-top: -40px;
+}
+/* line 946, ../../sass/screen.scss */
+.participant-info img {
+  border: 1px #57AF57 solid;
+  margin-right: 25px;
+  margin-top: 40px;
+  border-radius: 5px;
+}
+/* line 953, ../../sass/screen.scss */
+.participant-info .overlay {
+  position: absolute;
+  color: white;
+  width: 102px;
+  margin-top: 135px;
+  margin-left: -131px;
+  text-align: center;
+  background-color: #57AF57;
+  border-radius: 3px;
 }

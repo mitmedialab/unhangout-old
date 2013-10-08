@@ -1,6 +1,9 @@
 <% include permalink-header.ejs %>
 
 <div class="container">
+<div class="alert">
+There is going to be some instability in the server this week - you may have noticed some issues with people getting sent to the wrong hangout. We're chasing that problem down, but it requires the occasional server restart. This should be invisible to you, but in case it's not, you've been warned! Feel free to reach out to me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a> if you have questions or concerns! Thanks!
+</div>
 
 <form action="/h/admin/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
 	<% if(showAdmin) { %>
@@ -12,30 +15,56 @@
 	<submit class="btn btn-primary" id="session-update">SET TITLE AND DESCRIPTION</submit>
 	<% } else { %>
 
-	<h3><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></h3>
-	<p><%= session.get("description") %></p>
+	<br/>
+
+	<span class="permalink-title"><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></span>
+
+	<div class="hangout-status">
+		<% if(session.get("hangoutConnected")) { %>
+			<i class="icon-facetime-video"></i>
+		<% } else { %>
+			<i class="icon-remove-sign"></i>
+		<% } %> 
+
+		<span>
+		<%= session.get("hangoutConnected") ? "LIVE" : "OFFLINE" %>
+		</span>
+	</div>
+
+	<br/><br/>
+
+	<p class="permalink-description"><%= session.get("description") %></p>
+	
 	<% } %>
 </form>
 
-The hangout is <%= session.get("hangoutConnected") ? "LIVE" : "currently OFFLINE. Click JOIN to start it!" %> <br><br>
+<br><br>
 
 <% if(session.get("hangoutConnected")) { %>
 
-Currently connected participants: <br>
-<ul>
+<span class="participants-header">Currently connected particpants</span>
+<hr noshade size=2 class="line">
+
+<br>
+
+<div class="participant-info">
 	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
-	<li><%= users.get(id).get("displayName") %><img width=100 src="<%= users.get(id).get("picture") %>"></li>
+			
+		<a href="<%= users.get(id).get("link") %>" target="blank">
+		<img width=100 src="<%= users.get(id).get("picture") %>">
+		</a>
+
+		<span class="overlay"><%= users.get(id).get("displayName") %></span>
+
 	<% }); %>
-</ul>
+
+	<br/><br/><br/><br/>
+</div>
 
 <% } %>
-
-
-
 
 <a href="/session/<%= session.get("session-key") %>" class="btn btn-success btn-large" target="_new">JOIN HANGOUT</a>
 
 </div>
 
 <% include footer.ejs %>
-
