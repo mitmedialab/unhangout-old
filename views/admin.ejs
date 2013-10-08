@@ -40,6 +40,9 @@
 		<td><%= session.get("total-seconds") %></td>
 		<td><%= session.get("total-instances") %></td>
 		<td>
+		<div class="hide">
+		<%= JSON.stringify(session) %>
+		</div>
 		<% if(session.get("hangoutConnected")) { %>
 		<form action="/h/<%= session.get("shortCode") %>/stop" method="post">
 			<button type="submit" class="btn btn-danger btn-link">stop</submit>
