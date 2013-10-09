@@ -1,141 +1,293 @@
 <% include header.ejs %>
 
 <script>
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-42792478-1', 'mit.edu');
-  ga('send', 'pageview');
+ga('create', 'UA-42792478-1', 'mit.edu');
+ga('send', 'pageview');
 
 </script>
 
-	<div class="jumbotron">
-		<h1>The Unhangout Project</h1>
-		<h3>A platform for unconferences. On the web. </h3>
-	</div>
+
+<div class="jumbotron">
+    <h1>The Unhangout Project</h1>
+
+    <h3>A platform for unconferences. On the web.</h3>
+</div>
 
 <div class="container">
-<div id="home" class="section">
+    <div class="section" id="home">
+        <div class="row event-container">
+            <h3>Upcoming Events</h3>
+        </div>
 
-<div class="row">
-<h3>Upcoming Events</h3>
-<div class="event">
+        <div class="row">
+            <div class="event">
+                <div class="date">
+                    <div class="day">Friday, October</div>
+                    <div class="number">18</div>
 
-<div class="date">
-<div class="day">Monday, September</div>
-<div class="number">30</div>
-<div class="time">4:30 PM EDT</div>
-</div>
+                    <div class="time">10:00 AM EDT</div>
+                </div>
 
-<div class="title"><a href="http://unhangout.media.mit.edu/event/learning-aloud" target="_blank">Learning Aloud Geekout</a></div>
+                <div class="title">
+                    <a href=
+                    "http://unhangout.media.mit.edu/event/data-explorer"
+                    target="_blank">Data Explorer Mission</a>
+                </div>
 
-<div class="description lead">Join us to hear from maker experts talking about their favorite topics including Arduino, Scratch, Wearable Tech, 3D Printing, Minecraft, and more. Everyone will learn a little bit about all these topics, plus you'll get to pick one topic to get an in depth introduction from an expert in a small group environment. You'll meet other interested people in the maker movement, and learn about ways to go deeper on the topic that interests you most! This event will be hosted by <a href="http://beta.homago.com/" target="_blank"><i>HOMAGO Geekouts</i></a>, <a href="http://hivelearningnetwork.org/" target="_blank"><i>Hive Learning Networks</i></a> and the <a href="http://www.nwp.org/" target="_blank"><i>National Writing Project.</i></a></div>
-</div></div>
+                <div class="description lead">
+                    Join us for a two-day online data explorer mission.
+                    <a href=
+                    "https://p2pu.org/en/schools/school-of-data/%20target="
+                    style="font-style: italic">School of Data</a> (P2PU and
+                    OKFN) and the International Labor Rights Forum, will
+                    bring data explorers from around the globe together, to
+                    answer some of the tough questions about the global
+                    garment industry.This event will be hosted by <a href=
+                    "http://okfn.org/" style="font-style: italic" target=
+                    "_blank">Open Knowledge Foundation</a> and <a href=
+                    "http://p2pu.org" style="font-style: italic" target=
+                    "_blank">Peer 2 Peer University.</a><br>
+                    <br>
+                </div>
+            </div>
+        </div>
 
-<div class="row">
-<div class="event">
+        <div class="row">
+            <div class="event">
+                <div class="date">
+                    <div class="day">Saturday, October</div>
+                    <div class="number">26</div>
+                    <div class="time">12:30 PM EDT</div>
+                </div>
 
-<div class="date">
-<div class="day">Friday, October</div>
-<div class="number">18</div>
-<div class="time">10:00 AM EDT</div>
-</div>
+                <div class="title">Edcamp Online
+                </div>
 
-<div class="title">Data Explorer Mission</div>
+                <div class="description lead">
+                    October is Connected Educator Month and
+                    educators across the nation are teaming up via
+                    social media to improve learning for kids. To
+                    help educators debrief and reflect on that
+                    learning, we are organizing the first virtual
+                    Edcamp, hosted by <a href="http://edcamp.org/"
+                    style="font-style: italic" target=
+                    "_blank">Edcamp Foundation</a> and <a href=
+                    "http://www.nwp.org/" style=
+                    "font-style: italic" target="_blank">National
+                    Writing Project.</a>
+                </div>  
+            </div>
+        </div>
+        
+        <hr noshade size="2">
 
-<div class="description lead">
-This event will be hosted by <a href="http://okfn.org/" target="_blank"><i>Open Knowledge Foundation</i></a> and <a href="http://p2pu.org" target="_blank"><i>Peer 2 Peer University.</i></a>
-</div></div></div>
-<br/>
+        <div class="row event-container">
+            <h3>Past Events</h3>
+        </div>
 
-<div class="row">
-<div class="event">
+        <div class="row">
+            <div class="event">
+                <div class="date">
+                    <div class="day">Monday, September</div>
+                    <div class="number">30</div>
+                    <div class="time">4:30 PM EDT</div>
+                </div>
 
-<div class="date">
-<div class="day">Saturday, October</div>
-<div class="number">26</div>
-<div class="time">12:30 PM EDT</div>
-</div>
+                <div class="title">
+                    <a href=
+                    "http://unhangout.media.mit.edu/event/learning-aloud"
+                    target="_blank">Learning Aloud Geekout</a>
+                </div>
 
-<div class="title">Edcamp Online</div>
+                <div class="description lead">
+                    Join us to hear from maker experts talking
+                    about their favorite topics including
+                    Arduino, Scratch, Wearable Tech, 3D
+                    Printing, Minecraft, and more. Everyone
+                    will learn a little bit about all these
+                    topics, plus you'll get to pick one topic
+                    to get an in depth introduction from an
+                    expert in a small group environment. You'll
+                    meet other interested people in the maker
+                    movement, and learn about ways to go deeper
+                    on the topic that interests you most! This
+                    event will be hosted by <a href=
+                    "http://beta.homago.com/" style=
+                    "font-style: italic" target="_blank">HOMAGO
+                    Geekouts</a>, <a href=
+                    "http://hivelearningnetwork.org/" style=
+                    "font-style: italic" target="_blank">Hive
+                    Learning Networks</a> and the <a href=
+                    "http://www.nwp.org/" target=
+                    "_blank"><i>National Writing
+                    Project.</i><br>
+                    <br></a>
+                </div>   
+            </div>
+        </div>
 
-<div class="description lead">
-October is Connected Educator Month and educators across the nation are teaming up via social media to improve learning for kids. To help educators debrief and reflect on that learning, we are organizing the first virtual Edcamp, hosted by <a href="http://edcamp.org/" target="_blank"><i>Edcamp Foundation</i></a> and <a href="http://www.nwp.org/" target="_blank"><i>National Writing Project.</i></a>
-</div></div></div>
+        <div class="row">
+            <div class="event">
 
-<div class="row">
-<h3>Last Event</h3>
-<div class="event">
+                <div class="date">
+                    <div class="day">Monday, July</div>
+                    <div class="number">29</div>
+                    <div class="time">1:00 PM EDT</div>
+                </div>
 
-<div class="date">
-<div class="day">Monday, July</div>
-<div class="number">29</div>
-<div class="time">1:00 PM EDT</div>
-</div>
+                <div class="title">
+                    <a href=
+                    "http://unhangout.media.mit.edu/event/1"
+                    target="_blank">National Writing
+                    Project</a>
+                </div>
 
-<div class="title"><a href="http://unhangout.media.mit.edu/event/1" target="_blank">National Writing Project</a></div>
-<div class="description lead">Throughout July, NWP partnered with Connected Learning TV to host a webinar series called <a href="http://connectedlearning.tv/writers-work-making-and-connected-learning"><i>Writers at Work: Making and Connected Learning.</i></a> As a wrap-up to our series we invite you to regroup here to debrief with us, test and tinker with this new unHangout tool, and continue the great conversations that have been started! We will start with a whole group kick-off and then split up into smaller group discussions, based on themes and topics raised by the seminar series. Please be aware that this is a “beta-test webinar” so your adventurous spirit is welcome. </div>
-</div>
-</div>
+                <div class="description lead">
+                    Throughout July, NWP partnered with
+                    Connected Learning TV to host a webinar
+                    series called <a href=
+                    "http://connectedlearning.tv/writers-work-making-and-connected-learning"
+                    style="font-style: italic">Writers at Work:
+                    Making and Connected Learning.</a> As a
+                    wrap-up to our series we invite you to
+                    regroup here to debrief with us, test and
+                    tinker with this new unHangout tool, and
+                    continue the great conversations that have
+                    been started! We will start with a whole
+                    group kick-off and then split up into
+                    smaller group discussions, based on themes
+                    and topics raised by the seminar series.
+                    Please be aware that this is a “beta-test
+                    webinar” so your adventurous spirit is
+                    welcome.
+                </div>
+            </div>
+        </div>
+        
+        <hr noshade size="2">
 
-<div class="signup">
-<h3>Reminders</h3>
-<p class="lead">Interested in email notifications for future Unhangout events? Leave your email below and we'll send you notices for upcoming events using the platform!</p>
+        <div class="signup">
+            <h3>Reminders</h3>
 
-<div class="input-append offset2">
-  <input class="span6" id="email" type="email">
-  <button id="subscribe" class="btn" type="button">Subscribe</button>
-</div>
+            <p class="lead">Interested in email notifications
+            for future Unhangout events? Leave your email below
+            and we'll send you notices for upcoming events
+            using the platform!</p>
 
-<div class="modal hide fade subscription-modal" id="subscription-modal">
-  	<div class="modal-header">
-		<h3>Subscribed!</h3>
-	</div>
-	<div class="modal-body">
-		<p>You have been subscribed to this event. We will send you an email reminder 24 hours before the event and 5 minutes before it starts.</p>
-	</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-	</div>
-</div>
-</div>
+            <div class="input-append offset2">
+                <input class="span6" id="email" type="email">
+                <button class="btn" id="subscribe" type=
+                "button">Subscribe</button>
+            </div>
 
-</div>
+            <div class="modal hide fade subscription-modal" id=
+            "subscription-modal">
+                    <div class="modal-header">
+                        <h3>Subscribed!</h3>
+                    </div>
 
+                    <div class="modal-body">
+                        <p>You have been subscribed to this event.
+                        We will send you an email reminder 24 hours
+                        before the event and 5 minutes before it
+                        starts.</p>
+                    </div>
 
-<div id="about" class="section">
-<h1>About</h1>
-<p><strong>Unhangout</strong> is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.<div class="modal hide fade disconnected-modal" id="disconnected-modal">
-					<div class="modal-header">
-					<h3>Warning!</h3>
-					</div>
-					<div class="modal-body">
-						<p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
-						<a href="#" class="btn">Close</a>
-					</div>
-				</div> Think of it as a classroom with an infinite number of breakout sessions. 
-						Each event has a landing page, which we call the lobby. When participants arrive, they can see who else is there and chat with each other. The hosts can do a video welcome and introduction that gets streamed into the lobby. 
-						Participants then break out into smaller sessions (up to 10 people per session) for in-depth conversations, peer-to-peer learning, and collaboration on projects. UnHangouts are community-based learning instead of top-down information transfer. </p>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss=
+                        "modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-<h3>Open Source</h3>
-<p><strong>Unhangout</strong> is an open source project. You can find the code in <a href="https://github.com/drewww/unhangout">our repository on GitHub</a>. Please let us know if you're interested in hosting your own unhangout events - we would be happy to help you get this set up on your own servers. In some situations, we might be able to host your event on our installation, too.<p>
+        <div class="section" id="about">
+            <h1>About</h1>
 
-<h3>The Team</h3>
-<p>Our three person design and development team is based at the MIT Media Lab in Cambridge, MA.</p>
-<ul>
-<li><a href="http://www.media.mit.edu/people/ps1">Philipp Schmidt</a></li>
-<li><a href="http://web.media.mit.edu/~dharry">Drew Harry</a></li>
-<li><a href="http://srishtisethi.com/">Srishti Sethi</a></li>
-</ul>
+            <p><strong>Unhangout</strong> is an open source
+            platform for running large scale online un-conferences.
+            We use Google Hangouts to create as many small sessions
+            as needed, and help users find others with shared
+            interests.</p>
 
+            <div class="modal hide fade disconnected-modal" id=
+            "disconnected-modal">
+                <div class="modal-header">
+                    <h3>Warning!</h3>
+                </div>
 
-<h3>Acknowledgements</h3>
-<p><strong>Unhangout</strong> is made possible by the generous support of the MacArthur Foundation and the MIT Media Lab</p>
+                <div class="modal-body">
+                    <p>An unexpected error has occured. You have
+                    been disconnected from the server. Please
+                    refresh the page to reconnect.</p><a class=
+                    "btn" href="#">Close</a>
+                </div>
+            </div>
 
-</div>
+            Think of it as a classroom with an infinite
+            number of breakout sessions. Each event has a landing
+            page, which we call the lobby. When participants
+            arrive, they can see who else is there and chat with
+            each other. The hosts can do a video welcome and
+            introduction that gets streamed into the lobby.
+            Participants then break out into smaller sessions (up
+            to 10 people per session) for in-depth conversations,
+            peer-to-peer learning, and collaboration on projects.
+            UnHangouts are community-based learning instead of
+            top-down information transfer.
+            <p>
 
-<div class="footer">An MIT Media Lab project, in collaboration with the MacArthur Foundation.</div>
+            <h3>Open Source</h3>
 
+            <p><strong>Unhangout</strong> is an open source
+            project. You can find the code in <a href=
+            "https://github.com/drewww/unhangout">our repository on
+            GitHub</a>. Please let us know if you're interested in
+            hosting your own unhangout events - we would be happy
+            to help you get this set up on your own servers. In
+            some situations, we might be able to host your event on
+            our installation, too.</p>
+
+            <p></p>
+
+            <h3>The Team</h3>
+
+            <p>Our three person design and development team is
+            based at the MIT Media Lab in Cambridge, MA.</p>
+
+            <ul>
+                <li>
+                    <a href=
+                    "http://www.media.mit.edu/people/ps1">Philipp
+                    Schmidt</a>
+                </li>
+
+                <li>
+                    <a href="http://web.media.mit.edu/~dharry">Drew
+                    Harry</a>
+                </li>
+
+                <li>
+                    <a href="http://srishtisethi.com/">Srishti
+                    Sethi</a>
+                </li>
+            </ul>
+
+            <h3>Acknowledgements</h3>
+
+            <p><strong>Unhangout</strong> is made possible by the
+            generous support of the MacArthur Foundation and the
+            MIT Media Lab</p>
+        </div>
+
+        <div class="footer">
+            An MIT Media Lab project, in collaboration with the
+            MacArthur Foundation.
+        </div>
 <% include footer.ejs %>
+            

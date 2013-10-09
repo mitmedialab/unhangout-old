@@ -751,13 +751,15 @@ tr:nth-child(even) {
 	background-image: url('/public/img/dots.png');
 	height: 200px;
 	width: 100%;
-
 	background-size: 1400px;
 	margin-top: -20px;
+	font-family: "open sans",arial,sans-serif;
 
 	h1 {
-		padding-top: 75px;
+		padding-top: 60px;
 		margin-top: 0px;
+		font-weight: 200;
+		font-size: 36px;
 	}
 
 	h1,  h3{
@@ -765,21 +767,33 @@ tr:nth-child(even) {
 		margin-left: auto;
 		margin-right: auto;
 	}
+
+	h3 {
+		font-weight: 200;
+		font-size: 20px;
+	}
 }
 
 .event {
+		margin-left: 20px;
+		margin-top: 20px;
+
 	.title, .description {
 		float: left;
+		color: #3c3c3c;
+		font-family: "open sans",arial,sans-serif;
 	}
 
 	.title {
-		font-weight: bold;
-		font-size: 1.4em;
+		font-weight: 200;
+		font-size: 20px;
 	}
 
 	.description {
-		font-size: 1.4em;
-		width: 800px;
+		margin-top: 20px;
+		font-size: 16px;
+		width: 780px;
+
 	}
 
 	.date {
@@ -829,6 +843,32 @@ tr:nth-child(even) {
 	.btn {
 		float: left;
 		margin-top: 5px;
+	}
+}
+
+.event-container {
+	margin-left: 0px;
+
+	h3 {
+		margin-top: 20px;
+		font-weight: 400;
+		font-size: 26px;
+		color: #444;
+	}
+}
+
+.signup {
+	h3 {
+		margin-top: 20px;
+		font-weight: 400;
+		font-size: 26px;
+		color: #444;
+	}
+
+	p {
+		color: #3c3c3c;
+		font-size: 16px;
+		font-family: "open sans",arial,sans-serif;
 	}
 }
 
