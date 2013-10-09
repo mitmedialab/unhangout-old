@@ -49,10 +49,14 @@ There is going to be some instability in the server this week - you may have not
 
 <div class="participant-info">
 	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
-			
-		<a href="<%= users.get(id).get("link") %>" target="blank">
-		<img width=100 src="<%= users.get(id).get("picture") %>">
-		</a>
+
+		<% if(users.get(id).get("link")) { %>
+			<a href="<%= users.get(id).get("link") %>" target="blank">
+			<img width=100 src="<%= users.get(id).get("picture") %>">
+			</a>
+		<% } else { %>	
+			<img width=100 src="<%= users.get(id).get("picture") %>">
+		<% } %> 
 
 		<span class="overlay"><%= users.get(id).get("displayName") %></span>
 
