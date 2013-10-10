@@ -33,9 +33,13 @@
 
 <table id="permalinks">
 	<tr><th>shortcode</th><th># ppl connected</th><th>total seconds active</th><th># hangouts created</th><th>actions</th></tr>
-	<% permalinkSessions.forEach(function(session) { %>
+	<% sessions.forEach(function(session) { %>
 	<tr>
-		<td><a href="/h/<%= session.get("shortCode") %>"><%= session.get("shortCode") %></a></td>
+		<% if(session.get("isPermalinkSessions")) { %>
+			<td><a href="/h/<%= session.get("shortCode") %>"><%= session.get("shortCode") %></a></td>
+		<% } else { %>
+			<td><a href="/event/<%= session.collection.event.id %>"><%= session.get("title") %></a></td>
+		<% } %>
 		<td><%= session.get("connectedParticipantIds").length %></td>
 		<td><%= session.get("total-seconds") %></td>
 		<td><%= session.get("total-instances") %></td>
