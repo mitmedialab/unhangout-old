@@ -35,7 +35,7 @@
 	<tr><th>shortcode</th><th># ppl connected</th><th>total seconds active</th><th># hangouts created</th><th>actions</th></tr>
 	<% sessions.forEach(function(session) { %>
 	<tr>
-		<% if(session.get("isPermalinkSessions")) { %>
+		<% if(session.get("isPermalinkSession")) { %>
 			<td><a href="/h/<%= session.get("shortCode") %>"><%= session.get("shortCode") %></a></td>
 		<% } else { %>
 			<td><a href="/event/<%= session.collection.event.id %>"><%= session.get("title") %></a></td>
