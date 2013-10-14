@@ -1005,3 +1005,80 @@ tr:nth-child(even) {
 td form {
 	margin: 0px;
 }
+
+/* ------------------------Tour-Nav--------------------------------- */
+
+.tour-container {
+	color: #c6c6c6;
+	font-size: 16px;
+	font-family: "open sans",arial,sans-serif;
+
+	h3 {
+		color: #444;
+		font-weight: 400;
+		font-size: 30px;
+		margin-left: 350px;
+		margin-top: 50px;
+	}
+
+	img {
+		margin-top: -50px;
+	}
+
+	.hangout-note {
+		position: absolute;
+		top: 200px;
+		left: 10px;
+		width: 100px;
+	}
+
+	.sessions-note {
+		position: absolute;
+		width: 150px;
+		top: 350px;
+		left: 10px;
+	}
+
+	.participants-note {
+		position: absolute;
+		width: 150px;
+		top: 240px;
+		right: 10px;
+	}
+
+	.chat-note {
+		position: absolute;
+		top: 570px;
+		left: 460px;
+		width: 200px;
+	}
+
+	.lobby-note {
+		position: absolute;
+		top: 540px;
+		font-size: 14px;
+		left: 230px;
+		font-style: italic;
+	}
+
+	.window1-note {
+		position: absolute;
+		right: 10px;
+		width: 150px;
+		top: 780px;
+	}
+
+	.window2-note {
+		position: absolute;
+		right: 10px;
+		width: 150px;
+		top: 1160px;
+	}
+
+	.window3-note {
+		position: absolute;
+		left: 10px;
+		width: 150px;
+		top: 1050px;
+	}
+}

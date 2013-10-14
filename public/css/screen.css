@@ -913,3 +913,80 @@ tr:nth-child(even) {
 td form {
   margin: 0px;
 }
+
+/* ------------------------Tour-Nav--------------------------------- */
+/* line 1011, ../../sass/screen.scss */
+.tour-container {
+  color: #c6c6c6;
+  font-size: 16px;
+  font-family: "open sans",arial,sans-serif;
+}
+/* line 1016, ../../sass/screen.scss */
+.tour-container h3 {
+  color: #444;
+  font-weight: 400;
+  font-size: 30px;
+  margin-left: 350px;
+  margin-top: 50px;
+}
+/* line 1024, ../../sass/screen.scss */
+.tour-container img {
+  margin-top: -50px;
+}
+/* line 1028, ../../sass/screen.scss */
+.tour-container .hangout-note {
+  position: absolute;
+  top: 200px;
+  left: 10px;
+  width: 100px;
+}
+/* line 1035, ../../sass/screen.scss */
+.tour-container .sessions-note {
+  position: absolute;
+  width: 150px;
+  top: 350px;
+  left: 10px;
+}
+/* line 1042, ../../sass/screen.scss */
+.tour-container .participants-note {
+  position: absolute;
+  width: 150px;
+  top: 240px;
+  right: 10px;
+}
+/* line 1049, ../../sass/screen.scss */
+.tour-container .chat-note {
+  position: absolute;
+  top: 570px;
+  left: 460px;
+  width: 200px;
+}
+/* line 1056, ../../sass/screen.scss */
+.tour-container .lobby-note {
+  position: absolute;
+  top: 540px;
+  font-size: 14px;
+  left: 230px;
+  font-style: italic;
+}
+/* line 1064, ../../sass/screen.scss */
+.tour-container .window1-note {
+  position: absolute;
+  right: 10px;
+  width: 150px;
+  top: 780px;
+}
+/* line 1071, ../../sass/screen.scss */
+.tour-container .window2-note {
+  position: absolute;
+  right: 10px;
+  width: 150px;
+  top: 1160px;
+}
+/* line 1078, ../../sass/screen.scss */
+.tour-container .window3-note {
+  position: absolute;
+  left: 10px;
+  width: 150px;
+  top: 1050px;
+}
