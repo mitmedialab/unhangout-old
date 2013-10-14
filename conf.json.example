@@ -12,5 +12,9 @@
 
 	"UNHANGOUT_ADMIN_EMAILS": ["user1@example.com", "user2@example.com"],
 
-	"UNHANGOUT_HANGOUT_APP_ID":123456789012
+	"UNHANGOUT_HANGOUT_APP_ID":123456789012,
+
+	"UNHANGOUT_USE_SSL":false,
+	"UNHANGOUT_PRIVATE_KEY":"ssl/private.pem",
+	"UNHANGOUT_CERTIFICATE":"ssl/cert.pem"
 }
