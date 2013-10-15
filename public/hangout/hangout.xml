@@ -51,7 +51,7 @@
 
 
 <script type="text/template" id="footer-template">
-  <div class="footer">powered by <a href="http://unhangout.media.mit.edu/">unhangout</a>, from the MIT Media Lab</div>
+  <div class="footer">powered by <a href="unhangout.media.mit.edu/">unhangout</a>, from the MIT Media Lab</div>
 </script>
 
 <script>
@@ -102,7 +102,7 @@ function init() {
     				// TODO if the app is started without app data, note it in the logs.
     				var appDataPieces = appData.split(":");
     				
-    				baseServerUrl = "http://" + appDataPieces[0] + ":" + appDataPieces[1];
+    				baseServerUrl = "//" + appDataPieces[0] + ":" + appDataPieces[1];
     				sessionId = appDataPieces[2];
     				serverUrl = baseServerUrl + "/session/hangout/" + sessionId;
 		            title = appDataPieces[3].replace("|", ":");
