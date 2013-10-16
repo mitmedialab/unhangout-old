@@ -519,7 +519,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	},
 
 	updateDisplay: function() {
-		// figure out how tall a session is.
+		// figure out how tall a user is.
 		var exampleUserHeight = this.$el.find(".user").first().outerHeight();
 
 		if(exampleUserHeight< 10) {
@@ -530,6 +530,13 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 		var height = this.$el.parent().innerHeight() - 75;
 
 		var userPerPage = Math.floor(height / exampleUserHeight);
+
+		console.log("collection.perPage: " + this.collection.perPage);
+		console.log("userPerPage: " + userPerPage);
+		
+		// stop trusting collection.perPage; that seems to vary 
+		// depending on how many people are actually available
+		// to be shown?
 
 		if(this.collection.perPage != userPerPage) {
 			this.collection.howManyPer(userPerPage);

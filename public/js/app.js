@@ -479,13 +479,13 @@ $(document).ready(function() {
 
 			// a user has blurred the lobby window
 			case "blur":
-				var blurredUser = users.get(msg.args.id);
+				var blurredUser = _.findWhere(users.origModels, {id:msg.args.id});
 				blurredUser.setBlurred(true);
 				break;
 
 			// a user has focused the lobby window
 			case "focus":
-				var blurredUser = users.get(msg.args.id);
+				var blurredUser = _.findWhere(users.origModels, {id:msg.args.id});
 				blurredUser.setBlurred(false);
 				break;
 			
