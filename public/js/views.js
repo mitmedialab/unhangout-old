@@ -24,6 +24,7 @@ var SessionView = Marionette.ItemView.extend({
 	ui: {
 		attend: '.attend',
 		start:'.start',
+		deleteButton: '.delete',		// delete is reserved word
 		attending: '.attending',
 		empty: '.empty',
 		description: '.description',
@@ -33,6 +34,7 @@ var SessionView = Marionette.ItemView.extend({
 	events: {
 		'click .attend':'attend',
 		'click .start':'start',
+		'click .delete':'delete',
 		'click h3':'headerClick'
 	},
 
@@ -201,6 +203,10 @@ var SessionView = Marionette.ItemView.extend({
 	start: function() {
 		sock.send(JSON.stringify({type:"start", args:{id:this.model.id}}));
 	},
+
+	delete: function() {
+		sock.send(JSON.stringify({type:"delete", args:{id:this.model.id}}));
+	}
 });
 
 // The list view contains all the individual session views. We don't
