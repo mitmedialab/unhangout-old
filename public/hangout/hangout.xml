@@ -42,6 +42,8 @@
 
 		<p>If you have any questions or feedback or comments about this service, please don't hesitate to message me <a href="http://twitter.com/drewwww">@drewwww</a> on Twitter, or email me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a></p>
 	</div>
+
+	<div id="disable-heartbeat">disable heartbeat (TESTING)</div>
 </script>
 
 <script type="text/template" id="welcome-unhangout-template">
@@ -68,6 +70,9 @@ var eventTitle;
 
 var localGoogleId;
 var isLeader = false;
+
+// this is purely for testing our heartbeat delay issues
+var disableHeartbeat = false;
 
 // five seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
@@ -183,6 +188,11 @@ function init() {
             	console.log("Hiding app on click");
 	            gapi.hangout.hideApp();
             });
+
+            $("#disable-heartbeat").click(function() {
+            	disableHeartbeat = !disableHeartbeat;
+            	console.log("disable: " + disableHeartbeat);
+            });
           }  // End of IF block
 
       }); // End of handler
@@ -273,9 +283,23 @@ function init() {
 	}
 
 	function sendHeartbeat(eventObj) {
+		// just for testing purposes, so we can disable in testing.
+		if(disableHeartbeat) {
+			return;
+		}
+
+		var allParticipantIds = _.map(gapi.hangout.getParticipants(), function(p) {
+			return p.person.id;
+		});
+
+		var localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
+
+
 		$.post(serverUrl, {
 			type:"heartbeat",
-			from:gapi.hangout.getLocalParticipantId()
+			from:localGoogleId,
+			url:gapi.hangout.getHangoutUrl(),
+			participants: allParticipantIds
 		}).done(function() {
 			console.log("heartbeat success!");
 		}).fail(function() {

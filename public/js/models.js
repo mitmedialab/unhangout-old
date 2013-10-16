@@ -215,11 +215,6 @@ models.Session = Backbone.Model.extend({
 		this.set("connectedParticipantIds", ids);
 		this.trigger("change");
 		this.trigger("change:connectedParticipantIds");
-
-		if(!this.get("hangoutConnected")) {
-			// this shouldn't happen!
-			console.log("This shouldn't be happening!");
-		}
 	},
 
 	getNumConnectedParticipants: function() {
