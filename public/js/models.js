@@ -275,7 +275,11 @@ models.User = Backbone.Model.extend({
 			else { this.set("picture", "")}
 
 			if("link" in json) this.set("link", this.get("_json").link);
-		}		
+		}	
+
+		if(!this.has("admin"))	 {
+			this.set("admin", false);
+		}
 	},
 	
 	isAdmin: function() {

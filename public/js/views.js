@@ -76,9 +76,9 @@ var SessionView = Marionette.ItemView.extend({
 			// show the admin UI. obviously, requests generated here are authenticated
 			// on the server, so doesn't matter if users mess around and show these
 			// buttons covertly.
-			this.$el.find(".admin").show();
+			this.$el.find(".admin-buttons").show();
 		} else {
-			this.$el.find(".admin").hide();			
+			this.$el.find(".admin-buttons").hide();			
 		}
 
 		if(this.model.isAttending(USER_ID)) {
