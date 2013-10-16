@@ -547,6 +547,14 @@ $(document).ready(function() {
 
 				break;
 
+			case "delete":
+				var session = curEvent.get("sessions").get(msg.args.id);
+				app.paginatedSessions.remove(session);
+				curEvent.removeSession(session);
+
+				console.log("removing session: " + msg.args.id);
+				break;
+
 			// create a new session
 			case "create-session":
 				var session = new models.Session(msg.args);

@@ -88,6 +88,11 @@ models.Event = Backbone.Model.extend({
 		this.get("sessions").add(session);
 		session.trigger("change:collection");
 	},
+
+	removeSession: function(session) {
+		this.get("sessions").remove(session);
+		session.trigger("change:collection");
+	},
 		
 	url: function() {
 		// okay this is sort of stupid, but we want to have a fixed width 
