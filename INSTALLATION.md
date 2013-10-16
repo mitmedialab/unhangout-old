@@ -75,7 +75,8 @@ C. Cloning the Repository.
       - server.crt is your certificate, move it to `ssl/` and set the path to that file in UNHANGOUT_CERTIFICATE
     - for production purposes, you will need to buy a formal certificate. The Heroku instructions for SSL certificates will show you how to generate a certificate signing request, which you will provide to an SSL issuer: https://devcenter.heroku.com/articles/ssl-endpoint#acquire-ssl-certificate
       - after submitting the CSR, the certificate provider will issue you a certificate. Put the private key you used to generate the CSR as well as the associated certificate in `ssl/` and set the paths in UNHANGOUT_PRIVATE_KEY and UNHANGOUT_CERTIFICATE to point to those files.
-    
+    - in most production situations, you will want to enable UNHANGOUT_REDIRECT_HTTP. This will start a separate HTTP server that will redirect any requests to their HTTPS equivalent. This presumes that you're using default ports: 80 for HTTP, and 443 for HTTPS, so it requres sudo to bind to privileged ports. In development contexts, set UNHANGOUT_REDIRECT_HTTP to false, and use HTTPS on whatever port you desire.
+
   - Start the node server and run it in the browser <br>
     $ npm start <br>
     $ 127.0.0.1:7777/ [In browser]
