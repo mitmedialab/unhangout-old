@@ -77,6 +77,8 @@ var disableHeartbeat = false;
 // five seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
 
+var startTime = null;
+
 function init() {
 	console.log("init running");
 		gapi.hangout.onApiReady.add(
@@ -84,6 +86,20 @@ function init() {
 	        if (eventObj.isApiReady) {
     			  // When API is ready...                                                         
     				console.log("READY!");
+
+    				// check and see if this particular hangout session has been initialized
+    				// already. If it hasn't, record the current time. If it has, leave it alone.
+    				// we'll use this initialization time as a unique identifier (for now)
+    				// so we can tell hangouts apart.
+    				startTime = gapi.hangout.data.getValue("startTime");
+
+    				if(_.isUndefined(startTime)) {
+    					console.log("setting startTime, since it hasn't been set yet");
+    					startTime = new Date().getTime();
+    					gapi.hangout.data.setValue("startTime", "" + startTime);
+    				} else {
+    					startTime = parseInt(startTime);
+    				}
 
     				// we expect that appData has format:
     				// host:port:sessionid
@@ -258,6 +274,7 @@ function init() {
 			url: gapi.hangout.getHangoutUrl(),
 			participant: localGoogleId,
 			participants: allParticipantIds,
+			startTime: startTime
 		}).done(function() {
 			console.log("loaded success!");
 		}).fail(function() {
@@ -299,7 +316,8 @@ function init() {
 			type:"heartbeat",
 			from:localGoogleId,
 			url:gapi.hangout.getHangoutUrl(),
-			participants: allParticipantIds
+			participants: allParticipantIds,
+			startTime: startTime
 		}).done(function() {
 			console.log("heartbeat success!");
 		}).fail(function() {
