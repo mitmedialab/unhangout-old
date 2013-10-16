@@ -67,6 +67,14 @@ C. Cloning the Repository.
     
   - Install the required dependencies in local node_modules folder <br>
     $ npm install
+
+  - We strongly recommend running the unhangout-server with SSL enabled. Google Hangouts are always run over SSL, and trying to run a hangout application over http causes many browsers to refuse to send requests, which causes a number of insidious issues. 
+    - ensure that UNHANGOUT_USE_SSL in conf.json is set to true.
+    - for development purposes, a self-signed certificate will work fine. These instructions from Heroku are quite good: https://devcenter.heroku.com/articles/ssl-certificate-self If you follow those instructions, you will have two resulting files:
+      - server.key is your private key, move it to `ssl/` and set the path to that file in UNHANGOUT_PRIVATE_KEY
+      - server.crt is your certificate, move it to `ssl/` and set the path to that file in UNHANGOUT_CERTIFICATE
+    - for production purposes, you will need to buy a formal certificate. The Heroku instructions for SSL certificates will show you how to generate a certificate signing request, which you will provide to an SSL issuer: https://devcenter.heroku.com/articles/ssl-endpoint#acquire-ssl-certificate
+      - after submitting the CSR, the certificate provider will issue you a certificate. Put the private key you used to generate the CSR as well as the associated certificate in `ssl/` and set the paths in UNHANGOUT_PRIVATE_KEY and UNHANGOUT_CERTIFICATE to point to those files.
     
   - Start the node server and run it in the browser <br>
     $ npm start <br>
