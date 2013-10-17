@@ -330,7 +330,7 @@ function init() {
 
 				disableHeartbeat = true;
 				$('body').empty();
-				$('body').html($("#conflict-template").html());
+				$('body').append(_.template($("#conflict-template").html())());
 			} else {
 				console.log("heartbeat success");
 			}
