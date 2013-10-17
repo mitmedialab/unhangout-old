@@ -42,6 +42,8 @@
 
 		<p>If you have any questions or feedback or comments about this service, please don't hesitate to message me <a href="http://twitter.com/drewwww">@drewwww</a> on Twitter, or email me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a></p>
 	</div>
+
+	<div id="disable-heartbeat">disable heartbeat (TESTING)</div>
 </script>
 
 <script type="text/template" id="welcome-unhangout-template">
@@ -54,7 +56,7 @@
   <div class="footer">powered by <a href="unhangout.media.mit.edu/">unhangout</a>, from the MIT Media Lab</div>
 </script>
 
-<script>
+<script type="text/javascript">
 
 var baseServerUrl;
 var sessionId;
@@ -69,8 +71,13 @@ var eventTitle;
 var localGoogleId;
 var isLeader = false;
 
+// this is purely for testing our heartbeat delay issues
+var disableHeartbeat = false;
+
 // five seconds is a reasonable starting time.
 var HEARTBEAT_INTERVAL = 5000;
+
+var startTime = null;
 
 function init() {
 	console.log("init running");
@@ -79,6 +86,20 @@ function init() {
 	        if (eventObj.isApiReady) {
     			  // When API is ready...                                                         
     				console.log("READY!");
+
+    				// check and see if this particular hangout session has been initialized
+    				// already. If it hasn't, record the current time. If it has, leave it alone.
+    				// we'll use this initialization time as a unique identifier (for now)
+    				// so we can tell hangouts apart.
+    				startTime = gapi.hangout.data.getValue("startTime");
+
+    				if(_.isUndefined(startTime)) {
+    					console.log("setting startTime, since it hasn't been set yet");
+    					startTime = new Date().getTime();
+    					gapi.hangout.data.setValue("startTime", "" + startTime);
+    				} else {
+    					startTime = parseInt(startTime);
+    				}
 
     				// we expect that appData has format:
     				// host:port:sessionid
@@ -183,6 +204,11 @@ function init() {
             	console.log("Hiding app on click");
 	            gapi.hangout.hideApp();
             });
+
+            $("#disable-heartbeat").click(function() {
+            	disableHeartbeat = !disableHeartbeat;
+            	console.log("disable: " + disableHeartbeat);
+            });
           }  // End of IF block
 
       }); // End of handler
@@ -248,6 +274,7 @@ function init() {
 			url: gapi.hangout.getHangoutUrl(),
 			participant: localGoogleId,
 			participants: allParticipantIds,
+			startTime: startTime
 		}).done(function() {
 			console.log("loaded success!");
 		}).fail(function() {
@@ -273,11 +300,34 @@ function init() {
 	}
 
 	function sendHeartbeat(eventObj) {
+		// just for testing purposes, so we can disable in testing.
+		if(disableHeartbeat) {
+			return;
+		}
+
+		var allParticipantIds = _.map(gapi.hangout.getParticipants(), function(p) {
+			return p.person.id;
+		});
+
+		var localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
+
+
 		$.post(serverUrl, {
 			type:"heartbeat",
-			from:gapi.hangout.getLocalParticipantId()
-		}).done(function() {
-			console.log("heartbeat success!");
+			from:localGoogleId,
+			url:gapi.hangout.getHangoutUrl(),
+			participants: allParticipantIds,
+			startTime: startTime
+		}).done(function(data) {
+			if(data=="FAIL") {
+				console.log("HANGOUT CONFLICT!!!!");
+
+				disableHeartbeat = true;
+				$('body').empty();
+				$('body').append($('<div class="conflict">Your hangout session is in conflict with another session! The other session started first, so you should close this hangout immediately hit "Join Hangout" again - you should be directed to the correct hangout! If this problem persists, please contact dharry@media.mit.edu.</div>'));
+			} else {
+				console.log("heartbeat success");
+			}
 		}).fail(function() {
 			console.log("heartbeat fail");
 		});
@@ -507,6 +557,16 @@ gadgets.util.registerOnLoadHandler(init);
 	.hide:hover {
 		background-color: #555;
 		color: white;
+	}
+
+	.conflict {
+		background-color: red;
+		color: white;
+
+		font-size: 1.2em;
+		font-weight: bold;
+
+		height: 100%;
 	}
 
   </style>
