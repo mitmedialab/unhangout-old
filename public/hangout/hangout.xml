@@ -62,6 +62,8 @@
 	</div>
 <script>
 
+<script type="text/javascript">
+
 var baseServerUrl;
 var sessionId;
 var interval;
