@@ -421,7 +421,8 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 
 	onRender: function() {
 		if(this.firstRun && NUM_HANGOUTS_FARMED==0) {
-			$("#no-urls-warning").modal('show');
+			// $("#no-urls-warning").modal('show');
+			console.log("No farmed hangouts available!");
 		}
 	},
 
