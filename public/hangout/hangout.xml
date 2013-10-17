@@ -56,6 +56,10 @@
   <div class="footer">powered by <a href="unhangout.media.mit.edu/">unhangout</a>, from the MIT Media Lab</div>
 </script>
 
+<script type="text/template" id="conflict-template">
+	<div class="conflict">
+		Your hangout session is in conflict with another session! The other session started first, so you should close this hangout immediately hit "Join Hangout" again - you should be directed to the correct hangout! If this problem persists, please contact dharry@media.mit.edu.
+	</div>
 <script>
 
 var baseServerUrl;
@@ -318,8 +322,16 @@ function init() {
 			url:gapi.hangout.getHangoutUrl(),
 			participants: allParticipantIds,
 			startTime: startTime
-		}).done(function() {
-			console.log("heartbeat success!");
+		}).done(function(data) {
+			if(data=="FAIL") {
+				console.log("HANGOUT CONFLICT!!!!");
+
+				disableHeartbeat = true;
+				$('body').empty();
+				$('body').html($("#conflict-template").html());
+			} else {
+				console.log("heartbeat success");
+			}
 		}).fail(function() {
 			console.log("heartbeat fail");
 		});
@@ -549,6 +561,15 @@ gadgets.util.registerOnLoadHandler(init);
 	.hide:hover {
 		background-color: #555;
 		color: white;
+	}
+
+	.conflict {
+		background-color: red;
+		color: white;
+		text-align: center;
+
+		padding-top: 100px;
+		font-size: 2.5em;
 	}
 
   </style>
