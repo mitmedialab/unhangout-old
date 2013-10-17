@@ -56,12 +56,6 @@
   <div class="footer">powered by <a href="unhangout.media.mit.edu/">unhangout</a>, from the MIT Media Lab</div>
 </script>
 
-<script type="text/template" id="conflict-template">
-	<div class="conflict">
-		Your hangout session is in conflict with another session! The other session started first, so you should close this hangout immediately hit "Join Hangout" again - you should be directed to the correct hangout! If this problem persists, please contact dharry@media.mit.edu.
-	</div>
-</script>
-
 <script type="text/javascript">
 
 var baseServerUrl;
@@ -330,7 +324,7 @@ function init() {
 
 				disableHeartbeat = true;
 				$('body').empty();
-				$('body').append(_.template($("#conflict-template").html())());
+				$('body').append($('<div class="conflict">Your hangout session is in conflict with another session! The other session started first, so you should close this hangout immediately hit "Join Hangout" again - you should be directed to the correct hangout! If this problem persists, please contact dharry@media.mit.edu.</div>'));
 			} else {
 				console.log("heartbeat success");
 			}
