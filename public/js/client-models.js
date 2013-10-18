@@ -16,12 +16,13 @@ models.ClientSessionList = models.SessionList.extend({
 	},
 
 	comparator: function(a, b) {
-		if(a.isAttending(USER_ID)) {
-			return -1;
-		} else if(b.isAttending(USER_ID)) {
+		// sort by activity first, then alpha
+		if(a.getNumConnectedParticipants() < b.getNumConnectedParticipants()) {
 			return 1;
+		} else if(b.getNumConnectedParticipants() < a.getNumConnectedParticipants()) {
+			return -1;
 		} else {
-			return 0;
+			return a.get("title").localeCompare(b.get("title"));
 		}
 	}
 });
