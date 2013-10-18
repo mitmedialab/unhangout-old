@@ -336,11 +336,13 @@ var UserView = Marionette.ItemView.extend({
 			this.$el.addClass("focus");
 		}
 
-		this.$el.find("img").attr("data-toggle", "tooltip");
-		this.$el.find("img").attr("data-placement", "left");
-		this.$el.find("img").attr("data-container", "#chat-container-region");
-		this.$el.find("img").attr("title", this.model.get("displayName"));
-		this.$el.find("img").tooltip();
+		// look for either an img or an i child, since people who don't have
+		// a g+ icon should still get tooltips
+		this.$el.find("img, i").attr("data-toggle", "tooltip");
+		this.$el.find("img, i").attr("data-placement", "left");
+		this.$el.find("img, i").attr("data-container", "#chat-container-region");
+		this.$el.find("img, i").attr("title", this.model.get("displayName"));
+		this.$el.find("img, i").tooltip();
 	}
 });
 
