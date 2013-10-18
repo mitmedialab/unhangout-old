@@ -730,7 +730,7 @@ var AboutEventView = Marionette.ItemView.extend({
 	id: "about-event",
 
 	initialize: function() {
-		this.listenTo(this.model, 'all', _.bind(function() {
+		this.listenTo(this.model, 'change:description', _.bind(function() {
 			$(".updated").removeClass("hide");
 			this.render();
 		}, this), this);

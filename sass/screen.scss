@@ -230,7 +230,10 @@ body {
 
 		margin-left: 5px;
 
-		display: inline-block;
+		display: block;
+		position: absolute;
+		right: 5px;
+		top: 14px;
 
 		&.hide {
 			display: none;
