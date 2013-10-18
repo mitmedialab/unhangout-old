@@ -80,6 +80,39 @@
 		    <div class="footer">This event has not yet started, so the rest of the page is disabled. Come back at the posted start time to participate!</div>
 		    </script>
 
+		    <script type="text/template" id="tour-event-template">
+		    <div class="container tour-container">
+		    	<h3>Unhangout Tour</h3>
+
+			    <div class="row">
+			    	<img src="/public/img/tour-mockup-1.png">
+			    	<span class="hangout-note">Google Hangout on Air</span>
+			    	
+			    	<span class="sessions-note">A list of sessions. Click signup to reserve a spot.</span>
+
+			    	<span class="chat-note">You can chat with everyone</span>
+
+			    	<span class="lobby-note">This is your lobby. Its like your home page</span>
+
+			    	<span class="participants-note">These avatars keep track of the event participants</span>
+			    </div>
+
+			    <br/><br/>
+
+			    <div class="row">
+			    <img src="/public/img/tour-mockup-2.png">
+				    <span class="window1-note">Each breakout session 
+				    is like a satellite</span>
+				    	
+				    <span class="window2-note"> People talk about their interests with like minded people</span>
+
+				    <span class="window3-note">At the end of their conversation, they return to the lobby for a wrap up</span>
+			    </div>
+			    <br/><br/><br/>
+		    </div>
+		   
+		    </script>
+
 			<script type="text/template" id="session-template">
 			<h3>{{= title }}<span class="started label label-success">live</span><span class="joined label label-info">your pick</span></h3>
 			<div class="description">{{= description }} </div>
@@ -259,6 +292,9 @@
 						<li class="" id="video-nav"><a href="#video-nav">Video <span class="label label-success hide">live</span></a></li>
 						<li class="" id="about-nav">
 						<a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
+						</li>
+						<li class="" id="tour-nav">
+						<a href="#tour-nav">Tour<span class="updated circle hide">&nbsp;</span></a>
 						</li> 
 					</ul>
 					<div class="nav pull-right identity">

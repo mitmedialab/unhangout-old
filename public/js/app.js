@@ -122,6 +122,7 @@ $(document).ready(function() {
 		this.dialogView = new DialogView();
 
 		this.aboutView = new AboutEventView({model:curEvent});
+		this.tourView = new TourEventView({model: curEvent});
 
 		// present the views in their respective regions
 		this.right.show(this.chatView);
@@ -216,6 +217,7 @@ $(document).ready(function() {
 
 	var videoShown = false;
 	var aboutShown = false;
+	var tourShown = false;
 
 	// this event handles the show-hide behavior of the video embed
 	// in the upper left corner of the UI. There are lots of finnicky details here 
@@ -284,6 +286,30 @@ $(document).ready(function() {
 
 	}, app));
 
+	app.vent.on("tour-nav", _.bind(function() {
+		$(".updated").addClass("hide");
+
+		if(tourShown) {
+			this.top.$el.animate({"top":(-1*this.top.$el.outerHeight())});
+
+			tourShown = false;
+			$("#tour-nav").removeClass("active");
+
+			$("#about-nav").addClass("active");
+			this.top.show(this.aboutView);
+			
+		} else {
+			this.top.$el.animate({"top":0});
+			
+			aboutShown = false;
+			$("#about-nav").removeClass("active");
+
+			tourShown = true;
+			$("#tour-nav").addClass("active");
+			this.top.show(this.tourView);
+		}
+
+	}, app));
 	// We have to wait for the youtube api to load for us to embed the video. This
 	// will trigger more or less on page load, so as a user you don't really see
 	// any delay. But we do need to wait.
@@ -387,7 +413,7 @@ $(document).ready(function() {
 	}
 
 	// Handles clicks on the nav bar links.
-	$("#video-nav, #about-nav").click(function() {
+	$("#video-nav, #about-nav, #tour-nav").click(function() {
 		app.vent.trigger($(this).attr("id"));
 	});
 	
