@@ -935,6 +935,11 @@ tr:nth-child(even) {
 }
 
 /* line 1027, ../../sass/screen.scss */
+#permalinks {
+  max-width: 685px;
+}
+
+/* line 1031, ../../sass/screen.scss */
 td form {
   margin: 0px;
 }

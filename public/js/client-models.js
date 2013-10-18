@@ -8,20 +8,23 @@ models.ClientSessionList = models.SessionList.extend({
 		models.SessionList.prototype.initialize.call(this, options);
 
 		this.on("add", _.bind(function(session) {
-			session.on("change:attendeeIds", _.bind(function() {
+			session.on("change:attendeeIds change:connectedParticipantIds", _.bind(function() {
+				console.log("updating sorting!");
 				this.sort();
 				this.trigger("change");
+				this.trigger("sort");
 			}, this));
 		}, this));
 	},
 
 	comparator: function(a, b) {
-		if(a.isAttending(USER_ID)) {
-			return -1;
-		} else if(b.isAttending(USER_ID)) {
+		// sort by activity first, then alpha
+		if(a.getNumConnectedParticipants() < b.getNumConnectedParticipants()) {
 			return 1;
+		} else if(b.getNumConnectedParticipants() < a.getNumConnectedParticipants()) {
+			return -1;
 		} else {
-			return 0;
+			return a.get("title").localeCompare(b.get("title"));
 		}
 	}
 });
