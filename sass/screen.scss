@@ -230,7 +230,10 @@ body {
 
 		margin-left: 5px;
 
-		display: inline-block;
+		display: block;
+		position: absolute;
+		right: 5px;
+		top: 14px;
 
 		&.hide {
 			display: none;
@@ -287,6 +290,10 @@ body {
 			position: relative;
 			// top: -3px;
 		}
+
+		i {
+			padding-left: 2px;
+		}
 	}
 
 	img {
@@ -300,6 +307,8 @@ body {
 		height: 40px;
 		line-height: 40px;
 		padding-left: 5px;
+
+		display: block;
 	}
 
 	&.blur {
@@ -392,6 +401,11 @@ body {
 			height: 30px;
 
 			list-style: none;
+
+			i {
+				font-size: 26px;
+				line-height: 30px;
+			}
 		}
 	}
 

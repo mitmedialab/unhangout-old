@@ -367,11 +367,23 @@ var UserView = Marionette.ItemView.extend({
 			this.$el.addClass("focus");
 		}
 
-		this.$el.find("img").attr("data-toggle", "tooltip");
-		this.$el.find("img").attr("data-placement", "left");
-		this.$el.find("img").attr("data-container", "#chat-container-region");
-		this.$el.find("img").attr("title", this.model.get("displayName"));
-		this.$el.find("img").tooltip();
+		// look for either an img or an i child, since people who don't have
+		// a g+ icon should still get tooltips
+		this.$el.find("img, i").attr("data-toggle", "tooltip");
+
+		// if we're a child of hangout-users, then we're a small session user icon,
+		// not a big presence gutter icon. in this case, make the data container
+		// the session.
+		if(this.$el.parent().hasClass("hangout-users")) {
+			// this.$el.find("img, i").attr("data-container", "#chat-container-region");
+			this.$el.find("img, i").attr("data-placement", "top");
+		} else {
+			this.$el.find("img, i").attr("data-container", "#chat-container-region");
+			this.$el.find("img, i").attr("data-placement", "left");
+		}
+
+		this.$el.find("img, i").attr("title", this.model.get("displayName"));
+		this.$el.find("img, i").tooltip();
 	}
 });
 
@@ -452,7 +464,8 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 
 	onRender: function() {
 		if(this.firstRun && NUM_HANGOUTS_FARMED==0) {
-			$("#no-urls-warning").modal('show');
+			// $("#no-urls-warning").modal('show');
+			console.log("No farmed hangouts available!");
 		}
 	},
 
@@ -748,7 +761,7 @@ var AboutEventView = Marionette.ItemView.extend({
 	id: "about-event",
 
 	initialize: function() {
-		this.listenTo(this.model, 'all', _.bind(function() {
+		this.listenTo(this.model, 'change:description', _.bind(function() {
 			$(".updated").removeClass("hide");
 			this.render();
 		}, this), this);
