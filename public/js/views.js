@@ -143,7 +143,14 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".start").show();
 		}
 
-		var numAttendees = this.model.numAttendees();
+		var numAttendees;
+
+		// if we're live, make the bar fill up based on how many people are currently there
+		if(this.model.isLive()) {
+			numAttendees = this.model.getNumConnectedParticipants();
+		} else {
+			numAttendees = this.model.numAttendees();
+		}
 
 		this.$el.find(".attend-count").text("(" + numAttendees + " of " + this.model.MAX_ATTENDEES + ")");
 		this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");

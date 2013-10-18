@@ -367,23 +367,19 @@ body {
 }
 
 .session {
-	// background-color: #e6e7e6;
 	position: relative;
-
-	// margin-bottom: 5px;
-
 
 	box-sizing: border-box;
 	
-	// border: 2px solid $primary;
-	// border-bottom: 1px solid #ddd;
 
 	width: 430px;
-	height: 80px;
+	height: 40px;
 
-	// &.hangout-connected {
-	// 	height: 80px;
-	// }
+	overflow: hidden;
+
+	&:hover {
+		height: 80px;
+	}
 
 	.hangout-users, .hangout-offline {
 		position: absolute;
