@@ -367,47 +367,50 @@ body {
 }
 
 .session {
-	// background-color: #e6e7e6;
 	position: relative;
-
-	// margin-bottom: 5px;
-
 
 	box-sizing: border-box;
 	
-	// border: 2px solid $primary;
-	// border-bottom: 1px solid #ddd;
 
 	width: 430px;
 	height: 40px;
 
-	&.hangout-connected {
+	overflow: hidden;
+
+	&:hover {
 		height: 80px;
+	}
 
-		.hangout-users {
-			position: absolute;
-			top: 40px;
-			left: 0px;
-			right: 0px;
-			height: 40px;
+	.hangout-users, .hangout-offline {
+		position: absolute;
+		top: 40px;
+		left: 0px;
+		right: 0px;
+		height: 40px;
 
-			padding-left: 5px;
+		padding-left: 5px;
 
-			.user {
-				float: left;
-				margin-right: 5px;
-				width: 30px;
-				height: 30px;
+		.user {
+			float: left;
+			margin-right: 5px;
+			width: 30px;
+			height: 30px;
 
-				list-style: none;
+			list-style: none;
 
-				i {
-					font-size: 26px;
-					line-height: 30px;
-				}
+			i {
+				font-size: 26px;
+				line-height: 30px;
 			}
 		}
 	}
+
+	.hangout-offline {
+		text-align: center;
+		color: $background;
+		font-style: italic;
+	}
+
 
 	float: left;
 
