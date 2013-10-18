@@ -247,6 +247,11 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 			// this.render();
 			setTimeout(this.render, 1);
 		}, this);
+
+		this.listenTo(this.collection, "sort", function() {
+			console.log("collection:sort");
+			this.render();
+		}, this);
 	},
 
 	previous: function() {

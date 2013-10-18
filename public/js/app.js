@@ -108,6 +108,12 @@ $(document).ready(function() {
 		// page, so it's pretty transparent.
 	    this.paginatedSessions = new models.PaginatedSessionList(curEvent.get("sessions").models);
 
+	    // I'm not sure why callign setsort is the right way to trigger sorts (sort of thought
+	    // it would set the comparator) but it does seem to behave like we want it to.
+	    this.paginatedSessions.on("add", _.bind(function() {
+		    this.paginatedSessions.setSort("title", "asc");
+	    }, this));
+
 	    // the pagination system sort of assumes that it's going to be loading pages
 	    // over HTTP from the server. Using it in this client-side way causes some 
 	    // issues for it. One of them is that we have to manually tell it to set itself up,
@@ -582,6 +588,7 @@ $(document).ready(function() {
 			// mark a session as disconnected
 			case "session-hangout-disconnected":
 				var session = curEvent.get("sessions").get(msg.args.id);
+				session.setConnectedParticipantIds([]);
 				session.set("hangoutConnected", false);
 				break;
 
