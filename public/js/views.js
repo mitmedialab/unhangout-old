@@ -237,26 +237,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 	},
 
 	initialize: function(args) {
-		// Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
-		setTimeout(_.bind(this.updateDisplay, this), 100);
-
-		$(window).resize(_.bind(function() {
-			this.updateDisplay();
-		}, this));
-
-		this.listenTo(this.collection, "add", function() {
-			this.updateDisplay();
-			this.collection.goTo(this.collection.currentPage);
-
-			// really not sure why a render right here won't
-			// get rid of the double-display issue, but a timedout
-			// one will. Erg. The basic issue here is that when we ad
-			// to the paginated display it tries to be helpful
-			// and insta-append the new object to the list instead
-			// of re-rendering everything. 
-			// this.render();
-			setTimeout(this.render, 1);
-		}, this);
+		Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
 
 		this.listenTo(this.collection, "sort", function() {
 			console.log("collection:sort");
@@ -264,81 +245,8 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 		}, this);
 	},
 
-	previous: function() {
-		this.collection.prevPage();
-		this.render();
-	},
-
-	next: function() {
-		this.collection.nextPage();
-		this.render();
-	},
-
-	goto: function(e) {
-		this.collection.goTo(parseInt($(e.target).text()));
-		this.render();
-	},
-
-	updateDisplay: function() {
-
-		// figure out how tall a session is.
-		// the problem is sessions can be two different heights; if they're
-		// not live, they're about 40 pixels high, if they're live AND hangout
-		// is connected, they're about 80 pixels. 
-
-		// this pretty much breaks this whole algorithm.
-		// model: calculate the TOTAL height (doable) but then how the hell
-		// do we figure the per page number? that's going to change depending
-		// on how many sesions are live on a given page. that breaks the
-		// assumptions of the entire pagination system. If a page as all
-		// live sessions, it will mess up the numbering of all the rest.
-		// ugh ugh ugh.
-		//
-		// So, what are our options on this one? 
-		//	1. fixed height. this burns a lot of space, although it does allow us to 
-		//		say something like "hangout not started yet"
-		//		we could also show slots in that space, the way we used to.
-		//	2. rebuild the pagination internals
-		//		what would this even mean? we would have to break the assumption that
-		//		all pages have the same number of items, and adjust accordingly.
-		//
-		// option 1 is the only one feasible in the short term, so I guess we do that.
-		//
-		//	there is one slight variant; if we have distinct "sign up" phases and "live"
-		//	phases within an event, we could expand/contract sessions at that point
-		//	without messing things up. It just needs to be all of one or all of the 
-		//	other for now.
-
-		var exampleSessionHeight = this.$el.find(".session").first().outerHeight();
-
-		if(exampleSessionHeight< 10) {
-			return;
-		}
-
-		// figure out how many we can fit safely, rounding down
-		var height = this.$el.parent().innerHeight() - 50;
-
-		var sessionsPerPage = Math.floor(height / exampleSessionHeight);
-		
-		if(sessionsPerPage < 1) {
-			sessionsPerPage = 1;
-		}
-
-		// tell the collection how big we want its pages to be as a result
-		if(this.collection.perPage != sessionsPerPage) {
-			this.collection.howManyPer(sessionsPerPage);
-			this.render();
-		}
-	},
-
 	onRender: function() {
-		this.$el.find(".footer").remove();
-		if(this.collection.info().pageSet.length >1) {
-			var template = _.template($("#pagination-template").text(), this.collection);
 
-			this.$el.append(template);
-			this.delegateEvents();
-		}
 	}
 })
 

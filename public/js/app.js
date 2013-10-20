@@ -106,23 +106,23 @@ $(document).ready(function() {
 		// plus a sliding view of the current "page" of sessions. You can use
 		// the object like any other backbone collection, and it returns only the current
 		// page, so it's pretty transparent.
-	    this.paginatedSessions = new models.PaginatedSessionList(curEvent.get("sessions").models);
+	    // this.paginatedSessions = new models.PaginatedSessionList(curEvent.get("sessions").models);
 
 	    // I'm not sure why callign setsort is the right way to trigger sorts (sort of thought
 	    // it would set the comparator) but it does seem to behave like we want it to.
-	    this.paginatedSessions.on("add", _.bind(function() {
-		    this.paginatedSessions.setSort("title", "asc");
-	    }, this));
+	    // this.paginatedSessions.on("add", _.bind(function() {
+		   //  this.paginatedSessions.setSort("title", "asc");
+	    // }, this));
 
 	    // the pagination system sort of assumes that it's going to be loading pages
 	    // over HTTP from the server. Using it in this client-side way causes some 
 	    // issues for it. One of them is that we have to manually tell it to set itself up,
 	    // rather than letting it lazily load its contents on demand from an HTTP
 	    // endpoint.
-	    this.paginatedSessions.bootstrap();
+	    // this.paginatedSessions.bootstrap();
 
 	    // create all the basic views
-		this.sessionListView = new SessionListView({collection: this.paginatedSessions});
+		this.sessionListView = new SessionListView({collection: curEvent.get("sessions")});
 		this.chatView = new ChatLayout({messages:messages, users:users});
 		this.youtubeEmbedView = new VideoEmbedView({model:curEvent});
 		this.dialogView = new DialogView();
@@ -555,7 +555,7 @@ $(document).ready(function() {
 
 			case "delete":
 				var session = curEvent.get("sessions").get(msg.args.id);
-				app.paginatedSessions.remove(session);
+				// app.paginatedSessions.remove(session);
 				curEvent.removeSession(session);
 
 				console.log("removing session: " + msg.args.id);
@@ -570,7 +570,7 @@ $(document).ready(function() {
 				// important that we add it to the special paginated sessions list.
 				// after startup, we have to edit it directly.
 				curEvent.get("sessions").add(session);
-				app.paginatedSessions.add(session);
+				// app.paginatedSessions.add(session);
 				break;
 
 			// update the list of a session's participants
