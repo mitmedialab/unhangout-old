@@ -39,12 +39,12 @@ $(document).ready(function() {
 	
 	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 
-	// add in some fake users
-	users.add(new models.User({displayName:"test1", picture:""}));
-	users.add(new models.User({displayName:"test2", picture:""}));
-	users.add(new models.User({displayName:"test3", picture:""}));
-	users.add(new models.User({displayName:"test4", picture:""}));
-	users.add(new models.User({displayName:"test5", picture:""}));
+	// add in some fake users for testing user list display
+	// users.add(new models.User({displayName:"test1", picture:""}));
+	// users.add(new models.User({displayName:"test2", picture:""}));
+	// users.add(new models.User({displayName:"test3", picture:""}));
+	// users.add(new models.User({displayName:"test4", picture:""}));
+	// users.add(new models.User({displayName:"test5", picture:""}));
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 
