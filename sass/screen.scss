@@ -118,12 +118,11 @@ body {
 	bottom: 0px;
 	top: 0px;
 
-	overflow: hidden;
+	overflow-y: scroll;
 
 	&.bar {
 		top: 40px;
 	}
-
 }
 
 #main {
@@ -1033,4 +1032,19 @@ tr:nth-child(even) {
 
 td form {
 	margin: 0px;
+}
+
+
+// This forces webkit browsers to show scroll bars whenever possible.
+// per http://stackoverflow.com/questions/18317634/force-visible-scrollbar-in-firefox-on-mac-os-x
+// not great, but it's something.
+::-webkit-scrollbar {
+   -webkit-appearance: none;
+   width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+   border-radius: 4px;
+   background-color: rgba(0,0,0,.5);
+   -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
