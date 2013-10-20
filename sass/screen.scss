@@ -132,15 +132,15 @@ body {
 }
 
 #presence-gutter {
-	width: 58px;
+	width: 60px;
 
 	position: absolute;
 	top: 0px;
 	right: 0px;
 	bottom: 0px;
 
-	// overflow-y: auto;
-	overflow-x: visible;
+	overflow-y: scroll;
+	// overflow-x: visible;
 
 	ul {
 		margin: 0px;
@@ -159,8 +159,8 @@ body {
 	// }
 
 	#user-list {
-		overflow-y: scroll;
-		overflow-x: visible;
+		// overflow-y: scroll;
+		// overflow-x: visible;
 
 		padding-left: 5px;
 	}
@@ -183,37 +183,9 @@ body {
 		margin-bottom: 5px;
 	}
 
-	.pageUp, .pageDown {
-		background-color: $primary;
-		color: white;
-		width: 40px;
-		text-align: center;
-		border-radius: 5px;
-		height: 15px;
 
-		cursor: pointer;
-
-		&:hover {
-			background-color: lighten($primary, 10);
-		}
-
-		&:active {
-			background-color: darken($primary, 10);
-		}
-	}
-
-	.pageDown {
-		position: absolute;
-
-		bottom: 3px;
-
-		clear: left;
-		padding-top: -5px;
-
-		i {
-			position: relative;
-			top: -5px;
-		}
+	#user-list-container {
+		overflow-y: scroll;
 	}
 }
 

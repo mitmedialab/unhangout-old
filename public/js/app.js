@@ -38,6 +38,13 @@ $(document).ready(function() {
 	curEvent = new models.ClientEvent(EVENT_ATTRS);
 	
 	users = new models.UserList(EVENT_ATTRS.connectedUsers);
+
+	// add in some fake users
+	users.add(new models.User({displayName:"test1", picture:""}));
+	users.add(new models.User({displayName:"test2", picture:""}));
+	users.add(new models.User({displayName:"test3", picture:""}));
+	users.add(new models.User({displayName:"test4", picture:""}));
+	users.add(new models.User({displayName:"test5", picture:""}));
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 
@@ -483,13 +490,13 @@ $(document).ready(function() {
 
 			// a user has blurred the lobby window
 			case "blur":
-				var blurredUser = _.findWhere(users.origModels, {id:msg.args.id});
+				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(true);
 				break;
 
 			// a user has focused the lobby window
 			case "focus":
-				var blurredUser = _.findWhere(users.origModels, {id:msg.args.id});
+				var blurredUser = users.get(msg.args.id);
 				blurredUser.setBlurred(false);
 				break;
 			

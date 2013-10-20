@@ -430,11 +430,6 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	itemViewContainer: "#user-list-container",
 	id: "user-list",
 
-	events: {
-		'click .pageUp':'pageUp',
-		'click .pageDown':'pageDown'
-	},
-
 	initialize: function() {
 		this.listenTo(this.collection, 'add remove', function() {
 			// going to manually update the current user counter because
