@@ -457,13 +457,8 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 			// to keep an eye on. More info here:
 			// https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.compositeview.md#model-and-collection-rendering
 
-			this.$el.find(".header .contents").text(this.collection.info().totalUnfilteredRecords);
+			this.$el.find(".header .contents").text(this.collection.length);
 		}, this);
-
-
-		$(window).resize(_.bind(function() {
-			this.updateDisplay();
-		}, this));
 	},
 
 	serializeData: function() {
@@ -471,7 +466,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 
 		data = this.collection.toJSON();
 
-		data["numUsers"] = this.collection.info().totalRecords;
+		data["numUsers"] = this.collection.length;
 
 		console.log("running user list serialize data");
 		return data;
@@ -480,49 +475,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 	update: function() {
 		console.log("rendering UserListView");
 		this.render();
-	},
-
-	updateDisplay: function() {
-		// figure out how tall a user is.
-		var exampleUserHeight = this.$el.find(".user").first().outerHeight();
-
-		if(exampleUserHeight< 10) {
-			return;
-		}
-
-		// figure out how many we can fit safely, rounding down
-		var height = this.$el.parent().innerHeight() - 75;
-
-		var userPerPage = Math.floor(height / exampleUserHeight);
-
-		console.log("collection.perPage: " + this.collection.perPage);
-		console.log("userPerPage: " + userPerPage);
-		
-		// stop trusting collection.perPage; that seems to vary 
-		// depending on how many people are actually available
-		// to be shown?
-
-		if(this.collection.perPage != userPerPage) {
-			this.collection.howManyPer(userPerPage);
-			this.render();
-		}
-	},
-
-	// onRender: function() {
-	// 	console.log("post render");
-	// },
-
-	pageUp: function() {
-		console.log("page up");
-		this.collection.prevPage();
-		this.render();
-	},
-
-	pageDown: function() {
-		console.log("page down");
-		this.collection.nextPage();
-		this.render();
-	},
+	}
 });
 
 // Manages chat message display. The layout piece sets up the differnt chat zones:

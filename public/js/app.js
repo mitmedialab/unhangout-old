@@ -37,8 +37,7 @@ $(document).ready(function() {
 	// over the sockJS channel, but the initial state is embedded in these constants.
 	curEvent = new models.ClientEvent(EVENT_ATTRS);
 	
-	users = new models.PaginatedUserList(EVENT_ATTRS.connectedUsers);
-	users.bootstrap();
+	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 

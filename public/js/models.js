@@ -232,19 +232,6 @@ models.SessionList = Backbone.Collection.extend({
 	}
 });
 
-models.PaginatedSessionList = Backbone.Paginator.clientPager.extend({
-	model:models.Session,
-
-	paginator_ui: {
-		firstPage: 1,
-
-		currentPage: 1,
-		perPage: 6,
-		totalPages: 10,
-		pagesInRange: 4
-	}
-});
-
 models.User = Backbone.Model.extend({
 
 	default: function() {
@@ -322,18 +309,6 @@ models.UserList = Backbone.Collection.extend({
 	model:models.User
 });
 
-models.PaginatedUserList = Backbone.Paginator.clientPager.extend({
-	model:models.User,
-
-	paginator_ui: {
-		firstPage: 1,
-
-		currentPage: 1,
-		perPage: 6,
-		totalPages: 10,
-		pagesInRange: 4
-	}
-});
 
 function pad(n, width, z) {
   z = z || '0';
