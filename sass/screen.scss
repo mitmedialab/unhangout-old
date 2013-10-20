@@ -139,7 +139,7 @@ body {
 	right: 0px;
 	bottom: 0px;
 
-	overflow-y: scroll;
+	// overflow-y: scroll;
 	// overflow-x: visible;
 
 	ul {
@@ -159,9 +159,6 @@ body {
 	// }
 
 	#user-list {
-		// overflow-y: scroll;
-		// overflow-x: visible;
-
 		padding-left: 5px;
 	}
 
@@ -184,8 +181,14 @@ body {
 	}
 
 
-	#user-list-container {
+	#user-list-scroll-container {
 		overflow-y: scroll;
+
+		position: absolute;
+		bottom: 0px;
+		left: 5px;
+		right: 0px;
+		top: 20px;
 	}
 }
 
