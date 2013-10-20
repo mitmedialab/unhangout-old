@@ -232,12 +232,11 @@ $(document).ready(function() {
 		// it's currently showon.	
 		if(videoShown) {
 			this.topLeft.$el.css("z-index", -10);
-
+			this.topLeft.$el.addClass("hide");
 			this.topLeft.reset();
 			videoShown = false;
 
 			this.main.$el.css("top", 0);
-			this.sessionListView.updateDisplay();
 			$("#video-nav").removeClass("active");
 		} else if(curEvent.hasEmbed()) {
 			// we have to make sure the current event actually has an embed to show.
@@ -248,6 +247,7 @@ $(document).ready(function() {
 			if(!videoShown) {
 				this.topLeft.show(this.youtubeEmbedView);
 				videoShown = true;
+				this.topLeft.$el.removeClass("hide");
 
 				var mainHeight = this.youtubeEmbedView.$el.outerHeight()-5;
 
@@ -256,7 +256,6 @@ $(document).ready(function() {
 				}
 
 				this.main.$el.css("top", mainHeight);
-				this.sessionListView.updateDisplay();
 				this.topLeft.$el.css("z-index", 50);
 				$("#video-nav").addClass("active");
 			}
