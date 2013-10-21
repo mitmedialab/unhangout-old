@@ -126,9 +126,9 @@
 			
 			<script type="text/template" id="user-list-template">
 			<div class="header"><span class="contents">{{=numUsers}}</span><i class="icon-user"></i></div>
-			<div class="pageUp"><i class="icon-sort-up"></i></div>
+			<div id="user-list-scroll-container">
 			<ul id="user-list-container"></ul>
-			<div class="pageDown"><i class="icon-sort-down"></i></div>
+			</div>
 			</script>
 			
 			<script type="text/template" id="chat-message-template">
@@ -296,7 +296,7 @@
 	<div id="bar"></div>
 	<div id="top"></div>
 
-	<div id="top-left" class="span6">
+	<div id="top-left" class="span6 hide">
 	</div>
 	<div id="main-left" class="span6">
 	</div>
