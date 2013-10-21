@@ -1,9 +1,6 @@
 <% include permalink-header.ejs %>
 
 <div class="container">
-<div class="alert">
-We've switched to SSL throughout the unhangout site, to (hopefully) relieve some occasional issues with browsers sometimes blocking hangout application messages to our servers. Let me know at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a> if this move to https causes you any issues! Thanks!
-</div>
 
 <form action="/h/admin/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
 	<% if(showAdmin) { %>
