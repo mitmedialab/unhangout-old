@@ -318,6 +318,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 	events: {
 		'click #set-embed':'setEmbed',
+		'click #remove-embed':'removeEmbed',
 		'click #disconnected-modal a':'closeDisconnected',
 		'click #create-session':'createSession'
 	},
@@ -334,6 +335,13 @@ var DialogView = Backbone.Marionette.Layout.extend({
 			var message = {type:"embed", args:{ytId:newId}};
 			sock.send(JSON.stringify(message));
 		}
+	},
+
+	removeEmbed: function() {
+		// just send an empty message, and clear the field
+		$("#youtubue_id").val("");
+		var message = {type:"embed", args:{ytId:""}};
+		sock.send(JSON.stringify(message));
 	},
 
 	createSession: function() {

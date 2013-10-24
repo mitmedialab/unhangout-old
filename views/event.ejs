@@ -168,7 +168,7 @@
 
 							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
 
-							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">embed</a>
+							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">video embed</a>
 							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
 							<a role="menuitem" tabindex="-1" id="stop-all">stop all sessions</a>
 							<a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
@@ -203,11 +203,12 @@
 					<div class="modal-body">
 						<p class="text-warning hide">Invalid youtube ID, should be 11 characters long</p>
 						<div class="control-group">
-							<label for="youtube_id">Youtube Id</label><input type="text" name="youtube_id" value="" id="youtube_id">
+							<label for="youtube_id">Youtube Id (11 character id, after '?v=')</label><input type="text" name="youtube_id" value="" id="youtube_id">
 						</div>
 					</div>
 					<div class="modal-footer">
-						<a href="#" class="btn btn-primary" id="set-embed">Set Embed</a>
+						<a href="#" class="btn btn-warning" id="remove-embed">Remove Video</a>
+						<a href="#" class="btn btn-primary" id="set-embed">Set Video</a>
 					</div>
 				</div>
 				<div class="modal hide fade started-modal">
