@@ -40,33 +40,9 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	initialize: function() {
-
 		// if we get a notice that someone has connected to the associated participant,
 		// re-render to show them.
 		this.listenTo(this.model, 'change change:connectedParticipantIds change:hangoutConnected', this.render, this);
-
-		// changes to session-key are basically a proxy for a session going "live", eg
-		// an organizer has marked that session was now running.
-		this.listenTo(this.model, 'change:session-key', function() {
-			if(!this.model.isAttending(USER_ID)) {
-				console.log("skipping dialog for a non-attending user");
-				return;
-			}
-			
-			console.log("got start message!");
-			$(".started-modal").find("a").attr("href", "/session/" + this.model.get("session-key"));
-			$(".started-modal").find("h3").text(this.model.get("title") + " IS STARTING");
-			$(".started-modal").modal('show');
-
-			setTimeout(_.bind(function() {
-				console.log("running hide");
-				$(".modal.in").modal("hide");
-				// this.ui.joinDialog.modal('hide');
-			}, this), 60000);
-		}, this);	
-
-		// this.listenTo(this.model, 'stopped', this)
-
 	},
 
 	onRender: function() {
@@ -82,17 +58,8 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".admin-buttons").hide();			
 		}
 
-		if(this.model.isAttending(USER_ID)) {
-			this.ui.attend.addClass("active");
-			this.$el.find(".joined").show();
-		} else {
-			this.ui.attend.removeClass("active");
-			this.$el.find(".joined").hide();
-		}
-
 		if(this.model.isLive()) {
 			this.$el.addClass("live");
-
 
 			// remove the toggle-ness of the button once the event starts.
 			this.ui.attend.attr("data-toggle", "");

@@ -47,22 +47,6 @@ $(document).ready(function() {
 	// users.add(new models.User({displayName:"test5", picture:""}));
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
-
-	// SINGLE_SESSION_RSVP 
-	// if true, enforces that a client can only "sign up" for one session at a time. Subsequent
-	// sign up messages will be interepreted as un-signing up ('unattend' in the protocol) from
-	// the session they're currently signed up for and signing up for the new one.
-	//
-	// This behavior is 100% optional. We used it in our first event, but there are reasons we
-	// might or might not use it in future events.
-	if(SINGLE_SESSION_RSVP) {
-		curEvent.get("sessions").each(function(session) {
-			if(session.isAttending(USER_ID)) {
-				console.log("SETTING CUR SESSION: " + session.id);
-				curSession = session.id;
-			}
-		})
-	}
 	
 	messages = new models.ChatMessageList();
 	
@@ -438,38 +422,7 @@ $(document).ready(function() {
 		}
 		
 		// All messages have a type field. 
-		switch(msg.type) {
-
-			// a user rsvps to a session
-			case "attend":
-				curEvent.get("sessions").get(msg.args.id).addAttendee(msg.args.user);
-				console.log("added attendee to a session");
-
-				if(SINGLE_SESSION_RSVP && msg.args.user.id==USER_ID) {
-
-					if(!_.isNull(curSession)) {
-						var message = {type:"unattend", args:{id:curSession}};
-						sock.send(JSON.stringify(message));				
-					}
-
-					curSession = msg.args.id;
-				}
-				break;
-
-			// a user un-rsvp's to a session
-			case "unattend"	:
-				curEvent.get("sessions").get(msg.args.id).removeAttendee(msg.args.user);
-				console.log("removed attendee from a session");
-
-				curSession = null;
-
-				if(queuedAttend) {
-					queuedAttend.call();
-					queuedAttend = false;
-				}
-
-				break;
-			
+		switch(msg.type) {			
 			// join an EVENT
 			case "join":
 				console.log("join: " + JSON.stringify(msg.args));
@@ -521,43 +474,6 @@ $(document).ready(function() {
 				}
 
 				break;
-				
-			// a session has been "started" by an admin. 
-			case "start":
-				// this is a little wacky, but we want to give people who RSVP'd a chance to join first.
-				// so we're going to do two things here: 
-				// 1) if not rsvp, delay triggering start and setting the session key.
-				// 2) if not rsvp, supress the dialog popup
-				var session = curEvent.get("sessions").get(msg.args.id);
-				
-				var timeout = 0;
-				
-				if(!(session.isAttending(USER_ID))) {
-					timeout = 60*1000;
-				}				
-
-				setTimeout(function() {
-					session.set("session-key", msg.args.key);
-					session.start();
-
-					if(session.isattending(USER_ID)) {
-						app.vent.trigger("show-bar", msg.args.key);
-					}
-				}, timeout);
-
-				break;
-
-			// Mark a session as ended
-			case "stop":
-				var session = curEvent.get("sessions").get(msg.args.id);
-				session.stop();
-
-				if(session.id==curSession) {
-					app.vent.trigger("hide-bar");
-				}
-
-				break;
-
 			case "delete":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				// app.paginatedSessions.remove(session);
