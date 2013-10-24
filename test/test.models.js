@@ -107,23 +107,9 @@ describe("SERVEREVENT", function() {
 	});
 });
 
-describe("SESSION", function() {
-	describe("#addAttendee", function() {
-		it('should reject a second add, when max attendees is set to 1', function(done) {
-			client_models.Session.prototype.MAX_ATTENDEES = 1;
+// describe("SESSION", function() {
 
-			var session = new client_models.Session();
-			session.addAttendee(new client_models.User({id:0}));
-
-			var err = session.addAttendee(new client_models.User({id:1}));
-
-			if(err) {
-				client_models.Session.prototype.MAX_ATTENDEES = 10;
-				done();				
-			}
-		})
-	});	
-});
+// });
 
 describe("USER", function() {
 	describe("#getShortDisplayName", function () {

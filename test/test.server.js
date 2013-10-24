@@ -225,7 +225,7 @@ describe('unhangout server', function() {
 		});
 
 		it('if :code is new, it should create a new session on the server', function(done){
-			request.get('http://localhost:7777/h/test')
+			request.get('http://localhost:7777/h/' + Math.floor(Math.random()*100000))
 				.redirects(0)
 				.end(function(res){
 					res.status.should.equal(302);
@@ -300,9 +300,6 @@ describe('unhangout server', function() {
 		beforeEach(mockSetup(false, function(done) {
 				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
 				session = s.events.at(0).get("sessions").at(0);
-
-				session.start();
-
 				done();
 			}));
 
@@ -505,183 +502,8 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"join", args:{id:0}}));
 			});
 			
-			it("should reject an ATTEND message before a join");
 		});
 		
-		describe("ATTEND", function() {
-			beforeEach(joinEventSetup);
-			
-			it("should accept an ATTEND request with a valid session id (part of event)", function(done) {
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="attend-ack") {
-						done();
-					} else if(msg.type=="attend-err") {
-						should.fail();
-					}
-				});
-
-				sock.write(JSON.stringify({type:"attend", args:{id:1}}));
-			});
-						
-			it('should reject an ATTEND request with a valid session id (not part of event)', function(done) {
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="attend-ack") {
-						should.fail();
-					} else if(msg.type=="attend-err") {
-						done();
-					}
-				});
-
-				sock.write(JSON.stringify({type:"attend", args:{id:28}}));
-			});
-			
-			it('should reject an ATTEND request with an invalid session id', function(done) {
-				sock.once("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="attend-ack") {
-						should.fail();
-					} else if(msg.type=="attend-err") {
-						done();
-					}
-				});
-
-				sock.write(JSON.stringify({type:"attend", args:{id:100}}));
-			});
-			
-			it('should increment attendee count', function(done) {
-				var session = s.events.get(1).get("sessions").get(1);
-				session.numAttendees().should.equal(0);
-				
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="attend-ack") {
-						session.numAttendees().should.equal(1);
-						done();
-					} else if(msg.type=="attend-err") {
-						should.fail();
-					}
-				});
-
-				sock.write(JSON.stringify({type:"attend", args:{id:1}}));	
-			});
-			
-			it('should generate a message to clients joined to that event', function(done) {
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="attend") {
-						msg.args.should.have.keys("id", "user");
-						done();
-					} else if(msg.type=="attend-err") {
-						should.fail();
-					}
-				});
-
-				sock.write(JSON.stringify({type:"attend", args:{id:1}}));				
-			});
-		});
-		
-		describe("UNATTEND", function() {
-			beforeEach(joinEventSetup);
-			
-			it("should accept an UNATTEND request with the user.id of an attending user", function(done) {
-				// manipulate internal state to do an attend.
-				var user = s.users.at(0);
-				var event = s.events.get(1);
-				var session = event.get("sessions").at(0);
-				
-				session.addAttendee(user);
-				
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					
-					if(msg.type=="unattend-ack") {
-						done();
-					} else if(msg.type=="unattend-err") {
-						should.fail("unattend-err");
-					}
-				});
-				
-				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));
-			});
-			
-			it("should reject an UNATTEND request if that user.id is not attending", function(done) {
-				// manipulate internal state to do an attend.
-				var user = s.users.at(0);
-				var event = s.events.get(1);
-				var session = event.get("sessions").at(0);
-				
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					
-					if(msg.type=="unattend-ack") {
-						should.fail("unattend-err");
-					} else if(msg.type=="unattend-err") {
-						done();
-					}
-				});
-				
-				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));				
-			});
-			
-			it("should send an UNATTEND message to all connected users in that event", function(done) {
-				var user = s.users.at(0);
-				var event = s.events.get(1);
-				var session = event.get("sessions").at(0);
-				
-				session.addAttendee(user);
-				
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					
-					if(msg.type=="unattend") {
-						done();
-					} else if(msg.type=="unattend-err") {
-						should.fail("unattend-err");
-					}
-				});
-				
-				sock.write(JSON.stringify({type:"unattend", args:{id:session.id}}));
-			});			
-		});
-		
-		describe("START/STOP", function() {
-			beforeEach(joinEventSetup);
-			
-			it("should reject start messages from non-admins", function(done) {
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="start-ack") {
-						should.fail();
-					} else if(msg.type=="start-err") {
-						done();
-					}
-				});
-				
-				sock.write(JSON.stringify({type:"start", args:{id:s.events.get(1).get("sessions").at(0).id}}));
-			});
-			
-			it("should accept start messages from admins", function(done) {
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="start-ack") {
-						done();
-					} else if(msg.type=="start-err") {
-						should.fail();
-					}
-				});
-				
-				s.users.at(0).set("admin", true);
-				
-				sock.write(JSON.stringify({type:"start", args:{id:s.events.get(1).get("sessions").at(0).id}}));
-			});
-
-			it("should accept a stop-all message");
-			it("should stop any running session, but not stop non-running sessions");
-			it("should send stop messages for running sessions to clients");
-		});
-
 		describe("CREATE-SESSION", function() {
 			beforeEach(joinEventSetup);
 
