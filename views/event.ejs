@@ -81,7 +81,7 @@
 		    </script>
 
 			<script type="text/template" id="session-template">
-			<h3>{{= title }}<span class="joined label label-info">your pick</span></h3>
+			<h3>{{= title }}</h3>
 			<div class="description">{{= description }} </div>
 			<div class="empty">no one signed up yet</div>
 			<div class="attending"><div class="first"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="full">FULL</div></div>
@@ -89,7 +89,6 @@
 			
 			<div class="admin-buttons">
 			<div class="delete btn btn-warning"><i class="icon-trash"></i></div>
-			<div class="start btn btn-warning"><i class="icon-play"></i></div>
 			</div>
 			<div class="hangout-users">
 			</div>
@@ -165,12 +164,9 @@
 						<li role="presentation">
 							<a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">create session</a>
 							<a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">edit event settings</a>
-
-							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
-
 							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">video embed</a>
-							<!--<a role="menuitem" tabindex="-1" id="start-all">start all sessions</a>-->
-							<a role="menuitem" tabindex="-1" id="stop-all">stop all sessions</a>
+							<a role="menuitem" tabindex="-1" id="open-sessions">open sessions</a>
+							<a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
 							<a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
 						</li>
 					</ul>

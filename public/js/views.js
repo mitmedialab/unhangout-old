@@ -40,33 +40,9 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	initialize: function() {
-
 		// if we get a notice that someone has connected to the associated participant,
 		// re-render to show them.
 		this.listenTo(this.model, 'change change:connectedParticipantIds change:hangoutConnected', this.render, this);
-
-		// changes to session-key are basically a proxy for a session going "live", eg
-		// an organizer has marked that session was now running.
-		this.listenTo(this.model, 'change:session-key', function() {
-			if(!this.model.isAttending(USER_ID)) {
-				console.log("skipping dialog for a non-attending user");
-				return;
-			}
-			
-			console.log("got start message!");
-			$(".started-modal").find("a").attr("href", "/session/" + this.model.get("session-key"));
-			$(".started-modal").find("h3").text(this.model.get("title") + " IS STARTING");
-			$(".started-modal").modal('show');
-
-			setTimeout(_.bind(function() {
-				console.log("running hide");
-				$(".modal.in").modal("hide");
-				// this.ui.joinDialog.modal('hide');
-			}, this), 60000);
-		}, this);	
-
-		// this.listenTo(this.model, 'stopped', this)
-
 	},
 
 	onRender: function() {
@@ -82,17 +58,8 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".admin-buttons").hide();			
 		}
 
-		if(this.model.isAttending(USER_ID)) {
-			this.ui.attend.addClass("active");
-			this.$el.find(".joined").show();
-		} else {
-			this.ui.attend.removeClass("active");
-			this.$el.find(".joined").hide();
-		}
-
 		if(this.model.isLive()) {
 			this.$el.addClass("live");
-
 
 			// remove the toggle-ness of the button once the event starts.
 			this.ui.attend.attr("data-toggle", "");
@@ -180,6 +147,18 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.hangoutUsers.hide();
 			this.ui.hangoutOffline.show();
 			this.$el.removeClass("hangout-connected");
+		}
+
+		if(!curEvent.sessionsOpen() || numAttendees == this.model.MAX_ATTENDEES) {
+			this.ui.attend.attr("disabled", true);
+			this.ui.attend.addClass("disabled");
+
+			if(numAttendees==this.model.MAX_ATTENDEES) {
+				// TODO do something special here, an icon perhaps?
+			}
+		} else {
+			this.ui.attend.removeAttr("disabled");
+			this.ui.attend.removeClass("disabled");
 		}
 	},
 
@@ -371,17 +350,16 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 
 	events: {
 		'click #show-embed-modal':'showEmbedModal',
-		'click #start-all':'startAll',
-		'click #stop-all':'stopAll',
+		'click #open-sessions':'openSessions',
+		'click #close-sessions':'closeSessions'
 	},
 
-	startAll: function() {
-		console.log("start all!");
+	openSessions: function() {
+		sock.send(JSON.stringify({type:"open-sessions", args:{}}));
 	},
 
-	stopAll: function() {
-		console.log("stop all!");
-		sock.send(JSON.stringify({type:"stop-all", args:{}}));
+	closeSessions: function() {
+		sock.send(JSON.stringify({type:"close-sessions", args:{}}));
 	},
 
 	showEmbedModal: function() {

@@ -52,7 +52,8 @@ models.Event = Backbone.Model.extend({
 			end: null,
 			connectedUsers: null,			// these two fields are setup in initialize
 			sessions: null,
-			youtubeEmbed: null
+			youtubeEmbed: null,
+			sessionsOpen: false
 		}
 	},
 	
@@ -92,6 +93,18 @@ models.Event = Backbone.Model.extend({
 	removeSession: function(session) {
 		this.get("sessions").remove(session);
 		session.trigger("change:collection");
+	},
+
+	openSessions: function() {
+		this.set("sessionsOpen", true);
+	},
+
+	closeSessions: function() {
+		this.set("sessionsOpen", false);
+	},
+
+	sessionsOpen: function() {
+		return this.get("sessionsOpen");
 	},
 		
 	url: function() {
@@ -148,66 +161,15 @@ models.Session = Backbone.Model.extend({
 		return {
 			title: "",
 			description: "",
-			attendeeIds: [], // attendees are people who have signed up for the session
-			started: false,
-			stopped: false,
+			started: true,
 			connectedParticipantIds: [],	// connectedParticipants are people who the google hangout supervisor app reports are present in the hangout associated with this session
 			hangoutConnected: false,
 			shortCode: null
 		};
 	},
-	
-	numAttendees: function() {
-		return this.get("attendeeIds").length;
-	},
-	
-	addAttendee: function(user) {
-		if(this.get("attendeeIds").length==this.MAX_ATTENDEES) {
-			return new Error("already at max attendees");
-		}
 		
-		var attendeeIds = _.clone(this.get("attendeeIds"));
-		
-		if(attendeeIds.indexOf(user.id)==-1) {
-			attendeeIds.push(user.id);
-			this.set("attendeeIds", attendeeIds);
-			this.trigger("change");
-			this.trigger("change:attendeeIds");
-		} else {
-			return new Error("user already attending session");
-		}
-	},
-	
-	removeAttendee: function(user) {
-		var attendeeIds = _.clone(this.get("attendeeIds"));
-		
-		var index = attendeeIds.indexOf(user.id);
-		if(index==-1) {
-			return new Error("user not attending this session");
-		} else {
-			attendeeIds.splice(index, 1);
-			this.set("attendeeIds", attendeeIds);
-			this.trigger("change");
-			this.trigger("change:attendeeIds");
-		}
-	},
-	
-	isAttending: function(userId) {
-		return this.get("attendeeIds").indexOf(userId)!=-1;
-	},
-		
-	start: function() {
-		this.set("started", new Date().getTime());
-		this.trigger("start");
-	},
-
-	stop: function() {
-		this.set("stopped", new Date().getTime());
-		this.trigger("stopped");
-	},
-
 	isLive: function() {
-		return this.get("started") && !this.get("stopped");
+		return true;
 	},
 
 	setConnectedParticipantIds: function(ids) {
