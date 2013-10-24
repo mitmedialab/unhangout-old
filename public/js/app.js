@@ -513,6 +513,16 @@ $(document).ready(function() {
 				session.set("hangoutConnected", false);
 				break;
 
+			case "open-sessions":
+				curEvent.openSessions();
+				app.sessionListView.render();		
+				break;
+
+			case "close-sessions":
+				curEvent.closeSessions();
+				app.sessionListView.render();		
+				break;
+
 			// sent in cases when the event's information has been updated.
 			// includes the entire event JSON object as the server sees it.
 			// copy it into curEvent.

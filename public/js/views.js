@@ -148,6 +148,18 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.hangoutOffline.show();
 			this.$el.removeClass("hangout-connected");
 		}
+
+		if(!curEvent.sessionsOpen() || numAttendees == this.model.MAX_ATTENDEES) {
+			this.ui.attend.attr("disabled", true);
+			this.ui.attend.addClass("disabled");
+
+			if(numAttendees==this.model.MAX_ATTENDEES) {
+				// TODO do something special here, an icon perhaps?
+			}
+		} else {
+			this.ui.attend.removeAttr("disabled");
+			this.ui.attend.removeClass("disabled");
+		}
 	},
 
 	destroy: function() {
@@ -330,17 +342,16 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 
 	events: {
 		'click #show-embed-modal':'showEmbedModal',
-		'click #start-all':'startAll',
-		'click #stop-all':'stopAll',
+		'click #open-sessions':'openSessions',
+		'click #close-sessions':'closeSessions'
 	},
 
-	startAll: function() {
-		console.log("start all!");
+	openSessions: function() {
+		sock.send(JSON.stringify({type:"open-sessions", args:{}}));
 	},
 
-	stopAll: function() {
-		console.log("stop all!");
-		sock.send(JSON.stringify({type:"stop-all", args:{}}));
+	closeSessions: function() {
+		sock.send(JSON.stringify({type:"close-sessions", args:{}}));
 	},
 
 	showEmbedModal: function() {

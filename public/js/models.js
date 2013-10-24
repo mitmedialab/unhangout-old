@@ -52,7 +52,8 @@ models.Event = Backbone.Model.extend({
 			end: null,
 			connectedUsers: null,			// these two fields are setup in initialize
 			sessions: null,
-			youtubeEmbed: null
+			youtubeEmbed: null,
+			sessionsOpen: false
 		}
 	},
 	
@@ -92,6 +93,18 @@ models.Event = Backbone.Model.extend({
 	removeSession: function(session) {
 		this.get("sessions").remove(session);
 		session.trigger("change:collection");
+	},
+
+	openSessions: function() {
+		this.set("sessionsOpen", true);
+	},
+
+	closeSessions: function() {
+		this.set("sessionsOpen", false);
+	},
+
+	sessionsOpen: function() {
+		return this.get("sessionsOpen");
 	},
 		
 	url: function() {
