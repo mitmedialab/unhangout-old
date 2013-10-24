@@ -504,6 +504,7 @@ describe('unhangout server', function() {
 			
 		});
 		
+
 		describe("CREATE-SESSION", function() {
 			beforeEach(joinEventSetup);
 
@@ -587,6 +588,70 @@ describe('unhangout server', function() {
 			});
 		});
 		
+		describe("OPEN/CLOSE SESSIONS", function() {
+			beforeEach(joinEventSetup);
+
+			it("should accept open messages from admins", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="open-sessions-ack") {
+						s.events.get(1).sessionsOpen().should.be.true
+						done();
+					} else if(msg.type=="open-sessions-err") {
+						should.fail();
+					}
+				});
+				
+				s.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({type:"open-sessions", args:{}}));
+			});
+			
+			it("should generate messages to everyone in the event on open sessions", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="open-sessions") {
+						done();
+					} else if(msg.type=="open-sessions-err") {
+						should.fail();
+					}
+				});
+
+				s.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({type:"open-sessions", args:{}}));
+			});
+
+			it("should accept close messages from admins", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="close-sessions-ack") {
+						s.events.get(1).sessionsOpen().should.be.false
+						done();
+					} else if(msg.type=="close-sessions-err") {
+						should.fail();
+					}
+				});
+				
+				s.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({type:"close-sessions", args:{}}));
+			});
+			
+			it("should generate messages to everyone in the event on close sessions", function(done) {
+				sock.on("data", function(message) {
+					var msg = JSON.parse(message);
+					if(msg.type=="close-sessions") {
+						done();
+					} else if(msg.type=="close-sessions-err") {
+						should.fail();
+					}
+				});
+
+				s.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({type:"close-sessions", args:{}}));
+			});
+
+
+		})
+
 		describe("EMBED", function() {
 			beforeEach(joinEventSetup);
 			
@@ -652,7 +717,7 @@ describe('unhangout server', function() {
 				sock.write(JSON.stringify({type:"embed", args:{ytId:"QrsIICQ1eg8"}}));
 			});	
 		});
-		
+
 		describe("CHAT", function() {
 			beforeEach(joinEventSetup);
 			
