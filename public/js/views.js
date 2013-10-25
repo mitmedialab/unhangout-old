@@ -264,7 +264,7 @@ var UserView = Marionette.ItemView.extend({
 			// this.$el.find("img, i").attr("data-container", "#chat-container-region");
 			this.$el.find("img, i").attr("data-placement", "top");
 		} else {
-			this.$el.find("img, i").attr("data-container", "#chat-container-region");
+			this.$el.find("img, i").attr("data-container", "body");
 			this.$el.find("img, i").attr("data-placement", "left");
 		}
 
