@@ -146,34 +146,38 @@ $(document).ready(function() {
 		//
 		// We also use this to decide whether or not to show new messages coming in
 		// by changing the tab title.
-		var startingTitle = window.document.title;
-		var isAlreadyBlurred; 
-		$(window).blur(function() {
-			if(isAlreadyBlurred)
-				return ;
 
-			isIntervalRunning = true ;
-			windowBlurred = true ;
-			messageShown = true ;
+		if(!curEvent.get("blurDisabled")) {
+			var startingTitle = window.document.title;
+			var isAlreadyBlurred; 
+			$(window).blur(function() {
+				if(isAlreadyBlurred)
+					return ;
 
-			var message = {type:"blur", args:{id:USER_ID}};
-			sock.send(JSON.stringify(message));	
+				isIntervalRunning = true ;
+				windowBlurred = true ;
+				messageShown = true ;
 
-			isAlreadyBlurred = true; 
-		})
+				var message = {type:"blur", args:{id:USER_ID}};
+				sock.send(JSON.stringify(message));	
 
-		$(window).focus(function() {
-			isIntervalRunning = false;
-			windowBlurred = false;
-			messageShown = false ;
-			clearInterval(interval);
-			window.document.title = startingTitle;
+				isAlreadyBlurred = true; 
+			})
 
-			var message = {type:"focus", args:{id:USER_ID}};
-			sock.send(JSON.stringify(message));	
+			$(window).focus(function() {
+				isIntervalRunning = false;
+				windowBlurred = false;
+				messageShown = false ;
+				clearInterval(interval);
+				window.document.title = startingTitle;
 
-			isAlreadyBlurred = false;
-		})
+				var message = {type:"focus", args:{id:USER_ID}};
+				sock.send(JSON.stringify(message));	
+
+				isAlreadyBlurred = false;
+			})
+		}
+
 
 	});
 

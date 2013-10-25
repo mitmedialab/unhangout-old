@@ -53,7 +53,8 @@ models.Event = Backbone.Model.extend({
 			connectedUsers: null,			// these two fields are setup in initialize
 			sessions: null,
 			youtubeEmbed: null,
-			sessionsOpen: false
+			sessionsOpen: false,
+			blurDisabled: false
 		}
 	},
 	
