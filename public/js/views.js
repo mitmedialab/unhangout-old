@@ -199,17 +199,11 @@ var SessionView = Marionette.ItemView.extend({
 // marionette CollectionView logic. Our primary issue in this class
 // is to deal with pagination and its associated rendering issues.
 
-var SessionListView = Backbone.Marionette.CollectionView.extend({
+var SessionListView = Backbone.Marionette.CompositeView.extend({
 	template: "#session-list-template",
 	itemView: SessionView,
 	itemViewContainer: '#session-list-container',
 	id: "session-list",
-
-	events: {
-		'click #prev':'previous',
-		'click #next':'next',
-		'click .page':'goto'
-	},
 
 	initialize: function(args) {
 		Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
@@ -221,7 +215,7 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 	},
 
 	onRender: function() {
-
+		// this.$el.append('<div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>');
 	}
 })
 

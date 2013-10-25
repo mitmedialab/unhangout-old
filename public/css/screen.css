@@ -794,47 +794,58 @@ tr:nth-child(even) {
   width: 250px;
 }
 
+/* line 896, ../../sass/screen.scss */
+.credits {
+  position: fixed;
+  bottom: 0px;
+  z-index: 100000;
+  background-color: white;
+  width: 459px;
+  text-align: center;
+  font-size: 12px;
+}
+
 /*-------------------------- HOW TO UNHANGOUT -------------------------*/
-/* line 898, ../../sass/screen.scss */
+/* line 908, ../../sass/screen.scss */
 .how-to-unhangout {
   color: #444;
   margin-left: 20px;
   height: 450px;
   font-family: "open sans",arial,sans-serif;
 }
-/* line 904, ../../sass/screen.scss */
+/* line 914, ../../sass/screen.scss */
 .how-to-unhangout h4 {
   margin-top: 45px;
   margin-left: 600px;
   font-weight: 200;
   font-size: 22px;
 }
-/* line 911, ../../sass/screen.scss */
+/* line 921, ../../sass/screen.scss */
 .how-to-unhangout img {
   margin-left: 70px;
   float: left;
   width: 500px;
   height: 433px;
 }
-/* line 918, ../../sass/screen.scss */
+/* line 928, ../../sass/screen.scss */
 .how-to-unhangout p {
   font-size: 14px;
   float: right;
   width: 240px;
 }
-/* line 924, ../../sass/screen.scss */
+/* line 934, ../../sass/screen.scss */
 .how-to-unhangout .step-description {
   float: right;
   width: 340px;
   margin-top: 30px;
 }
-/* line 930, ../../sass/screen.scss */
+/* line 940, ../../sass/screen.scss */
 .how-to-unhangout .step-icon {
   color: #63666a;
   margin-left: 20px;
 }
 
-/* line 936, ../../sass/screen.scss */
+/* line 946, ../../sass/screen.scss */
 .circle {
   margin-bottom: -52px;
   width: 40px;
@@ -848,46 +859,46 @@ tr:nth-child(even) {
 }
 
 /*-------------------------- PERMALINKS -------------------------------*/
-/* line 950, ../../sass/screen.scss */
+/* line 960, ../../sass/screen.scss */
 .permalink-title {
   font-size: 34px;
   color: #3c3c3c;
 }
 
-/* line 955, ../../sass/screen.scss */
+/* line 965, ../../sass/screen.scss */
 .permalink-description {
   font-size: 18px;
   color: #3c3c3c;
 }
 
-/* line 960, ../../sass/screen.scss */
+/* line 970, ../../sass/screen.scss */
 .participants-header {
   font-size: 18px;
   color: #63666a;
 }
 
-/* line 965, ../../sass/screen.scss */
+/* line 975, ../../sass/screen.scss */
 .hangout-status {
   float: right;
 }
-/* line 968, ../../sass/screen.scss */
+/* line 978, ../../sass/screen.scss */
 .hangout-status .icon-facetime-video {
   color: #57AF57;
   font-size: 24px;
 }
-/* line 973, ../../sass/screen.scss */
+/* line 983, ../../sass/screen.scss */
 .hangout-status .icon-remove-sign {
   color: #D34F3E;
   font-size: 24px;
 }
-/* line 978, ../../sass/screen.scss */
+/* line 988, ../../sass/screen.scss */
 .hangout-status span {
   margin-left: 10px;
   font-size: 20px;
   color: #63666a;
 }
 
-/* line 985, ../../sass/screen.scss */
+/* line 995, ../../sass/screen.scss */
 .line {
   margin-left: 280px;
   margin-right: 20px;
@@ -896,18 +907,18 @@ tr:nth-child(even) {
   border-top: 1px #DfDfDf solid;
 }
 
-/* line 993, ../../sass/screen.scss */
+/* line 1003, ../../sass/screen.scss */
 .participant-info {
   margin-top: -40px;
 }
-/* line 996, ../../sass/screen.scss */
+/* line 1006, ../../sass/screen.scss */
 .participant-info img {
   border: 1px #57AF57 solid;
   margin-right: 25px;
   margin-top: 40px;
   border-radius: 5px;
 }
-/* line 1003, ../../sass/screen.scss */
+/* line 1013, ../../sass/screen.scss */
 .participant-info .overlay {
   position: absolute;
   color: white;
@@ -919,23 +930,23 @@ tr:nth-child(even) {
   border-radius: 3px;
 }
 
-/* line 1015, ../../sass/screen.scss */
+/* line 1025, ../../sass/screen.scss */
 #permalinks {
   max-width: 685px;
 }
 
-/* line 1019, ../../sass/screen.scss */
+/* line 1029, ../../sass/screen.scss */
 td form {
   margin: 0px;
 }
 
-/* line 1027, ../../sass/screen.scss */
+/* line 1037, ../../sass/screen.scss */
 ::-webkit-scrollbar {
   -webkit-appearance: none;
   width: 7px;
 }
 
-/* line 1032, ../../sass/screen.scss */
+/* line 1042, ../../sass/screen.scss */
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
   background-color: rgba(0, 0, 0, 0.5);
