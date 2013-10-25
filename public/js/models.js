@@ -53,7 +53,8 @@ models.Event = Backbone.Model.extend({
 			connectedUsers: null,			// these two fields are setup in initialize
 			sessions: null,
 			youtubeEmbed: null,
-			sessionsOpen: false
+			sessionsOpen: false,
+			blurDisabled: false
 		}
 	},
 	
@@ -284,7 +285,8 @@ models.ChatMessage = Backbone.Model.extend({
 		return {
 			text: "This is my awesome chat message.",
 			time: new Date().getTime(),
-			user: null
+			user: null,
+			past: false
 		};
 	},
 	

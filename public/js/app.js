@@ -146,33 +146,38 @@ $(document).ready(function() {
 		//
 		// We also use this to decide whether or not to show new messages coming in
 		// by changing the tab title.
-		var isAlreadyBlurred; 
-		$(window).blur(function() {
-			if(isAlreadyBlurred)
-				return ;
 
-			isIntervalRunning = true ;
-			windowBlurred = true ;
-			messageShown = true ;
+		if(!curEvent.get("blurDisabled")) {
+			var startingTitle = window.document.title;
+			var isAlreadyBlurred; 
+			$(window).blur(function() {
+				if(isAlreadyBlurred)
+					return ;
 
-			var message = {type:"blur", args:{id:USER_ID}};
-			sock.send(JSON.stringify(message));	
+				isIntervalRunning = true ;
+				windowBlurred = true ;
+				messageShown = true ;
 
-			isAlreadyBlurred = true; 
-		})
+				var message = {type:"blur", args:{id:USER_ID}};
+				sock.send(JSON.stringify(message));	
 
-		$(window).focus(function() {
-			isIntervalRunning = false;
-			windowBlurred = false;
-			messageShown = false ;
-			clearInterval(interval);
-			window.document.title = 'Unhangout';
+				isAlreadyBlurred = true; 
+			})
 
-			var message = {type:"focus", args:{id:USER_ID}};
-			sock.send(JSON.stringify(message));	
+			$(window).focus(function() {
+				isIntervalRunning = false;
+				windowBlurred = false;
+				messageShown = false ;
+				clearInterval(interval);
+				window.document.title = startingTitle;
 
-			isAlreadyBlurred = false;
-		})
+				var message = {type:"focus", args:{id:USER_ID}};
+				sock.send(JSON.stringify(message));	
+
+				isAlreadyBlurred = false;
+			})
+		}
+
 
 	});
 
@@ -388,6 +393,11 @@ $(document).ready(function() {
 	
 	console.log("Setup regions.");
 
+	if(!_.isNull(curEvent.get("welcomeMessage"))) {
+		// if there is a welcome message, put it in chat.
+		messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
+	}
+
 	//------------------------------------------------------------------------//
 	//																		  //
 	//								NETWORKING								  //
@@ -548,12 +558,6 @@ $(document).ready(function() {
 				break;				
 			case "join-ack":
 				console.log("joined!");
-
-				if(!_.isNull(curEvent.get("welcomeMessage"))) {
-					// if there is a welcome message, put it in chat.
-					messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
-				}
-
 				break;
 			case "attend-ack":
 				console.log("attend-ack");

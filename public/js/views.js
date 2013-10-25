@@ -122,39 +122,40 @@ var SessionView = Marionette.ItemView.extend({
 
 		// now check and see if the hangout is communicating properly with the server. if it is, show
 		// the hangout-users div, and populate it with users.
-		if(this.model.get("hangoutConnected")) {
-			this.$el.addClass("hangout-connected");
+		this.$el.addClass("hangout-connected");
 
-			this.ui.hangoutUsers.empty();
+		this.ui.hangoutUsers.empty();
 
-			_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
-				// make a new user view and append it here.
-				var user = users.get(id);
+		_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
+			// make a new user view and append it here.
+			var user = users.get(id);
 
-				if(_.isUndefined(user)) {
-					console.log("skipping connected user, because can't find user data for them yet");
-					return;
-				}
+			if(_.isUndefined(user)) {
+				console.log("skipping connected user, because can't find user data for them yet");
+				return;
+			}
 
-				var userView = new UserView({model:user});
+			var userView = new UserView({model:user});
 
-				this.ui.hangoutUsers.append(userView.render().el);
-			}, this));
+			this.ui.hangoutUsers.append(userView.render().el);
+		}, this));
 
-			this.ui.hangoutUsers.show();
-			this.ui.hangoutOffline.hide();
-		} else {
-			this.ui.hangoutUsers.hide();
-			this.ui.hangoutOffline.show();
-			this.$el.removeClass("hangout-connected");
+		for(var i=0; i<10-numAttendees; i++) {
+			this.ui.hangoutUsers.append($("<li class='empty'></li>"));
 		}
 
+		this.ui.hangoutUsers.show();
+		this.ui.hangoutOffline.hide();
+
+		this.ui.attend.find(".icon-lock").hide();
 		if(!curEvent.sessionsOpen() || numAttendees == this.model.MAX_ATTENDEES) {
+			this.ui.attend.find(".icon-lock").show();
+
 			this.ui.attend.attr("disabled", true);
 			this.ui.attend.addClass("disabled");
 
 			if(numAttendees==this.model.MAX_ATTENDEES) {
-				// TODO do something special here, an icon perhaps?
+				this.ui.attend.find(".text").text("JOIN (full)");
 			}
 		} else {
 			this.ui.attend.removeAttr("disabled");
@@ -167,24 +168,19 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	attend: function() {
-		console.log("attend pressed on " + this.model.id);
-		console.log("model: " + JSON.stringify(this.model));
+
+		// if the event currently has closed sessions, ignore
+		// clicks on the join button.
+		if(!curEvent.sessionsOpen()) {
+			return;
+		}
 
 		if(this.model.isLive()) {
 			// if the event has started, button presses should attempt to join
 			// the hangout.
 			var url = "/session/" + this.model.get("session-key");
 			window.open(url);
-		} else {
-			if(this.ui.attend.hasClass("active")) {
-				this.ui.attend.text("JOIN");
-				var message = {type:"unattend", args:{id:this.model.id}};
-				sock.send(JSON.stringify(message));				
-			} else {
-				app.vent.trigger("attend", this.model.id);
-			}		
 		}
-
 	},
 
 	start: function() {
@@ -201,17 +197,11 @@ var SessionView = Marionette.ItemView.extend({
 // marionette CollectionView logic. Our primary issue in this class
 // is to deal with pagination and its associated rendering issues.
 
-var SessionListView = Backbone.Marionette.CollectionView.extend({
+var SessionListView = Backbone.Marionette.CompositeView.extend({
 	template: "#session-list-template",
 	itemView: SessionView,
 	itemViewContainer: '#session-list-container',
 	id: "session-list",
-
-	events: {
-		'click #prev':'previous',
-		'click #next':'next',
-		'click .page':'goto'
-	},
 
 	initialize: function(args) {
 		Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
@@ -223,7 +213,6 @@ var SessionListView = Backbone.Marionette.CollectionView.extend({
 	},
 
 	onRender: function() {
-
 	}
 })
 
@@ -275,7 +264,7 @@ var UserView = Marionette.ItemView.extend({
 			// this.$el.find("img, i").attr("data-container", "#chat-container-region");
 			this.$el.find("img, i").attr("data-placement", "top");
 		} else {
-			this.$el.find("img, i").attr("data-container", "#chat-container-region");
+			this.$el.find("img, i").attr("data-container", "body");
 			this.$el.find("img, i").attr("data-placement", "left");
 		}
 
@@ -325,12 +314,10 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 	createSession: function() {
 		var title = $("#session_name").val();
-		var desc = $("#session_desc").val();
 
-		sock.send(JSON.stringify({type:"create-session", args:{title:title, description:desc}}));
+		sock.send(JSON.stringify({type:"create-session", args:{title:title}}));
 
 		$("#session_name").val("");
-		$("#session_desc").val("");
 
 		$("#create-session-modal").modal('hide');
 	},
@@ -581,6 +568,9 @@ var ChatMessageView = Marionette.ItemView.extend({
 			this.$el.find(".from").addClass("admin");
 		}
 
+		if(this.model.get("past")) {
+			this.$el.addClass("past");
+		}
 	}
 });
 
