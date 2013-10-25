@@ -122,36 +122,30 @@ var SessionView = Marionette.ItemView.extend({
 
 		// now check and see if the hangout is communicating properly with the server. if it is, show
 		// the hangout-users div, and populate it with users.
-		if(this.model.get("hangoutConnected")) {
-			this.$el.addClass("hangout-connected");
+		this.$el.addClass("hangout-connected");
 
-			this.ui.hangoutUsers.empty();
+		this.ui.hangoutUsers.empty();
 
-			_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
-				// make a new user view and append it here.
-				var user = users.get(id);
+		_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
+			// make a new user view and append it here.
+			var user = users.get(id);
 
-				if(_.isUndefined(user)) {
-					console.log("skipping connected user, because can't find user data for them yet");
-					return;
-				}
-
-				var userView = new UserView({model:user});
-
-				this.ui.hangoutUsers.append(userView.render().el);
-			}, this));
-
-			for(var i=0; i<10-numAttendees; i++) {
-				this.ui.hangoutUsers.append($("<li class='empty'></li>"));
+			if(_.isUndefined(user)) {
+				console.log("skipping connected user, because can't find user data for them yet");
+				return;
 			}
 
-			this.ui.hangoutUsers.show();
-			this.ui.hangoutOffline.hide();
-		} else {
-			this.ui.hangoutUsers.hide();
-			this.ui.hangoutOffline.show();
-			this.$el.removeClass("hangout-connected");
+			var userView = new UserView({model:user});
+
+			this.ui.hangoutUsers.append(userView.render().el);
+		}, this));
+
+		for(var i=0; i<10-numAttendees; i++) {
+			this.ui.hangoutUsers.append($("<li class='empty'></li>"));
 		}
+
+		this.ui.hangoutUsers.show();
+		this.ui.hangoutOffline.hide();
 
 		this.ui.attend.find(".icon-lock").hide();
 		if(!curEvent.sessionsOpen() || numAttendees == this.model.MAX_ATTENDEES) {
