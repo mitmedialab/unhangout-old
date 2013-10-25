@@ -141,6 +141,10 @@ var SessionView = Marionette.ItemView.extend({
 				this.ui.hangoutUsers.append(userView.render().el);
 			}, this));
 
+			for(var i=0; i<10-numAttendees; i++) {
+				this.ui.hangoutUsers.append($("<li class='empty'></li>"));
+			}
+
 			this.ui.hangoutUsers.show();
 			this.ui.hangoutOffline.hide();
 		} else {
@@ -215,7 +219,6 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 	},
 
 	onRender: function() {
-		// this.$el.append('<div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>');
 	}
 })
 
