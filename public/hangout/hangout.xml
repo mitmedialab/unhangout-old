@@ -466,6 +466,7 @@ gadgets.util.registerOnLoadHandler(init);
       padding: 20px;
 
       font-size: 26px;
+      margin-top: 0px;
     }	
 
     .footer {
