@@ -271,7 +271,7 @@ $(document).ready(function() {
 				return;
 			}
 
-			this.top.$el.animate({"top":(-1*this.top.$el.outerHeight())});
+			this.top.$el.animate({"top":(-1*this.top.$el.outerHeight()-15)});
 
 			aboutShown = false;
 			$("#about-nav").removeClass("active");
