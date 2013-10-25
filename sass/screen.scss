@@ -633,6 +633,10 @@ body {
 
 			.chat-message {
 
+				&.past {
+					opacity: 0.3;
+				}
+
 				padding-left: 120px;
 
 				&.system {

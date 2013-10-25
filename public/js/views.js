@@ -577,6 +577,9 @@ var ChatMessageView = Marionette.ItemView.extend({
 			this.$el.find(".from").addClass("admin");
 		}
 
+		if(this.model.get("past")) {
+			this.$el.addClass("past");
+		}
 	}
 });
 

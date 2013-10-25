@@ -388,6 +388,11 @@ $(document).ready(function() {
 	
 	console.log("Setup regions.");
 
+	if(!_.isNull(curEvent.get("welcomeMessage"))) {
+		// if there is a welcome message, put it in chat.
+		messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
+	}
+
 	//------------------------------------------------------------------------//
 	//																		  //
 	//								NETWORKING								  //
@@ -548,12 +553,6 @@ $(document).ready(function() {
 				break;				
 			case "join-ack":
 				console.log("joined!");
-
-				if(!_.isNull(curEvent.get("welcomeMessage"))) {
-					// if there is a welcome message, put it in chat.
-					messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
-				}
-
 				break;
 			case "attend-ack":
 				console.log("attend-ack");

@@ -549,7 +549,11 @@ body {
 #chat #chat-container #chat-list-container .chat-message {
   padding-left: 120px;
 }
-/* line 638, ../../sass/screen.scss */
+/* line 636, ../../sass/screen.scss */
+#chat #chat-container #chat-list-container .chat-message.past {
+  opacity: 0.3;
+}
+/* line 642, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message.system {
   text-align: center;
   font-style: italic;
@@ -561,11 +565,11 @@ body {
   margin-bottom: 20px;
   border-bottom: 1px solid #aaa;
 }
-/* line 651, ../../sass/screen.scss */
+/* line 655, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message.system .from {
   display: none;
 }
-/* line 656, ../../sass/screen.scss */
+/* line 660, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from {
   margin-left: -120px;
   float: left;
@@ -574,18 +578,18 @@ body {
   width: 115px;
   text-align: right;
 }
-/* line 665, ../../sass/screen.scss */
+/* line 669, ../../sass/screen.scss */
 #chat #chat-container #chat-list-container .chat-message span.from.admin {
   color: orange;
 }
 
-/* line 674, ../../sass/screen.scss */
+/* line 678, ../../sass/screen.scss */
 #global {
   position: absolute;
   z-index: 1000;
 }
 
-/* line 679, ../../sass/screen.scss */
+/* line 683, ../../sass/screen.scss */
 #video-embed {
   position: absolute;
   left: 0px;
@@ -593,13 +597,13 @@ body {
   /*padding-top: 50px;*/
   /*box-shadow: 3px 3px 5px #aaa;*/
 }
-/* line 687, ../../sass/screen.scss */
+/* line 691, ../../sass/screen.scss */
 #video-embed .player {
   background-color: #aaa;
   width: 100%;
 }
 
-/* line 693, ../../sass/screen.scss */
+/* line 697, ../../sass/screen.scss */
 #bar {
   position: absolute;
   top: 0px;
@@ -614,49 +618,49 @@ body {
   z-index: 59;
   box-shadow: 3px 3px 3px #aaa;
 }
-/* line 711, ../../sass/screen.scss */
+/* line 715, ../../sass/screen.scss */
 #bar #session-live-bar {
   width: 400px;
   margin-left: auto;
   margin-right: auto;
 }
-/* line 716, ../../sass/screen.scss */
+/* line 720, ../../sass/screen.scss */
 #bar #session-live-bar div {
   float: left;
   font-weight: bold;
   font-size: 1.6em;
   padding-top: 5px;
 }
-/* line 723, ../../sass/screen.scss */
+/* line 727, ../../sass/screen.scss */
 #bar #session-live-bar .btn {
   float: left;
   margin-left: 15px;
 }
 
 /*---------------------------- ADMIN STYLES ---------------------------*/
-/* line 736, ../../sass/screen.scss */
+/* line 740, ../../sass/screen.scss */
 #events {
   float: left;
 }
 
-/* line 740, ../../sass/screen.scss */
+/* line 744, ../../sass/screen.scss */
 #permalinks {
   float: left;
   margin-left: 50px;
 }
 
-/* line 745, ../../sass/screen.scss */
+/* line 749, ../../sass/screen.scss */
 th {
   padding-right: 20px;
 }
 
-/* line 749, ../../sass/screen.scss */
+/* line 753, ../../sass/screen.scss */
 tr:nth-child(even) {
   background-color: #f1f1f1;
 }
 
 /*---------------------------- INDEX STYLES ---------------------------*/
-/* line 755, ../../sass/screen.scss */
+/* line 759, ../../sass/screen.scss */
 .jumbotron {
   color: white;
   background-image: url("/public/img/dots.png");
@@ -666,61 +670,61 @@ tr:nth-child(even) {
   margin-top: -20px;
   font-family: "open sans",arial,sans-serif;
 }
-/* line 764, ../../sass/screen.scss */
+/* line 768, ../../sass/screen.scss */
 .jumbotron h1 {
   padding-top: 60px;
   margin-top: 0px;
   font-weight: 200;
   font-size: 36px;
 }
-/* line 771, ../../sass/screen.scss */
+/* line 775, ../../sass/screen.scss */
 .jumbotron h1, .jumbotron h3 {
   width: 940px;
   margin-left: auto;
   margin-right: auto;
 }
-/* line 777, ../../sass/screen.scss */
+/* line 781, ../../sass/screen.scss */
 .jumbotron h3 {
   font-weight: 200;
   font-size: 20px;
 }
 
-/* line 783, ../../sass/screen.scss */
+/* line 787, ../../sass/screen.scss */
 .event {
   margin-left: 20px;
   margin-top: 20px;
 }
-/* line 787, ../../sass/screen.scss */
+/* line 791, ../../sass/screen.scss */
 .event .title, .event .description {
   float: left;
   color: #3c3c3c;
   font-family: "open sans",arial,sans-serif;
 }
-/* line 793, ../../sass/screen.scss */
+/* line 797, ../../sass/screen.scss */
 .event .title {
   font-weight: 200;
   font-size: 20px;
 }
-/* line 798, ../../sass/screen.scss */
+/* line 802, ../../sass/screen.scss */
 .event .description {
   margin-top: 20px;
   font-size: 16px;
   width: 780px;
 }
-/* line 805, ../../sass/screen.scss */
+/* line 809, ../../sass/screen.scss */
 .event .date {
   float: left;
   width: 100px;
   margin-right: 20px;
 }
-/* line 810, ../../sass/screen.scss */
+/* line 814, ../../sass/screen.scss */
 .event .date .day, .event .date .time {
   text-align: center;
   background-color: #2f3732;
   color: white;
   padding: 3px;
 }
-/* line 817, ../../sass/screen.scss */
+/* line 821, ../../sass/screen.scss */
 .event .date .number {
   box-sizing: border-box;
   color: #2f3732;
@@ -732,13 +736,13 @@ tr:nth-child(even) {
   border-right: 1px solid #2f3732;
   border-left: 1px solid #2f3732;
 }
-/* line 830, ../../sass/screen.scss */
+/* line 834, ../../sass/screen.scss */
 .event .date .time {
   background-color: #2f3732;
   color: white;
 }
 
-/* line 838, ../../sass/screen.scss */
+/* line 842, ../../sass/screen.scss */
 #about-event .footer {
   color: #ccc;
   width: 400px;
@@ -747,17 +751,17 @@ tr:nth-child(even) {
   font-style: italic;
 }
 
-/* line 849, ../../sass/screen.scss */
+/* line 853, ../../sass/screen.scss */
 .admin-table-buttons .btn {
   float: left;
   margin-top: 5px;
 }
 
-/* line 855, ../../sass/screen.scss */
+/* line 859, ../../sass/screen.scss */
 .event-container {
   margin-left: 0px;
 }
-/* line 858, ../../sass/screen.scss */
+/* line 862, ../../sass/screen.scss */
 .event-container h3 {
   margin-top: 20px;
   font-weight: 400;
@@ -765,72 +769,72 @@ tr:nth-child(even) {
   color: #444;
 }
 
-/* line 867, ../../sass/screen.scss */
+/* line 871, ../../sass/screen.scss */
 .signup h3 {
   margin-top: 20px;
   font-weight: 400;
   font-size: 26px;
   color: #444;
 }
-/* line 874, ../../sass/screen.scss */
+/* line 878, ../../sass/screen.scss */
 .signup p {
   color: #3c3c3c;
   font-size: 16px;
   font-family: "open sans",arial,sans-serif;
 }
 
-/* line 881, ../../sass/screen.scss */
+/* line 885, ../../sass/screen.scss */
 .footer {
   margin-top: 50px;
   color: #aaa;
 }
 
-/* line 887, ../../sass/screen.scss */
+/* line 891, ../../sass/screen.scss */
 #permalink-create label {
   width: 250px;
 }
 
 /*-------------------------- HOW TO UNHANGOUT -------------------------*/
-/* line 894, ../../sass/screen.scss */
+/* line 898, ../../sass/screen.scss */
 .how-to-unhangout {
   color: #444;
   margin-left: 20px;
   height: 450px;
   font-family: "open sans",arial,sans-serif;
 }
-/* line 900, ../../sass/screen.scss */
+/* line 904, ../../sass/screen.scss */
 .how-to-unhangout h4 {
   margin-top: 45px;
   margin-left: 600px;
   font-weight: 200;
   font-size: 22px;
 }
-/* line 907, ../../sass/screen.scss */
+/* line 911, ../../sass/screen.scss */
 .how-to-unhangout img {
   margin-left: 70px;
   float: left;
   width: 500px;
   height: 433px;
 }
-/* line 914, ../../sass/screen.scss */
+/* line 918, ../../sass/screen.scss */
 .how-to-unhangout p {
   font-size: 14px;
   float: right;
   width: 240px;
 }
-/* line 920, ../../sass/screen.scss */
+/* line 924, ../../sass/screen.scss */
 .how-to-unhangout .step-description {
   float: right;
   width: 340px;
   margin-top: 30px;
 }
-/* line 926, ../../sass/screen.scss */
+/* line 930, ../../sass/screen.scss */
 .how-to-unhangout .step-icon {
   color: #63666a;
   margin-left: 20px;
 }
 
-/* line 932, ../../sass/screen.scss */
+/* line 936, ../../sass/screen.scss */
 .circle {
   margin-bottom: -52px;
   width: 40px;
@@ -844,46 +848,46 @@ tr:nth-child(even) {
 }
 
 /*-------------------------- PERMALINKS -------------------------------*/
-/* line 946, ../../sass/screen.scss */
+/* line 950, ../../sass/screen.scss */
 .permalink-title {
   font-size: 34px;
   color: #3c3c3c;
 }
 
-/* line 951, ../../sass/screen.scss */
+/* line 955, ../../sass/screen.scss */
 .permalink-description {
   font-size: 18px;
   color: #3c3c3c;
 }
 
-/* line 956, ../../sass/screen.scss */
+/* line 960, ../../sass/screen.scss */
 .participants-header {
   font-size: 18px;
   color: #63666a;
 }
 
-/* line 961, ../../sass/screen.scss */
+/* line 965, ../../sass/screen.scss */
 .hangout-status {
   float: right;
 }
-/* line 964, ../../sass/screen.scss */
+/* line 968, ../../sass/screen.scss */
 .hangout-status .icon-facetime-video {
   color: #57AF57;
   font-size: 24px;
 }
-/* line 969, ../../sass/screen.scss */
+/* line 973, ../../sass/screen.scss */
 .hangout-status .icon-remove-sign {
   color: #D34F3E;
   font-size: 24px;
 }
-/* line 974, ../../sass/screen.scss */
+/* line 978, ../../sass/screen.scss */
 .hangout-status span {
   margin-left: 10px;
   font-size: 20px;
   color: #63666a;
 }
 
-/* line 981, ../../sass/screen.scss */
+/* line 985, ../../sass/screen.scss */
 .line {
   margin-left: 280px;
   margin-right: 20px;
@@ -892,18 +896,18 @@ tr:nth-child(even) {
   border-top: 1px #DfDfDf solid;
 }
 
-/* line 989, ../../sass/screen.scss */
+/* line 993, ../../sass/screen.scss */
 .participant-info {
   margin-top: -40px;
 }
-/* line 992, ../../sass/screen.scss */
+/* line 996, ../../sass/screen.scss */
 .participant-info img {
   border: 1px #57AF57 solid;
   margin-right: 25px;
   margin-top: 40px;
   border-radius: 5px;
 }
-/* line 999, ../../sass/screen.scss */
+/* line 1003, ../../sass/screen.scss */
 .participant-info .overlay {
   position: absolute;
   color: white;
@@ -915,23 +919,23 @@ tr:nth-child(even) {
   border-radius: 3px;
 }
 
-/* line 1011, ../../sass/screen.scss */
+/* line 1015, ../../sass/screen.scss */
 #permalinks {
   max-width: 685px;
 }
 
-/* line 1015, ../../sass/screen.scss */
+/* line 1019, ../../sass/screen.scss */
 td form {
   margin: 0px;
 }
 
-/* line 1023, ../../sass/screen.scss */
+/* line 1027, ../../sass/screen.scss */
 ::-webkit-scrollbar {
   -webkit-appearance: none;
   width: 7px;
 }
 
-/* line 1028, ../../sass/screen.scss */
+/* line 1032, ../../sass/screen.scss */
 ::-webkit-scrollbar-thumb {
   border-radius: 4px;
   background-color: rgba(0, 0, 0, 0.5);

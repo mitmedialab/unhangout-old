@@ -284,7 +284,8 @@ models.ChatMessage = Backbone.Model.extend({
 		return {
 			text: "This is my awesome chat message.",
 			time: new Date().getTime(),
-			user: null
+			user: null,
+			past: false
 		};
 	},
 	
