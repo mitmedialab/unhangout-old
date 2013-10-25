@@ -149,12 +149,15 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.removeClass("hangout-connected");
 		}
 
+		this.ui.attend.find(".icon-lock").hide();
 		if(!curEvent.sessionsOpen() || numAttendees == this.model.MAX_ATTENDEES) {
+			this.ui.attend.find(".icon-lock").show();
+
 			this.ui.attend.attr("disabled", true);
 			this.ui.attend.addClass("disabled");
 
 			if(numAttendees==this.model.MAX_ATTENDEES) {
-				// TODO do something special here, an icon perhaps?
+				this.ui.attend.find(".text").text("JOIN (full)");
 			}
 		} else {
 			this.ui.attend.removeAttr("disabled");
