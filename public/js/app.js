@@ -146,6 +146,7 @@ $(document).ready(function() {
 		//
 		// We also use this to decide whether or not to show new messages coming in
 		// by changing the tab title.
+		var startingTitle = window.document.title;
 		var isAlreadyBlurred; 
 		$(window).blur(function() {
 			if(isAlreadyBlurred)
@@ -166,7 +167,7 @@ $(document).ready(function() {
 			windowBlurred = false;
 			messageShown = false ;
 			clearInterval(interval);
-			window.document.title = 'Unhangout';
+			window.document.title = startingTitle;
 
 			var message = {type:"focus", args:{id:USER_ID}};
 			sock.send(JSON.stringify(message));	
