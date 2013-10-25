@@ -167,24 +167,19 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	attend: function() {
-		console.log("attend pressed on " + this.model.id);
-		console.log("model: " + JSON.stringify(this.model));
+
+		// if the event currently has closed sessions, ignore
+		// clicks on the join button.
+		if(!curEvent.sessionsOpen()) {
+			return;
+		}
 
 		if(this.model.isLive()) {
 			// if the event has started, button presses should attempt to join
 			// the hangout.
 			var url = "/session/" + this.model.get("session-key");
 			window.open(url);
-		} else {
-			if(this.ui.attend.hasClass("active")) {
-				this.ui.attend.text("JOIN");
-				var message = {type:"unattend", args:{id:this.model.id}};
-				sock.send(JSON.stringify(message));				
-			} else {
-				app.vent.trigger("attend", this.model.id);
-			}		
 		}
-
 	},
 
 	start: function() {
