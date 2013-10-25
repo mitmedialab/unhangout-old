@@ -320,12 +320,10 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 	createSession: function() {
 		var title = $("#session_name").val();
-		var desc = $("#session_desc").val();
 
-		sock.send(JSON.stringify({type:"create-session", args:{title:title, description:desc}}));
+		sock.send(JSON.stringify({type:"create-session", args:{title:title}}));
 
 		$("#session_name").val("");
-		$("#session_desc").val("");
 
 		$("#create-session-modal").modal('hide');
 	},
