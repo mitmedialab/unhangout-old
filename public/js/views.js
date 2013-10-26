@@ -207,7 +207,7 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 		Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
 
 		this.listenTo(this.collection, "sort", function() {
-			console.log("collection:sort");
+			// console.log("collection:sort");
 			this.render();
 		}, this);
 	},
