@@ -447,7 +447,7 @@ $(document).ready(function() {
 	// This is the big one - handles every incoming message. 
 	sock.onmessage = function(message) {
 
-		console.log(message);
+		// console.log(message);
 
 		// messages come across the wire as raw strings in the data field.
 		// parse them into a proper object here.
