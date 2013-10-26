@@ -209,6 +209,18 @@ function init() {
             	disableHeartbeat = !disableHeartbeat;
             	console.log("disable: " + disableHeartbeat);
             });
+
+            // now setup listening for conflict state
+            gapi.hangout.data.onStateChanged.add(function(stateChangedEvent) {
+            	console.log("state changed callback!")
+            	console.log(stateChangedEvent);
+            	if("conflict" in stateChangedEvent.metadata) {
+            		console.log("IN CONFLICT CALLBACK");
+            		$('body').empty();
+					$('body').append($('<div class="conflict">It looks like you've ended up in the wrong hangout by accident. Our mistake! The room we meant to send you to is back online now. You should close this hangout, and hit the big green "JOIN" button again and we'll send you to the right place. Sorry about that!</div>'));
+            	}
+            });
+
           }  // End of IF block
 
       }); // End of handler
@@ -323,8 +335,8 @@ function init() {
 				console.log("HANGOUT CONFLICT!!!!");
 
 				disableHeartbeat = true;
-				$('body').empty();
-				$('body').append($('<div class="conflict">Your hangout session is in conflict with another session! The other session started first, so you should close this hangout immediately hit "Join Hangout" again - you should be directed to the correct hangout! If this problem persists, please contact dharry@media.mit.edu.</div>'));
+
+				gapi.hangout.data.setValue("conflict", "1");
 			} else {
 				console.log("heartbeat success");
 			}
@@ -568,6 +580,7 @@ gadgets.util.registerOnLoadHandler(init);
 		font-weight: bold;
 
 		height: 100%;
+		padding: 5px;
 	}
 
   </style>
