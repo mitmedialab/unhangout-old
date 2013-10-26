@@ -43,7 +43,7 @@
 		<p>If you have any questions or feedback or comments about this service, please don't hesitate to message me <a href="http://twitter.com/drewwww">@drewwww</a> on Twitter, or email me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a></p>
 	</div>
 
-	<div id="disable-heartbeat">disable heartbeat (TESTING)</div>
+	<!-- <div id="disable-heartbeat">disable heartbeat (TESTING)</div> -->
 </script>
 
 <script type="text/template" id="welcome-unhangout-template">
