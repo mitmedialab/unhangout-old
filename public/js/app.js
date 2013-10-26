@@ -45,6 +45,32 @@ $(document).ready(function() {
 	// users.add(new models.User({displayName:"test3", picture:""}));
 	// users.add(new models.User({displayName:"test4", picture:""}));
 	// users.add(new models.User({displayName:"test5", picture:""}));
+	// users.add(new models.User({displayName:"test6", picture:""}));
+	// users.add(new models.User({displayName:"test7", picture:""}));
+	// users.add(new models.User({displayName:"test8", picture:""}));
+	// users.add(new models.User({displayName:"test9", picture:""}));
+	// users.add(new models.User({displayName:"test10", picture:""}));
+	// users.add(new models.User({displayName:"test11", picture:""}));
+	// users.add(new models.User({displayName:"test12", picture:""}));
+	// users.add(new models.User({displayName:"test13", picture:""}));
+	// users.add(new models.User({displayName:"test14", picture:""}));
+	// users.add(new models.User({displayName:"test15", picture:""}));
+	// users.add(new models.User({displayName:"test16", picture:""}));
+	// users.add(new models.User({displayName:"test17", picture:""}));
+	// users.add(new models.User({displayName:"test18", picture:""}));
+	// users.add(new models.User({displayName:"test19", picture:""}));
+	// users.add(new models.User({displayName:"test20", picture:""}));
+	// users.add(new models.User({displayName:"test21", picture:""}));
+	// users.add(new models.User({displayName:"test22", picture:""}));
+	// users.add(new models.User({displayName:"test23", picture:""}));
+	// users.add(new models.User({displayName:"test24", picture:""}));
+	// users.add(new models.User({displayName:"test25", picture:""}));
+	// users.add(new models.User({displayName:"test26", picture:""}));
+	// users.add(new models.User({displayName:"test27", picture:""}));
+	// users.add(new models.User({displayName:"test28", picture:""}));
+	// users.add(new models.User({displayName:"test29", picture:""}));
+	// users.add(new models.User({displayName:"test30", picture:""}));
+
 	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
 	
