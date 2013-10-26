@@ -461,7 +461,6 @@ $(document).ready(function() {
 		switch(msg.type) {			
 			// join an EVENT
 			case "join":
-				console.log("join: " + JSON.stringify(msg.args));
 				users.add(new models.User(msg.args.user));
 				break;
 			
