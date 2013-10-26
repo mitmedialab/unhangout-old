@@ -9,7 +9,7 @@ models.ClientSessionList = models.SessionList.extend({
 
 		this.on("add", _.bind(function(session) {
 			session.on("change:attendeeIds change:connectedParticipantIds", _.bind(function() {
-				console.log("updating sorting!");
+				// console.log("updating sorting!");
 				this.sort();
 				this.trigger("change");
 				this.trigger("sort");

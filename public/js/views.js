@@ -131,7 +131,7 @@ var SessionView = Marionette.ItemView.extend({
 			var user = users.get(id);
 
 			if(_.isUndefined(user)) {
-				console.log("skipping connected user, because can't find user data for them yet");
+				// console.log("skipping connected user, because can't find user data for them yet");
 				return;
 			}
 
