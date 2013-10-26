@@ -217,7 +217,7 @@ function init() {
             	if("conflict" in stateChangedEvent.metadata) {
             		console.log("IN CONFLICT CALLBACK");
             		$('body').empty();
-					$('body').append($('<div class="conflict">It looks like you've ended up in the wrong hangout by accident. Our mistake! The room we meant to send you to is back online now. You should close this hangout, and hit the big green "JOIN" button again and we willll send you to the right place. Sorry about that!</div>'));
+					$('body').append($('<div class="conflict">It looks like you have ended up in the wrong hangout by accident. Our mistake! The room we meant to send you to is back online now. You should close this hangout, and hit the big green "JOIN" button again and we will send you to the right place. Sorry about that!</div>'));
             	}
             });
 
