@@ -492,8 +492,12 @@ var ChatInputView = Marionette.ItemView.extend({
 
 	chat: function(e) {
 		var msg = this.ui.chatInput.val();
-		sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
-		this.ui.chatInput.val("");
+
+		if(msg.length>0) {
+			sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
+			this.ui.chatInput.val("");
+		}
+
 		e.preventDefault();
 		return false;
 	},
