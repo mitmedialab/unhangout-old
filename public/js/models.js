@@ -176,7 +176,6 @@ models.Session = Backbone.Model.extend({
 	setConnectedParticipantIds: function(ids) {
 		// TODO add some validation here, probably.
 		this.set("connectedParticipantIds", ids);
-		this.trigger("change");
 		this.trigger("change:connectedParticipantIds");
 	},
 

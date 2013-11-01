@@ -14,6 +14,7 @@
 // the view looks in response to changes in its model or other application
 // state. 
 
+var userViewCache = {};
 
 var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
@@ -42,10 +43,12 @@ var SessionView = Marionette.ItemView.extend({
 	initialize: function() {
 		// if we get a notice that someone has connected to the associated participant,
 		// re-render to show them.
-		this.listenTo(this.model, 'change change:connectedParticipantIds change:hangoutConnected', this.render, this);
+		this.listenTo(this.model, 'change:connectedParticipantIds change:hangoutConnected', this.render, this);
 	},
 
 	onRender: function() {
+		console.log("rendered " + this.model.id);
+		var start = new Date().getTime();
 		// mostly just show/hide pieces of the view depending on 
 		// model state.
 
@@ -124,7 +127,11 @@ var SessionView = Marionette.ItemView.extend({
 		// the hangout-users div, and populate it with users.
 		this.$el.addClass("hangout-connected");
 
+		// trying to simply not do the individual picture display to see if this helps.
+		// (it does mostly, but there's still some slowness)
 		this.ui.hangoutUsers.empty();
+
+		var fragment = document.createDocumentFragment();
 
 		_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
 			// make a new user view and append it here.
@@ -135,14 +142,30 @@ var SessionView = Marionette.ItemView.extend({
 				return;
 			}
 
-			var userView = new UserView({model:user});
+			// try looking up the user view from the main user list.
+			var userView;
+			if(user.id in userViewCache) {
+				userView = userViewCache[user.id];
+			} else {
+				userView = new UserView({model:user});
+				userViewCache[user.id] = userView;
+			}
 
-			this.ui.hangoutUsers.append(userView.render().el);
+			// var userView = new UserView({model:user});
+
+			// this.ui.hangoutUsers.append(userView.render().el);
+			// this.ui.hangoutUsers.append(userView.render().el.cloneNode(true));
+			fragment.appendChild(userView.render().el.cloneNode(true));
 		}, this));
 
+
+		this.ui.hangoutUsers.append(fragment);
+
 		for(var i=0; i<10-numAttendees; i++) {
-			this.ui.hangoutUsers.append($("<li class='empty'></li>"));
+			this.ui.hangoutUsers.append($("<li class='empty'></li>"))
+			// fragment.appendChild($("<li class='empty'></li>"));
 		}
+
 
 		this.ui.hangoutUsers.show();
 		this.ui.hangoutOffline.hide();
@@ -161,6 +184,8 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.attend.removeAttr("disabled");
 			this.ui.attend.removeClass("disabled");
 		}
+
+		console.log("render time " + this.model.id + ": " + (start - (new Date().getTime())) + "ms");
 	},
 
 	destroy: function() {
@@ -205,11 +230,6 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 
 	initialize: function(args) {
 		Backbone.Marionette.CollectionView.prototype.initialize.call(this, args);
-
-		this.listenTo(this.collection, "sort", function() {
-			// console.log("collection:sort");
-			this.render();
-		}, this);
 	},
 
 	onRender: function() {
@@ -236,7 +256,7 @@ var UserView = Marionette.ItemView.extend({
 	initialize: function(args) {
 		Marionette.ItemView.prototype.initialize.call(this, args);
 
-		this.listenTo(this.model, 'change', this.render, this);
+		// this.listenTo(this.model, 'change', this.render, this);
 		this.listenTo(this.model, 'change:isBlurred', this.render, this);
 	},	
 
