@@ -226,7 +226,7 @@ function init() {
             	console.log("message: " + messageReceivedEvent.message);
             	if(messageReceivedEvent.message=="heartbeat-failed") {
             		console.log("heartbeat sending");
-            		sendHeartbeat();
+            		sendHeartbeat(true);
             	}
             });
           }  // End of IF block
@@ -331,14 +331,18 @@ function init() {
 
 		var localGoogleId = gapi.hangout.getParticipantById(gapi.hangout.getLocalParticipantId()).person.id;
 
-
-		$.post(serverUrl, {
-			type:"heartbeat",
-			from:localGoogleId,
-			url:gapi.hangout.getHangoutUrl(),
-			participants: allParticipantIds,
-			startTime: startTime,
-			timeout: 5000
+		$.ajax({
+			type: "POST",
+			url: serverUrl,
+			timeout: 5000,
+			data: {
+				type:"heartbeat",
+				from:localGoogleId,
+				url:gapi.hangout.getHangoutUrl(),
+				participants: allParticipantIds,
+				startTime: startTime,
+				fromLeader: isLeader
+			}
 		}).done(function(data) {
 			if(data=="FAIL") {
 				console.log("HANGOUT CONFLICT!!!!");
