@@ -213,6 +213,11 @@ var SessionListView = Backbone.Marionette.CompositeView.extend({
 	},
 
 	onRender: function() {
+		if(this.collection.length==0) {
+			this.$el.find(".empty-notice").removeClass("hide");
+		} else {
+			this.$el.find(".empty-notice").addClass("hide");
+		}
 	}
 })
 
