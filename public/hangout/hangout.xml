@@ -43,7 +43,7 @@
 		<p>If you have any questions or feedback or comments about this service, please don't hesitate to message me <a href="http://twitter.com/drewwww">@drewwww</a> on Twitter, or email me at <a href="mailto:dharry@media.mit.edu">dharry@media.mit.edu</a></p>
 	</div>
 
-	<!-- <div id="disable-heartbeat">disable heartbeat (TESTING)</div> -->
+	<div id="disable-heartbeat">send heartbeat fail message (TESTING)</div>
 </script>
 
 <script type="text/template" id="welcome-unhangout-template">
@@ -206,8 +206,9 @@ function init() {
             });
 
             $("#disable-heartbeat").click(function() {
-            	disableHeartbeat = !disableHeartbeat;
-            	console.log("disable: " + disableHeartbeat);
+            	<!-- disableHeartbeat = !disableHeartbeat; -->
+            	<!-- console.log("disable: " + disableHeartbeat); -->
+            	gapi.hangout.data.sendMessage("heartbeat-failed");
             });
 
             // now setup listening for conflict state
@@ -221,6 +222,13 @@ function init() {
             	}
             });
 
+            gapi.hangout.data.onMessageReceived.add(function(messageReceivedEvent) {
+            	console.log("message: " + messageReceivedEvent.message);
+            	if(messageReceivedEvent.message=="heartbeat-failed") {
+            		console.log("heartbeat sending");
+            		sendHeartbeat();
+            	}
+            });
           }  // End of IF block
 
       }); // End of handler
@@ -329,7 +337,8 @@ function init() {
 			from:localGoogleId,
 			url:gapi.hangout.getHangoutUrl(),
 			participants: allParticipantIds,
-			startTime: startTime
+			startTime: startTime,
+			timeout: 5000
 		}).done(function(data) {
 			if(data=="FAIL") {
 				console.log("HANGOUT CONFLICT!!!!");
@@ -341,7 +350,16 @@ function init() {
 				console.log("heartbeat success");
 			}
 		}).fail(function() {
-			console.log("heartbeat fail");
+			// when a heartbeat fails, send a message to everyone in the hangout and they'll all try to heartbeat once
+
+			// only the leader sends this; if other clients fail to send, we don't want it
+			// pingponging around and causing a big loop. One leader heartbeat fail should
+			// trigger no more than 9 participant heartbeats. This is still overkill, but
+			// more simple and reliable than trying to be more delicate.
+
+			if (isLeader) {
+				gapi.hangout.data.sendMessage("heartbeat-failed");
+			}
 		});
 	}
 
