@@ -2,17 +2,13 @@
 
 $(document).on('ready', function() {
 
-	$("#about").hide();
-	$(".nav li").click(function() {
-		$(".active").removeClass("active");
-
-		var aEl = $(this).find("a");
-
-		$(this).addClass("active");
-
-		$(".section").hide();
-		$(aEl.attr("href")).show();
-	});
+    $(".nav li").each(function(i, el) {
+        if ($(el).find("a").attr("href") == window.location.pathname) {
+            $(el).addClass("active");
+        } else {
+            $(el).removeClass("active");
+        }
+    });
 
 	$("#subscribe").click(function() {
 		var email = $("#email").val();
