@@ -98,7 +98,7 @@ if(require.main === module)
 			{
 				timestamp: true
 			})
-			],
+			]
 		});
 		
 	logger.cli();
@@ -121,6 +121,6 @@ if(require.main === module)
 				filename: "seed.log",
 				timestamp: true
 			})
-			],
+			]
 		});
 }
