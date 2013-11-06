@@ -51,17 +51,22 @@ C. Cloning the Repository.
     $ cd unhangout
     
   - Create a file and copy the contents of conf.json.example file in it. Name this file conf.json. 
-    conf.json.example file contains environment variables to specify server settings. GOOGLE_CLIENT_ID &
-    GOOGLE_CLIENT_SECRET fields are app credentials that can be configured and obtained at 
-    http://code.google.com/apis/console/
-
-    In the Google API console, you should make a "Client ID for web applications" - that will create
-    the necessary CLIENT_ID and CLIENT_SECRET you need to authenticate with Google and create
-    calendar events.
+    conf.json.example file contains environment variables to specify server settings.
 
     $ touch conf.json <br>
     $ gedit conf.json [copy contents from conf.json.example here]
     
+    GOOGLE_CLIENT_ID & GOOGLE_CLIENT_SECRET fields are app credentials that can
+    be configured and obtained at http://code.google.com/apis/console/.
+    In the Google API console, you should make a "Client ID for web applications" - that will create
+    the necessary CLIENT_ID and CLIENT_SECRET you need to authenticate with Google and create
+    calendar events.  Set the callback URL to https://localhost:7777/auth/google/callback
+    (swap out the hostname and port with whichever settings you use).
+
+    UNHANGOUT_ADMIN_EMAILS is a list of email addresses which are granted
+    "admin" status when they authenticate.  (The server must be restarted and
+    clients must re-login to change their admin status).
+
   - Install data structure redis server <br>
     $ sudo apt-get install redis-server 
     
