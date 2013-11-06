@@ -1,22 +1,5 @@
 <% include header.ejs %>
-
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-42792478-1', 'mit.edu');
-ga('send', 'pageview');
-
-</script>
-
-
-<div class="jumbotron">
-    <h1>The Unhangout Project</h1>
-
-    <h3>A platform for unconferences. On the web.</h3>
-</div>
+<% include hero.ejs %>
 
 <div class="container">
     <div class="section" id="home">
@@ -207,88 +190,6 @@ ga('send', 'pageview');
             </div>
         </div>
 
-        <div class="section" id="about">
-            <h1>About</h1>
-
-            <p><strong>Unhangout</strong> is an open source
-            platform for running large scale online un-conferences.
-            We use Google Hangouts to create as many small sessions
-            as needed, and help users find others with shared
-            interests.</p>
-
-            <div class="modal hide fade disconnected-modal" id=
-            "disconnected-modal">
-                <div class="modal-header">
-                    <h3>Warning!</h3>
-                </div>
-
-                <div class="modal-body">
-                    <p>An unexpected error has occured. You have
-                    been disconnected from the server. Please
-                    refresh the page to reconnect.</p><a class=
-                    "btn" href="#">Close</a>
-                </div>
-            </div>
-
-            Think of it as a classroom with an infinite
-            number of breakout sessions. Each event has a landing
-            page, which we call the lobby. When participants
-            arrive, they can see who else is there and chat with
-            each other. The hosts can do a video welcome and
-            introduction that gets streamed into the lobby.
-            Participants then break out into smaller sessions (up
-            to 10 people per session) for in-depth conversations,
-            peer-to-peer learning, and collaboration on projects.
-            UnHangouts are community-based learning instead of
-            top-down information transfer.
-            <p>
-
-            <h3>Open Source</h3>
-
-            <p><strong>Unhangout</strong> is an open source
-            project. You can find the code in <a href=
-            "https://github.com/drewww/unhangout">our repository on
-            GitHub</a>. Please let us know if you're interested in
-            hosting your own unhangout events - we would be happy
-            to help you get this set up on your own servers. In
-            some situations, we might be able to host your event on
-            our installation, too.</p>
-
-            <p></p>
-
-            <h3>The Team</h3>
-
-            <p>Our three person design and development team is
-            based at the MIT Media Lab in Cambridge, MA.</p>
-
-            <ul>
-                <li>
-                    <a href=
-                    "http://www.media.mit.edu/people/ps1">Philipp
-                    Schmidt</a>
-                </li>
-
-                <li>
-                    <a href="http://web.media.mit.edu/~dharry">Drew
-                    Harry</a>
-                </li>
-
-                <li>
-                    <a href="http://srishtisethi.com/">Srishti
-                    Sethi</a>
-                </li>
-            </ul>
-
-            <h3>Acknowledgements</h3>
-
-            <p><strong>Unhangout</strong> is made possible by the
-            generous support of the MacArthur Foundation and the
-            MIT Media Lab</p>
-        </div>
-
-        <div class="footer">
-            An MIT Media Lab project, in collaboration with the
-            MacArthur Foundation.
-        </div>
+<% include sponsorship.ejs %>
+<% include analytics.ejs %>
 <% include footer.ejs %>
-            
