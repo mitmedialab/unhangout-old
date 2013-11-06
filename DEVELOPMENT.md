@@ -6,7 +6,6 @@ This file contains some collected notes from development to help guide future de
 Structure
 ---------
 
-/	
 	/bin - contains all files intended to be executed directly, using, e.g. `node seed.js`
 		_get-all-user-emails.js_ helper script for extracting all emails users have logged in with
 		_seed.js_  _wipes_ and populates the redis database with basic models
