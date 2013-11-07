@@ -27,3 +27,4 @@ ssl/
 
 .sass-cache
 .idea
+bin/selenium-server-standalone.jar

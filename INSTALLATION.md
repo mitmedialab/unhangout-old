@@ -1,10 +1,11 @@
 Setting up the development environment
---------------------------------------
+======================================
 
 Unhangout is an un-conference style platform for organizing Google hangout sessions. Following are the steps for 
 setting up the development environment on Ubuntu/Debian machine.
 
 A. Installing node.js (any version)
+-----------------------------------
 
    - Update your system <br>
      $ sudo apt-get update
@@ -36,6 +37,7 @@ A. Installing node.js (any version)
      $ v0.9.9
      
 B. Setting up npm (Node Package Management)
+-------------------------------------------
 
   - Install from NPM script using curl <br>
     $ curl https://npmjs.org/install.sh -L -o -| sh
@@ -45,6 +47,7 @@ B. Setting up npm (Node Package Management)
     $1.3.1
     
 C. Cloning the Repository.
+--------------------------
 
   - Clone unhangout repository from github <br>
     $ git clone http://github.com/drewww/unhangout <br>
@@ -87,6 +90,7 @@ C. Cloning the Repository.
     $ 127.0.0.1:7777/ [In browser]
 
 D. Making changes to the codebase
+---------------------------------
 
   - Create a new branch in git unhangout repository <br>
     $ git branch branch-name
@@ -107,3 +111,27 @@ D. Making changes to the codebase
     $ git commit -m "commit-message" <br>
     $ git push origin branch-name <br>
     Go to github and send a pull request. 
+
+E. Testing
+----------
+
+Tests use mocha and selenium-webdriver (for live browser tests with Firefox).  To run selenium tests, you must download ``selenium-server-standalone.jar`` from https://code.google.com/p/selenium/downloads/list, and set TESTING_SELENIUM_PATH in conf.json to its path. 
+
+You can run tests using the npm helper script <br>
+
+    $ npm test <br>
+
+By installing mocha globally, you can invoke it directly, as well as cherry-picking individual tests:
+
+    $ sudo npm install -g mocha
+    $ mocha -R nyan
+
+To suppress display of the web browser when running selenium tests, install and run with ``xvfb``, a "headless" X-server:
+
+    $ sudo apt-get install xvfb
+    $ DISPLAY=99.0 xvfb-run npm test
+
+Alternately, you can skip selenium tests (which are very slow) outright by setting the SKIP_SELENIUM_TESTS environment variable:
+
+    $ SKIP_SELENIUM_TESTS=1 npm test
+

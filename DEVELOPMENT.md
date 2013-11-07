@@ -18,7 +18,7 @@ Structure
 	/logs
 	/public - all static content, served by *express* at `/public/*`
 	/sass - sass stylesheets (which generate into `/public/css`)
-	/test - mocha-style unit and integration tests
+	/test - mocha and selenium unit and integration tests
 	/views - templates for rendering HTML pages
 	package.json - dependencies + other metadata
 	config.rb - configures compass, for turning sass into css
@@ -83,3 +83,11 @@ The calendar-api-based strategy depends on an option in Google Calendar to "crea
 Until then, we provide a simple way to "farm" these hangout links. With the server running, you can go to `http://host:port/hangout-farming` and the server will redirect you to google to authenticate your account. After authentication, it will use your token to create a calendar event. If your account has the "create hangout links" option set (which it _must_ if this is going to work) then it will log the URL to redis and make it available for any future session on the platform. This means that before running a big event, you should make sure to farm 20 or 30 urls in advance. 
 
 If there are no farmed urls available, the system falls back to a somewhat-more-clunky user experience. The first user to click "join hangout" will be designated as the hangout creator, and redirected to the "create a new hangout" URL. Included in that URL is our Hangout App Id, which will phone home to the server when the hangout is created successfully. Any requests after the first to join the hangout will be held open while waiting for the hangout to be created, and then redirected to that URL when the hangout has started up. Any later requests, after the hangout has started properly, will be redirected to the hangout. The problem with this approach is that if the designated first user fails to create the hangout for some reason (their account doesn't have a google+ profile, is a Google Apps for Domains account that has hangouts disabled, the plugin is not installed, they are currently in another hangout, etc) then we run into major problems. There are workarounds for these issues, but they add significant complexity and won't necessarily be totally reliable. We recommend farming hangouts in the manner described above.
+
+Testing
+-------
+
+Tests are written with mocha; and integration tests with selenium.  Wherever possible, core functionality should be backed up with tests.  See INSTALLATION.md for instructions on running tests (with or without selenium, and with or without a headless X-server).
+
+Common functions for starting up the server and building the selenium webdriver are found in ``test/common.js``.  Selenium webdriver uses a "promise" syntax to handle asynchronous code (see http://code.google.com/p/selenium/wiki/WebDriverJs for full documentation).
+

@@ -22,12 +22,15 @@ var buildBrowser = function(callback) {
     browser.byCsss = function(selector) {
         return browser.findElements(webdriver.By.css(selector));
     };
+    browser.byLinkText = function(linkText) {
+        return browser.findElement(webdriver.By.linkText(linkText));
+    };
     callback(browser);
 };
 
-exports.getSeleniumBrowser = function() {
+exports.getSeleniumBrowser = function(callback) {
     if (seleniumServer) {
-        buildBrowser();
+        buildBrowser(callback);
     } else {
         var seleniumPath;
         if (!conf.TESTING_SELENIUM_PATH) {
@@ -40,7 +43,7 @@ exports.getSeleniumBrowser = function() {
             seleniumPath = __dirname + "/../" + conf.TESTING_SELENIUM_PATH;
         }
         seleniumServer = new SeleniumServer(seleniumPath, {port: 4444});
-        seleniumServer.start().then(buildBrowser);
+        seleniumServer.start().then(function() { buildBrowser(callback) });
     }
 }
 
