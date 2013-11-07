@@ -3,53 +3,12 @@ var server = require('../lib/unhangout-server'),
 	_ = require('underscore')._,
 	sock_client = require('sockjs-client'),
 	request = require('superagent'),
-	redis = require('redis').createClient();
-	seed = require('../bin/seed.js');
+	seed = require('../bin/seed.js'),
+    common = require("./common");
 
 var s;
 var sock;
 var session;
-
-var standardSetup = function(done) {
-	s = new server.UnhangoutServer();
-	s.on("inited", function() {s.start()});
-	s.on("started", done);
-	
-	seed.run(1, redis, function() {
-		s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "timeoutHttp":true});		
-	});
-}
-
-var mockSetup = function(admin, callback) {
-	return function(done) {
-		s = new server.UnhangoutServer();
-		s.on("inited", function() {s.start()});
-		s.on("started", function() {
-			if(callback) {
-				callback(done);
-			} else {
-				done();
-			}
-		});
-		
-		if(_.isUndefined(admin)) {
-			admin = false;
-		}
-
-		seed.run(1, redis, function() {
-			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin, "timeoutHttp":true});		
-		});
-	}
-}
-
-
-var standardShutdown = function(done) {
-	s.on("stopped", function() {
-		s.on("destroyed", done);
-		s.destroy();
-	});
-	s.stop();
-};
 
 var joinEventSetup = function(done) {
 	connectNewSock(function(newSock) {
@@ -77,7 +36,7 @@ function connectNewSock(callback) {
 	});
 
 	newSock.on("connection", function() {
-		var user = s.users.at(s.users.length-1);
+		var user = common.server.users.at(common.server.users.length-1);
 		newSock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
 	});
 }
@@ -141,7 +100,9 @@ describe('unhangout server', function() {
 			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true});
 		});
 
-		afterEach(standardShutdown);
+		afterEach(function(done) {
+            common.standardShutdown(done, s);
+        });
 		
 		it("#start should emit 'started' message when complete", function(done) {
 			s.on("started", done);
@@ -151,8 +112,8 @@ describe('unhangout server', function() {
 	
 	
 	describe('routes (unauthenticated)', function() {
-		beforeEach(standardSetup);
-		afterEach(standardShutdown);
+		beforeEach(common.standardSetup);
+		afterEach(common.standardShutdown);
 		
 		describe("GET /", function() {
 			it('should return without error', function(done) {
@@ -178,8 +139,8 @@ describe('unhangout server', function() {
 	});
 	
 	describe('routes (authenticated)', function() {
-		beforeEach(mockSetup());
-		afterEach(standardShutdown);
+		beforeEach(common.mockSetup());
+		afterEach(common.standardShutdown);
 		
 		describe("GET /event/:id", function() {
 			it('should allow connections without redirection', function(done) {
@@ -193,8 +154,8 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /subscribe', function() {
-		beforeEach(mockSetup());
-		afterEach(standardShutdown);
+		beforeEach(common.mockSetup());
+		afterEach(common.standardShutdown);
 
 		it('should accept email addresses', function(done) {
 			request.post('http://localhost:7777/subscribe')
@@ -202,7 +163,7 @@ describe('unhangout server', function() {
 			.end(function(res) {
 				res.status.should.equal(200);
 
-				redis.lrange("global:subscriptions", -1, 1, function(err, res) {
+				common.server.redis.lrange("global:subscriptions", -1, 1, function(err, res) {
 					if(res=="email@example.com") {
 						done();
 					}
@@ -213,8 +174,8 @@ describe('unhangout server', function() {
 
 
 	describe('GET /h/:code', function(){
-		beforeEach(mockSetup(false));
-		afterEach(standardShutdown);
+		beforeEach(common.mockSetup(false));
+		afterEach(common.standardShutdown);
 
 		it('should direct to the landing page when there is no code', function(done){
 			request.get('http://localhost:7777/h/')
@@ -229,7 +190,7 @@ describe('unhangout server', function() {
 				.redirects(0)
 				.end(function(res){
 					res.status.should.equal(302);
-					s.permalinkSessions.length.should.equal(1);
+					common.server.permalinkSessions.length.should.equal(1);
 					done();
 				});
 		});
@@ -239,11 +200,11 @@ describe('unhangout server', function() {
 				.redirects(0)
 				.end(function(res){
 					res.status.should.equal(302);
-					s.permalinkSessions.length.should.equal(1);
+					common.server.permalinkSessions.length.should.equal(1);
 					request.get('http://localhost:7777/h/test')
 						.end(function(res){
 							res.status.should.equal(200);
-							s.permalinkSessions.length.should.equal(1);
+							common.server.permalinkSessions.length.should.equal(1);
 							done();
 						});
 				});
@@ -263,7 +224,7 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /h/admin/:code', function(){
-		beforeEach(mockSetup(false, function(done){
+		beforeEach(common.mockSetup(false, function(done){
 			request.get('http://localhost:7777/h/test')
 				.end(function(res) {
 					res.status.should.equal(200);
@@ -271,10 +232,10 @@ describe('unhangout server', function() {
 				});
 		}));
 
-		afterEach(standardShutdown);
+		afterEach(common.standardShutdown);
 
 		it('should reject requests without a valid creation key in the request body', function(done){
-			var session = s.permalinkSessions[0];
+			var session = common.server.permalinkSessions[0];
 			request.post('http://localhost:7777/h/admin/test')
 				.send({creationKey: 'wrong1', title: 'migrate title', description: 'something cool'})
 				.end(function(res){
@@ -284,7 +245,7 @@ describe('unhangout server', function() {
 		});
 
 		it('should update session title and description when valid creation key is present', function(done){
-			var session = s.permalinkSessions.at(0);
+			var session = common.server.permalinkSessions.at(0);
 			request.post('http://localhost:7777/h/admin/test')
 				.send({creationKey: session.get('creationKey'), title: 'migrate title', description: 'something cool'})
 				.end(function(res){
@@ -297,13 +258,13 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /session/hangout/:id', function() {
-		beforeEach(mockSetup(false, function(done) {
+		beforeEach(common.mockSetup(false, function(done) {
 				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
-				session = s.events.at(0).get("sessions").at(0);
+				session = common.server.events.at(0).get("sessions").at(0);
 				done();
 			}));
 
-		afterEach(standardShutdown);
+		afterEach(common.standardShutdown);
 
 		it('should handle loaded properly', function(done) {
 			var fakeUrl = "http://plus.google.com/hangout/_/abslkjasdlfkjasdf";
@@ -378,8 +339,8 @@ describe('unhangout server', function() {
 	});
 	
 	describe('sock (mock)', function() {
-		beforeEach(mockSetup());
-		afterEach(standardShutdown);
+		beforeEach(common.mockSetup());
+		afterEach(common.standardShutdown);
 
 		it('should accept a connection at /sock', function(done) {
 			var sock = sock_client.create("http://localhost:7777/sock");
@@ -389,7 +350,7 @@ describe('unhangout server', function() {
 		it('should consider the socket unauthenticated before an AUTH message', function(done) {
 			var sock = sock_client.create("http://localhost:7777/sock");
 			sock.on("connection", function() {
-				var socketsList = _.values(s.unauthenticatedSockets);
+				var socketsList = _.values(common.server.unauthenticatedSockets);
 				socketsList.length.should.equal(1);
 				socketsList[0].authenticated.should.equal(false);
 				done();
@@ -438,7 +399,7 @@ describe('unhangout server', function() {
 			});
 			
 			sock.on("connection", function() {
-				var user = s.users.at(0);
+				var user = common.server.users.at(0);
 				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
 			});	
 		});
@@ -454,7 +415,7 @@ describe('unhangout server', function() {
 			});
 			
 			sock.on("connection", function() {
-				var user = s.users.at(0);
+				var user = common.server.users.at(0);
 				
 				user.on("disconnect", done);
 				
@@ -474,7 +435,7 @@ describe('unhangout server', function() {
 				});
 
 				sock.on("connection", function() {
-					var user = s.users.at(0);
+					var user = common.server.users.at(0);
 					sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
 				});	
 			});
@@ -483,7 +444,7 @@ describe('unhangout server', function() {
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="join-ack") {
-						s.events.get(1).numUsersConnected().should.equal(1);
+						common.server.events.get(1).numUsersConnected().should.equal(1);
 						done();
 					}
 				});
@@ -519,7 +480,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session", description:"This is a description."}}));
 			});
@@ -548,7 +509,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session"}}));
 			});
@@ -563,7 +524,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{description:"This is a description."}}));
 			});
@@ -582,7 +543,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session", description:"This is a description."}}));
 			});
@@ -595,14 +556,14 @@ describe('unhangout server', function() {
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="open-sessions-ack") {
-						s.events.get(1).sessionsOpen().should.be.true
+						common.server.events.get(1).sessionsOpen().should.be.true
 						done();
 					} else if(msg.type=="open-sessions-err") {
 						should.fail();
 					}
 				});
 				
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				sock.write(JSON.stringify({type:"open-sessions", args:{}}));
 			});
 			
@@ -616,7 +577,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				sock.write(JSON.stringify({type:"open-sessions", args:{}}));
 			});
 
@@ -624,14 +585,14 @@ describe('unhangout server', function() {
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="close-sessions-ack") {
-						s.events.get(1).sessionsOpen().should.be.false
+						common.server.events.get(1).sessionsOpen().should.be.false
 						done();
 					} else if(msg.type=="close-sessions-err") {
 						should.fail();
 					}
 				});
 				
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				sock.write(JSON.stringify({type:"close-sessions", args:{}}));
 			});
 			
@@ -645,7 +606,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				sock.write(JSON.stringify({type:"close-sessions", args:{}}));
 			});
 
@@ -679,7 +640,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{}}));
 			});
@@ -695,7 +656,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{ytId:"QrsIICQ1eg8"}}));
 			});
@@ -712,7 +673,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				s.users.at(0).set("admin", true);
+				common.server.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{ytId:"QrsIICQ1eg8"}}));
 			});	
