@@ -596,8 +596,8 @@ var ChatView = Marionette.CompositeView.extend({
     },
     onAfterItemAdded: function() {
         var latest = this.collection.at(this.collection.length - 1);
-        // Scroll down if we haven't moved our scroll bar, and the last message
-        // wasn't from ourselves.
+        // Scroll down if we haven't moved our scroll bar, or the last message
+        // was from ourselves.
         if (!this._isScrolled || latest.get("user").id == USER_ID) {
             this.$el.scrollTop(this.el.scrollHeight);
         }
