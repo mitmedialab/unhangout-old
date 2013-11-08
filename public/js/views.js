@@ -591,14 +591,17 @@ var ChatView = Marionette.CompositeView.extend({
 	itemViewContainer: "#chat-list-container",
 	id: "chat-container",
 
-
-	initialize: function() {
-		this.listenTo(this.collection, 'all', this.update, this);
-	},
-
-	update: function() {
-		this.$el.scrollTop(this.$el[0].scrollHeight);
-	}
+    onBeforeItemAdded: function() {
+        this._isScrolled = this.$el.scrollTop() < (this.el.scrollHeight - this.$el.height());
+    },
+    onAfterItemAdded: function() {
+        var latest = this.collection.at(this.collection.length - 1);
+        // Scroll down if we haven't moved our scroll bar, or the last message
+        // was from ourselves.
+        if (!this._isScrolled || latest.get("user").id == USER_ID) {
+            this.$el.scrollTop(this.el.scrollHeight);
+        }
+    }
 });
 
 // The bar that appears when your session goes live.
