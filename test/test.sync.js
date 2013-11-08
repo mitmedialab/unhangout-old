@@ -11,7 +11,7 @@ var logger= new (winston.Logger)({
 			filename: "test.log",
 			timestamp: true
 			})
-    ],
+    ]
 });
 
 var event;
