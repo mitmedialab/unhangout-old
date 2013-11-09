@@ -10,7 +10,7 @@ describe("CREATE EVENT", function() {
     before(function(done) {
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
-            common.mockSetup(true)(done);
+            common.standardSetup(done);
         });
     });
     after(function(done) {
@@ -20,6 +20,10 @@ describe("CREATE EVENT", function() {
     });
 
     it("Creates an event via admin page", function(done) {
+        // Authenticate
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("admin1");
+
         // Create a new event.
         browser.get("http://localhost:7777/admin");
         browser.byLinkText("new").click();
