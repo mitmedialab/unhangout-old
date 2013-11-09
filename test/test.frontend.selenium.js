@@ -12,7 +12,7 @@ describe("FRONT PAGE", function() {
 
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
-            common.mockSetup(false)(done);
+            common.standardSetup(done);
         });
     });
     after(function(done) {

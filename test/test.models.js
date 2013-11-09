@@ -1,7 +1,9 @@
 var models = require('../lib/server-models.js'),
 	client_models = require('../public/js/models.js'),
-	should = require('should');
+	should = require('should'),
+    Backbone = require("backbone");
 
+Backbone.sync = require("../lib/redis-sync").dummySync;
 models.logger = {warn: function() {}, info: function() {}, debug: function(){}};
 
 describe("SERVEREVENT", function() {

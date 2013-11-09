@@ -53,31 +53,17 @@ exports.standardSetup = function(done) {
     exports.server = new unhangoutServer.UnhangoutServer();
     exports.server.on("inited", function() {exports.server.start()});
     exports.server.on("started", done);
-    
     seed.run(1, redis, function() {
-        exports.server.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "timeoutHttp":true});      
+        exports.server.init({
+            "transport":"file",
+            "level":"debug",
+            "GOOGLE_CLIENT_ID":true,
+            "GOOGLE_CLIENT_SECRET":true,
+            "REDIS_DB":1,
+            "timeoutHttp":true,
+            "mockAuth": true
+        });
     });
-}
-exports.mockSetup = function(admin, callback) {
-    return function(done) {
-        exports.server = new unhangoutServer.UnhangoutServer();
-        exports.server.on("inited", function() {exports.server.start()});
-        exports.server.on("started", function() {
-            if(callback) {
-                callback(done);
-            } else {
-                done();
-            }
-        });
-        
-        if(_.isUndefined(admin)) {
-            admin = false;
-        }
-
-        seed.run(1, redis, function() {
-            exports.server.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true, "REDIS_DB":1, "mock-auth":true, "mock-auth-admin":admin, "timeoutHttp":true});       
-        });
-    }
 };
 
 var shutDown = function(server, done) {
