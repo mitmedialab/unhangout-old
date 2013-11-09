@@ -67,7 +67,7 @@
 <div class="control-group">
   <label class="control-label" for="inputDisableBlur">Disable Blur</label>
   <div class="controls">
-    <input type="checkbox" name="blurDisabled" id="inputBlurDisabled" <%= event.get("blurDisabled") ? "checked":""%>>
+    <input type="checkbox" name="blurDisabled" id="inputBlurDisabled" <%= event && event.get("blurDisabled") ? "checked":""%>>
   </div>
 </div>
 
