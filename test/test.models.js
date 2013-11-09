@@ -2,8 +2,6 @@ var models = require('../lib/server-models.js'),
 	client_models = require('../public/js/models.js'),
 	should = require('should');
 
-models.logger = {warn: function() {}, info: function() {}, debug: function(){}};
-
 describe("SERVEREVENT", function() {
 	describe("#new", function() {
 		it('should construct a default model', function() {
