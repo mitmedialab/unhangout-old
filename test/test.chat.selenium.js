@@ -15,7 +15,7 @@ describe("CHAT WINDOW", function() {
 
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
-            common.mockSetup(false)(function() {
+            common.standardSetup(function() {
                 //sock = sock_client.create("http://localhost:7777/sock");
                 done();
             });
@@ -42,6 +42,8 @@ describe("CHAT WINDOW", function() {
     it("scrolls chat window", function(done) {
         var evt = common.server.events.at(0);
         evt.start();
+        browser.get("http://localhost:7777/")
+        browser.mockAuthenticate("regular1")
         browser.get("http://localhost:7777/event/" + evt.id);
         var msgCount = 100;
         for (var i = 0; i < msgCount; i++) {
@@ -57,8 +59,7 @@ describe("CHAT WINDOW", function() {
         checkScroll(browser, false)
         browser.byCss("#chat-input").sendKeys("msg " + i + "\n");
         checkScroll(browser, true).then(function() { done(); });
-        // TODO: Get multiple mocked users going, and test messages coming in
-        // from another client.
+        // TODO: Test messages coming in from another client.
     });
 });
     

@@ -25,6 +25,9 @@ var buildBrowser = function(callback) {
     browser.byLinkText = function(linkText) {
         return browser.findElement(webdriver.By.linkText(linkText));
     };
+    browser.mockAuthenticate = function(user) {
+        return browser.executeScript("document.cookie = 'mock_user=" + user + "; path=/';");
+    };
     callback(browser);
 };
 
@@ -46,7 +49,6 @@ exports.getSeleniumBrowser = function(callback) {
         seleniumServer.start().then(function() { buildBrowser(callback) });
     }
 }
-
 exports.server = null;
 
 exports.standardSetup = function(done) {
