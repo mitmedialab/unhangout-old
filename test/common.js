@@ -57,8 +57,6 @@ exports.standardSetup = function(done) {
     exports.server.on("started", done);
     seed.run(1, redis, function() {
         exports.server.init({
-            "transport":"file",
-            "level":"debug",
             "GOOGLE_CLIENT_ID":true,
             "GOOGLE_CLIENT_SECRET":true,
             "REDIS_DB":1,

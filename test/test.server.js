@@ -53,7 +53,7 @@ describe('unhangout server', function() {
 			s.on("inited", function() {
 				should.fail("Expected an error.");
 			});
-			s.init({"transport":"file", "level":"debug"});
+			s.init({});
 		});
 		
 		it('#start should fail if init is not called first', function(done) {

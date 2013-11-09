@@ -1,18 +1,9 @@
 var models = require('../public/js/models.js'),
-	winston = require('winston'),
 	sync = require('../lib/redis-sync.js'),
-	redis = require('redis').createClient();
+	redis = require('redis').createClient(),
+    logger = require('../lib/logging').getLogger(),
 	should = require('should');
 
-var logger= new (winston.Logger)({
-    transports: [
-		new (winston.transports.File)(
-			{
-			filename: "test.log",
-			timestamp: true
-			})
-    ]
-});
 
 var event;
 
