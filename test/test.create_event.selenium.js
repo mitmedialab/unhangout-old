@@ -33,7 +33,7 @@ describe("CREATE EVENT", function() {
             el.getText().then(function(text) {
                 text.should.equal("Test Title (test-title)");
             });
-        })
+        });
         
         // Event hasn't started
         browser.get("http://localhost:7777/event/2")
@@ -55,7 +55,7 @@ describe("CREATE EVENT", function() {
         browser.byCsss(".admin-table-buttons .btn-success").then(function(els) {
             // This is a little hackish -- should have a cleaner way to select the event.
             els[1].click();
-        })
+        });
 
         // View the started event
         browser.get("http://localhost:7777/event/2");
