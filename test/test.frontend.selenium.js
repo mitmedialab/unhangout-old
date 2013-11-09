@@ -1,6 +1,4 @@
-var server      = require('../lib/unhangout-server'),
-    should      = require('should'),
-    _           = require('underscore'),
+var should      = require('should'),
     common      = require('./common');
 
 var browser = null;
@@ -9,7 +7,6 @@ describe("FRONT PAGE", function() {
     this.timeout(40000); // Extra long timeout for selenium :(
 
     before(function(done) {
-
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.mockSetup(false)(done);
