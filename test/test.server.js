@@ -12,33 +12,12 @@ var session;
 
 var joinEventSetup = function(userKey) {
     return function(done) {
-        connectNewSock(userKey, function(newSock) {
+        common.authedSock(userKey, 1, function(newSock) {
             sock = newSock;
             done();
         });
     }
 };
-
-function connectNewSock(userKey, callback) {
-	var newSock = sock_client.create("http://localhost:7777/sock");
-    var user = common.server.users.findWhere({"sock-key": userKey});
-	newSock.on("data", function(message) {
-		var msg = JSON.parse(message);
-
-		if(msg.type=="auth-ack") {
-			// Joining event id 1 for all these tests, valid session ids for that
-			// event are 1, 2, 3 (invalid are 4, 5, 6)
-			newSock.write(JSON.stringify({type:"join", args: {id: 1}}));
-		} else if(msg.type=="join-ack") {
-			newSock.removeAllListeners();
-			callback && callback(newSock);
-		}
-	});
-
-	newSock.on("connection", function() {
-		newSock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
-	});
-}
 
 describe('unhangout server', function() {
 	describe('configuration', function() {

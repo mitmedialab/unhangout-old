@@ -6,6 +6,7 @@ var conf            = require("../conf.json"),
     _               = require('underscore'),
     async           = require('async'),
     webdriver       = require('selenium-webdriver'),
+    sock_client     = require("sockjs-client"),
     SeleniumServer  = require('selenium-webdriver/remote').SeleniumServer;
 
 var seleniumServer = null;
@@ -72,7 +73,7 @@ var shutDown = function(server, done) {
         server.destroy();
     });
     server.stop();
-}
+};
 
 exports.standardShutdown = function(done, s) {
     var servers = [];
@@ -83,4 +84,34 @@ exports.standardShutdown = function(done, s) {
         servers.push(s);
     }
     async.map(servers, shutDown, done);
-}
+};
+
+// Create a new socket, and authenticate it with the user specified in
+// 'userKey', and join it to the given room. Depends on `exports.server`
+// already being inited with users.
+exports.authedSock = function(userKey, room, callback) {
+    var newSock = sock_client.create("http://localhost:7777/sock");
+    var user = exports.server.users.findWhere({"sock-key": userKey});
+    var onData = function(message) {
+        var msg = JSON.parse(message);
+        if (msg.type === "auth-ack") {
+            newSock.write(JSON.stringify({type: "join", args: {id: room}}));
+        } else if (msg.type === "join-ack") {
+            newSock.removeListener("data", onData);
+            callback && callback(newSock);
+        }
+    };
+    newSock.on("data", onData);
+    newSock.on("error", function(msg) {
+        // TODO: We're suppressing error messages here to make mocha happy.
+        // See https://github.com/sockjs/sockjs-client-node/issues/1
+        // Uncomment below to see the errors when running tests.
+        //console.log("error", msg);
+    });
+    newSock.once("connection", function() {
+        newSock.write(JSON.stringify({
+            type:"auth",
+            args:{ key: user.getSockKey(), id: user.id }
+        }));
+    });
+};
