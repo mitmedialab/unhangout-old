@@ -10,36 +10,14 @@ var s;
 var sock;
 var session;
 
-var joinEventSetup = function(done) {
-	connectNewSock(function(newSock) {
-		sock = newSock;
-		done();
-	});
+var joinEventSetup = function(userKey) {
+    return function(done) {
+        common.authedSock(userKey, 1, function(newSock) {
+            sock = newSock;
+            done();
+        });
+    }
 };
-
-// TODO This doesn't really work unless we have more mock users on the server for testing,
-// and I don't have a clean way of doing that just yet. Annoying. For now, stick with single
-// user tests.
-function connectNewSock(callback) {
-	var newSock = sock_client.create("http://localhost:7777/sock");
-	newSock.on("data", function(message) {
-		var msg = JSON.parse(message);
-
-		if(msg.type=="auth-ack") {
-			// Joining event id 1 for all these tests, valid session ids for that
-			// event are 1, 2, 3 (invalid are 4, 5, 6)
-			newSock.write(JSON.stringify({type:"join", args:{id:1}}));
-		} else if(msg.type=="join-ack") {
-			newSock.removeAllListeners();
-			callback && callback(newSock);
-		}
-	});
-
-	newSock.on("connection", function() {
-		var user = common.server.users.at(common.server.users.length-1);
-		newSock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
-	});
-}
 
 describe('unhangout server', function() {
 	describe('configuration', function() {
@@ -54,7 +32,7 @@ describe('unhangout server', function() {
 			s.on("inited", function() {
 				should.fail("Expected an error.");
 			});
-			s.init({"transport":"file", "level":"debug"});
+			s.init({});
 		});
 		
 		it('#start should fail if init is not called first', function(done) {
@@ -139,12 +117,13 @@ describe('unhangout server', function() {
 	});
 	
 	describe('routes (authenticated)', function() {
-		beforeEach(common.mockSetup());
+		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 		
 		describe("GET /event/:id", function() {
 			it('should allow connections without redirection', function(done) {
 				request('http://localhost:7777/event/1')
+                .set("x-mock-user", "regular1")
 				.end(function(res) {
 					res.status.should.equal(200);
 					done();
@@ -154,7 +133,7 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /subscribe', function() {
-		beforeEach(common.mockSetup());
+		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 
 		it('should accept email addresses', function(done) {
@@ -174,7 +153,7 @@ describe('unhangout server', function() {
 
 
 	describe('GET /h/:code', function(){
-		beforeEach(common.mockSetup(false));
+		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 
 		it('should direct to the landing page when there is no code', function(done){
@@ -224,13 +203,15 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /h/admin/:code', function(){
-		beforeEach(common.mockSetup(false, function(done){
-			request.get('http://localhost:7777/h/test')
-				.end(function(res) {
-					res.status.should.equal(200);
-					done();
-				});
-		}));
+		beforeEach(function(done) {
+            common.standardSetup(function() {
+                request.get('http://localhost:7777/h/test')
+                    .end(function(res) {
+                        res.status.should.equal(200);
+                        done();
+                    });
+            });
+		});
 
 		afterEach(common.standardShutdown);
 
@@ -258,11 +239,13 @@ describe('unhangout server', function() {
 	});
 
 	describe('POST /session/hangout/:id', function() {
-		beforeEach(common.mockSetup(false, function(done) {
+		beforeEach(function(done) {
+            common.standardSetup(function() {
 				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
 				session = common.server.events.at(0).get("sessions").at(0);
 				done();
-			}));
+			})
+        });
 
 		afterEach(common.standardShutdown);
 
@@ -339,7 +322,7 @@ describe('unhangout server', function() {
 	});
 	
 	describe('sock (mock)', function() {
-		beforeEach(common.mockSetup());
+		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 
 		it('should accept a connection at /sock', function(done) {
@@ -467,7 +450,7 @@ describe('unhangout server', function() {
 		
 
 		describe("CREATE-SESSION", function() {
-			beforeEach(joinEventSetup);
+			beforeEach(joinEventSetup("regular1"));
 
 			it("should accept create session messages", function(done) {
 				sock.on("data", function(message) {
@@ -550,7 +533,7 @@ describe('unhangout server', function() {
 		});
 		
 		describe("OPEN/CLOSE SESSIONS", function() {
-			beforeEach(joinEventSetup);
+			beforeEach(joinEventSetup("regular1"));
 
 			it("should accept open messages from admins", function(done) {
 				sock.on("data", function(message) {
@@ -614,7 +597,7 @@ describe('unhangout server', function() {
 		})
 
 		describe("EMBED", function() {
-			beforeEach(joinEventSetup);
+			beforeEach(joinEventSetup("regular1"));
 			
 			it("should reject embed messages from non-admins", function(done) {
 				sock.on("data", function(message) {
@@ -680,7 +663,7 @@ describe('unhangout server', function() {
 		});
 
 		describe("CHAT", function() {
-			beforeEach(joinEventSetup);
+			beforeEach(joinEventSetup("regular1"));
 			
 			it("should reject a chat message without text argument", function(done) {
 				sock.on("data", function(message) {

@@ -19,5 +19,6 @@
 	"UNHANGOUT_PRIVATE_KEY":"ssl/private.pem",
 	"UNHANGOUT_CERTIFICATE":"ssl/cert.pem",
 
+    "EMAIL_LOG_RECIPIENTS": [],
     "TESTING_SELENIUM_PATH": "bin/selenium-server-standalone.jar"
 }

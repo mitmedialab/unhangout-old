@@ -476,7 +476,7 @@ var ChatLayout = Backbone.Marionette.Layout.extend({
 		this.chat.show(this.chatView);
 		this.presence.show(this.userListView);
 		this.chatInput.show(this.chatInputView);
-	},
+	}
 })
 
 // The input form for sending chat messages.
@@ -591,14 +591,19 @@ var ChatView = Marionette.CompositeView.extend({
 	itemViewContainer: "#chat-list-container",
 	id: "chat-container",
 
-
-	initialize: function() {
-		this.listenTo(this.collection, 'all', this.update, this);
-	},
-
-	update: function() {
-		this.$el.scrollTop(this.$el[0].scrollHeight);
-	}
+    onBeforeItemAdded: function() {
+        var limit = Math.max(this.el.scrollHeight - this.$el.height() - 10, 0);
+        this._isScrolled = this.$el.scrollTop() < limit;
+        return null;
+    },
+    onAfterItemAdded: function() {
+        var latest = this.collection.at(this.collection.length - 1);
+        // Scroll down if we haven't moved our scroll bar, or the last message
+        // was from ourselves.
+        if (!this._isScrolled || latest.get("user").id == USER_ID) {
+            this.$el.scrollTop(this.el.scrollHeight);
+        }
+    }
 });
 
 // The bar that appears when your session goes live.
@@ -624,7 +629,7 @@ var AboutEventView = Marionette.ItemView.extend({
 		} else {
 			this.$el.find(".footer").show();
 		}
-	},
+	}
 });
 
 // Manages the display of embedded videos on the upper left corner.

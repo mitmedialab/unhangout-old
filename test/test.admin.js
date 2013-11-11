@@ -11,9 +11,10 @@ describe('HTTP ADMIN API', function() {
 	afterEach(common.standardShutdown);
 
 	describe('/admin/event/new (non-admin)', function() {
-		beforeEach(common.mockSetup(false));
+		beforeEach(common.standardSetup);
 		it('should reject well-formed requests from non-admins', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
+                .set("x-mock-user", "regular1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -25,10 +26,11 @@ describe('HTTP ADMIN API', function() {
 	});
 
 	describe('/admin/event/new (admin)', function() {
-		beforeEach(common.mockSetup(true));
+		beforeEach(common.standardSetup);
 
 		it('should accept well-formed creation request from admin', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
+                .set("x-mock-user", "admin1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -46,6 +48,7 @@ describe('HTTP ADMIN API', function() {
 		it('should reject requests that are missing required parameters', function(done) {
 			// title is missing
 			request.post('http://localhost:7777/admin/event/new')
+                .set("x-mock-user", "admin1")
 				.send({description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -56,6 +59,7 @@ describe('HTTP ADMIN API', function() {
 
 		it('should redirect to /admin/ on successful creation', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
+                .set("x-mock-user", "admin1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -67,10 +71,11 @@ describe('HTTP ADMIN API', function() {
 	});
 
 	describe('/admin/event/:id (non-admin)', function() {
-		beforeEach(common.mockSetup(false));
+		beforeEach(common.standardSetup)
 
 		it('should reject well-formed requests from non-admins', function(done) {
 			request.post('http://localhost:7777/admin/event/1')
+                .set("x-mock-user", "regular1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -82,10 +87,11 @@ describe('HTTP ADMIN API', function() {
 	});
 
 	describe('/admin/event/:id (admin)', function() {
-		beforeEach(common.mockSetup(true));
+		beforeEach(common.standardSetup);
 
 		it('should accept well-formed creation request from admin', function(done) {
 			request.post('http://localhost:7777/admin/event/1')
+                .set("x-mock-user", "admin1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -99,6 +105,7 @@ describe('HTTP ADMIN API', function() {
 
 		it('should redirect to /admin/event/:id on successful creation', function(done) {
 			request.post('http://localhost:7777/admin/event/1')
+                .set("x-mock-user", "admin1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
