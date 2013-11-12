@@ -5,7 +5,7 @@ var RoomManager = require("../lib/room-manager").RoomManager,
     async = require("async"),
     expect = require("expect.js"),
     sockjs = require("sockjs"),
-	sockjs_client = require('sockjs-client'),
+    sockjs_client = require('sockjs-client'),
     _ = require("underscore");
 
 var users = createUsers(new models.ServerUserList());
@@ -354,6 +354,10 @@ describe("ROOM MANAGER", function() {
                             });
                         }
                     ], function() {
+                        mgr.destroy();
+                        sock1.close();
+                        sock2.close();
+                        sock3.close();
                         done();
                     });
                     // broadcast to everyone but sock1.
@@ -362,5 +366,48 @@ describe("ROOM MANAGER", function() {
             });
         });
       
+    });
+
+    it("Restricts joining with channel auth", function(done) {
+        var mgr = new RoomManager(socketServer, users);
+        var regular = users.findWhere({admin: false});
+        var admin = users.findWhere({admin: true});
+        // Create an authorization function on the "admin" channel, which
+        // checks that a user is authenticated and has an 'admin' bit.
+        mgr.channelAuth.admin = function(socket, room, callback) {
+            var authorized = socket.user && socket.user.get("admin") === true;
+            callback(null, authorized);
+        };
+        // Try to join a room in "admin":
+        async.parallel([
+            // Join as a non-admin user that won't be authorized.
+            function(done) {
+                authedSocket(regular, function(sock) {
+                    sock.write(JSON.stringify({type: "join", args: {id: "admin/1"}}));
+                    sock.once("data", function(message) {
+                        var data = JSON.parse(message);
+                        expect(data.type).to.be("join-err");
+                        expect(data.args).to.be("Permission to join admin/1 denied.");
+                        sock.close();
+                        done();
+                    });
+                });
+            },
+            // Join as an admin user that will be authorized.
+            function(done) {
+                authedSocket(admin, function(sock) {
+                    sock.write(JSON.stringify({type: "join", args: {id: "admin/1"}}));
+                    sock.once("data", function(message) {
+                        var data = JSON.parse(message);
+                        expect(data.type).to.be("join-ack");
+                        sock.close();
+                        done();
+                    });
+                });
+            }
+        ], function() {
+            mgr.destroy();
+            done();
+        });
     });
 });
