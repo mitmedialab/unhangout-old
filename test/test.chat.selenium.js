@@ -11,7 +11,7 @@ var evt = null;
 
 describe("CHAT WINDOW", function() {
     if (process.env.SKIP_SELENIUM_TESTS) { return; }
-    this.timeout(120000); // Extra long timeout for selenium :(
+    this.timeout(40000); // Extra long timeout for selenium :(
 
     before(function(done) {
         async.series([
@@ -23,7 +23,7 @@ describe("CHAT WINDOW", function() {
             },
             function(done) {
                 common.standardSetup(function() {
-                    evt = common.server.events.at(0);
+                    evt = common.server.db.events.at(0);
                     evt.start();
                     done();
                 });
