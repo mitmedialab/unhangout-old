@@ -91,7 +91,7 @@ exports.standardShutdown = function(done, s) {
 // already being inited with users.
 exports.authedSock = function(userKey, room, callback) {
     var newSock = sock_client.create("http://localhost:7777/sock");
-    var user = exports.server.users.findWhere({"sock-key": userKey});
+    var user = exports.server.db.users.findWhere({"sock-key": userKey});
     var onData = function(message) {
         var msg = JSON.parse(message);
         if (msg.type === "auth-ack") {
