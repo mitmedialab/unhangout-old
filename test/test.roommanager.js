@@ -15,8 +15,6 @@ var socketServer = sockjs.createServer({log: function(severity, message){
         console.log(message);
     }
 }});
-socketServer.installHandlers(server, {prefix: '/sock'});
-server.listen(7777, '0.0.0.0');
 
 // Connect an unauthenticated socket.
 function connectSocket(connectCallback, dataCallback) {
@@ -49,6 +47,13 @@ function authedSocket(user, callback) {
 }
 
 describe("ROOM MANAGER", function() {
+    before(function() {
+        socketServer.installHandlers(server, {prefix: '/sock'});
+        server.listen(7777, '0.0.0.0');
+    });
+    after(function() {
+        server.close();
+    });
     it("Fires auth events", function(done) {
         var mgr = new RoomManager(socketServer, users);
         var user = users.at(0);
@@ -126,44 +131,44 @@ describe("ROOM MANAGER", function() {
         var mgr = new RoomManager(socketServer, users);
         var sock1, sock2, sock3;
         // Expectations with one socket from `user` in the room.
-        function expectOne(args) {
-            expect(mgr.roomToSockets).to.eql({"someroom": [args.socket]});
+        function expectOne(socket, args) {
+            expect(mgr.roomToSockets).to.eql({"someroom": [socket]});
 
             var socketIdToRooms = {};
-            socketIdToRooms[args.socket.id] = ["someroom"];
+            socketIdToRooms[socket.id] = ["someroom"];
             expect(mgr.socketIdToRooms).to.eql(socketIdToRooms);
 
             expect(mgr.roomToUsers).to.eql({"someroom": [user]});
-            expect(mgr.socketBindings[args.socket.id]).to.not.be(undefined);
+            expect(mgr.socketBindings[socket.id]).to.not.be(undefined);
         }
         // Expectations with two sockets from `user` in the room. 
-        function expectTwo(args) {
+        function expectTwo(socket, args) {
             expect(mgr.roomToSockets.someroom.length).to.be(2);
-            expect(_.contains(mgr.roomToSockets.someroom, args.socket)).to.be(true);
+            expect(_.contains(mgr.roomToSockets.someroom, socket)).to.be(true);
 
             expect(_.size(mgr.socketIdToRooms)).to.be(2);
-            expect(mgr.socketIdToRooms[args.socket.id]).to.eql(["someroom"]);
+            expect(mgr.socketIdToRooms[socket.id]).to.eql(["someroom"]);
 
             expect(mgr.userIdToSockets[user.id].length).to.be(2);
-            expect(_.contains(mgr.userIdToSockets[user.id], args.socket)).to.be(true);
+            expect(_.contains(mgr.userIdToSockets[user.id], socket)).to.be(true);
 
-            expect(mgr.socketIdToUser[args.socket.id]).to.eql(user);
+            expect(mgr.socketIdToUser[socket.id]).to.eql(user);
 
             expect(mgr.roomToUsers).to.eql({"someroom": [user]});
-            expect(mgr.socketBindings[args.socket.id]).to.not.be(undefined);
+            expect(mgr.socketBindings[socket.id]).to.not.be(undefined);
         }
         // Expectations with two sockets from `user` and one from `user2` in the room.
-        function expectThree(args) {
+        function expectThree(socket, args) {
             expect(mgr.roomToSockets.someroom.length).to.be(3);
-            expect(_.contains(mgr.roomToSockets.someroom, args.socket)).to.be(true);
+            expect(_.contains(mgr.roomToSockets.someroom, socket)).to.be(true);
             expect(_.size(mgr.socketIdToRooms)).to.be(3);
-            expect(mgr.socketIdToRooms[args.socket.id]).to.eql(["someroom"]);
+            expect(mgr.socketIdToRooms[socket.id]).to.eql(["someroom"]);
             expect(_.size(mgr.userIdToSockets)).to.be(2);
-            expect(mgr.userIdToSockets[user2.id]).to.eql([args.socket]);
-            expect(mgr.socketIdToUser[args.socket.id]).to.eql(user2);
+            expect(mgr.userIdToSockets[user2.id]).to.eql([socket]);
+            expect(mgr.socketIdToUser[socket.id]).to.eql(user2);
             expect(mgr.roomToUsers.someroom.length).to.be(2);
             expect(_.contains(mgr.roomToUsers.someroom, user)).to.be(true);
-            expect(mgr.socketBindings[args.socket.id]).to.not.be(undefined);
+            expect(mgr.socketBindings[socket.id]).to.not.be(undefined);
         }
         // The first socket joins a room.
         authedSocket(user, function(sock) {
@@ -174,20 +179,20 @@ describe("ROOM MANAGER", function() {
             });
             sock1 = sock;
         });
-        mgr.once("join", function(args) {
-            expect(args.socket.user.id).to.eql(user.id); // we are authed
+        mgr.once("join", function(socket, args) {
+            expect(socket.user.id).to.eql(user.id); // we are authed
             expect(args.roomFirst).to.be(true); // we're the first in this room
             expect(args.userFirst).to.be(true); // This is our first socket in the room.
-            expectOne(args);
+            expectOne(socket, args);
 
             // At this point, mgr.userIdToSockets only contains ourselves.
             var userIdToSockets = {};
-            userIdToSockets[user.id] = [args.socket];
+            userIdToSockets[user.id] = [socket];
             expect(mgr.userIdToSockets).to.eql(userIdToSockets);
 
             // ... as does mgr.socketIdToUser.
             var socketIdToUser = {};
-            socketIdToUser[args.socket.id] = user;
+            socketIdToUser[socket.id] = user;
             expect(mgr.socketIdToUser).to.eql(socketIdToUser);
             
             // Join a second socket from the same user.
@@ -199,11 +204,11 @@ describe("ROOM MANAGER", function() {
                 });
                 sock2 = sock;
             });
-            mgr.once("join", function(args2) {
-                expect(args2.socket.user.id).to.eql(user.id);
+            mgr.once("join", function(socket2, args2) {
+                expect(socket2.user.id).to.eql(user.id);
                 expect(args2.userFirst).to.be(false); // This is our 2nd sock in this room.
                 expect(args2.roomFirst).to.be(false); // and the 2nd sock in the room, period.
-                expectTwo(args2);
+                expectTwo(socket2, args2);
 
                 // Join a third socket from a different user.
                 authedSocket(user2, function(sock) {
@@ -214,42 +219,42 @@ describe("ROOM MANAGER", function() {
                     });
                     sock3 = sock;
                 });
-                mgr.once("join", function(args3) {
-                    expect(args3.socket.user.id).to.eql(user2.id);
+                mgr.once("join", function(socket3, args3) {
+                    expect(socket3.user.id).to.eql(user2.id);
                     expect(args3.roomId).to.be("someroom");
                     expect(args3.userFirst).to.be(true); // user2's first sock
                     expect(args3.roomFirst).to.be(false); // but the room's third
-                    expectThree(args3);
+                    expectThree(socket3, args3);
 
                     expect(mgr.getUsers("someroom")).to.eql([user, user2]);
 
                     // Third socket leaves by "leave" message.
                     sock3.write(JSON.stringify({type: "leave", args: {id: "someroom"}}));
-                    mgr.once("leave", function(args4) {
+                    mgr.once("leave", function(socket4, args4) {
                         expect(args4.roomId).to.be("someroom");
-                        expect(args4.socket).to.eql(args3.socket);
+                        expect(socket4).to.eql(socket3);
                         expect(args4.userLast).to.be(true);
                         expect(args4.roomLast).to.be(false);
 
                         sock3.once("data", function(message) {
                             expect(JSON.parse(message).type).to.eql("leave-ack");
 
-                            expectTwo(args2);
+                            expectTwo(socket2, args2);
 
                             // Second socket leaves by disconnect.
                             sock2.close();
-                            mgr.once("leave", function(args5) {
-                                expectOne(args);
+                            mgr.once("leave", function(socket5, args5) {
+                                expectOne(socket, args);
                                 expect(args5.roomId).to.be("someroom");
-                                expect(args5.socket).to.eql(args2.socket);
+                                expect(socket5).to.eql(socket2);
                                 // Still have another socket in this room from this user..
                                 expect(args5.roomLast).to.be(false);
                                 expect(args5.userLast).to.be(false);
 
                                 sock1.close();
-                                mgr.once("leave", function(args6) {
+                                mgr.once("leave", function(socket6, args6) {
                                     expect(args6.roomId).to.eql("someroom");
-                                    expect(args6.socket).to.eql(args.socket);
+                                    expect(socket6).to.eql(socket);
                                     expect(args6.roomLast).to.be(true);
                                     expect(args6.userLast).to.be(true);
 
@@ -262,7 +267,7 @@ describe("ROOM MANAGER", function() {
                                     expect(_.size(mgr.roomToUsers)).to.be(0);
 
                                     mgr.destroy();
-                                    args.socket.close();
+                                    socket.close();
                                     sock3.close();
                                     done();
                                 });
@@ -289,7 +294,7 @@ describe("ROOM MANAGER", function() {
                 throw new Error(data);
             }
         )
-        mgr.on("disconnect", function(args) {
+        mgr.on("disconnect", function(socket, args) {
             expect(args.authenticated).to.be(false);
             expect(args.last).to.be(null);
             mgr.destroy();
@@ -303,11 +308,11 @@ describe("ROOM MANAGER", function() {
         authedSocket(user, function(sock1) {
             authedSocket(user, function(sock2) {
                 sock1.close();
-                mgr.once("disconnect", function(args) {
+                mgr.once("disconnect", function(socket, args) {
                     expect(args.authenticated).to.be(true);
                     expect(args.last).to.be(false);
                     sock2.close();
-                    mgr.once("disconnect", function(args) {
+                    mgr.once("disconnect", function(socket, args) {
                         expect(args.authenticated).to.be(true);
                         expect(args.last).to.be(true);
                         mgr.destroy();
@@ -332,7 +337,7 @@ describe("ROOM MANAGER", function() {
         var mgr = new RoomManager(socketServer, users);
         var user1 = users.at(0);
         var user2 = users.at(1);
-        var data = {doge: "wow"};
+        var data = {type: "doge", args: {so: "wow"}};
         roomSocket(user1, "funroom", function(sock1) {
             roomSocket(user1, "funroom", function(sock2) {
                 roomSocket(user2, "funroom", function(sock3) {
@@ -361,7 +366,8 @@ describe("ROOM MANAGER", function() {
                         done();
                     });
                     // broadcast to everyone but sock1.
-                    mgr.broadcast('funroom', data, mgr.userIdToSockets[user1.id][0]);
+                    mgr.broadcast('funroom', data.type, data.args,
+                                  mgr.userIdToSockets[user1.id][0]);
                 });
             });
         });
@@ -409,5 +415,32 @@ describe("ROOM MANAGER", function() {
             mgr.destroy();
             done();
         });
+    });
+    it("determines if a room contains a socket", function(done) {
+        var user1 = users.at(0),
+            user2 = users.at(1);
+        var mgr = new RoomManager(socketServer, users);
+        roomSocket(user1, "funroom", function(clientSock1) {
+            roomSocket(user2, "funroom", function(clientSock2) {
+                authedSocket(user2, function(clientSock3) {
+                    expect(
+                        mgr.roomContainsSocket("funroom", mgr.userIdToSockets[user1.id][0])
+                    ).to.be(true);
+                    expect(
+                        mgr.roomContainsSocket("funroom", mgr.userIdToSockets[user2.id][0])
+                    ).to.be(true);
+                    expect(
+                        mgr.roomContainsSocket("funroom", mgr.userIdToSockets[user2.id][1])
+                    ).to.be(false);
+                    mgr.destroy();
+                    clientSock1.close();
+                    clientSock2.close();
+                    clientSock3.close();
+                    done();
+                });
+            });
+        });
+
+
     });
 });

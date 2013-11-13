@@ -145,7 +145,10 @@ models.Event = Backbone.Model.extend({
 		} else {
 			this.set("end", new Date().getTime());
 		}
-	}
+	},
+    getRoomId: function() {
+        return this.id ? "event/" + this.id : null
+    }
 });
 
 models.EventList = Backbone.Collection.extend({

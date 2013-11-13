@@ -14,7 +14,18 @@ var joinEventSetup = function(userKey) {
     return function(done) {
         common.authedSock(userKey, 1, function(newSock) {
             sock = newSock;
-            done();
+            sock.write(JSON.stringify({
+                type: "join",
+                args: {id: common.server.db.events.at(0).getRoomId()}
+            }));
+            sock.once("data", function(message) {
+                var data = JSON.parse(message);
+                if (data.type == "join-ack") {
+                    done();
+                } else {
+                    throw new Error(message);
+                }
+            });
         });
     }
 };
@@ -142,7 +153,7 @@ describe('unhangout server', function() {
 			.end(function(res) {
 				res.status.should.equal(200);
 
-				common.server.redis.lrange("global:subscriptions", -1, 1, function(err, res) {
+				common.server.db.redis.lrange("global:subscriptions", -1, 1, function(err, res) {
 					if(res=="email@example.com") {
 						done();
 					}
@@ -169,7 +180,7 @@ describe('unhangout server', function() {
 				.redirects(0)
 				.end(function(res){
 					res.status.should.equal(302);
-					common.server.permalinkSessions.length.should.equal(1);
+					common.server.db.permalinkSessions.length.should.equal(1);
 					done();
 				});
 		});
@@ -179,11 +190,11 @@ describe('unhangout server', function() {
 				.redirects(0)
 				.end(function(res){
 					res.status.should.equal(302);
-					common.server.permalinkSessions.length.should.equal(1);
+					common.server.db.permalinkSessions.length.should.equal(1);
 					request.get('http://localhost:7777/h/test')
 						.end(function(res){
 							res.status.should.equal(200);
-							common.server.permalinkSessions.length.should.equal(1);
+							common.server.db.permalinkSessions.length.should.equal(1);
 							done();
 						});
 				});
@@ -216,7 +227,7 @@ describe('unhangout server', function() {
 		afterEach(common.standardShutdown);
 
 		it('should reject requests without a valid creation key in the request body', function(done){
-			var session = common.server.permalinkSessions[0];
+			var session = common.server.db.permalinkSessions[0];
 			request.post('http://localhost:7777/h/admin/test')
 				.send({creationKey: 'wrong1', title: 'migrate title', description: 'something cool'})
 				.end(function(res){
@@ -226,7 +237,7 @@ describe('unhangout server', function() {
 		});
 
 		it('should update session title and description when valid creation key is present', function(done){
-			var session = common.server.permalinkSessions.at(0);
+			var session = common.server.db.permalinkSessions.at(0);
 			request.post('http://localhost:7777/h/admin/test')
 				.send({creationKey: session.get('creationKey'), title: 'migrate title', description: 'something cool'})
 				.end(function(res){
@@ -242,7 +253,7 @@ describe('unhangout server', function() {
 		beforeEach(function(done) {
             common.standardSetup(function() {
 				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
-				session = common.server.events.at(0).get("sessions").at(0);
+				session = common.server.db.events.at(0).get("sessions").at(0);
 				done();
 			})
         });
@@ -325,134 +336,11 @@ describe('unhangout server', function() {
 		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 
-		it('should accept a connection at /sock', function(done) {
-			var sock = sock_client.create("http://localhost:7777/sock");
-			sock.on("connection", done);
-		});
-		
-		it('should consider the socket unauthenticated before an AUTH message', function(done) {
-			var sock = sock_client.create("http://localhost:7777/sock");
-			sock.on("connection", function() {
-				var socketsList = _.values(common.server.unauthenticatedSockets);
-				socketsList.length.should.equal(1);
-				socketsList[0].authenticated.should.equal(false);
-				done();
-			});
-		});
-		
-		it('should reject a bad authorization key', function(done) {
-			var sock = sock_client.create("http://localhost:7777/sock");
-			sock.on("data", function(message) {
-				var msg = JSON.parse(message);
-				
-				if(msg.type=="auth-err") {
-					done();
-				}
-			});
-			
-			sock.on("connection", function() {
-				sock.write(JSON.stringify({type:"auth", args:{key:"abe027d9c910236af", id:"0"}}));
-			});	
-		});
-		
-		it('should reject a good authorization key for the wrong id', function(done) {
-			var sock = sock_client.create("http://localhost:7777/sock");
-			sock.on("data", function(message) {
-				var msg = JSON.parse(message);
-				
-				if(msg.type=="auth-err") {
-					done();
-				}
-			});
-			
-			sock.on("connection", function() {
-				var user = s.users.at(0);
-				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:"1"}}));
-			});	
-		});
-		
-		it('should accept a good authorization key', function(done) {
-			var sock = sock_client.create("http://localhost:7777/sock");
-			sock.on("data", function(message) {
-				var msg = JSON.parse(message);
-				
-				if(msg.type=="auth-ack") {
-					done();
-				}
-			});
-			
-			sock.on("connection", function() {
-				var user = common.server.users.at(0);
-				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
-			});	
-		});
-		
-		it('should trigger a disconnect event when closing the socket', function(done) {
-			var sock = sock_client.create("http://localhost:7777/sock");
-			sock.on("data", function(message) {
-				var msg = JSON.parse(message);
-				
-				if(msg.type=="auth-ack") {
-					sock.close();
-				}
-			});
-			
-			sock.on("connection", function() {
-				var user = common.server.users.at(0);
-				
-				user.on("disconnect", done);
-				
-				sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
-			});	
-		});
-		
-		describe("JOIN", function() {
-			beforeEach(function(done) {
-				sock = sock_client.create("http://localhost:7777/sock");
-				sock.once("data", function(message) {
-					var msg = JSON.parse(message);
-
-					if(msg.type=="auth-ack") {
-						done();
-					}
-				});
-
-				sock.on("connection", function() {
-					var user = common.server.users.at(0);
-					sock.write(JSON.stringify({type:"auth", args:{key:user.getSockKey(), id:user.id}}));
-				});	
-			});
-			
-			it("should accept a join message with a valid event id", function(done) {
-				sock.on("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="join-ack") {
-						common.server.events.get(1).numUsersConnected().should.equal(1);
-						done();
-					}
-				});
-				
-				sock.write(JSON.stringify({type:"join", args:{id:1}}));
-			});
-			
-			it("should reject a join message with an invalid event id", function(done) {
-				sock.once("data", function(message) {
-					var msg = JSON.parse(message);
-					if(msg.type=="join-err") {
-						done();
-					}
-				});
-												// 0 is not a valid event id in seeds
-				sock.write(JSON.stringify({type:"join", args:{id:0}}));
-			});
-			
-		});
-		
-
 		describe("CREATE-SESSION", function() {
 			beforeEach(joinEventSetup("regular1"));
 
 			it("should accept create session messages", function(done) {
+                var event = common.server.db.events.at(0);
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 
@@ -463,9 +351,16 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session", description:"This is a description."}}));
+				sock.write(JSON.stringify({
+                    type:"create-session",
+                    args:{
+                        title: "New Session",
+                        description:"This is a description.",
+                        roomId: event.getRoomId()
+                    }
+                }));
 			});
 
 			it("should reject messages from non-admins", function(done) {
@@ -492,7 +387,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session"}}));
 			});
@@ -507,7 +402,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{description:"This is a description."}}));
 			});
@@ -526,9 +421,16 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session", description:"This is a description."}}));
+				sock.write(JSON.stringify({
+                    type:"create-session",
+                    args: {
+                        title: "New Session",
+                        description:"This is a description.",
+                        roomId: common.server.db.events.at(0).getRoomId()
+                    }
+                }));
 			});
 		});
 		
@@ -539,15 +441,19 @@ describe('unhangout server', function() {
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="open-sessions-ack") {
-						common.server.events.get(1).sessionsOpen().should.be.true
+						common.server.db.events.get(1).sessionsOpen().should.be.true
 						done();
 					} else if(msg.type=="open-sessions-err") {
+                        console.error(msg);
 						should.fail();
 					}
 				});
 				
-				common.server.users.at(0).set("admin", true);
-				sock.write(JSON.stringify({type:"open-sessions", args:{}}));
+				common.server.db.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({
+                    type:"open-sessions",
+                    args: { roomId: common.server.db.events.at(0).getRoomId() }
+                }));
 			});
 			
 			it("should generate messages to everyone in the event on open sessions", function(done) {
@@ -560,23 +466,27 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.users.at(0).set("admin", true);
-				sock.write(JSON.stringify({type:"open-sessions", args:{}}));
+				common.server.db.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({type:"open-sessions", args:{
+                    roomId: common.server.db.events.at(0).getRoomId()
+                }}));
 			});
 
 			it("should accept close messages from admins", function(done) {
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="close-sessions-ack") {
-						common.server.events.get(1).sessionsOpen().should.be.false
+						common.server.db.events.get(1).sessionsOpen().should.be.false
 						done();
 					} else if(msg.type=="close-sessions-err") {
 						should.fail();
 					}
 				});
 				
-				common.server.users.at(0).set("admin", true);
-				sock.write(JSON.stringify({type:"close-sessions", args:{}}));
+				common.server.db.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({type:"close-sessions", args: {
+                    roomId: common.server.db.events.at(0).getRoomId()
+                }}));
 			});
 			
 			it("should generate messages to everyone in the event on close sessions", function(done) {
@@ -589,8 +499,10 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.users.at(0).set("admin", true);
-				sock.write(JSON.stringify({type:"close-sessions", args:{}}));
+				common.server.db.users.at(0).set("admin", true);
+				sock.write(JSON.stringify({type:"close-sessions", args:{
+                    roomId: common.server.db.events.at(0).getRoomId()
+                }}));
 			});
 
 
@@ -623,7 +535,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("admin", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{}}));
 			});
@@ -639,16 +551,18 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"embed", args:{ytId:"QrsIICQ1eg8"}}));
+				sock.write(JSON.stringify({type:"embed", args:{
+                    ytId:"QrsIICQ1eg8",
+                    roomId: common.server.db.events.at(0).getRoomId()
+                }}));
 			});
 			
 			it("should generate messages to everyone in the event on embed", function(done) {
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 					if(msg.type=="embed") {
-						msg.args.should.have.keys("ytId");
 						msg.args.ytId.should.equal("QrsIICQ1eg8");
 						done();
 					} else if(msg.type=="embed-err") {
@@ -656,9 +570,12 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("admin", true);
 				
-				sock.write(JSON.stringify({type:"embed", args:{ytId:"QrsIICQ1eg8"}}));
+				sock.write(JSON.stringify({type:"embed", args:{
+                    ytId:"QrsIICQ1eg8",
+                    roomId: common.server.db.events.at(0).getRoomId()
+                }}));
 			});	
 		});
 
@@ -675,7 +592,9 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				sock.write(JSON.stringify({type:"chat", args:{}}));
+				sock.write(JSON.stringify({type:"chat", args:{
+                    roomId: common.server.db.events.at(0).getRoomId()
+                }}));
 			});
 			
 			it("should accept a chat message with proper arguments", function(done) {
@@ -687,7 +606,10 @@ describe('unhangout server', function() {
 						should.fail();
 					}
 				});				
-				sock.write(JSON.stringify({type:"chat", args:{text:"hello world"}}));
+				sock.write(JSON.stringify({type:"chat", args: {
+                    text:"hello world",
+                    roomId: common.server.db.events.at(0).getRoomId()
+                }}));
 			});
 			
 			
