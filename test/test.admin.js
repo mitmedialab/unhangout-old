@@ -35,7 +35,7 @@ describe('HTTP ADMIN API', function() {
 				.redirects(0)
 				.end(function(res) {
 					res.status.should.equal(302);
-                    var evt = common.server.events.at(common.server.events.length-1);
+                    var evt = common.server.db.events.at(common.server.db.events.length-1);
                     evt.get("title").should.equal("Test Event");
                     evt.get("description").should.equal("Description of the test event.");
 
@@ -96,7 +96,7 @@ describe('HTTP ADMIN API', function() {
 				.redirects(0)
 				.end(function(res) {
 					res.status.should.equal(302);
-                    var evt = common.server.events.at(0);
+                    var evt = common.server.db.events.at(0);
                     evt.get("title").should.equal("Test Event");
                     evt.get("description").should.equal("Description of the test event.");
 					done();
