@@ -354,11 +354,11 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	},
 
 	openSessions: function() {
-		sock.send(JSON.stringify({type:"open-sessions", args:{roomId: curEvent.getRoomid()}}));
+		sock.send(JSON.stringify({type:"open-sessions", args:{roomId: curEvent.getRoomId()}}));
 	},
 
 	closeSessions: function() {
-		sock.send(JSON.stringify({type:"close-sessions", args:{roomId: curEvent.getRoomid()}}));
+		sock.send(JSON.stringify({type:"close-sessions", args:{roomId: curEvent.getRoomId()}}));
 	},
 
 	showEmbedModal: function() {
