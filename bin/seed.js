@@ -1,12 +1,10 @@
 var models = require('../lib/server-models.js'),
-_ = require('underscore')._;
-sync = require('../lib/redis-sync.js'),
-async = require('async'),
-winston = require('winston'),
-redis = require('redis')
+    _ = require('underscore')._;
+    sync = require('../lib/redis-sync.js'),
+    async = require('async'),
+    logger = require("../lib/logging").getLogger(),
+    redis = require('redis');
 
-
-var logger;
 
 // This file populates the database with basic starter objects to make development easier and more predictable.
 // typically run like this:
@@ -90,37 +88,11 @@ exports.run = function(dbId, redis, callback) {
 }
 
 
-if(require.main === module) 
-{
-    logger = new (winston.Logger)({
-		transports: [
-		new (winston.transports.Console)(
-			{
-				timestamp: true
-			})
-			],
-		});
-		
-	logger.cli();
-
-	logger.info("Called seeds directly; running on main redis db.");
-	
-	models.logger = logger;
-
+if(require.main === module) {
 	var r = redis.createClient();
 	r.on("connect", function() {
 		exports.run(0, r, function() {
 			process.exit();
 		});		
 	})
-} else {
-	logger = new (winston.Logger)({
-		transports: [
-		new (winston.transports.File)(
-			{
-				filename: "seed.log",
-				timestamp: true
-			})
-			],
-		});
 }

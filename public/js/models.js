@@ -98,10 +98,12 @@ models.Event = Backbone.Model.extend({
 
 	openSessions: function() {
 		this.set("sessionsOpen", true);
+		this.trigger("open-sessions");
 	},
 
 	closeSessions: function() {
 		this.set("sessionsOpen", false);
+		this.trigger("close-sessions");
 	},
 
 	sessionsOpen: function() {
@@ -145,7 +147,10 @@ models.Event = Backbone.Model.extend({
 		} else {
 			this.set("end", new Date().getTime());
 		}
-	}
+	},
+    getRoomId: function() {
+        return this.id ? "event/" + this.id : null
+    }
 });
 
 models.EventList = Backbone.Collection.extend({

@@ -193,7 +193,6 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	attend: function() {
-
 		// if the event currently has closed sessions, ignore
 		// clicks on the join button.
 		if(!curEvent.sessionsOpen()) {
@@ -209,11 +208,16 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	start: function() {
-		sock.send(JSON.stringify({type:"start", args:{id:this.model.id}}));
+        //TODO: Server isn't listening for this..
+		sock.send(JSON.stringify({
+            type:"start", args: {id: this.model.id, roomid: curEvent.getRoomId()}
+        }));
 	},
 
 	delete: function() {
-		sock.send(JSON.stringify({type:"delete", args:{id:this.model.id}}));
+		sock.send(JSON.stringify({
+            type:"delete", args: {id: this.model.id, roomId: curEvent.getRoomId()}
+        }));
 	}
 });
 
@@ -325,7 +329,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 		} else {
 			this.$el.find("#embed-modal p.text-warning").addClass("hide");
 			this.$el.find("#embed-modal .control-group").removeClass("error");
-			var message = {type:"embed", args:{ytId:newId}};
+			var message = {type:"embed", args: {ytId:newId, roomId: curEvent.getRoomId()}};
 			sock.send(JSON.stringify(message));
 		}
 	},
@@ -333,14 +337,17 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	removeEmbed: function() {
 		// just send an empty message, and clear the field
 		$("#youtubue_id").val("");
-		var message = {type:"embed", args:{ytId:""}};
+		var message = {type:"embed", args:{ytId:"", roomId: curEvent.getRoomId()}};
 		sock.send(JSON.stringify(message));
 	},
 
 	createSession: function() {
 		var title = $("#session_name").val();
 
-		sock.send(JSON.stringify({type:"create-session", args:{title:title, description:""}}));
+		sock.send(JSON.stringify({
+            type:"create-session",
+            args:{title:title, description:"", roomId: curEvent.getRoomId()}
+        }));
 
 		$("#session_name").val("");
 
@@ -367,11 +374,11 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	},
 
 	openSessions: function() {
-		sock.send(JSON.stringify({type:"open-sessions", args:{}}));
+		sock.send(JSON.stringify({type:"open-sessions", args:{roomId: curEvent.getRoomId()}}));
 	},
 
 	closeSessions: function() {
-		sock.send(JSON.stringify({type:"close-sessions", args:{}}));
+		sock.send(JSON.stringify({type:"close-sessions", args:{roomId: curEvent.getRoomId()}}));
 	},
 
 	showEmbedModal: function() {
@@ -496,7 +503,7 @@ var ChatLayout = Backbone.Marionette.Layout.extend({
 		this.chat.show(this.chatView);
 		this.presence.show(this.userListView);
 		this.chatInput.show(this.chatInputView);
-	},
+	}
 })
 
 // The input form for sending chat messages.
@@ -519,7 +526,9 @@ var ChatInputView = Marionette.ItemView.extend({
 		var msg = this.ui.chatInput.val();
 
 		if(msg.length>0) {
-			sock.send(JSON.stringify({type:"chat", args:{text:msg}}));
+			sock.send(JSON.stringify({
+                type:"chat", args: {text: msg, roomId: curEvent.getRoomId()}
+            }));
 			this.ui.chatInput.val("");
 		}
 
@@ -611,14 +620,19 @@ var ChatView = Marionette.CompositeView.extend({
 	itemViewContainer: "#chat-list-container",
 	id: "chat-container",
 
-
-	initialize: function() {
-		this.listenTo(this.collection, 'all', this.update, this);
-	},
-
-	update: function() {
-		this.$el.scrollTop(this.$el[0].scrollHeight);
-	}
+    onBeforeItemAdded: function() {
+        var limit = Math.max(this.el.scrollHeight - this.$el.height() - 10, 0);
+        this._isScrolled = this.$el.scrollTop() < limit;
+        return null;
+    },
+    onAfterItemAdded: function() {
+        var latest = this.collection.at(this.collection.length - 1);
+        // Scroll down if we haven't moved our scroll bar, or the last message
+        // was from ourselves.
+        if (!this._isScrolled || latest.get("user").id == USER_ID) {
+            this.$el.scrollTop(this.el.scrollHeight);
+        }
+    }
 });
 
 // The bar that appears when your session goes live.
@@ -644,7 +658,7 @@ var AboutEventView = Marionette.ItemView.extend({
 		} else {
 			this.$el.find(".footer").show();
 		}
-	},
+	}
 });
 
 // Manages the display of embedded videos on the upper left corner.

@@ -184,7 +184,7 @@ $(document).ready(function() {
 				windowBlurred = true ;
 				messageShown = true ;
 
-				var message = {type:"blur", args:{id:USER_ID}};
+				var message = {type:"blur", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
 				sock.send(JSON.stringify(message));	
 
 				isAlreadyBlurred = true; 
@@ -197,7 +197,7 @@ $(document).ready(function() {
 				clearInterval(interval);
 				window.document.title = startingTitle;
 
-				var message = {type:"focus", args:{id:USER_ID}};
+				var message = {type:"focus", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
 				sock.send(JSON.stringify(message));	
 
 				isAlreadyBlurred = false;
@@ -373,7 +373,7 @@ $(document).ready(function() {
 
 		// if they're the same, just ignore it.
 		if(curSession && curSession!=sessionId) {
-
+            //TODO: server isn't listening to this..
 			queuedAttend = function() {
 				var message = {type:"attend", args:{id:sessionId}};
 				sock.send(JSON.stringify(message));				
@@ -382,6 +382,7 @@ $(document).ready(function() {
 			var message = {type:"unattend", args:{id:curSession}};
 			sock.send(JSON.stringify(message));
 		} else if(!curSession) {
+            //TODO: server isn't listening to this..
 			var message = {type:"attend", args:{id:sessionId}};
 			sock.send(JSON.stringify(message));				
 		}
@@ -389,6 +390,7 @@ $(document).ready(function() {
 
 	app.start();
 
+    //TODO: curSession seems to be dead?
 	// if the user joining has a curSession (ie a session they have RSVP'd to)
 	// check and see if it's live. If it is, show the bar.
 	// (Not sure how this will work in the non SINGLE_SESSION_RSVP mode, because
@@ -576,7 +578,7 @@ $(document).ready(function() {
 			// in some situations we do react to them. They're used 
 			// more for testing.
 			case "auth-ack":
-				sock.send(JSON.stringify({type:"join", args:{id:curEvent.id}}));
+				sock.send(JSON.stringify({type:"join", args:{id:curEvent.getRoomId()}}));
 				break;
 				
 			case "embed-ack":
