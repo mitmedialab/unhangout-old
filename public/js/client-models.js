@@ -7,12 +7,12 @@ models.ClientSessionList = models.SessionList.extend({
 	initialize: function(options) {
 		models.SessionList.prototype.initialize.call(this, options);
 
-		this.on("add", _.bind(function(session) {
-			session.on("change:attendeeIds change:connectedParticipantIds", _.bind(function() {
-				// disabling sorting for now.
-				// this.sort();
-			}, this));
-		}, this));
+		// disabling sorting for now.
+		// this.on("add", _.bind(function(session) {
+		// 	session.on("change:attendeeIds change:connectedParticipantIds", _.bind(function() {
+		// 		this.sort();
+		// 	}, this));
+		// }, this));
 	},
 
 	comparator: function(a, b) {
