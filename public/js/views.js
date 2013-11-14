@@ -47,7 +47,6 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	onRender: function() {
-		console.log("rendered " + this.model.id);
 		var start = new Date().getTime();
 		// mostly just show/hide pieces of the view depending on 
 		// model state.
@@ -151,10 +150,6 @@ var SessionView = Marionette.ItemView.extend({
 				userViewCache[user.id] = userView;
 			}
 
-			// var userView = new UserView({model:user});
-
-			// this.ui.hangoutUsers.append(userView.render().el);
-			// this.ui.hangoutUsers.append(userView.render().el.cloneNode(true));
 			fragment.appendChild(userView.render().el.cloneNode(true));
 		}, this));
 
@@ -184,8 +179,6 @@ var SessionView = Marionette.ItemView.extend({
 			this.ui.attend.removeAttr("disabled");
 			this.ui.attend.removeClass("disabled");
 		}
-
-		console.log("render time " + this.model.id + ": " + (start - (new Date().getTime())) + "ms");
 	},
 
 	destroy: function() {
@@ -260,7 +253,6 @@ var UserView = Marionette.ItemView.extend({
 	initialize: function(args) {
 		Marionette.ItemView.prototype.initialize.call(this, args);
 
-		// this.listenTo(this.model, 'change', this.render, this);
 		this.listenTo(this.model, 'change:isBlurred', this.render, this);
 	},	
 
