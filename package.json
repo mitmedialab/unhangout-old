@@ -46,7 +46,9 @@
     "validator":"1.4.0",
   	"moment"    : "2.1.0",
   	"googleapis": "0.4.5",
-  	"gapitoken" : "0.0.3"
+  	"gapitoken" : "0.0.3",
+    "stylus" : "0.40.2",
+    "nib" : "1.0.1"
   },
   "analyze": false,
   "devDependencies": {
