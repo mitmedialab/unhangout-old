@@ -28,3 +28,4 @@ ssl/
 .sass-cache
 .idea
 bin/selenium-server-standalone.jar
+public/css/screen.css
