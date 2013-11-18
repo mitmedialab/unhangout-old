@@ -54,7 +54,8 @@ models.Event = Backbone.Model.extend({
 			sessions: null,
 			youtubeEmbed: null,
 			sessionsOpen: false,
-			blurDisabled: false
+			blurDisabled: false,
+            admins: []
 		}
 	},
 	
@@ -150,6 +151,29 @@ models.Event = Backbone.Model.extend({
 	},
     getRoomId: function() {
         return this.id ? "event/" + this.id : null
+    },
+    addAdmin: function(params) {
+        var existing = _.any(this.get("admins"), function(admin) {
+            return (!_.isUndefined(params.id) && admin.id == params.id) || (params.email && admin.email == params.email);
+        });
+        if (!existing) {
+            var admins = this.get("admins");
+            admins.push(params);
+            this.set("admins", admins);
+            this.trigger("change:admins", this);
+        }
+    },
+    removeAdmin: function(params) {
+        var changed = false;
+        this.set("admins", _.reject(this.get("admins"), function(admin) {
+            console.log(params, admin);
+            var found = (!_.isUndefined(params.id) && admin.id == params.id) || (params.email && admin.email == params.email);
+            if (found) {
+                changed = true;
+            }
+            return found;
+        }), {silent: !changed});
+        console.log(this.get('admins'));
     }
 });
 
@@ -202,7 +226,7 @@ models.SessionList = Backbone.Collection.extend({
 models.User = Backbone.Model.extend({
 
 	default: function() {
-		return {picture: "", admin:false, isBlurred: false}
+		return {picture: "", superuser: false, isBlurred: false}
 	},
 	
 	initialize: function() {
@@ -230,9 +254,23 @@ models.User = Backbone.Model.extend({
 			this.set("admin", false);
 		}
 	},
-	
-	isAdmin: function() {
-		return this.get("admin");
+
+    isSuperuser: function() {
+        return this.get("superuser");
+    },
+
+	isAdminOf: function(event) {
+        if (this.isSuperuser()) { return true; }
+        if (!event) { return false; }
+
+        var emails = _.pluck(this.get("emails"), "value");
+        var that = this;
+        return _.any(event.get("admins"), function(admin) {
+            if (_.isUndefined(admin.id)) {
+                return _.contains(emails, admin.email);
+            }
+            return admin.id == that.id;
+        });
 	},
 
 	isBlurred: function() {
@@ -273,7 +311,12 @@ models.User = Backbone.Model.extend({
 });
 
 models.UserList = Backbone.Collection.extend({
-	model:models.User
+	model:models.User,
+    findByEmail: function(email) {
+        return this.find(function(u) {
+            return _.contains(_.pluck(u.get("emails"), "value"), email);
+        });
+    }
 });
 
 

@@ -22,7 +22,7 @@ describe("CREATE EVENT", function() {
     it("Creates an event via admin page", function(done) {
         // Authenticate
         browser.get("http://localhost:7777/");
-        browser.mockAuthenticate("admin1");
+        browser.mockAuthenticate("superuser1");
 
         // Create a new event.
         browser.get("http://localhost:7777/admin");
@@ -33,14 +33,16 @@ describe("CREATE EVENT", function() {
         browser.byCss("[name='description']").sendKeys("This is my description");
         browser.byCss("[name='welcomeMessage']").sendKeys("<em>Welcome!</em>");
         browser.byCss(".btn-primary").click()
-        browser.byCss("#events a[href='/event/2']").then(function(el) {
+        // TODO: get rid of hard-coded event ID here and below, in case we
+        // change the fixture..
+        browser.byCss("#events a[href='/event/3']").then(function(el) {
             el.getText().then(function(text) {
                 text.should.equal("Test Title (test-title)");
             });
         });
         
         // Event hasn't started
-        browser.get("http://localhost:7777/event/2")
+        browser.get("http://localhost:7777/event/3")
         browser.getTitle().then(function(title) {
             title.should.equal("Test Title — powered by unhangout");
         });
@@ -57,12 +59,13 @@ describe("CREATE EVENT", function() {
         // Start the event.
         browser.get("http://localhost:7777/admin");
         browser.byCsss(".admin-table-buttons .btn-success").then(function(els) {
-            // This is a little hackish -- should have a cleaner way to select the event.
-            els[1].click();
+            // TODO This is a little hackish -- should have a cleaner way to
+            // select the event. Goes along with the un-hard-code event ID.
+            els[2].click();
         });
 
         // View the started event
-        browser.get("http://localhost:7777/event/2");
+        browser.get("http://localhost:7777/event/3");
         // Expose the 'about' div
         browser.byCss("#about-nav a").click();
         browser.executeScript("return $('#about-event .footer').is(':visible');").then(function(res) {

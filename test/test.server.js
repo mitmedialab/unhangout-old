@@ -347,11 +347,12 @@ describe('unhangout server', function() {
 					if(msg.type=="create-session-ack") {
 						done();
 					} else if(msg.type=="create-session-err") {
+                        console.log(msg);
 						should.fail();
 					}
 				});
 
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				
 				sock.write(JSON.stringify({
                     type:"create-session",
@@ -387,7 +388,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session"}}));
 			});
@@ -402,7 +403,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{description:"This is a description."}}));
 			});
@@ -421,7 +422,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				
 				sock.write(JSON.stringify({
                     type:"create-session",
@@ -449,7 +450,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				sock.write(JSON.stringify({
                     type:"open-sessions",
                     args: { roomId: common.server.db.events.at(0).getRoomId() }
@@ -466,7 +467,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				sock.write(JSON.stringify({type:"open-sessions", args:{
                     roomId: common.server.db.events.at(0).getRoomId()
                 }}));
@@ -483,7 +484,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				sock.write(JSON.stringify({type:"close-sessions", args: {
                     roomId: common.server.db.events.at(0).getRoomId()
                 }}));
@@ -499,7 +500,7 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				sock.write(JSON.stringify({type:"close-sessions", args:{
                     roomId: common.server.db.events.at(0).getRoomId()
                 }}));
@@ -535,7 +536,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{}}));
 			});
@@ -551,7 +552,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{
                     ytId:"QrsIICQ1eg8",
@@ -570,7 +571,7 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("admin", true);
+				common.server.db.users.at(0).set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{
                     ytId:"QrsIICQ1eg8",

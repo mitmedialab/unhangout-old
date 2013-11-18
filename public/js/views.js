@@ -262,7 +262,7 @@ var UserView = Marionette.ItemView.extend({
 
 	onRender: function() {
 		// add in the tooltip attributes	
-		if(this.model.isAdmin()) {
+		if(this.model.isAdminOf(curEvent)) {
 		 	this.$el.addClass("admin");
 		}
 

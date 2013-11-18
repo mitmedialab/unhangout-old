@@ -83,17 +83,16 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
     https://localhost:7777/auth/google/callback (swap out the hostname and port
     with whichever settings you use).
 
-  - ``UNHANGOUT_ADMIN_EMAILS`` is a list of email addresses which are granted
-    "admin" status when they authenticate.  (The server must be restarted and
-    clients must re-login to change their admin status).
-
+  - ``UNHANGOUT_SUPERUSER_EMAILS`` is a list of email addresses which are
+    granted "superuser" status when they authenticate.  Use this to bootstrap
+    the first superusers, but you can add more later via the web interface.
+    (The server must be restarted and clients must re-login to change their
+    superuser status).
   - ``UNHANGOUT_REDIS_HOST`` and ``UNHANGOUT_REDIS_PORT`` are the host and port
     name for the installed redis.  Defaults are ``localhost`` and ``6379``.
   - ``UNHANOGUT_REDIS_DB`` is an index number pointing to the redis database to
     use. By default, we use 0 for production.  The unit tests use 1, and will
     destroy data there.
-  - ``UNHANGOUT_ADMIN_EMAILS`` is a list of email addresses which are granted
-    admin status.
   - ``UNHANGOUT_HANGOUT_APP_ID`` is the Google app ID for our hangout gadget.
   - ``UNHANGOUT_USE_SSL``: if true, the server will run with SSL.  We strongly
     recommend running the unhangout server with SSL, even in development (you

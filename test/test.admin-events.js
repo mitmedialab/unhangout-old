@@ -7,7 +7,7 @@ var server = require('../lib/unhangout-server'),
 var sock;
 var session;
 
-describe('HTTP ADMIN API', function() {
+describe('HTTP ADMIN EVENTS API', function() {
 	afterEach(common.standardShutdown);
 
 	describe('/admin/event/new (non-admin)', function() {
@@ -30,7 +30,7 @@ describe('HTTP ADMIN API', function() {
 
 		it('should accept well-formed creation request from admin', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
-                .set("x-mock-user", "admin1")
+                .set("x-mock-user", "superuser1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -48,7 +48,7 @@ describe('HTTP ADMIN API', function() {
 		it('should reject requests that are missing required parameters', function(done) {
 			// title is missing
 			request.post('http://localhost:7777/admin/event/new')
-                .set("x-mock-user", "admin1")
+                .set("x-mock-user", "superuser1")
 				.send({description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -59,7 +59,7 @@ describe('HTTP ADMIN API', function() {
 
 		it('should redirect to /admin/ on successful creation', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
-                .set("x-mock-user", "admin1")
+                .set("x-mock-user", "superuser1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
@@ -84,6 +84,17 @@ describe('HTTP ADMIN API', function() {
 					done();
 				});
 		});
+		it('should reject well-formed requests from admins of other events who don\'t admin this one', function(done) {
+			request.post('http://localhost:7777/admin/event/1')
+                .set("x-mock-user", "admin2")
+				.send({title:"Test Event", description:"Description of the test event."})
+				.redirects(0)
+				.end(function(res) {
+					res.status.should.equal(302);
+					res.header['location'].should.equal("/");
+					done();
+				});
+		});
 	});
 
 	describe('/admin/event/:id (admin)', function() {
@@ -96,21 +107,23 @@ describe('HTTP ADMIN API', function() {
 				.redirects(0)
 				.end(function(res) {
 					res.status.should.equal(302);
+                    console.log(res);
                     var evt = common.server.db.events.at(0);
                     evt.get("title").should.equal("Test Event");
                     evt.get("description").should.equal("Description of the test event.");
 					done();
 				});
 		});
-
-		it('should redirect to /admin/event/:id on successful creation', function(done) {
+		it('should accept well-formed creation request from superuser', function(done) {
 			request.post('http://localhost:7777/admin/event/1')
-                .set("x-mock-user", "admin1")
+                .set("x-mock-user", "superuser1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
 					res.status.should.equal(302);
-					res.header['location'].should.equal("/admin/event/1");
+                    var evt = common.server.db.events.at(0);
+                    evt.get("title").should.equal("Test Event");
+                    evt.get("description").should.equal("Description of the test event.");
 					done();
 				});
 		});
