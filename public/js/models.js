@@ -149,13 +149,20 @@ models.Event = Backbone.Model.extend({
 			this.set("end", new Date().getTime());
 		}
 	},
+
     getRoomId: function() {
         return this.id ? "event/" + this.id : null
     },
+
+    _adminMatches: function(admin, params) {
+        return !!((!_.isUndefined(params.id) && admin.id == params.id) ||
+                (params.email && admin.email == params.email));
+    },
+
     addAdmin: function(params) {
-        var existing = _.any(this.get("admins"), function(admin) {
-            return (!_.isUndefined(params.id) && admin.id == params.id) || (params.email && admin.email == params.email);
-        });
+        var existing = _.any(this.get("admins"), _.bind(function(admin) {
+            return this._adminMatches(admin, params);
+        }, this));
         if (!existing) {
             var admins = this.get("admins");
             admins.push(params);
@@ -163,17 +170,16 @@ models.Event = Backbone.Model.extend({
             this.trigger("change:admins", this);
         }
     },
+
     removeAdmin: function(params) {
         var changed = false;
-        this.set("admins", _.reject(this.get("admins"), function(admin) {
-            console.log(params, admin);
-            var found = (!_.isUndefined(params.id) && admin.id == params.id) || (params.email && admin.email == params.email);
+        this.set("admins", _.reject(this.get("admins"), _.bind(function(admin) {
+            var found = this._adminMatches(admin, params);
             if (found) {
                 changed = true;
             }
             return found;
-        }), {silent: !changed});
-        console.log(this.get('admins'));
+        }, this)), {silent: !changed});
     }
 });
 

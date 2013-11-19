@@ -1,4 +1,5 @@
 var server = require('../lib/unhangout-server'),
+    models = require('../lib/server-models'),
     expect = require('expect.js'),
     _ = require('underscore')._,
     request = require('superagent'),
@@ -112,13 +113,14 @@ describe("HTTP ADMIN USERS API", function() {
             action: "set-superuser",
             superuser: true
         }, function(res) {
-            expect(res.status).to.be(200);
+            expect(res.status).to.be(400);
+            expect(res.text).to.be("Unknown user");
             var newUser = common.server.db.users.findByEmail("newone@example.com");
-            expect(newUser).to.not.be(undefined);
-            expect(newUser.get("superuser")).to.be(true);
+            expect(newUser).to.be(undefined);
             done()
         });
     });
+
     it("adds event admins by id", function(done) {
         var user = common.server.db.users.findByEmail("regular1@example.com");
         var event = common.server.db.events.at(0);
@@ -136,6 +138,8 @@ describe("HTTP ADMIN USERS API", function() {
     it("removes event admins by id", function(done) {
         var event = common.server.db.events.at(0);
         var user = common.server.db.users.findByEmail(event.get("admins")[0].email);
+        event.set("admins", [{id: user.id}]);
+
         expect(user.isAdminOf(event)).to.be(true);
         postUsers("superuser1", {
             action: "remove-admin",
@@ -144,6 +148,70 @@ describe("HTTP ADMIN USERS API", function() {
         }, function(res) {
             expect(res.status).to.be(200);
             expect(user.isAdminOf(event)).to.be(false);
+            expect(event.get("admins")).to.eql([]);
+            done()
+        });
+    });
+    it("adds event admins by known email", function(done) {
+        var user = common.server.db.users.findByEmail("regular1@example.com");
+        var event = common.server.db.events.at(0);
+        expect(user.isAdminOf(event)).to.be(false);
+        postUsers("superuser1", {
+            action: "add-admin",
+            email: user.get("emails")[0].value,
+            eventId: event.id
+        }, function(res) {
+            expect(res.status).to.be(200);
+            expect(user.isAdminOf(event)).to.be(true)
+            done()
+        });
+    });
+    it("removes event admins by known email", function(done) {
+        var event = common.server.db.events.at(0);
+        var email = event.get("admins")[0].email;
+        var user = common.server.db.users.findByEmail(email);
+
+        expect(user.isAdminOf(event)).to.be(true);
+        postUsers("superuser1", {
+            action: "remove-admin",
+            email: email,
+            eventId: event.id
+        }, function(res) {
+            expect(res.status).to.be(200);
+            expect(user.isAdminOf(event)).to.be(false);
+            expect(event.get("admins")).to.eql([]);
+            done()
+        });
+    });
+    it("adds event admins by unknown email", function(done) {
+        var user = common.server.db.users.findByEmail("nonexistent@example.com");
+        expect(user).to.be(undefined);
+        var event = common.server.db.events.at(0);
+        event.set("admins", []);
+        postUsers("superuser1", {
+            action: "add-admin",
+            email: "nonexistent@example.com",
+            eventId: event.id
+        }, function(res) {
+            expect(res.status).to.be(200);
+            var user = new models.ServerUser({emails: [{value: "nonexistent@example.com"}]});
+            expect(user.isAdminOf(event)).to.be(true)
+            done()
+        });
+    });
+    it("removes event admins by unknown email", function(done) {
+        var event = common.server.db.events.at(0);
+        event.set("admins", [{email: "nonexistent@example.com"}]);
+        expect(new models.ServerUser({emails: [{value: "nonexistent@example.com"}]}).isAdminOf(event)).to.be(true);
+
+        postUsers("superuser1", {
+            action: "remove-admin",
+            email: "nonexistent@example.com",
+            eventId: event.id
+        }, function(res) {
+            expect(res.status).to.be(200);
+            expect(event.get("admins")).to.eql([]);
+            expect(new models.ServerUser({emails: [{value: "nonexistent@example.com"}]}).isAdminOf(event)).to.be(false);
             done()
         });
     });
