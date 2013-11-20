@@ -25,7 +25,7 @@ describe("CREATE EVENT", function() {
         browser.mockAuthenticate("superuser1");
 
         // Create a new event.
-        browser.get("http://localhost:7777/admin");
+        browser.get("http://localhost:7777/admin/");
         browser.byLinkText("new").click();
         browser.byCss("[name='title']").sendKeys("Test Title");
         browser.byCss("[name='shortName']").sendKeys("test-title");

@@ -14,6 +14,10 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
     initialize: function(options) {
         _.bindAll(this, "addEvent", "removeEvent", "setSuperuser", "postUserData");
     },
+    onRender: function() {
+        // Set the user ID as an aid for testing.
+        this.$el.attr("data-user-id", this.model.id);
+    },
     serializeData: function() {
         var model = this.model;
         var context = model.toJSON();
@@ -176,5 +180,3 @@ app.addInitializer(function(options) {
 app.start();
 
 });
-
-

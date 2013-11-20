@@ -165,8 +165,8 @@ models.Event = Backbone.Model.extend({
             throw new Error("Missing id or email");
         }
         var exists = _.any(admins, function(admin) {
-            return (admin.id && admin.id == user.id ||
-                    admin.email && _.contains(emails, admin.email));
+            return ((!_.isUndefined(admin.id) && admin.id == user.id) ||
+                    (admin.email && _.contains(emails, admin.email)));
         });
         if (!exists) {
             if (user.id) {
