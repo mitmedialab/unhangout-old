@@ -212,7 +212,42 @@ describe("HTTP ADMIN USERS API", function() {
             expect(res.status).to.be(200);
             expect(event.get("admins")).to.eql([]);
             expect(new models.ServerUser({emails: [{value: "nonexistent@example.com"}]}).isAdminOf(event)).to.be(false);
-            done()
+            done();
+        });
+    });
+    it("removes event admins by email when they were added by id", function(done) {
+        var event = common.server.db.events.at(0);
+        var user = common.server.db.users.findWhere({superuser: false});
+        event.set("admins", [{id: user.id}]);
+        expect(user.isAdminOf(event)).to.be(true);
+        // Make sure it has an email set...
+        expect(!!user.get('emails')[0].value).to.be(true);
+        
+        postUsers("superuser1", {
+            action: "remove-admin",
+            email: user.get('emails')[0].value,
+            eventId: event.id
+        }, function(res) {
+            expect(res.status).to.be(200);
+            expect(user.isAdminOf(event)).to.be(false);
+            expect(event.get("admins")).to.eql([]);
+            done();
+        });
+    });
+    it("removes event admins by id when they were added by email", function(done) {
+        var event = common.server.db.events.at(0);
+        var user = common.server.db.users.findWhere({superuser: false});
+        event.set("admins", [{email: user.get('emails')[0].value}]);
+        expect(user.isAdminOf(event)).to.be(true);
+        postUsers("superuser1", {
+            action: "remove-admin",
+            userId: user.id,
+            eventId: event.id
+        }, function(res) {
+            expect(res.status).to.be(200);
+            expect(user.isAdminOf(event)).to.be(false);
+            expect(event.get("admins")).to.eql([]);
+            done();
         });
     });
 });

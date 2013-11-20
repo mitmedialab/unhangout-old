@@ -107,7 +107,6 @@ describe('HTTP ADMIN EVENTS API', function() {
 				.redirects(0)
 				.end(function(res) {
 					res.status.should.equal(302);
-                    console.log(res);
                     var evt = common.server.db.events.at(0);
                     evt.get("title").should.equal("Test Event");
                     evt.get("description").should.equal("Description of the test event.");

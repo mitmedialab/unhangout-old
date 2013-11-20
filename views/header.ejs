@@ -17,7 +17,8 @@
 		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
 		_.templateSettings = {
 		    interpolate : /\{\{=(.+?)\}\}/g,
-			evaluate: /\{\{(.+?)\}\}/g
+            escape: /\{\{-(.+?)\}\}/g,
+            evaluate: /\{\{(.+?)\}\}/g
 		};
 	
 		<% if(!_.isUndefined(user)) { %>
