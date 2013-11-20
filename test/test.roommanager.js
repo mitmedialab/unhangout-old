@@ -376,33 +376,33 @@ describe("ROOM MANAGER", function() {
 
     it("Restricts joining with channel auth", function(done) {
         var mgr = new RoomManager(socketServer, users);
-        var regular = users.findWhere({admin: false});
-        var admin = users.findWhere({admin: true});
-        // Create an authorization function on the "admin" channel, which
-        // checks that a user is authenticated and has an 'admin' bit.
-        mgr.channelAuth.admin = function(socket, room, callback) {
-            var authorized = socket.user && socket.user.get("admin") === true;
+        var regular = users.findWhere({superuser: false});
+        var superuser = users.findWhere({superuser: true});
+        // Create an authorization function on the "superuser" channel, which
+        // checks that a user is authenticated and is a superuser.
+        mgr.channelAuth.superuser = function(socket, room, callback) {
+            var authorized = socket.user && socket.user.isSuperuser();
             callback(null, authorized);
         };
-        // Try to join a room in "admin":
+        // Try to join a room in "superuser":
         async.parallel([
-            // Join as a non-admin user that won't be authorized.
+            // Join as a non-superuser that won't be authorized.
             function(done) {
                 authedSocket(regular, function(sock) {
-                    sock.write(JSON.stringify({type: "join", args: {id: "admin/1"}}));
+                    sock.write(JSON.stringify({type: "join", args: {id: "superuser/1"}}));
                     sock.once("data", function(message) {
                         var data = JSON.parse(message);
                         expect(data.type).to.be("join-err");
-                        expect(data.args).to.be("Permission to join admin/1 denied.");
+                        expect(data.args).to.be("Permission to join superuser/1 denied.");
                         sock.close();
                         done();
                     });
                 });
             },
-            // Join as an admin user that will be authorized.
+            // Join as a superuser that will be authorized.
             function(done) {
-                authedSocket(admin, function(sock) {
-                    sock.write(JSON.stringify({type: "join", args: {id: "admin/1"}}));
+                authedSocket(superuser, function(sock) {
+                    sock.write(JSON.stringify({type: "join", args: {id: "superuser/1"}}));
                     sock.once("data", function(message) {
                         var data = JSON.parse(message);
                         expect(data.type).to.be("join-ack");

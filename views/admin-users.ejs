@@ -1,0 +1,102 @@
+<% include header.ejs %>
+<style type='text/css'>
+    label.success {
+        background-color: #efe;
+    }
+    label.error {
+        background-color: #fee;
+    }
+    .icon-trash.remove-event {
+        cursor: pointer;
+    }
+</style>
+
+<div id='app'>
+    <div id='main'></div>
+</div>
+
+<script type='text/template' id='user-table'>
+    <div class='span10 offset2'>
+        <h1>Users</h1>
+        <div>
+            Filter by email or name: <input class='filter-input' type='text' />
+        </div>
+        <table style='width: 100%;' class='user-table'>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Emails</th>
+                    <th>Superuser?</th>
+                    <th>Event admin</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</script>
+<script type='text/template' id='user-row'>
+    <td class='name'>{{- displayName }}</td>
+    <td class='emails'>
+        {{ _.each(emails, function(email) { }}
+            <a href='mailto:{{- email.value }}'>{{- email.value }}</a>
+        {{ }); }}
+    </td>
+    <td class='superuser'>
+        <label class='inline'>
+            Superuser:
+            <input type='checkbox' class='superuser'
+                {{- superuser ? "checked='checked'" : "" }} />
+        </label>
+    </td>
+    <td class='admins'>
+        {{ _.each(adminEvents, function(event) { }}
+            <div>
+                <a href='/admin/event/{{- event.id }}'>{{- event.title }}</a>
+                <span class='icon icon-trash remove-event'
+                      title='Remove event'
+                      rel='tooltip'
+                      data-user-id='{{- id }}'
+                      data-event-id='{{- event.id }}'></span>
+            </div>
+        {{ }); }}
+        <div>
+            <a href='#' class='add-event'><span class='icon icon-plus-sign'></span> Add event</a>
+        </div>
+    </td>
+</script>
+<script type='text/template' id='event-admin-adder'>
+    <div class='modal-header'>
+         <button type="button" class="close cancel" aria-hidden="true">&times;</button>
+         <h3>Add admin</h3>
+    </div>
+    <div class='modal-body'>
+        Choose an event for {{- user.get("displayName") }} to administrate:
+        <select name='event'>
+            {{ events.each(function(event) { }}
+                <option value='{{- event.id }}'>{{- event.get("title") }}</option>
+            {{ }); }}
+        </select>
+    </div>
+    <div class='modal-footer'>
+        <a href='#' class='btn cancel'>Cancel</a>
+        <a href='#' class='btn btn-primary add'>Add</a>
+    </div>
+</script>
+
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.0.0-rc4-bundled/backbone.marionette.min.js"></script>
+<script type="text/javascript" src="/public/js/models.js"></script>	
+<script type="text/javascript" src="/public/js/client-models.js"></script>	
+
+<script type='text/javascript'>
+    $(".nav li.active").removeClass("active");
+    $("#admin-users-nav").addClass("active");
+
+    var users = new models.UserList(<%- JSON.stringify(users) %>);
+    var events = new models.EventList(<%- JSON.stringify(events) %>);
+    var USER_ID = <%- user.id %>;
+</script>
+
+<script type="text/javascript" src="/public/js/admin-users.js"></script>
+
+<% include footer.ejs %>

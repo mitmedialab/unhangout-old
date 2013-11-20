@@ -35,9 +35,9 @@
 		<% if(!_.isUndefined(user)) { %>
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';
-		var IS_ADMIN = <%= user.isAdmin() %>;
+		var IS_ADMIN = <%= user.isAdminOf(event) %>;
 
-		<% if(user.isAdmin()) { %>
+		<% if(user.isAdminOf(event)) { %>
 		var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
 		<% } %>
 
@@ -231,7 +231,7 @@
 			</script>
 		</head>
 <body>
-	<% if(user.isAdmin()) {%>
+	<% if(user.isAdminOf(event)) {%>
 		<div class="admin-header">
 		</div>
 	<% } %>

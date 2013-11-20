@@ -17,7 +17,8 @@
 		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
 		_.templateSettings = {
 		    interpolate : /\{\{=(.+?)\}\}/g,
-			evaluate: /\{\{(.+?)\}\}/g
+            escape: /\{\{-(.+?)\}\}/g,
+            evaluate: /\{\{(.+?)\}\}/g
 		};
 	
 		<% if(!_.isUndefined(user)) { %>
@@ -44,9 +45,12 @@
 						<li class="active"><a href="/">Home</a></li>
 						<li><a href="/about/">About</a></li>
 						<li><a href="/how-to-unhangout/">How to Unhangout</a></li>
-						<% if(user && user.isAdmin()) { %>
+						<% if(user && user.isAdminOf(event)) { %>
 							<li id="admin-nav"><a href="/admin/">Admin</a></li>
 						<% } %>
+                        <% if(user && user.isSuperuser()) { %>
+                            <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
+                        <% } %>
 					</ul>
 					<div class="nav pull-right identity">
 					<% if(!user) {%>

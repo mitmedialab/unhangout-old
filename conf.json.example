@@ -10,7 +10,7 @@
 	"UNHANGOUT_REDIS_PORT":6379,
 	"UNHANGOUT_REDIS_DB":0,
 
-	"UNHANGOUT_ADMIN_EMAILS": ["user1@example.com", "user2@example.com"],
+	"UNHANGOUT_SUPERUSER_EMAILS": ["user1@example.com", "user2@example.com"],
 
 	"UNHANGOUT_HANGOUT_APP_ID":123456789012,
 

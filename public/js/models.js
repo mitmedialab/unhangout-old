@@ -54,7 +54,8 @@ models.Event = Backbone.Model.extend({
 			sessions: null,
 			youtubeEmbed: null,
 			sessionsOpen: false,
-			blurDisabled: false
+			blurDisabled: false,
+            admins: []
 		}
 	},
 	
@@ -148,8 +149,60 @@ models.Event = Backbone.Model.extend({
 			this.set("end", new Date().getTime());
 		}
 	},
+
     getRoomId: function() {
         return this.id ? "event/" + this.id : null
+    },
+
+    addAdmin: function(user) {
+        var admins = this.get("admins");
+        var emails;
+        if (user.email) {
+            emails = [user.email];
+        } else if (user.get && user.get("emails")) {
+            emails = _.pluck(user.get("emails"), "value");
+        } else {
+            throw new Error("Missing id or email");
+        }
+        var exists = _.any(admins, function(admin) {
+            return (admin.id && admin.id == user.id ||
+                    admin.email && _.contains(emails, admin.email));
+        });
+        if (!exists) {
+            if (user.id) {
+                admins.push({id: user.id});
+            } else {
+                admins.push({email: emails[0]});
+            }
+            this.set("admins", admins);
+            this.trigger("change:admins");
+            this.trigger("change");
+        }
+    },
+
+    removeAdmin: function(user) {
+        var userId = user.id;
+        var changed = false;
+        var emails;
+        if (user.get && user.get('emails')) {
+            emails = _.pluck(user.get('emails'), "value");
+        } else {
+            emails = [user.email];
+        }
+        var admins = this.get("admins");
+        admins = _.reject(admins, function(admin) {
+            if ((!_.isUndefined(admin.id) && admin.id == userId) ||
+                  (admin.email && _.contains(emails, admin.email))) {
+                changed = true;
+                return true;
+            }
+            return false;
+        });
+        if (changed) {
+            this.set("admins", admins);
+            this.trigger("change:admins");
+            this.trigger("change");
+        }
     }
 });
 
@@ -201,8 +254,8 @@ models.SessionList = Backbone.Collection.extend({
 
 models.User = Backbone.Model.extend({
 
-	default: function() {
-		return {picture: "", admin:false, isBlurred: false}
+	defaults: function() {
+		return {picture: "", superuser: false, isBlurred: false}
 	},
 	
 	initialize: function() {
@@ -230,9 +283,27 @@ models.User = Backbone.Model.extend({
 			this.set("admin", false);
 		}
 	},
-	
-	isAdmin: function() {
-		return this.get("admin");
+
+    isSuperuser: function() {
+        return this.get("superuser");
+    },
+
+    hasEmail: function(email) {
+        return !_.isUndefined(email) && _.contains(_.pluck(this.get('emails', 'value')), email);
+    },
+
+	isAdminOf: function(event) {
+        if (this.isSuperuser()) { return true; }
+        if (!event) { return false; }
+
+        var emails = _.pluck(this.get("emails"), "value");
+        var that = this;
+        return _.any(event.get("admins"), function(admin) {
+            if (_.isUndefined(admin.id)) {
+                return _.contains(emails, admin.email);
+            }
+            return admin.id == that.id;
+        });
 	},
 
 	isBlurred: function() {
@@ -273,7 +344,12 @@ models.User = Backbone.Model.extend({
 });
 
 models.UserList = Backbone.Collection.extend({
-	model:models.User
+	model:models.User,
+    findByEmail: function(email) {
+        return this.find(function(u) {
+            return _.contains(_.pluck(u.get("emails"), "value"), email);
+        });
+    }
 });
 
 
@@ -285,7 +361,7 @@ function pad(n, width, z) {
 
 
 models.ChatMessage = Backbone.Model.extend({
-	default: function() {
+	defaults: function() {
 		return {
 			text: "This is my awesome chat message.",
 			time: new Date().getTime(),
