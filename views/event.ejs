@@ -153,14 +153,17 @@
         </div>
     </div>
     <div id="embed-modal" class="modal hide fade">
-        <div class="modal-header"><h3>SET EMBED ID</h3></div>
+        <div class="modal-header"><h3>Set Video URL</h3></div>
         <div class="modal-body">
-            <p class="text-warning hide">Invalid youtube ID, should be 11 characters long</p>
+            <p class="text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
             <div class="control-group">
-                <label for="youtube_id">Youtube Id (11 character id, after '?v=')</label><input type="text" name="youtube_id" value="" id="youtube_id">
+                <label for="youtube_id">Youtube video URL</label>
+                <input type="text" name="youtube_id" value="" id="youtube_id">
+                <div id='current-yt-url'></div>
             </div>
         </div>
         <div class="modal-footer">
+            <a href='#' class='btn pull-left' data-dismiss='modal'>Cancel</a>
             <a href="#" class="btn btn-warning" id="remove-embed">Remove Video</a>
             <a href="#" class="btn btn-primary" id="set-embed">Set Video</a>
         </div>

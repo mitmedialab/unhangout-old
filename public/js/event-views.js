@@ -312,10 +312,23 @@ var DialogView = Backbone.Marionette.Layout.extend({
 		'click #disconnected-modal a':'closeDisconnected',
 		'click #create-session':'createSession'
 	},
-
 	setEmbed: function() {
-		var newId = $("#youtube_id").val();
-
+		var val = $("#youtube_id").val();
+        var newId;
+        if (/^[-A-Za-z0-9_]{11}$/.test(val)) {
+            newId = val;
+        } else {
+            // From http://stackoverflow.com/a/6904504 , covering any of the 15
+            // or so different variations on youtube URLs.
+            var re = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+            var match = re.exec(val);
+            if (match) {
+                newId = match[1];
+            } else {
+                // Unmatched -- trigger error below.
+                newId = "bad";
+            }
+        }
 		if(newId.length!=11 && newId.length!=0) {
 			this.$el.find("#embed-modal p.text-warning").removeClass("hide");
 			this.$el.find("#embed-modal .control-group").addClass("error");
@@ -375,7 +388,17 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	},
 
 	showEmbedModal: function() {
-		$("#youtube_id").val(curEvent.get("youtubeEmbed"));
+        var ytId = curEvent.get("youtubeEmbed");
+        if (ytId) {
+            var url = "https://www.youtube.com/watch?v=" + ytId;
+            $("#youtube_id").val(url);
+            $("#current-yt-url").html("Current: <a target='_blank' href='" + url + "'>" + url + "</a>");
+            $("#remove-embed").show();
+        } else {
+            $("#youtube_id").val("");
+            $("#current-yt-url").html("");
+            $("#remove-embed").hide();
+        }
 	},
 
 	onRender: function() {
