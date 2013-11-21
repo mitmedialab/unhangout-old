@@ -3,7 +3,7 @@ var expect = require('expect.js'),
 
 var browser = null;
 
-describe("BROWSER ADMIN USERS", function() {
+describe("YOUTUBE EMBEDS", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
