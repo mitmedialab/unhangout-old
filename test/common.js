@@ -29,6 +29,22 @@ var buildBrowser = function(callback) {
     browser.mockAuthenticate = function(user) {
         return browser.executeScript("document.cookie = 'mock_user=" + user + "; path=/';");
     };
+    browser.waitForSelector = function(selector) {
+        return browser.wait(function() {
+            return browser.byCsss(selector).then(function(els) {
+                return els.length > 0;
+            });
+        });
+    };
+    browser.waitTime = function(time) {
+        var waited = false;
+        return browser.wait(function() {
+            setTimeout(function() { waited = true; }, time);
+            return browser.executeScript("return true;").then(function() {
+                return waited;
+            });
+        });
+    };
     callback(browser);
 };
 
