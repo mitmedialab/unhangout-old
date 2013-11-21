@@ -533,7 +533,7 @@ $(document).ready(function() {
 
 			// update the list of a session's participants
 			case "session-participants":
-				console.log("participants: "+msg.args.id);
+				console.log("participants in session "+msg.args.id, msg.args.participantIds);
 				var session = curEvent.get("sessions").get(msg.args.id);
 				session.setConnectedParticipantIds(msg.args.participantIds);
 				break;

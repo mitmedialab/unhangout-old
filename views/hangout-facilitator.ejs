@@ -1,0 +1,25 @@
+<% include _header.ejs %>
+
+<style type='text/css'>
+    body {
+        padding: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+
+<h2><%= session.get("title") %></h2>
+<p><%= session.get("description") %></p>
+
+<script type='text/javascript'>
+    var HANGOUT_ORIGIN_REGEX = new RegExp("<%- hangoutOriginRegex %>");
+    var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+    var SESSION_ATTRS = <%- JSON.stringify(session.toJSON()) %>;
+</script>
+
+<script src='/public/js/models.js'></script>
+<script src='/public/js/client-models.js'></script>
+<% include _sockjs.ejs %>
+<script src='/public/js/facilitator.js'></script>
+<% include _analytics.ejs %>
+<% include _footer.ejs %>

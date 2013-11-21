@@ -47,6 +47,7 @@ var SessionView = Marionette.ItemView.extend({
 	},
 
 	onRender: function() {
+        console.log("render SessionView", this.model.get("connectedParticipantIds"));
 		var start = new Date().getTime();
 		// mostly just show/hide pieces of the view depending on 
 		// model state.
@@ -430,7 +431,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 			// going to manually update the current user counter because
 			// doing it during render doesn't seem to work. There's some 
 			// voodoo in how marionette decides how much of the view to
-			// re-render on events, and it seems to excludethe piece out-
+			// re-render on events, and it seems to exclude the piece out-
 			// side the item-view-container, assuming it doesn't have
 			// reactive bits.
 			// I would also expect this to be .totalRecords, but for

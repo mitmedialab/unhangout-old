@@ -1,0 +1,39 @@
+    <% if(user.isAdminOf(event)) {%>
+        <div class="admin-header">
+        </div>
+    <% } %>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="brand" href="/#"><%= event.get("title") %></a>
+                <div class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="" id="video-nav"><a href="#video-nav">Video <span class="label label-success hide">live</span></a></li>
+                        <li class="" id="about-nav">
+                        <a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
+                        </li> 
+                    </ul>
+                    <div class="nav pull-right identity">
+                    <% if(!user) {%>
+                    <a class="btn btn-primary pull-left" href="/auth/google">Login</a>
+                    <% } else { %>
+                        <div class="dropdown">
+                            <a class="dropdown-toggle username" data-toggle="dropdown" href="#"><%= user.get("displayName")%></a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                                <li role="presentation">
+                                    <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
+                                </li>
+                            </ul>
+                        </div>
+                    <% } %>
+                    <div id="admin-region"></div>
+                    </div>
+                </div><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>

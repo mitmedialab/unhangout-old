@@ -207,7 +207,17 @@ models.Event = Backbone.Model.extend({
 });
 
 models.EventList = Backbone.Collection.extend({
-	model:models.Event
+	model: models.Event,
+    getSessionById: function(sessionId) {
+        var session;
+        var event = this.find(function(event) {
+            session = event.get("sessions").get(sessionId);
+            if (session) {
+                return true;
+            }
+        });
+        return session;
+    }
 });
 
 // Sessions are the individual meetings that make up an event. Sessions
@@ -230,6 +240,10 @@ models.Session = Backbone.Model.extend({
 	isLive: function() {
 		return true;
 	},
+
+    getRoomId: function() {
+        return this.id ? "session/" + this.id : null
+    },
 
 	setConnectedParticipantIds: function(ids) {
 		// TODO add some validation here, probably.
