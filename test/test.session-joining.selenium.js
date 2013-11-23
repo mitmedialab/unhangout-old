@@ -71,7 +71,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             done();
         });
     });
-    it("Updates session participant list when not present in the event", function(done) {
+    it("Updates session participant list when present in the event", function(done) {
         var sock1, sock2;
         var session = event.get("sessions").at(0);
         var participantList = "#session-list-container .session[data-session-id='" + session.id + "'] li";
