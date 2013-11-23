@@ -24,6 +24,8 @@ sock.onmessage = function(message) {
     }
 }
 
+// TODO: merge the parts of public/js/event-app.js and this which are the same
+// to avoid duplication.
 sock.onopen = function() {
     // Authorize ourselves, then join the room.
     console.log("open");
@@ -41,6 +43,26 @@ sock.onopen = function() {
             }
         }
     }, false);
+};
+// TODO: merge the parts of public/js/event-app.js and this which are the same
+// to avoid duplication.
+sock.onclose = function() {
+    $('#disconnected-modal').modal('show');
+    var checkIfServerUp = function() {
+        var ping = document.location;
+        $.ajax({
+            url: ping,
+            cache: false,
+            async: false,
+            success: function(msg) {
+                window.location.reload();
+            },
+            error: function(msg) {
+                timeout = setTimeout(checkIfServerUp, 250);
+            }
+        });
+    };
+    checkIfServerUp();
 };
 
 // Let the server know about changes to the hangout URL.

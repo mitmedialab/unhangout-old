@@ -6,7 +6,7 @@ var conf            = require("../conf.json"),
     _               = require('underscore'),
     async           = require('async'),
     webdriver       = require('selenium-webdriver'),
-    sock_client     = require("sockjs-client"),
+    sock_client     = require("sockjs-client-ws"),
     SeleniumServer  = require('selenium-webdriver/remote').SeleniumServer;
 
 var seleniumServer = null;
@@ -68,19 +68,49 @@ exports.getSeleniumBrowser = function(callback) {
 }
 exports.server = null;
 
-exports.standardSetup = function(done) {
+var SERVER_OPTIONS = {
+    "GOOGLE_CLIENT_ID":true,
+    "GOOGLE_CLIENT_SECRET":true,
+    "REDIS_DB":1,
+    "timeoutHttp":true,
+    "mockAuth": true
+}
+
+// A list of all open connections to the HTTP server, which we can nuke to
+// allow us to force-restart the server.
+
+exports.standardSetup = function(done, skipSeed) {
     exports.server = new unhangoutServer.UnhangoutServer();
-    exports.server.on("inited", function() {exports.server.start()});
-    exports.server.on("started", done);
-    seed.run(1, redis, function() {
-        exports.server.init({
-            "GOOGLE_CLIENT_ID":true,
-            "GOOGLE_CLIENT_SECRET":true,
-            "REDIS_DB":1,
-            "timeoutHttp":true,
-            "mockAuth": true
+    exports.server.on("inited", function() {
+        exports.server.start()
+    });
+    exports.server.on("started", function() {
+        done();
+        // This is a hack to allow us to kill the server while it still has
+        // ongoing connections, without terminating the node process.  We use
+        // this for simulating server restarts.
+        // http://stackoverflow.com/a/14636625
+        var OPEN_CONNS = [];
+        exports.server.http.on('connection', function(socket) {
+            OPEN_CONNS.push(socket);
+            socket.on('close', function() {
+                OPEN_CONNS.splice(OPEN_CONNS.indexOf(socket), 1);
+            });
+        });
+        exports.server.on("stopping", function() {
+            for (var i = 0; i < OPEN_CONNS.length; i++) {
+                OPEN_CONNS[i].destroy();
+            }
+            OPEN_CONNS = [];
         });
     });
+    if (!skipSeed) {
+        seed.run(1, redis, function() {
+            exports.server.init(SERVER_OPTIONS);
+        });
+    } else {
+        exports.server.init(SERVER_OPTIONS);
+    }
 };
 
 var shutDown = function(server, done) {
@@ -101,7 +131,13 @@ exports.standardShutdown = function(done, s) {
     }
     async.map(servers, shutDown, function() {
         done();
-             
+    });
+};
+exports.restartServer = function(onStopped, onRestarted) {
+    exports.standardShutdown(function() {
+        onStopped(function() {
+            exports.standardSetup(onRestarted, true);
+        });
     });
 };
 
@@ -122,10 +158,7 @@ exports.authedSock = function(userKey, room, callback) {
     };
     newSock.on("data", onData);
     newSock.on("error", function(msg) {
-        // TODO: We're suppressing error messages here to make mocha happy.
-        // See https://github.com/sockjs/sockjs-client-node/issues/1
-        // Uncomment below to see the errors when running tests.
-        //console.log("error", msg);
+        console.log("error", msg);
     });
     newSock.once("connection", function() {
         newSock.write(JSON.stringify({

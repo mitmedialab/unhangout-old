@@ -50,7 +50,7 @@
                     <% } else { %>
                         <td><a href="/event/<%= session.collection.event.id %>"><%= session.get("title") %></a></td>
                     <% } %>
-                    <td><%= session.get("connectedParticipantIds").length %></td>
+                    <td><%= session.getNumConnectedParticipants() %></td>
                     <td><%= session.get("total-seconds") %></td>
                     <td><%= session.get("total-instances") %></td>
                     <td>

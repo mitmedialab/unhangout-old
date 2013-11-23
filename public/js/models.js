@@ -231,7 +231,7 @@ models.Session = Backbone.Model.extend({
 			title: "",
 			description: "",
 			started: true,
-			connectedParticipantIds: [],	// connectedParticipants are people who the google hangout supervisor app reports are present in the hangout associated with this session
+			connectedParticipants: [],	// connectedParticipants are people who the google hangout supervisor app reports are present in the hangout associated with this session
 			hangoutConnected: false,
 			shortCode: null
 		};
@@ -245,14 +245,15 @@ models.Session = Backbone.Model.extend({
         return this.id ? "session/" + this.id : null
     },
 
-	setConnectedParticipantIds: function(ids) {
+	setConnectedParticipants: function(users) {
 		// TODO add some validation here, probably.
-		this.set("connectedParticipantIds", ids);
-		this.trigger("change:connectedParticipantIds");
+        users = _.map(users, function(u) {return u.toJSON ? u.toJSON() : u;});
+		this.set("connectedParticipants", users);
+		this.trigger("change:connectedParticipants");
 	},
 
 	getNumConnectedParticipants: function() {
-		return this.get("connectedParticipantIds").length;
+		return this.get("connectedParticipants").length;
 	}
 });
 

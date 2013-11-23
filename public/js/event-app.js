@@ -533,9 +533,9 @@ $(document).ready(function() {
 
 			// update the list of a session's participants
 			case "session-participants":
-				console.log("participants in session "+msg.args.id, msg.args.participantIds);
+				console.log("participants in session "+msg.args.id, msg.args.participants);
 				var session = curEvent.get("sessions").get(msg.args.id);
-				session.setConnectedParticipantIds(msg.args.participantIds);
+				session.setConnectedParticipants(msg.args.participants);
 				break;
 
 			// mark a session as having its hangout connected and communicating
@@ -547,7 +547,7 @@ $(document).ready(function() {
 			// mark a session as disconnected
 			case "session-hangout-disconnected":
 				var session = curEvent.get("sessions").get(msg.args.id);
-				session.setConnectedParticipantIds([]);
+				session.setConnectedParticipants([]);
 				session.set("hangoutConnected", false);
 				break;
 

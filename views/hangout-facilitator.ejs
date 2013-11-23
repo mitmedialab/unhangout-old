@@ -11,6 +11,14 @@
 <h2><%= session.get("title") %></h2>
 <p><%= session.get("description") %></p>
 
+<div class="modal hide fade disconnected-modal" id="disconnected-modal">
+    <div class="modal-header"><h3>Warning!</h3></div>
+    <div class="modal-body">
+        <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+        <a href="#" class="btn" data-dismiss='modal' >Close</a>
+    </div>
+</div>
+
 <script type='text/javascript'>
     var HANGOUT_ORIGIN_REGEX = new RegExp("<%- hangoutOriginRegex %>");
     var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;

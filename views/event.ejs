@@ -30,15 +30,6 @@
 
 <script type="text/template" id="session-template">
     <h3>{{= title }}</h3>
-    <div class="description">{{= description }} </div>
-    <div class="empty">no one signed up yet</div>
-    <div class="attending">
-        <div class="first"></div>
-        {{ for (var i = 0; i < 9; i++) { }}
-            <div class="counter"></div>
-        {{ } }}
-        <div class="full">FULL</div>
-    </div>
     <div class="attend btn btn-info" data-toggle="button">
         <span class="outer"><i class="icon-lock"></i><span class="text">SIGN UP</span><span class="attend-count hide"></span></span>
         <div class="attendance"></div>
@@ -46,7 +37,7 @@
     <div class="admin-buttons">
         <div class="delete btn btn-warning"><i class="icon-trash"></i></div>
     </div>
-    <div class="hangout-users"></div>
+    <ul class="hangout-users"></ul>
     <div class="hangout-offline">
         No one has joined this session yet.
     </div>
