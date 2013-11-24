@@ -259,6 +259,7 @@ models.User = Backbone.Model.extend({
             picture: "",
             superuser: false,
             isBlurred: false,
+            displayName: "[unknown]",
             emails: []
         }
 	},
