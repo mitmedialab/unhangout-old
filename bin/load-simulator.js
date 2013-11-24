@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-/*
- * Create a large number of socket connections to simulate a lot of traffic in
- * event/1 and its sessions. Requires the configuration setting
- * ``MOCK_AUTH=true`` to function.
- */
+//
+// Fire up the server, and create a large number of socket connections to
+// simulate a lot of traffic in ``event/1`` and its sessions.
+//
+// NOTE: always runs with USE_SSL=false and mockAuth=true, as required by the
+// mock users' sockets.
+//
 
 var logger = require("../lib/logging.js").getLogger(),
     _ = require("underscore"),
@@ -13,6 +15,9 @@ var logger = require("../lib/logging.js").getLogger(),
     sock_client = require("sockjs-client-ws"),
     unhangoutServer = require("../lib/unhangout-server.js");
 
+/*
+ * Object holding a socket and its authorization/join state.
+ */
 function AuthSock(options) {
     this.state = "disconnected";
     this.server = options.server;
@@ -134,8 +139,8 @@ Rando.prototype = {
                 break;
         };
     },
-    write: function(type, args, sock) {
-        (sock || this.sock).write(JSON.stringify({type: type, args: args}));
+    write: function(type, args) {
+        this.sock.write(JSON.stringify({type: type, args: args}));
     },
     chatMessages: [
         "From fairest creatures we desire increase,",
@@ -155,14 +160,14 @@ Rando.prototype = {
     ]
 };
 
-function init(done) {
+function init(callback) {
     var server = new unhangoutServer.UnhangoutServer();
     server.on("inited", function() {
         server.start();
     });
     server.on("started", function() {
         createUsers(server.db.users);
-        done();
+        callback(server);
     });
     var options = _.extend({}, config, {mockAuth: true, UNHANGOUT_USE_SSL: false});
     _.each(options, function(value, key) {
@@ -174,7 +179,7 @@ function init(done) {
     return server;
 }
 function main() {
-    var server = init(function() {
+    init(function(server) {
         var event = server.db.events.at(0)
         for (var i = 0; i < 100; i++) {
             new Rando({
