@@ -255,7 +255,12 @@ models.SessionList = Backbone.Collection.extend({
 models.User = Backbone.Model.extend({
 
 	defaults: function() {
-		return {picture: "", superuser: false, isBlurred: false}
+        return {
+            picture: "",
+            superuser: false,
+            isBlurred: false,
+            emails: []
+        }
 	},
 	
 	initialize: function() {
