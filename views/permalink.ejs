@@ -1,4 +1,5 @@
-<% include permalink-header.ejs %>
+<% include _header.ejs %>
+<% include _permalink-navbar.ejs %>
 
 <div class="container">
 
@@ -45,18 +46,13 @@
 <br>
 
 <div class="participant-info">
-	<% _.each(session.get("connectedParticipantIds"), function(id) { %>
-
-		<% if(users.get(id).get("link")) { %>
-			<a href="<%= users.get(id).get("link") %>" target="blank">
-			<img width=100 src="<%= users.get(id).get("picture") %>">
-			</a>
-		<% } else { %>	
-			<img width=100 src="<%= users.get(id).get("picture") %>">
-		<% } %> 
-
-		<span class="overlay"><%= users.get(id).get("displayName") %></span>
-
+	<% _.each(session.get("connectedParticipants"), function(udata) { %>
+        <span class='participant-image'>
+            <% if (udata.link) { %><a href="<%= udata.link %>" target="blank"><% } %>
+            <img width=100 src="<%= udata.picture %>" alt='profile image' />
+            <% if (udata.link) { %></a><% } %>
+            <span class="overlay"><%= udata.displayName %></span>
+        </span>
 	<% }); %>
 
 	<br/><br/><br/><br/>
@@ -68,4 +64,5 @@
 
 </div>
 
-<% include footer.ejs %>
+<% include _sponsorship.ejs %>
+<% include _footer.ejs %>

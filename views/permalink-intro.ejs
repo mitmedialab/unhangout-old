@@ -1,4 +1,5 @@
-<% include permalink-header.ejs %>
+<% include _header.ejs %>
+<% include _permalink-navbar.ejs %>
 
 <div class="container">
 
@@ -29,4 +30,25 @@
 	<div class="footer">This service is part of the <a href="/"><b>Unhangout Project</b></a> from the MIT Media Lab and MacArthur Foundation. Source available at <a href="http://github.com/drewww/unhangout">Github</a>.</div>
 </div>
 
-<% include footer.ejs %>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $("#permalink-create-submit").click(function(e) {
+            // TODO should start doing validation on the title
+            // on a per-character basis.
+            var permalinkTitle = $("#permalink-title").val();
+
+            var url = "/h/" + encodeURIComponent(permalinkTitle);
+
+            window.location = url;
+            e.stopPropagation();
+            return false;
+        });
+
+        $("submit").click(function() {
+            $("form").submit();
+            return false;
+        });
+    });
+</script>
+
+<% include _footer.ejs %>

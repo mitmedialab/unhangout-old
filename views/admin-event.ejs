@@ -1,24 +1,5 @@
-<% include header.ejs %>
-<script>
-
-	$("button").click(function() {
-		console.log("click");
-
-		$("form").submit();
-		return false;
-	});
-
-  $(".nav li.active").removeClass("active");
-  $("#admin-nav").addClass("active");
-</script>
-<style type='text/css'>
-    textarea {
-        width: 300px;
-        height: 100px;
-    }
-</style>
-
-
+<% include _header.ejs %>
+<% include _navbar.ejs %>
 
 <div class='container-fluid'>
     <div class='row-fluid'>
@@ -60,14 +41,14 @@
                 <div class="control-group">
                     <label class="control-label" for="inputDescription">Description</label>
                     <div class="controls">
-                        <textarea rows=10 type="text" id="inputDescription" name="description" placeholder="Description"><%=create? "":event.get("description")%></textarea>
+                        <textarea rows=5 cols=40 type="text" id="inputDescription" name="description" placeholder="Description" style='width: 300px;'><%=create? "":event.get("description")%></textarea>
                     </div>
                 </div>
   
                 <div class="control-group">
                     <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
                     <div class="controls">
-                        <textarea rows=10 type="text" id="inputWelcomeMessage" name="welcomeMessage" placeholder="welcome message"><%=create? "":event.get("welcomeMessage")%></textarea>
+                        <textarea rows=5 cols=40 type="text" id="inputWelcomeMessage" name="welcomeMessage" placeholder="welcome message" style='width: 300px;'><%=create? "":event.get("welcomeMessage")%></textarea>
                     </div>
                 </div>
   
@@ -80,7 +61,7 @@
   
                 <div class="control-group">
                     <div class='controls'>
-                        <button class="btn btn-primary"><%= create? "Create": "Update" %></button>
+                        <button class="btn btn-primary" type='submit'><%= create? "Create": "Update" %></button>
                     </div>
                 </div>
             </form>
@@ -88,5 +69,4 @@
     </div>
 </div>
 
-
-<% include footer.ejs %>
+<% include _footer.ejs %>

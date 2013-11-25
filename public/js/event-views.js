@@ -20,15 +20,10 @@ var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
 	className: 'session',
 	firstUserView: null,
-	mini: true,
-
 	ui: {
 		attend: '.attend',
 		start:'.start',
 		deleteButton: '.delete',		// delete is reserved word
-		attending: '.attending',
-		empty: '.empty',
-		description: '.description',
 		hangoutUsers: '.hangout-users',
 		hangoutOffline: '.hangout-offline'
 	},
@@ -43,11 +38,13 @@ var SessionView = Marionette.ItemView.extend({
 	initialize: function() {
 		// if we get a notice that someone has connected to the associated participant,
 		// re-render to show them.
-		this.listenTo(this.model, 'change:connectedParticipantIds change:hangoutConnected', this.render, this);
+		this.listenTo(this.model, 'change:connectedParticipants change:hangoutConnected', this.render, this);
 	},
 
 	onRender: function() {
 		var start = new Date().getTime();
+        this.$el.attr("data-session-id", this.model.id);
+        console.log("render SessionView", _.pluck(this.model.get("connectedParticipants"), 'id'));
 		// mostly just show/hide pieces of the view depending on 
 		// model state.
 
@@ -77,17 +74,6 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.removeClass("live");
 
 			this.ui.attend.find(".text").text("SIGN UP");
-		}
-
-		// check and see if we're in mini mode. If we are, hide the description and attendee counting in large form.
-		if(this.mini) {
-			this.ui.description.hide();
-			this.ui.empty.hide();
-			this.ui.attending.hide();
-		} else {
-			this.ui.description.show();
-			this.ui.empty.show();
-			this.ui.attending.show();
 		}
 
 		if(this.model.get("stopped")) {
@@ -132,22 +118,19 @@ var SessionView = Marionette.ItemView.extend({
 
 		var fragment = document.createDocumentFragment();
 
-		_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
-			// make a new user view and append it here.
-			var user = users.get(id);
-
-			if(_.isUndefined(user)) {
-				// console.log("skipping connected user, because can't find user data for them yet");
-				return;
-			}
-
+		_.each(this.model.get("connectedParticipants"), _.bind(function(udata) {
 			// try looking up the user view from the main user list.
 			var userView;
-			if(user.id in userViewCache) {
-				userView = userViewCache[user.id];
+			if(udata.id in userViewCache) {
+				userView = userViewCache[udata.id];
 			} else {
-				userView = new UserView({model:user});
-				userViewCache[user.id] = userView;
+                // vivify the user into a model when passing it in.  Note that
+                // any events bound on the `users` collection of connected
+                // participants won't work here.  When users join a session
+                // without being connected to the `events` page, they won't appear
+                // in that collection anyway.
+				userView = new UserView({model:new models.User(udata)});
+				userViewCache[udata.id] = userView;
 			}
 
 			fragment.appendChild(userView.render().el.cloneNode(true));
@@ -453,7 +436,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 			// going to manually update the current user counter because
 			// doing it during render doesn't seem to work. There's some 
 			// voodoo in how marionette decides how much of the view to
-			// re-render on events, and it seems to excludethe piece out-
+			// re-render on events, and it seems to exclude the piece out-
 			// side the item-view-container, assuming it doesn't have
 			// reactive bits.
 			// I would also expect this to be .totalRecords, but for
@@ -566,6 +549,7 @@ var ChatInputView = Marionette.ItemView.extend({
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
 	className: 'chat-message',
+    tagName: 'li',
 
 	initialize: function() {
 		this.model.set("text", this.linkify(this.model.get("text")));

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+<!-- Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *      
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License
+-->
+<ModulePrefs title="Unhangout Manager">
+        <Require feature="rpc" />
+        <Require feature="views" />
+</ModulePrefs>
+<Content type="html"><![CDATA[
+<!DOCTYPE html>
+<html>
+    <head>
+        <% if (mockHangoutUrl) { %>
+            <script type='text/javascript'>
+                // Shim gadget/gapi if we are mocking the hangout.
+                // Make global -- no 'var'.
+                gadgets = {
+                    util: {
+                        registerOnLoadHandler: function(cb) {
+                            cb();
+                        }
+                    },
+                    views: {
+                        getParams: function() {
+                            return {
+                                'appData': <%- JSON.stringify(mockAppData) %>
+                            };
+                        }
+                    }
+                };
+                // Make global -- no 'var'.
+                gapi = {
+                    hangout: {
+                        onApiReady: {
+                            add: function(cb) {
+                                cb({isApiReady: true});
+                            }
+                        },
+                        getHangoutUrl: function() {
+                            return "<%= mockHangoutUrl %>";
+                        }
+                    }
+                };
+            </script>
+        <% } else { %>
+            <script src='//plus.google.com/hangouts/_/api/v1/hangout.js'></script>
+        <% } %>
+    </head>
+    <body style='width: 100%; height: 100%; padding: 0; margin: 0;'>
+        <script type='text/javascript'>
+            if (typeof console === "undefined") {
+                console = {log: function(){}, info: function(){}, error: function(){}};
+            }
+            gadgets.util.registerOnLoadHandler(function() {
+                gapi.hangout.onApiReady.add(function(event) {
+                    if (!event.isApiReady) { return; }
+                    var iframe = document.createElement('iframe');
+                    var appData = gadgets.views.getParams()['appData'];
+                    // Create the session iframe which will handle the rest.
+                    iframe.src = "<%= unhangoutBaseUrl %>/facilitator/" + appData.sessionId + "/";
+                    iframe.width = "100%";
+                    iframe.height = "100%";
+                    iframe.style.width = "100%";
+                    iframe.style.height = "100%";
+                    iframe.style.border = "none";
+                    iframe.style.overflow = "none";
+                    iframe.style.position = "absolute";
+                    iframe.style.left = "0px";
+                    iframe.style.top = "0px";
+                    document.body.appendChild(iframe);
+
+                    var args = {
+                        url: gapi.hangout.getHangoutUrl()
+                    };
+                    var pollCount = 0;
+
+                    // Poll the inner iframe with our data until it ack's.
+                    var tellData = setInterval(function() {
+                        iframe.contentWindow.postMessage({
+                            type: "data",
+                            args: args
+                        }, "<%= unhangoutBaseUrl %>");
+                        pollCount += 1;
+                    }, 10);
+
+                    // Cancel after a while if we've gotten no ack -- but warn.
+                    setTimeout(function() {
+                        if (tellData) {
+                            console.log(data);
+                            alert("Error loading unhangout facilitator.");
+                            console.error("Failed to get ack; poll count: " +
+                                          pollCount);
+                            clearInterval(tellData);
+                        }
+                    }, 30000);
+
+                    function receiveMessage(event) {
+                        if (event.origin === "<%= unhangoutBaseUrl %>") {
+                            if (event.data.type === "ack") {
+                                console.log("outer", event.data.type);
+                                clearInterval(tellData);
+                                tellData = null;
+                            }
+                        }
+                    }
+                    window.addEventListener('message', receiveMessage, false);
+                });
+            });
+        </script>
+    </body>
+</html>
+]]>
+</Content>
+</Module>
