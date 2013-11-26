@@ -28,7 +28,11 @@
 <% if (session) { %>
     <script type='text/javascript'>
         var HANGOUT_ORIGIN_REGEX = new RegExp("<%- hangoutOriginRegex %>");
-        var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+        <% if (event) { %>
+            var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+        <% } else { %>
+            var EVENT_ATTRS = {};
+        <% } %>
         var SESSION_ATTRS = <%- JSON.stringify(session.toJSON()) %>;
     </script>
     

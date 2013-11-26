@@ -63,7 +63,7 @@
             }
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
-            var version = 2;
+            var version = 3;
             console.log("Unhangout Facilitator version " + version);
             gadgets.util.registerOnLoadHandler(function() {
                 gapi.hangout.onApiReady.add(function(event) {
@@ -107,7 +107,7 @@
                     // Cancel after a while if we've gotten no ack -- but warn.
                     setTimeout(function() {
                         if (tellData) {
-                            console.log(data);
+                            console.log(args);
                             alert("Error loading unhangout facilitator.");
                             console.error("Failed to get ack; poll count: " +
                                           pollCount);
@@ -118,9 +118,9 @@
                     function receiveMessage(event) {
                         if (event.origin === "<%= unhangoutBaseUrl %>") {
                             if (event.data.type === "ack") {
-                                console.log("outer", event.data.type);
                                 clearInterval(tellData);
                                 tellData = null;
+                                console.log("outer", event.data.type);
                             }
                         }
                     }
