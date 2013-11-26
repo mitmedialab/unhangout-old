@@ -36,7 +36,7 @@ sock.onopen = function() {
         if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
             if (event.data.type == "data") {
                 if (event.data.args.url) {
-                    console.log("inner set", event.data.args.url);
+                    console.log("inner set", event.data.args.url, event.origin);
                     session.set("hangout-url", event.data.args.url);
                     window.parent.postMessage({type: "ack"}, event.origin);
                 }
