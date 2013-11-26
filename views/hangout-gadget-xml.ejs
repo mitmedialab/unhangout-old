@@ -33,7 +33,7 @@
                     views: {
                         getParams: function() {
                             return {
-                                'appData': <%- JSON.stringify(mockAppData) %>
+                                "appData": "<%= mockAppData %>"
                             };
                         }
                     }
@@ -71,7 +71,7 @@
                     var iframe = document.createElement('iframe');
                     var appData = gadgets.views.getParams()['appData'] || "";
                     // TODO: handle null session ID / appData
-                    console.log(appData);
+                    console.log("appData:", appData);
                     var parts = appData.split(":");
                     var sessionId = parts[1];
                     console.log("Session ID:", sessionId);
@@ -120,7 +120,7 @@
                             if (event.data.type === "ack") {
                                 clearInterval(tellData);
                                 tellData = null;
-                                console.log("outer", event.data.type);
+                                console.log("outerCDM", event.data.type);
                             }
                         }
                     }
