@@ -8,8 +8,14 @@
     }
 </style>
 
-<h2><%= session.get("title") %></h2>
-<p><%= session.get("description") %></p>
+<% if (session) { %>
+    <h2><%= session.get("title") %></h2>
+    <p><%= session.get("description") %></p>
+    <p>Unhangout facilitator, for session <%= session.id %></p>
+<% } else { %>
+    <h2>Unhangout Facilitator</h2>
+    <p>No session... facilitator can't run.</p>
+<% } %>
 
 <div class="modal hide fade disconnected-modal" id="disconnected-modal">
     <div class="modal-header"><h3>Warning!</h3></div>
@@ -19,15 +25,17 @@
     </div>
 </div>
 
-<script type='text/javascript'>
-    var HANGOUT_ORIGIN_REGEX = new RegExp("<%- hangoutOriginRegex %>");
-    var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
-    var SESSION_ATTRS = <%- JSON.stringify(session.toJSON()) %>;
-</script>
-
-<script src='/public/js/models.js'></script>
-<script src='/public/js/client-models.js'></script>
-<% include _sockjs.ejs %>
-<script src='/public/js/facilitator.js'></script>
-<% include _analytics.ejs %>
-<% include _footer.ejs %>
+<% if (session) { %>
+    <script type='text/javascript'>
+        var HANGOUT_ORIGIN_REGEX = new RegExp("<%- hangoutOriginRegex %>");
+        var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+        var SESSION_ATTRS = <%- JSON.stringify(session.toJSON()) %>;
+    </script>
+    
+    <script src='/public/js/models.js'></script>
+    <script src='/public/js/client-models.js'></script>
+    <% include _sockjs.ejs %>
+    <script src='/public/js/facilitator.js'></script>
+    <% include _analytics.ejs %>
+    <% include _footer.ejs %>
+<% } %>

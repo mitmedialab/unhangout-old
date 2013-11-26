@@ -61,13 +61,24 @@
             if (typeof console === "undefined") {
                 console = {log: function(){}, info: function(){}, error: function(){}};
             }
+            // Increment this to be able to immediately tell if google is
+            // serving the latest or a cached version.
+            var version = 2;
+            console.log("Unhangout Facilitator version " + version);
             gadgets.util.registerOnLoadHandler(function() {
                 gapi.hangout.onApiReady.add(function(event) {
                     if (!event.isApiReady) { return; }
                     var iframe = document.createElement('iframe');
-                    var appData = gadgets.views.getParams()['appData'];
+                    var appData = gadgets.views.getParams()['appData'] || "";
+                    // TODO: handle null session ID / appData
+                    console.log(appData);
+                    var parts = appData.split(":");
+                    var sessionId = parts[1];
+                    console.log("Session ID:", sessionId);
+                    var url = "<%= unhangoutBaseUrl %>/facilitator/" + sessionId + "/";
+                    console.log(url);
                     // Create the session iframe which will handle the rest.
-                    iframe.src = "<%= unhangoutBaseUrl %>/facilitator/" + appData.sessionId + "/";
+                    iframe.src = url;
                     iframe.width = "100%";
                     iframe.height = "100%";
                     iframe.style.width = "100%";
