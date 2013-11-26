@@ -20,38 +20,17 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <% if (mockHangoutUrl) { %>
+        <% if (mock) { %>
             <script type='text/javascript'>
-                // Shim gadget/gapi if we are mocking the hangout.
-                // Make global -- no 'var'.
-                gadgets = {
-                    util: {
-                        registerOnLoadHandler: function(cb) {
-                            cb();
-                        }
-                    },
-                    views: {
-                        getParams: function() {
-                            return {
-                                "appData": "<%= mockAppData %>"
-                            };
-                        }
-                    }
-                };
-                // Make global -- no 'var'.
-                gapi = {
-                    hangout: {
-                        onApiReady: {
-                            add: function(cb) {
-                                cb({isApiReady: true});
-                            }
-                        },
-                        getHangoutUrl: function() {
-                            return "<%= mockHangoutUrl %>";
-                        }
-                    }
-                };
+                var MOCK_DATA = {
+                    startTime: new Date().getTime(),
+                    users: '<%- JSON.stringify(mockUsers) %>',
+                    hangoutUrl: "<%= mockHangoutUrl %>",
+                    appData: "<%= mockAppData %>"
+                }
+                console.log("MOCK DATA", MOCK_DATA);
             </script>
+            <script src='/public/js/mock-hangout-api.js'></script>
         <% } else { %>
             <script src='//plus.google.com/hangouts/_/api/v1/hangout.js'></script>
         <% } %>
@@ -90,36 +69,42 @@
                     iframe.style.top = "0px";
                     document.body.appendChild(iframe);
 
-                    var args = {
-                        url: gapi.hangout.getHangoutUrl()
-                    };
+                    var urlArgs = { url: gapi.hangout.getHangoutUrl() };
                     var pollCount = 0;
 
                     // Poll the inner iframe with our data until it ack's.
-                    var tellData = setInterval(function() {
+                    var tellUrl = setInterval(function() {
                         iframe.contentWindow.postMessage({
-                            type: "data",
-                            args: args
+                            type: "url",
+                            args: urlArgs
                         }, "<%= unhangoutBaseUrl %>");
                         pollCount += 1;
                     }, 10);
 
+                    // Periodically tell inner frame our paricipants once we've
+                    // acked.
+                    var tellParticipants = setInterval(function() {
+                        iframe.contentWindow.postMessage({
+                            type: "participants",
+                            args: { participants: gapi.hangout.getParticipants() }
+                        }, "<%= unhangoutBaseUrl %>");
+                    }, 5000);
+
                     // Cancel after a while if we've gotten no ack -- but warn.
                     setTimeout(function() {
-                        if (tellData) {
-                            console.log(args);
+                        if (tellUrl) {
+                            console.log(urlArgs);
                             alert("Error loading unhangout facilitator.");
-                            console.error("Failed to get ack; poll count: " +
-                                          pollCount);
-                            clearInterval(tellData);
+                            console.error("Failed to get ack; poll count: " + pollCount);
+                            clearInterval(tellUrl);
                         }
                     }, 30000);
 
                     function receiveMessage(event) {
                         if (event.origin === "<%= unhangoutBaseUrl %>") {
-                            if (event.data.type === "ack") {
-                                clearInterval(tellData);
-                                tellData = null;
+                            if (event.data.type === "url-ack") {
+                                clearInterval(tellUrl);
+                                tellUrl = null;
                                 console.log("outerCDM", event.data.type);
                             }
                         }

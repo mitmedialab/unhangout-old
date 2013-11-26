@@ -34,12 +34,14 @@ sock.onopen = function() {
     // of the hangout URL.
     window.addEventListener("message", function(event) {
         if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
-            if (event.data.type == "data") {
+            if (event.data.type == "url") {
                 if (event.data.args.url) {
                     console.log("innerCDM set", event.data.args.url, event.origin);
                     session.set("hangout-url", event.data.args.url);
-                    window.parent.postMessage({type: "ack"}, event.origin);
+                    window.parent.postMessage({type: "url-ack"}, event.origin);
                 }
+            } else if (event.data.type == "participants") {
+                console.log("innerCDM participants:", event.data.args);
             }
         }
     }, false);
