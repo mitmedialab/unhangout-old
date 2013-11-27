@@ -240,18 +240,45 @@ models.Session = Backbone.Model.extend({
 	isLive: function() {
 		return true;
 	},
-
     getRoomId: function() {
         return this.id ? "session/" + this.id : null
     },
-
+    addConnectedParticipant: function(user) {
+        var participants = _.clone(this.get("connectedParticipants"));
+        if (!_.findWhere(participants, { id: user.id }) && participants.length < 10) {
+            participants.push(user);
+            return this.setConnectedParticipants(participants);
+        }
+        return false;
+    },
+    removeConnectedParticipant: function(user) {
+        var participants = this.get("connectedParticipants");
+        var newParticipants = _.reject(participants, function (u) { u.id == user.id });
+        return this.setConnectedParticipants(newParticipants);
+    },
 	setConnectedParticipants: function(users) {
-		// TODO add some validation here, probably.
-        users = _.map(users, function(u) {return u.toJSON ? u.toJSON() : u;});
-		this.set("connectedParticipants", users);
-		this.trigger("change:connectedParticipants");
+        if (users.length > 10) { return false; }
+        // Clean incoming users..
+        users = _.map(users, function(u) {
+            u = (u.toJSON ? u.toJSON() : u);
+            return {
+                id: u.id,
+                displayName: u.displayName,
+                picture: u.picture || (u.image && u.image.url ? u.image.url : "")
+            }
+        });
+        // Has anything changed?
+        var current = this.get("connectedParticipants");
+        var intersection = _.intersection(_.pluck(users, "id"), _.pluck(current, "id"));
+        if (users.length != current.length || intersection.length != current.length) {
+            // We've changed.
+            this.set("connectedParticipants", users);
+            return true;
+        } else {
+            // No change.
+            return false;
+        }
 	},
-
 	getNumConnectedParticipants: function() {
 		return this.get("connectedParticipants").length;
 	}

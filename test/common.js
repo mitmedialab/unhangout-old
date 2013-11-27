@@ -36,14 +36,21 @@ var buildBrowser = function(callback) {
             });
         });
     };
+    // hack to get a promise... is there a better way?
+    browser.then = function(cb) {
+        return browser.executeScript("return true;").then(cb);
+    };
     browser.waitTime = function(time) {
         var waited = false;
         return browser.wait(function() {
             setTimeout(function() { waited = true; }, time);
-            return browser.executeScript("return true;").then(function() {
-                return waited;
-            });
+            return browser.then(function() { return waited; });
         });
+    };
+    browser.waitForFunc = function(cb) {
+        return browser.wait(function() {
+            return browser.then(function() { return cb(); })
+        })
     };
     callback(browser);
 };

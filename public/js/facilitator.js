@@ -42,6 +42,10 @@ sock.onopen = function() {
                 }
             } else if (event.data.type == "participants") {
                 console.log("innerCDM participants:", event.data.args);
+                var participants = _.map(JSON.parse(event.data.args.participants), function(u) {
+                    return u.person;
+                });
+                session.setConnectedParticipants(participants);
             }
         }
     }, false);
@@ -72,5 +76,11 @@ session.on("change:hangout-url", function() {
     sock.sendJSON("session/set-hangout-url", {
         url: session.get("hangout-url"),
         sessionId: session.id
+    });
+});
+session.on("change:connectedParticipants", function() {
+    sock.sendJSON("session/set-connected-participants", {
+        sessionId: session.id,
+        connectedParticipants: session.get("connectedParticipants")
     });
 });
