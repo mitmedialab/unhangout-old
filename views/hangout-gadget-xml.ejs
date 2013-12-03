@@ -42,7 +42,7 @@
             }
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
-            var version = 5;
+            var version = 6;
             console.log("Unhangout Facilitator version " + version);
             gadgets.util.registerOnLoadHandler(function() {
                 gapi.hangout.onApiReady.add(function(event) {
@@ -102,10 +102,15 @@
 
                     function receiveMessage(event) {
                         if (event.origin === "<%= unhangoutBaseUrl %>") {
-                            if (event.data.type === "url-ack") {
-                                clearInterval(tellUrl);
-                                tellUrl = null;
-                                console.log("outerCDM", event.data.type);
+                            switch (event.data.type) {
+                                case "url-ack":
+                                    clearInterval(tellUrl);
+                                    tellUrl = null;
+                                    console.log("outerCDM", event.data.type);
+                                    break;
+                                case "hide":
+                                    gapi.hangout.hideApp();
+                                    break;
                             }
                         }
                     }

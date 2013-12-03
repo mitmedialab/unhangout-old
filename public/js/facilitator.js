@@ -6,13 +6,13 @@
 var FacilitatorView = Backbone.View.extend({
     template: _.template($('#facilitator').html()),
     events: {
-        'click .close-app': 'close',
+        'click .hide-app': 'hide',
         'click .add-video': 'addVideo',
         'click .add-webpage': 'addWebpage'
     },
     initialize: function(options) {
         _.bindAll(this, "addViewForActivityData", "removeActivityView",
-                  "render", "renderActivityLinks", "setActivity", "close",
+                  "render", "renderActivityLinks", "setActivity", "hide",
                   "addVideo", "addWebpage");
         this.session = options.session;
         this.event = options.event;
@@ -166,10 +166,10 @@ var FacilitatorView = Backbone.View.extend({
     setActivityPresence: function() {
         // TODO
     },
-    close: function(event) {
-        // Hide the unhangout facilitator app. (TODO: do we need this?)
+    hide: function(event) {
+        // Hide the unhangout facilitator app.
         event.preventDefault();
-        alert("TODO");
+        window.parent.postMessage({type: "hide"}, HANGOUT_ORIGIN);
     },
     addVideo: function(event) {
         // Add a youtube video activity, complete with controls for
@@ -502,6 +502,8 @@ var RemoveActivity = BaseModalView.extend({
       Initialization
 *****************************/
 
+
+var HANGOUT_ORIGIN; // Will be set when the hangout CDM's us
 var event = new models.Event(EVENT_ATTRS);
 var session = new models.Session(SESSION_ATTRS);
 var sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
@@ -512,15 +514,10 @@ app.render();
 /****************************************************
       Socket initialization and hangout management
 *****************************************************/
-
-
 // Convenience wrapper for posting messages.
 sock.sendJSON = function(type, data) {
     sock.send(JSON.stringify({type: type, args: data}));
 }
-
-// TODO: merge the parts of public/js/event-app.js and this which are the same
-// to avoid duplication.
 sock.onopen = function() {
     // Authorize ourselves, then join the room.
     console.log("SOCK open");
@@ -534,6 +531,7 @@ sock.onopen = function() {
                     console.log("CDM inner set", event.data.args.url, event.origin);
                     session.set("hangout-url", event.data.args.url);
                     window.parent.postMessage({type: "url-ack"}, event.origin);
+                    HANGOUT_ORIGIN = event.origin;
                 }
             } else if (event.data.type == "participants") {
                 //console.log("innerCDM participants:", event.data.args);
@@ -545,8 +543,7 @@ sock.onopen = function() {
         }
     }, false);
 };
-// TODO: merge the parts of public/js/event-app.js and this which are the same
-// to avoid duplication.
+
 sock.onclose = function() {
     $('#disconnected-modal').modal('show');
     var checkIfServerUp = function() {

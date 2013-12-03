@@ -25,6 +25,9 @@ gapi = {
         },
         getParticipants: function() {
             return MOCK_DATA.users;
+        },
+        hideApp: function() {
+            alert("Hangout got 'hideApp' call");
         }
     }
 };
