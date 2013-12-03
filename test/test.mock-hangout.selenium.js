@@ -29,6 +29,27 @@ describe("MOCK HANGOUT", function() {
         });
     });
 
+    it("Communicates the hangout's URL on connction.", function(done) {
+        var u1 = common.server.db.users.at(0);
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate(u1.get("sock-key"));
+        // At first, there's no hangout url..
+        expect(session.get("hangout-url")).to.be(null);
+
+        // but after we connect ...
+        var url = "http://localhost:7777/test/hangout/" + session.id + "/";
+        browser.get(url);
+        browser.waitForFunc(function() {
+            return session.getNumConnectedParticipants() == 1;
+        }).then(function() {;
+            expect(session.get("hangout-url")).to.eql(url);
+        });
+        browser.get("http://localhost:7777/").then(function() {
+            expect(session.get("hangout-url")).to.be(null);
+            done();
+        });
+    });
+
     it("Updates connected participants who don't load app.", function(done) {
         var u1 = common.server.db.users.at(0);
         var u2 = common.server.db.users.at(1);

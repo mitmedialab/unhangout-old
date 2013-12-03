@@ -28,6 +28,14 @@ gapi = {
         },
         hideApp: function() {
             alert("Hangout got 'hideApp' call");
+        },
+        data: {
+            setValue: function(){},
+            getValue: function(key) {
+                if (key == "sessionId") {
+                    return MOCK_DATA.appData.split(":")[1];
+                }
+            }
         }
     }
 };

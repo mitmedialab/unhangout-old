@@ -58,6 +58,7 @@ describe("HANGOUT SESSION REDIRECTS", function() {
                 setTimeout(function() {
                     session.setHangoutUrl("http://example.com/hangy");
                     expect(session.isHangoutPending()).to.be(false);
+                    expect(session.get('hangout-url')).to.eql('http://example.com/hangy');
                     done();
                 }, 1000);
             },

@@ -49,11 +49,17 @@
                     if (!event.isApiReady) { return; }
                     var iframe = document.createElement('iframe');
                     var appData = gadgets.views.getParams()['appData'] || "";
-                    // TODO: handle null session ID / appData
                     console.log("appData:", appData);
                     var parts = appData.split(":");
                     var sessionId = parts[1];
-                    console.log("Session ID:", sessionId);
+                    // Fall back to gapi.hangout.data if we have no appData.
+                    if (sessionId) {
+                        gapi.hangout.data.setValue("sessionId", sessionId);
+                        console.log("Session ID from appData:", sessionId);
+                    } else {
+                        sessionId = gapi.hangout.data.getValue("sessionId");
+                        console.log("Session ID from gapi.hangout.data:", sessionId);
+                    }
                     var url = "<%= unhangoutBaseUrl %>/facilitator/" + sessionId + "/";
                     console.log(url);
                     // Create the session iframe which will handle the rest.
@@ -98,7 +104,7 @@
                             console.error("Failed to get ack; poll count: " + pollCount);
                             clearInterval(tellUrl);
                         }
-                    }, 30000);
+                    }, 60000);
 
                     function receiveMessage(event) {
                         if (event.origin === "<%= unhangoutBaseUrl %>") {
