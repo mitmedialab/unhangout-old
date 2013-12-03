@@ -1,0 +1,135 @@
+body {
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+}
+#share-link {
+  cursor: auto;
+}
+#app {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  top: 0;
+}
+.facilitator {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  display: table;
+
+  .header-row {
+    display: table-row;
+    background-color: #032;
+    .title {
+      display: table-cell;
+      vertical-align: middle;
+      h2 {
+        color: #eee;
+        font-size: 18px;
+        line-height: 1.2em;
+        height: 1.2em;
+        display: inline-block;
+        padding-left: 0.5em;
+      }
+      .brand {
+        float: right;
+        white-space: no-wrap;
+        font-style: italic;
+        color: #aaa;
+        padding-right: 1em;
+      }
+      .close-app {
+        float: right;
+        color: #eee;
+        cursor: pointer;
+        padding: 0em 0.5em;
+      }
+    }
+  }
+  .activity-list-holder {
+    display: table-row;
+    .activity-list {
+      display: table-cell;
+      border-bottom: 1px solid #eee;
+      ul.links {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        li {
+          margin: 0 0.5em;
+          display: inline;
+        }
+      }
+      a.active {
+        background-color: #ddd;
+        padding: 0em 0.5em;
+      }
+      .dropdown {
+        display: inline;
+        padding-left: 0.5em;
+      }
+    }
+  }
+
+  .activity-holder {
+    display: table-row;
+    .activity {
+      display: table-cell;
+      height: 100%;
+    }
+  }
+
+  .footer-holder {
+    display: table-row;
+    .footer {
+      display: table-cell;
+      width: 100%;
+      height: 1em;
+      background-color: #acb;
+      color: white;
+      font-style: italic;
+      text-align: center;
+    }
+  }
+
+  // Activities
+
+  .about-activity {
+    padding: 1em;
+  }
+
+  .video-activity {
+    height: 100%;
+    width: 100%;
+    .video-table {
+      display: table;
+      height: 100%;
+      width: 100%;
+    }
+    .player-row { display: table-row; }
+    .controls-row { display: table-row; }
+    .player-cell, .controls-cell { display: table-cell; }
+    .player-cell { height: 100%; }
+    .mute-for-everyone.active {
+      color: blue;
+    }
+  }
+
+  .webpage-activity {
+    width: 100%;
+    height: 100%;
+    position: relative;
+
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: yellow;
+    }
+  }
+
+}

@@ -1,45 +1,156 @@
 <% include _header.ejs %>
+<link rel='stylesheet' type='text/css' href='/public/css/facilitator.css' />
 
-<style type='text/css'>
-    body {
-        padding: 0;
-        width: 100%;
-        height: 100%;
-    }
-</style>
-
-<% if (session) { %>
-    <h2><%= session.get("title") %></h2>
-    <p><%= session.get("description") %></p>
-    <p>Unhangout facilitator, for session <%= session.id %></p>
-<% } else { %>
+<% if (!session) { %>
     <h2>Unhangout Facilitator</h2>
-    <p>No session... facilitator can't run.</p>
-<% } %>
+    <p>No session found. Facilitator disabled. :(</p>
+<% } else { %>
 
+<div id='app'>
+</div>
+
+<script type='text/template' id='facilitator'>
+    <div class='header-row'>
+        <div class='title'>
+            <h2>{{= session.get('title') || session.get('shortCode') || "Hangout Permalink" }}</h2>
+            <div class='close-app'>Close</div>
+            <!--<div class='brand'>Unhangout Facilitator</div>-->
+        </div>
+    </div>
+    <div class='activity-list-holder'>
+        <div class='activity-list'>
+            Activities: 
+            <ul class='links'>
+            </ul>
+            <div class="dropdown">
+                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add +</a>
+                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                    <li><a class='add-video' href='#'>Video</a></li>
+                    <li><a class='add-webpage' href='#'>Web page</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class='activity-holder'>
+        <div class='activity'></div>
+    </div>
+    <div class='footer-holder'>
+        <div class='footer'>
+            Powered by the
+            <a href='https://unhangout.media.mit.edu'>Unhangout Project</a>
+            from the MIT Media Lab.
+            Supported by the McArthur Foundation.
+        </div>
+    </div>
+</script>
+
+<script type='text/template' id='about-activity'>
+    <% if (session.get('description')) { %>
+        <p><%= session.get('description') %></p>
+    <% } else if (event) { %>
+        <p>This is an event session!</p>
+    <% } %>
+    <% if (session.get('isPermalinkSession')) { %>
+        <p>TODO ... text describing all about permalink sessions ...</p>
+        <p>Invite others with this link:
+            <input id='share-link' type='text' readonly
+             value='<%= baseUrl %>/h/<%= session.get('shortCode') %>' />
+        </p>
+    <% } %>
+</script>
+
+<script type='text/template' id='add-video-activity'>
+    <form>
+        <div class="modal-header"><h3>Add video</h3></div>
+        <div class="modal-body">
+            <p>Paste the link to a YouTube video here to share with everyone in the hangout:</p>
+            <input type='text' placeholder='https://youtube.com/....' />
+            <span class='error-msg' style='display: none;'>We can't recognize that as a youtube video. Please paste the link to a single video.</span>
+        </div>
+        <div class='modal-footer'>
+            <a href="#" class="btn pull-left" data-dismiss='modal' >Close</a>
+            <input type='submit' class='btn btn-primary' value='Add video' />
+        </div>
+    </form>
+</script>
+<script type='text/template' id='video-activity'>
+    <!-- Tables are the cleanest way I know of to get a sticky-footer effect. -->
+    <table style='width: 100%; height: 100%;'>
+        <tr>
+            <td style='height: 100%;'>
+                <div id='player-{{= cid}}' style='display: block; width: 100%; height: 100%;'></div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <a class='btn btn-success play-for-everyone'>Start playing for everyone</a>
+                <a class='btn mute-for-everyone'><i class='icon-volume-off'></i>
+                    <span class='text'>Mute for everyone</span>
+                 </a>
+            </td>
+        </tr>
+    </table>
+</script>
+
+
+<script type='text/template' id='add-webpage-activity'>
+    <form>
+        <div class="modal-header"><h3>Add webpage</h3></div>
+        <div class="modal-body">
+            <p>Paste the link of the webpage you'd like to show in the hangout here:</p>
+            <input type='text' placeholder='http://example.com...' />
+            <div class='error-msg alert-error' style='display: none;'>Sorry, but only secure pages (those starting with "https") can be embedded in hangouts.</div>
+        </div>
+        <div class='modal-footer'>
+            <a href="#" class="btn pull-left" data-dismiss='modal' >Close</a>
+            <input type='submit' class='btn btn-primary' value='Add webpage' />
+        </div>
+    </form>
+</script>
+
+<script type='text/template' id='webpage-activity'>
+    <div class='loading'>
+        Loading ... 
+    </div>
+</script>
+
+<script type='text/template' id='remove-activity'>
+    <div class="modal-header"><h3>Remove this?</h3></div>
+    <div class="modal-body">
+        <p>Would you like to remove this for all participants?</p>
+    </div>
+    <div class='modal-footer'>
+        <a href="#" class="btn pull-left" data-dismiss='modal' >Cancel</a>
+        <input type='submit' class='btn btn-primary' value='Remove' />
+    </div>
+</script>
+
+<!-- Disconnection modal -->
 <div class="modal hide fade disconnected-modal" id="disconnected-modal">
     <div class="modal-header"><h3>Warning!</h3></div>
     <div class="modal-body">
-        <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+        <p>An unexpected error has occured. You have been disconnected from the server. Trying to reconnect...</p>
         <a href="#" class="btn" data-dismiss='modal' >Close</a>
     </div>
 </div>
 
-<% if (session) { %>
-    <script type='text/javascript'>
-        var HANGOUT_ORIGIN_REGEX = new RegExp("<%- hangoutOriginRegex %>");
-        <% if (event) { %>
-            var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
-        <% } else { %>
-            var EVENT_ATTRS = {};
-        <% } %>
-        var SESSION_ATTRS = <%- JSON.stringify(session.toJSON()) %>;
-    </script>
-    
-    <script src='/public/js/models.js'></script>
-    <script src='/public/js/client-models.js'></script>
-    <% include _sockjs.ejs %>
-    <script src='/public/js/facilitator.js'></script>
-    <% include _analytics.ejs %>
-    <% include _footer.ejs %>
+<script type='text/javascript'>
+    // Set up global data
+    var HANGOUT_ORIGIN_REGEX = new RegExp("<%- hangoutOriginRegex %>");
+    <% if (event) { %>
+        var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+    <% } else { %>
+        var EVENT_ATTRS = {};
+    <% } %>
+    var SESSION_ATTRS = <%- JSON.stringify(session.toJSON()) %>;
+    // DEBUG
+</script>
+
+<script src='/public/js/models.js'></script>
+<script src='/public/js/client-models.js'></script>
+<% include _sockjs.ejs %>
+<script src='/public/js/facilitator.js'></script>
+
 <% } %>
+<% include _analytics.ejs %>
+<% include _footer.ejs %>

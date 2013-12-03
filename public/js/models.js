@@ -231,12 +231,13 @@ models.Session = Backbone.Model.extend({
 			title: "",
 			description: "",
 			started: true,
-			connectedParticipants: [],	// connectedParticipants are people who the google hangout supervisor app reports are present in the hangout associated with this session
+			connectedParticipants: [],
+            activities: [{type: "about"}],
+            activitiesPresence: [[]],
 			hangoutConnected: false,
 			shortCode: null
 		};
 	},
-		
 	isLive: function() {
 		return true;
 	},
@@ -281,7 +282,74 @@ models.Session = Backbone.Model.extend({
 	},
 	getNumConnectedParticipants: function() {
 		return this.get("connectedParticipants").length;
-	}
+	},
+    addActivity: function(activity, options) {
+        if (!_.contains(["webpage", "video"], activity.type)) {
+            return false;
+        }
+        var activities = this.get("activities");
+        var isDup = _.any(activities, function(a) {
+            return _.isEqual(a, activity);
+        });
+        if (isDup) {
+            return false;
+        } else {
+            activities.unshift(activity);
+            this.get("activitiesPresence").unshift([]);
+            this.trigger("change:activities");
+            this.trigger("addActivity", activity, options);
+            return true;
+        }
+    },
+    removeActivity: function(activity) {
+        if (activity.type == "about") {
+            // can't remove "about"
+            return false;
+        }
+        var activities = this.get("activities");
+        var index;
+        var newActivities = _.reject(activities, function(a, i) {
+            if (_.isEqual(a, activity)) {
+                index = i;
+                return true;
+            }
+            return false;
+        });
+        if (newActivities.length < activities.length) {
+            this.trigger("removeActivity", activity);
+            this.set("activities", newActivities);
+            this.get("activitiesPresence").splice(index, 1);
+            this.trigger("change:activitiesPresence");
+            return true;
+        }
+        return false;
+    },
+    setActivityPresence: function(userId, activity) {
+        var activities = this.get("activities");
+        var index = null;
+        if (activity == null) {
+            var changed = false;
+            // Strip out presence.
+
+        }
+        var activity = _.find(this.get("activities"), function(a, i) {
+            if (_.isEqual(a, activity)) {
+                index = i;
+                return true;
+            }
+            return false;
+        });
+        if (_.isNull(index)) {
+            return false;
+        }
+        var presence = this.get("activitiesPresence")[i];
+        if (!_.contains(presence, userId)) {
+            presence.push(userId);
+            this.trigger("change:activitiesPresence");
+            return true;
+        }
+        return false;
+    }
 });
 
 models.SessionList = Backbone.Collection.extend({
