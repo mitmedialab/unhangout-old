@@ -47,14 +47,15 @@
     <% if (session.get('description')) { %>
         <p><%= session.get('description') %></p>
     <% } else if (event) { %>
-        <p>This is an event session!</p>
+        <p><%= event.get('description') %></p>
     <% } %>
     <% if (session.get('isPermalinkSession')) { %>
-        <p>TODO ... text describing all about permalink sessions ...</p>
+        <p>This app helps the Unhangout Permalink service find the hangout, so that all participants end up in the same place.  You can hide this panel by clicking <a href='#' class='hide-app'>hide</a>.</p>
         <p>Invite others with this link:
             <input id='share-link' type='text' readonly
              value='<%= baseUrl %>/h/<%= session.get('shortCode') %>' />
         </p>
+        <p>Bonus: click "Add +" above to add webpages (etherpads, hackpads, etc.) or videos to this shared space.</p>
     <% } %>
 </script>
 
