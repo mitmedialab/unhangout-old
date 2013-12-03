@@ -29,6 +29,13 @@ var FacilitatorView = Backbone.View.extend({
                     // When we're authorized, join the room for this session.
                     sock.sendJSON("join", {id: "session/" + session.id});
                     break;
+                case "join-ack":
+					// Once we have a socket open, acknowledge the hangout
+					// gadget informing us of the hangout URL.
+					window.addEventListener("message",
+                                            this.handleCrossDocumentMessages,
+                                            false);
+
                 case "session/set-hangout-url-err":
                     // We got a different URL when we tried to set the hangout url.
                     // TODO: notify the user that this is the wrong URL for this
@@ -63,6 +70,30 @@ var FacilitatorView = Backbone.View.extend({
             }
         }, this));
     },
+    handleCrossDocumentMessages:  function(event) {
+		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
+			if (event.data.type == "url") {
+				if (event.data.args.url) {
+					console.log("CDM inner set", event.data.args.url,
+								event.origin);
+					session.set("hangout-url", event.data.args.url);
+					window.parent.postMessage({type: "url-ack"},
+											   event.origin);
+					HANGOUT_ORIGIN = event.origin;
+				}
+			} else if (event.data.type == "participants") {
+				console.log("CDM inner participants:", event.data.args);
+				var data = event.data.args.participants;
+				if (_.isString(data)) {
+					data = JSON.parse(data);
+				}
+				var participants = _.map(data, function(u) {
+					return u.person;
+				});
+				session.setConnectedParticipants(participants);
+			}
+		}
+	},
     addViewForActivityData: function(activityData, options) {
         // Create and render a new activity view corresponding with the given
         // data.
@@ -525,30 +556,6 @@ sock.onopen = function() {
     // Authorize ourselves, then join the room.
     console.log("SOCK open");
     sock.sendJSON("auth", {key: SOCK_KEY, id: USER_ID});
-    // Once we have a socket open, acknowledge the hangout gadget informing us
-    // of the hangout URL.
-    window.addEventListener("message", function(event) {
-        if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
-            if (event.data.type == "url") {
-                if (event.data.args.url) {
-                    console.log("CDM inner set", event.data.args.url, event.origin);
-                    session.set("hangout-url", event.data.args.url);
-                    window.parent.postMessage({type: "url-ack"}, event.origin);
-                    HANGOUT_ORIGIN = event.origin;
-                }
-            } else if (event.data.type == "participants") {
-                console.log("innerCDM participants:", event.data.args);
-                var data = event.data.args.participants;
-                if (_.isString(data)) {
-                    data = JSON.parse(data);
-                }
-                var participants = _.map(data, function(u) {
-                    return u.person;
-                });
-                session.setConnectedParticipants(participants);
-            }
-        }
-    }, false);
 };
 
 sock.onclose = function() {
@@ -572,6 +579,7 @@ sock.onclose = function() {
 
 // Let the server know about changes to the hangout URL.
 session.on("change:hangout-url", function() {
+    console.log("Broadcasting new hangout URL", session.get("hangout-url"));
     sock.sendJSON("session/set-hangout-url", {
         url: session.get("hangout-url"),
         sessionId: session.id
