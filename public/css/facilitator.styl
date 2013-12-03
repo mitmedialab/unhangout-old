@@ -60,13 +60,21 @@ body {
         margin: 0;
         padding: 0;
         li {
-          margin: 0 0.5em;
+          margin: 2px 2px 0 2px
           display: inline;
+          padding: 0 0.5em;
+          box-shadow: 0 -1px 1px #ddd;
+          &.active {
+            border-radius: 5px 5px 0px 0px;
+            box-shadow: 0 -1px 1px #666;
+            background-color: #efe;
+          }
+          a:active, a:focus, a:link, a:visited {
+            outline: none;
+            text-decoration: none;
+            color: black;
+          }
         }
-      }
-      a.active {
-        background-color: #ddd;
-        padding: 0em 0.5em;
       }
       .dropdown {
         display: inline;

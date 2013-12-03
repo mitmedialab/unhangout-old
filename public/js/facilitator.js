@@ -230,7 +230,7 @@ var BaseActivityView = Backbone.View.extend({
         return this.$a[0];
     },
     setActive: function(active) {
-        this.$a.toggleClass("active", active);
+        this.$a.parent().toggleClass("active", active);
     },
     render: function() {
         var context = {cid: this.cid};
@@ -251,6 +251,9 @@ var BaseActivityView = Backbone.View.extend({
 
 var AboutActivity = BaseActivityView.extend({
     template: _.template($("#about-activity").html()),
+    events: {
+        'click #share-link': function(event) { $(event.currentTarget).select(); }
+    },
     activity: {type: "about"},
     getLinkText: function() {
         return "About";
@@ -579,7 +582,4 @@ session.on("change:connectedParticipants", function() {
         sessionId: session.id,
         connectedParticipants: session.get("connectedParticipants")
     });
-});
-$("#share-link").on("click", function() {
-    $(this).select();
 });
