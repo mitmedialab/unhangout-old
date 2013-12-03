@@ -534,8 +534,12 @@ sock.onopen = function() {
                     HANGOUT_ORIGIN = event.origin;
                 }
             } else if (event.data.type == "participants") {
-                //console.log("innerCDM participants:", event.data.args);
-                var participants = _.map(JSON.parse(event.data.args.participants), function(u) {
+                console.log("innerCDM participants:", event.data.args);
+                var data = event.data.args.participants;
+                if (_.isString(data)) {
+                    data = JSON.parse(data);
+                }
+                var participants = _.map(data, function(u) {
                     return u.person;
                 });
                 session.setConnectedParticipants(participants);
