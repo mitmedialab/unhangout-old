@@ -35,7 +35,11 @@ var FacilitatorView = Backbone.View.extend({
                     // hangout; the right one is in msg.args.url.
                     break;
                 case "session/add-activity":
-                    this.session.addActivity(msg.args.activity, {renderLinks: true});
+                    this.session.addActivity(msg.args.activity, {
+                        broadcast: false,
+                        renderLinks: true,
+                        select: true
+                    });
                     break;
                 case "session/remove-activity":
                     this.session.removeActivity(msg.args.activity);
