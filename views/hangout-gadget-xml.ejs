@@ -106,6 +106,28 @@
                         }
                     }, 60000);
 
+                    var lastVideoDims;
+                    var setDims = function(dims) {
+                        var canvas = gapi.hangout.layout.getVideoCanvas();
+                        var aspect = canvas.getAspectRatio();
+                        // Center within the available rect.
+                        var h,w,x,y;
+                        if (dims.width / aspect > dims.height) {
+                            // height constrained.
+                            h = dims.height;
+                            w = h * aspect;
+                        } else {
+                            // width constrained.
+                            w = dims.width
+                            h = w / aspect;
+                        }
+                        x = dims.left + (dims.width - w)/2;
+                        y = dims.top + (dims.height - h)/2;
+                            
+                        canvas.setPosition(x, y);
+                        canvas.setWidth(w);
+                    };
+
                     function receiveMessage(event) {
                         if (event.origin === "<%= unhangoutBaseUrl %>") {
                             switch (event.data.type) {
@@ -119,16 +141,14 @@
                                     break;
                                 case "show-video":
                                     gapi.hangout.layout.getVideoCanvas().setVisible(true);
+                                    setDims(lastVideoDims);
                                     break;
                                 case "hide-video":
                                     gapi.hangout.layout.getVideoCanvas().setVisible(false);
                                     break;
                                 case "set-video-dims":
-                                    var canvas = gapi.hangout.layout.getVideoCanvas();
-                                    var args = event.data.args;
-                                    canvas.setPosition(args.left, args.top);
-                                    canvas.setWidth(args.width);
-                                    canvas.setHeight(args.height);
+                                    lastVideoDims = event.data.args;
+                                    setDims(lastVideoDims);
                                     break;
                             }
                         }

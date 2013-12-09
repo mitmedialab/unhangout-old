@@ -12,6 +12,7 @@ var FauxCanvas = function() {
     div.style.zIndex = '100000';
     div.style.display = 'none';
     var appended = false;
+    var aspectRatio = 1.5
 
     this.setPosition = function(value, opt_top) {
         var left = opt_top ? value : value.left;
@@ -20,6 +21,9 @@ var FauxCanvas = function() {
         div.style.left = (left + 3) + "px";
         div.style.top = (top + 3) + "px";
     };
+    this.getAspectRatio = function() {
+        return aspectRatio;
+    };
     this.setVisible = function(visible) {
         div.style.display = visible ? 'block' : 'none';
         if (!appended) {
@@ -27,9 +31,18 @@ var FauxCanvas = function() {
             appended = true;
         }
     };
-    // Leave room for the outline, to aid in debugging scaling.
-    this.setHeight = function(height) { div.style.height = (height-6) + "px"; };
-    this.setWidth  = function(width)  { div.style.width  = (width-6)  + "px"; };
+    this.setHeight = function(height) {
+        // Sets both height and width based on current aspect ratio.
+        // Leave room for the outline, to aid in debugging scaling.
+        div.style.height = (height-6) + "px";
+        div.style.width = (aspectRatio*height - 6) + "px";
+    };
+    this.setWidth  = function(width)  {
+        // Sets both height and width based on current aspect ratio.
+        // Leave room for the outline, to aid in debugging scaling.
+        div.style.width  = (width-6)  + "px";
+        div.style.height = (width/aspectRatio - 6) + "px";
+    };
 }
 var fauxCanvas = new FauxCanvas();
 
