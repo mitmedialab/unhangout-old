@@ -10,37 +10,49 @@
 </div>
 
 <script type='text/template' id='facilitator'>
-    <div class='header-row'>
-        <div class='title'>
+  <!-- parent has class "main-window" -->
+  <div class='columns'>
+    <div class='left-column'>
+      <!-- "Main" area if in sidebar mode; hidden otherwise -->
+    </div>
+    <div class='right-column'>
+      <!-- Sidebar app, or main app -->
+      <div class='facilitator'>
+        <div class='header-row'>
+          <div class='title'>
             <h2>{{= session.get('title') || session.get('shortCode') || "Hangout Permalink" }}</h2>
             <div class='hide-app'>Hide</div>
+          </div>
         </div>
-    </div>
-    <div class='activity-list-holder'>
-        <div class='activity-list'>
+        <div class='activity-list-holder'>
+          <div class='activity-list'>
+            <a class='toggle-sidebar' href='#'>Shrink&raquo;</a>
             Activities: 
             <ul class='links'>
             </ul>
             <div class="dropdown">
-                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add +</a>
-                <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                    <li><a class='add-video' href='#'>Video</a></li>
-                    <li><a class='add-webpage' href='#'>Web page</a></li>
-                </ul>
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#">Add +</a>
+              <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                <li><a class='add-video' href='#'>Video</a></li>
+                <li><a class='add-webpage' href='#'>Web page</a></li>
+              </ul>
             </div>
+          </div>
         </div>
-    </div>
-    <div class='activity-holder'>
-        <div class='activity'></div>
-    </div>
-    <div class='footer-holder'>
-        <div class='footer'>
+        <div class='activity-holder'>
+          <div class='activity'></div>
+        </div>
+        <div class='footer-holder'>
+          <div class='footer'>
             Powered by the
             <a href='https://unhangout.media.mit.edu'>Unhangout Project</a>
             from the MIT Media Lab.
             Supported by the McArthur Foundation.
+          </div>
         </div>
-    </div>
+      </div> <!-- /facilitator -->
+    </div> <!-- /right-column -->
+  </div> <!-- /columns -->
 </script>
 
 <script type='text/template' id='about-activity'>

@@ -1,17 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Module>
-<!-- Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *      
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License
--->
 <ModulePrefs title="Unhangout Manager">
         <Require feature="rpc" />
         <Require feature="views" />
@@ -42,72 +30,79 @@
             }
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
-            var version = 6;
+            var version = 8;
             console.log("Unhangout Facilitator version " + version);
-            gadgets.util.registerOnLoadHandler(function() {
-                gapi.hangout.onApiReady.add(function(event) {
-                    if (!event.isApiReady) { return; }
-                    var iframe = document.createElement('iframe');
-                    var appData = gadgets.views.getParams()['appData'] || "";
-                    console.log("appData:", appData);
-                    var parts = appData.split(":");
-                    var sessionId = parts[1];
-                    // Fall back to gapi.hangout.data if we have no appData.
-                    if (sessionId) {
-                        gapi.hangout.data.setValue("sessionId", sessionId);
-                        console.log("Session ID from appData:", sessionId);
-                    } else {
-                        sessionId = gapi.hangout.data.getValue("sessionId");
-                        console.log("Session ID from gapi.hangout.data:", sessionId);
+            var load = function(event) {
+                if (event && !event.isApiReady) { return; }
+                var iframe = document.createElement('iframe');
+                var appData = gadgets.views.getParams()['appData'] || "";
+                console.log("appData:", appData);
+                var parts = appData.split(":");
+                var sessionId = parts[1];
+                // Fall back to gapi.hangout.data if we have no appData.
+                if (sessionId) {
+                    gapi.hangout.data.setValue("sessionId", sessionId);
+                    console.log("Session ID from appData:", sessionId);
+                } else {
+                    sessionId = gapi.hangout.data.getValue("sessionId");
+                    console.log("Session ID from gapi.hangout.data:", sessionId);
+                }
+                var url = "<%= unhangoutBaseUrl %>/facilitator/" + sessionId + "/";
+                console.log(url);
+                // Create the session iframe which will handle the rest.
+                iframe.src = url;
+                iframe.width = "100%";
+                iframe.height = "100%";
+                iframe.style.width = "100%";
+                iframe.style.height = "100%";
+                iframe.style.border = "none";
+                iframe.style.overflow = "none";
+                iframe.style.position = "absolute";
+                iframe.style.left = "0px";
+                iframe.style.top = "0px";
+                document.body.appendChild(iframe);
+
+                var urlArgs = { url: gapi.hangout.getHangoutUrl() };
+                var pollCount = 0;
+
+                // Poll the inner iframe with our data until it ack's.
+                var tellUrl = setInterval(function() {
+                    iframe.contentWindow.postMessage({
+                        type: "url",
+                        args: urlArgs
+                    }, "<%= unhangoutBaseUrl %>");
+                    pollCount += 1;
+                }, 10);
+
+                // Periodically tell inner frame our paricipants once we've
+                // acked.
+                var tellParticipants = setInterval(function() {
+                    iframe.contentWindow.postMessage({
+                        type: "participants",
+                        args: { participants: gapi.hangout.getParticipants() }
+                    }, "<%= unhangoutBaseUrl %>");
+                }, 5000);
+
+                // Cancel after a while if we've gotten no ack -- but warn.
+                setTimeout(function() {
+                    if (tellUrl) {
+                        console.log(urlArgs);
+                        alert("Error loading unhangout facilitator.");
+                        console.error("Failed to get ack; poll count: " + pollCount);
+                        clearInterval(tellUrl);
                     }
-                    var url = "<%= unhangoutBaseUrl %>/facilitator/" + sessionId + "/";
-                    console.log(url);
-                    // Create the session iframe which will handle the rest.
-                    iframe.src = url;
-                    iframe.width = "100%";
-                    iframe.height = "100%";
-                    iframe.style.width = "100%";
-                    iframe.style.height = "100%";
-                    iframe.style.border = "none";
-                    iframe.style.overflow = "none";
-                    iframe.style.position = "absolute";
-                    iframe.style.left = "0px";
-                    iframe.style.top = "0px";
-                    document.body.appendChild(iframe);
+                }, 60000);
 
-                    var urlArgs = { url: gapi.hangout.getHangoutUrl() };
-                    var pollCount = 0;
-
-                    // Poll the inner iframe with our data until it ack's.
-                    var tellUrl = setInterval(function() {
-                        iframe.contentWindow.postMessage({
-                            type: "url",
-                            args: urlArgs
-                        }, "<%= unhangoutBaseUrl %>");
-                        pollCount += 1;
-                    }, 10);
-
-                    // Periodically tell inner frame our paricipants once we've
-                    // acked.
-                    var tellParticipants = setInterval(function() {
-                        iframe.contentWindow.postMessage({
-                            type: "participants",
-                            args: { participants: gapi.hangout.getParticipants() }
-                        }, "<%= unhangoutBaseUrl %>");
-                    }, 5000);
-
-                    // Cancel after a while if we've gotten no ack -- but warn.
-                    setTimeout(function() {
-                        if (tellUrl) {
-                            console.log(urlArgs);
-                            alert("Error loading unhangout facilitator.");
-                            console.error("Failed to get ack; poll count: " + pollCount);
-                            clearInterval(tellUrl);
-                        }
-                    }, 60000);
-
-                    var lastVideoDims;
-                    var setDims = function(dims) {
+                var lastVideoDims;
+                var _resizeTimeout;
+                var setDims = function(dims) {
+                    console.log("setDims", dims);
+                    // Throttle dimension setting to avoid crashing
+                    // browsers that try to repaint the video too fast.
+                    if (_resizeTimeout) {
+                        clearTimeout(_resizeTimeout);
+                    }
+                    _resizeTimeout = setTimeout(function() {
                         var canvas = gapi.hangout.layout.getVideoCanvas();
                         var aspect = canvas.getAspectRatio();
                         // Center within the available rect.
@@ -123,38 +118,44 @@
                         }
                         x = dims.left + (dims.width - w)/2;
                         y = dims.top + (dims.height - h)/2;
-                            
                         canvas.setPosition(x, y);
-                        canvas.setWidth(w);
-                    };
+                        canvas.setWidth(w); // also sets height
+                    }, 50);
+                };
 
-                    function receiveMessage(event) {
-                        if (event.origin === "<%= unhangoutBaseUrl %>") {
-                            switch (event.data.type) {
-                                case "url-ack":
-                                    clearInterval(tellUrl);
-                                    tellUrl = null;
-                                    console.log("outerCDM", event.data.type);
-                                    break;
-                                case "hide":
-                                    gapi.hangout.hideApp();
-                                    break;
-                                case "show-video":
-                                    gapi.hangout.layout.getVideoCanvas().setVisible(true);
-                                    setDims(lastVideoDims);
-                                    break;
-                                case "hide-video":
-                                    gapi.hangout.layout.getVideoCanvas().setVisible(false);
-                                    break;
-                                case "set-video-dims":
-                                    lastVideoDims = event.data.args;
-                                    setDims(lastVideoDims);
-                                    break;
-                            }
+                function receiveMessage(event) {
+                    if (event.origin === "<%= unhangoutBaseUrl %>") {
+                        switch (event.data.type) {
+                            case "url-ack":
+                                clearInterval(tellUrl);
+                                tellUrl = null;
+                                console.log("outerCDM", event.data.type);
+                                break;
+                            case "hide":
+                                gapi.hangout.hideApp();
+                                break;
+                            case "show-video":
+                                gapi.hangout.layout.getVideoCanvas().setVisible(true);
+                                setDims(lastVideoDims);
+                                break;
+                            case "hide-video":
+                                gapi.hangout.layout.getVideoCanvas().setVisible(false);
+                                break;
+                            case "set-video-dims":
+                                lastVideoDims = event.data.args;
+                                setDims(lastVideoDims);
+                                break;
+                            case "reload":
+                                document.body.removeChild(iframe);
+                                load();
+                                break;
                         }
                     }
-                    window.addEventListener('message', receiveMessage, false);
-                });
+                }
+                window.addEventListener('message', receiveMessage, false);
+            }
+            gadgets.util.registerOnLoadHandler(function() {
+                gapi.hangout.onApiReady.add(load);
             });
         </script>
     </body>

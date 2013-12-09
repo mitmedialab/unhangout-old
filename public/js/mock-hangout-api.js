@@ -15,11 +15,12 @@ var FauxCanvas = function() {
     var aspectRatio = 1.5
 
     this.setPosition = function(value, opt_top) {
-        var left = opt_top ? value : value.left;
-        var top = opt_top ? opt_top : value.top;
+        var left = typeof opt_top != "undefined" ? value : value.left;
+        var top = typeof opt_top != "undefined" ? opt_top : value.top;
         // Leave room for the outline, to aid in debugging scaling.
-        div.style.left = (left + 3) + "px";
-        div.style.top = (top + 3) + "px";
+        div.style.left = parseInt(left + 3) + "px";
+        div.style.top = parseInt(top + 3) + "px";
+        console.log(left, top, div.style.left, div.style.top);
     };
     this.getAspectRatio = function() {
         return aspectRatio;

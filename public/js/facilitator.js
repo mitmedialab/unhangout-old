@@ -8,17 +8,18 @@ var FacilitatorView = Backbone.View.extend({
     events: {
         'click .hide-app': 'hide',
         'click .add-video': 'addVideo',
-        'click .add-webpage': 'addWebpage'
+        'click .add-webpage': 'addWebpage',
+        'click .toggle-sidebar': 'toggleSidebar'
     },
     initialize: function(options) {
         _.bindAll(this, "addViewForActivityData", "removeActivityView",
                   "render", "renderActivityLinks", "setActivity", "hide",
-                  "addVideo", "addWebpage");
+                  "addVideo", "addWebpage", "toggleSidebar",
+                  "hideFacesIfActive", "showFacesIfActive");
         this.session = options.session;
         this.event = options.event;
         this.sock = options.sock;
         this.activities = [];
-
         this.session.addActivity({type: "faces"});
         console.log("Initial activities", this.session.get("activities"));
 
@@ -112,6 +113,7 @@ var FacilitatorView = Backbone.View.extend({
                 break;
             case "faces":
                 view = new FacesActivity({session: this.session, activity: activityData});
+                this.faces = view;
                 break;
         }
         view.on("selected", _.bind(function() {this.setActivity(view);}, this));
@@ -149,7 +151,7 @@ var FacilitatorView = Backbone.View.extend({
     render: function() {
         // This should only be called once -- all subsequent renders are
         // incremental; done with `setActivity` and `renderActivityLinks`.
-        this.$el.html(this.template()).addClass("facilitator");
+        this.$el.html(this.template()).addClass("main-window");
         var activitiesData = this.session.get('activities');
         for (var i = activitiesData.length - 1; i >= 0; i--) {
             this.addViewForActivityData(activitiesData[i], {
@@ -158,6 +160,9 @@ var FacilitatorView = Backbone.View.extend({
         }
         this.renderActivityLinks();
         this.setActivity(this.activities[0]);
+        if (!this.session.get("mainApp")) {
+            this.toggleSidebar();
+        }
     },
     renderActivityLinks: function() {
         // Render the header links corresponding with the activities.
@@ -200,23 +205,38 @@ var FacilitatorView = Backbone.View.extend({
         event.preventDefault();
         postMessageToHangout({type: "hide"});
     },
+    // Since it is always on top, we need to hide the faces view if we want
+    // to display anything (a dialog, etc) above it. Use 'hideFacesIfActive'
+    // when entering such a view and 'showFacesIfActive' when exiting.
+    hideFacesIfActive: function() {
+        this.faces.hideVideoIfActive();
+    },
+    showFacesIfActive: function() {
+        this.faces.showVideoIfActive();
+    },
+    // Add a youtube video activity, complete with controls for simultaneous
+    // playback.
     addVideo: function(event) {
-        // Add a youtube video activity, complete with controls for
-        // simultaneous playback.
         event.preventDefault();
         var view = new AddVideoActivity();
+        this.hideFacesIfActive();
         view.on("submit", _.bind(function(data) {
             this.session.addActivity(data, {broadcast: true, renderLinks: true, select: true});
+            this.showFacesIfActive();
         }, this));
+        view.on("close", this.showFacesIfActive);
     },
+    // Add a "webpage" type activity, which will just be an iframe with an
+    // arbitrary page in it.
     addWebpage: function(event) {
-        // Add a "webpage" type activity, which will just be an iframe with an
-        // arbitrary page in it.
         event.preventDefault();
         var view = new AddWebpageActivity();
+        this.hideFacesIfActive();
         view.on("submit", _.bind(function(data) {
             this.session.addActivity(data, {broadcast: true, renderLinks: true, select: true});
+            this.showFacesIfActive();
         }, this));
+        view.on("close", this.showFacesIfActive);
     },
     _getViewForActivityData: function(activityData) {
         return _.find(this.activities, function(a) {
@@ -227,7 +247,9 @@ var FacilitatorView = Backbone.View.extend({
         // Handler for clicks on the close "x" for activities.
         event.preventDefault();
         var view = new RemoveActivity();
+        this.hideFacesIfActive();
         view.on("submit", _.bind(function() {
+            this.showFacesIfActive();
             if (this.session.removeActivity(activityView.activity)) {
                 this.sock.sendJSON("session/remove-activity", {
                     sessionId: this.session.id,
@@ -235,21 +257,57 @@ var FacilitatorView = Backbone.View.extend({
                 });
             }
         }, this));
+        view.on("close", this.showFacesIfActive);
+    },
+    toggleSidebar: function(event) {
+        // This is rather ugly -- it special-cases the heck out of the 'faces'
+        // activity in a rather brittle way, moving it to a different div when
+        // we go to sidebar mode.  It has lots of edge cases -- which activity
+        // is active when 'sidebar' mode is toggled? Etc.
+        if (event) { event.preventDefault(); }
+        this.$el.toggleClass("sidebar");
+        var isSidebar = this.$el.hasClass("sidebar");
+        $(".toggle-sidebar").html(isSidebar ? "&laquo;Expand" : "Shrink&raquo;");
+        // Move the faces app from the default activity list to its own space.
+        if (isSidebar) {
+            if (!this.faces) { return; }
+            this.activities = _.without(this.activities, this.faces);
+            this.renderActivityLinks();
+            if (this.faces == this.currentActivity) {
+                if (this.activities.length > 0) {
+                    this.setActivity(this.activities[0]);
+                }
+            }
+            $(".left-column").append(this.faces.el);
+            this.faces.setActive(true);
+            this.faces.resize();
+        } else {
+            if (!this.faces) { return; }
+            this.$(".activity").append(this.faces.el);
+            this.activities.unshift(this.faces);
+            this.renderActivityLinks();
+            this.setActivity(this.faces);
+            this.faces.resize()
+        }
     }
 });
 
 var BaseActivityView = Backbone.View.extend({
     initialize: function(options) {
-        _.bindAll(this, "render", "getLink", "getLinkText");
+        _.bindAll(this, "render", "getLink", "getLinkText", "_onSelect");
         if (options.activity) {
             this.activity = options.activity;
         }
         this.session = options.session;
         this.$a = $("<a href='#'>" + this.getLinkText() + "</a>");
-        this.$a.on("click", _.bind(function(evt) {
-            evt.preventDefault();
-            this.trigger("selected", this);
-        }, this));
+    },
+    delegateEvents: function() {
+        this.$a.on("click", this._onSelect);
+        return Backbone.View.prototype.delegateEvents.apply(this, arguments);
+    },
+    _onSelect: function(evt) {
+        evt.preventDefault();
+        this.trigger("selected", this);
     },
     getLinkText: function() {
         // Should override this with something more interesting in subclasses.
@@ -302,22 +360,29 @@ var FacesActivity = BaseActivityView.extend({
     },
     resize: function() {
         var pos = this.$el.position();
+        var height;
         var dims = {
             top: pos.top,
             left: pos.left,
             width: this.$el.parent().width(),
-            height: this.$el.parent().height()
+            height: Math.min(this.$el.parent().height(), $(window).height())
         };
-        console.log(dims);
         postMessageToHangout({type: "set-video-dims", args: dims});
     },
     setActive: function(active) {
         BaseActivityView.prototype.setActive.apply(this, [active]);
+        this.isActive = active;
         if (active) {
             postMessageToHangout({type: "show-video"});
         } else {
             postMessageToHangout({type: "hide-video"});
         }
+    },
+    hideVideoIfActive: function() {
+        if (this.isActive) { postMessageToHangout({type: "hide-video"}); }
+    },
+    showVideoIfActive: function() {
+        if (this.isActive) { postMessageToHangout({type: "show-video"}); }
     },
     getLinkText: function() {
         return "Faces";
@@ -478,6 +543,10 @@ var WebpageActivity = BaseActivityView.extend({
     }
 });
 
+/*
+ * Modal dialogs
+ */
+
 var BaseModalView = Backbone.View.extend({
     events: {
         'click input[type=submit]': 'validateAndGo'
@@ -486,6 +555,9 @@ var BaseModalView = Backbone.View.extend({
         _.bindAll(this, "render", "validateAndGo", "validate", "close");
         $("body").append(this.el);
         this.render();
+        this.$el.on("hidden", _.bind(function() {
+            this.trigger("close");
+        }, this));
     },
     render: function() {
         this.$el.html(this.template()).addClass("modal hide fade");
@@ -501,6 +573,7 @@ var BaseModalView = Backbone.View.extend({
     },
     close: function() {
         this.$el.on("hidden", _.bind(function() {
+            this.trigger("close");
             this.remove();
         }, this));
         this.$el.modal("hide");
@@ -605,6 +678,7 @@ sock.onopen = function() {
 };
 
 sock.onclose = function() {
+    app.hideFacesIfActive();
     $('#disconnected-modal').modal('show');
     var checkIfServerUp = function() {
         var ping = document.location;
@@ -613,7 +687,7 @@ sock.onclose = function() {
             cache: false,
             async: false,
             success: function(msg) {
-                window.location.reload();
+                postMessageToHangout({'type': 'reload'});
             },
             error: function(msg) {
                 timeout = setTimeout(checkIfServerUp, 250);
