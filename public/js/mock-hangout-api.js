@@ -1,5 +1,38 @@
-// Shim gadget/gapi if we are mocking the hangout.
 // Make global -- no 'var'.
+
+var FauxCanvas = function() {
+    var div = document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.width = '320px';
+    div.style.height = '240px';
+    div.style.backgroundColor = 'rgba(255, 0, 0, 0.8)';
+    div.style.outlineColor = "blue";
+    div.style.outlineWidth = "3px";
+    div.style.outlineStyle = "ridge";
+    div.style.zIndex = '100000';
+    div.style.display = 'none';
+    var appended = false;
+
+    this.setPosition = function(value, opt_top) {
+        var left = opt_top ? value : value.left;
+        var top = opt_top ? opt_top : value.top;
+        // Leave room for the outline, to aid in debugging scaling.
+        div.style.left = (left + 3) + "px";
+        div.style.top = (top + 3) + "px";
+    };
+    this.setVisible = function(visible) {
+        div.style.display = visible ? 'block' : 'none';
+        if (!appended) {
+            document.body.appendChild(div);
+            appended = true;
+        }
+    };
+    // Leave room for the outline, to aid in debugging scaling.
+    this.setHeight = function(height) { div.style.height = (height-6) + "px"; };
+    this.setWidth  = function(width)  { div.style.width  = (width-6)  + "px"; };
+}
+var fauxCanvas = new FauxCanvas();
+
 gadgets = {
     util: {
         registerOnLoadHandler: function(cb) {
@@ -35,6 +68,11 @@ gapi = {
                 if (key == "sessionId") {
                     return MOCK_DATA.appData.split(":")[1];
                 }
+            }
+        },
+        layout: {
+            getVideoCanvas: function() {
+                return fauxCanvas;
             }
         }
     }

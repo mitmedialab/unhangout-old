@@ -1,0 +1,89 @@
+var expect = require('expect.js'),
+    _ = require("underscore"),
+    common = require('./common');
+
+var browser = null,
+    event = null;
+
+describe("CREATE SESSIONS", function() {
+    if (process.env.SKIP_SELENIUM_TESTS) {
+        return;
+    }
+    this.timeout(40000); // Extra long timeout for selenium :(
+
+    before(function(done) {
+        common.getSeleniumBrowser(function (theBrowser) {
+            browser = theBrowser;
+            common.standardSetup(function() {
+                event = common.server.db.events.at(0);
+                done();
+            });
+        });
+    });
+    after(function(done) {
+        browser.quit().then(function() {
+            common.standardShutdown(done);
+        });
+    });
+
+    it("Creates a permalink session", function(done) {
+        var sess;
+        // Notice we don't authenticate.
+        browser.get("http://localhost:7777/h/");
+        browser.byCss("#permalink-title").sendKeys("This won't work");
+        browser.byCss("#permalink-create-submit").click();
+        browser.byCss(".help-block").getText().then(function(text) {
+            expect(text.indexOf('this-won-t-work') > -1).to.be(true);
+        });
+        browser.byCss(".suggestion").click().then(function() {
+            // Should now be on the unhangout admin page.
+            sess = common.server.db.permalinkSessions.findWhere({
+                isPermalinkSession: true,
+                shortCode: "this-won-t-work"
+            });
+            expect(sess).to.not.be(undefined);
+            expect(sess.get('title')).to.be('');
+            expect(sess.get('description')).to.be('');
+        });
+        browser.byCss("#title").sendKeys("This Will Work");
+        browser.byCss("#description").sendKeys("And so will this");
+        browser.byCss("input[type=submit]").click().then(function() {
+            expect(sess.get('title')).to.be("This Will Work");
+            expect(sess.get('description')).to.be("And so will this");
+            done();
+        });
+        // Not testing the session redirect link here; that's tested elsewhere.
+    });
+
+    it("Creates an event session", function(done) {
+        // Start with no sessions.
+        event.get("sessions").reset();
+        event.start();
+        browser.get("http://localhost:7777");
+        browser.mockAuthenticate("superuser1");
+        browser.get("http://localhost:7777/event/" + event.id)
+        browser.byCss(".admin-button").click();
+        browser.byLinkText("create session").click();
+        browser.waitForSelector("#session_name");
+        browser.waitTime(100);
+        browser.byCss("#session_name").sendKeys("My New Session");
+        browser.byLinkText("Create Session").click();
+        browser.waitTime(200);
+        browser.byCsss(".session h3").then(function(els) {
+            expect(els.length).to.be(1);
+            els[0].getText().then(function(text) {
+                expect(text).to.eql("My New Session");
+            });
+            expect(event.get("sessions").length).to.be(1);
+            expect(event.get("sessions").at(0).get("title")).to.eql("My New Session");
+            done();
+        });
+        browser.byCss(".admin-button").click();
+        browser.byLinkText("open sessions").click();
+        browser.byCsss(".icon-lock").then(function(els) {
+            expect(els.length).to.be(0);
+            done();
+        });
+    });
+});
+

@@ -232,8 +232,7 @@ models.Session = Backbone.Model.extend({
 			description: "",
 			started: true,
 			connectedParticipants: [],
-            activities: [{type: "about"}],
-            activitiesPresence: [[]],
+            activities: [{type: "about"}, {type: "faces"}],
 			hangoutConnected: false,
 			shortCode: null
 		};
@@ -284,7 +283,7 @@ models.Session = Backbone.Model.extend({
 		return this.get("connectedParticipants").length;
 	},
     addActivity: function(activity, options) {
-        if (!_.contains(["webpage", "video"], activity.type)) {
+        if (!_.contains(["webpage", "video", "faces"], activity.type)) {
             return false;
         }
         var activities = this.get("activities");
@@ -295,7 +294,6 @@ models.Session = Backbone.Model.extend({
             return false;
         } else {
             activities.unshift(activity);
-            this.get("activitiesPresence").unshift([]);
             this.trigger("change:activities");
             this.trigger("addActivity", activity, options);
             return true;
@@ -318,34 +316,6 @@ models.Session = Backbone.Model.extend({
         if (newActivities.length < activities.length) {
             this.trigger("removeActivity", activity);
             this.set("activities", newActivities);
-            this.get("activitiesPresence").splice(index, 1);
-            this.trigger("change:activitiesPresence");
-            return true;
-        }
-        return false;
-    },
-    setActivityPresence: function(userId, activity) {
-        var activities = this.get("activities");
-        var index = null;
-        if (activity == null) {
-            var changed = false;
-            // Strip out presence.
-
-        }
-        var activity = _.find(this.get("activities"), function(a, i) {
-            if (_.isEqual(a, activity)) {
-                index = i;
-                return true;
-            }
-            return false;
-        });
-        if (_.isNull(index)) {
-            return false;
-        }
-        var presence = this.get("activitiesPresence")[i];
-        if (!_.contains(presence, userId)) {
-            presence.push(userId);
-            this.trigger("change:activitiesPresence");
             return true;
         }
         return false;

@@ -18,6 +18,8 @@ var FacilitatorView = Backbone.View.extend({
         this.event = options.event;
         this.sock = options.sock;
         this.activities = [];
+
+        this.session.addActivity({type: "faces"});
         console.log("Initial activities", this.session.get("activities"));
 
         // Our socket is not just correct, not just articulate... it is *on message*.
@@ -51,9 +53,6 @@ var FacilitatorView = Backbone.View.extend({
                 case "session/remove-activity":
                     this.session.removeActivity(msg.args.activity);
                     break;
-                case "session/set-activity-presence":
-                    this.session.setActivityPresence(msg.args.userId, msg.args.activity);
-                    break;
                 case "session/control-video":
                     var view = this._getViewForActivityData(msg.args.activity);
                     if (view) {
@@ -77,9 +76,8 @@ var FacilitatorView = Backbone.View.extend({
 					console.log("CDM inner set", event.data.args.url,
 								event.origin);
 					session.set("hangout-url", event.data.args.url);
-					window.parent.postMessage({type: "url-ack"},
-											   event.origin);
 					HANGOUT_ORIGIN = event.origin;
+					postMessageToHangout({type: "url-ack"});
 				}
 			} else if (event.data.type == "participants") {
 				console.log("CDM inner participants:", event.data.args);
@@ -111,6 +109,9 @@ var FacilitatorView = Backbone.View.extend({
                 break;
             case "about":
                 view = new AboutActivity({session: this.session, event: this.event});
+                break;
+            case "faces":
+                view = new FacesActivity({session: this.session, activity: activityData});
                 break;
         }
         view.on("selected", _.bind(function() {this.setActivity(view);}, this));
@@ -166,7 +167,7 @@ var FacilitatorView = Backbone.View.extend({
             var li = document.createElement("li");
             li.appendChild(activityView.getLink());
             // Add removal links for activities; but not for the 'about' activity.
-            if (activityView.activity.type != "about") {
+            if (!_.contains(["about", "faces"], activityView.activity.type)) {
                 var close = document.createElement("a");
                 close.class = 'close-activity';
                 close.href = '#';
@@ -194,13 +195,10 @@ var FacilitatorView = Backbone.View.extend({
         this.currentActivity.delegateEvents();
         this.currentActivity.setActive(true);
     },
-    setActivityPresence: function() {
-        // TODO
-    },
     hide: function(event) {
         // Hide the unhangout facilitator app.
         event.preventDefault();
-        window.parent.postMessage({type: "hide"}, HANGOUT_ORIGIN);
+        postMessageToHangout({type: "hide"});
     },
     addVideo: function(event) {
         // Add a youtube video activity, complete with controls for
@@ -242,6 +240,7 @@ var FacilitatorView = Backbone.View.extend({
 
 var BaseActivityView = Backbone.View.extend({
     initialize: function(options) {
+        _.bindAll(this, "render", "getLink", "getLinkText");
         if (options.activity) {
             this.activity = options.activity;
         }
@@ -251,7 +250,6 @@ var BaseActivityView = Backbone.View.extend({
             evt.preventDefault();
             this.trigger("selected", this);
         }, this));
-        _.bindAll(this, "render", "getLink", "getLinkText");
     },
     getLinkText: function() {
         // Should override this with something more interesting in subclasses.
@@ -290,6 +288,40 @@ var AboutActivity = BaseActivityView.extend({
         return "About";
     }
 
+});
+
+var FacesActivity = BaseActivityView.extend({
+    template: _.template($("#faces-activity").html()),
+    initialize: function(options) {
+        BaseActivityView.prototype.initialize.apply(this, [options]);
+        _.bindAll(this, "resize");
+        $(window).on("resize", this.resize);
+    },
+    onrender: function() {
+        this.resize();
+    },
+    resize: function() {
+        var pos = this.$el.position();
+        var dims = {
+            top: pos.top,
+            left: pos.left,
+            width: this.$el.parent().width(),
+            height: this.$el.parent().height()
+        };
+        console.log(dims);
+        postMessageToHangout({type: "set-video-dims", args: dims});
+    },
+    setActive: function(active) {
+        BaseActivityView.prototype.setActive.apply(this, [active]);
+        if (active) {
+            postMessageToHangout({type: "show-video"});
+        } else {
+            postMessageToHangout({type: "hide-video"});
+        }
+    },
+    getLinkText: function() {
+        return "Faces";
+    }
 });
 
 // Youtube's iframe API works on a global callback.  So set up a global queue
@@ -538,6 +570,20 @@ var RemoveActivity = BaseModalView.extend({
 
 
 var HANGOUT_ORIGIN; // Will be set when the hangout CDM's us
+var _messageQueue = [];
+var postMessageToHangout = function(message) {
+    if (message) {
+        _messageQueue.push(message);
+    }
+    if (HANGOUT_ORIGIN) {
+        _.each(_messageQueue, function(msg) {
+            window.parent.postMessage(msg, HANGOUT_ORIGIN);
+        });
+        _messageQueue = [];
+    } else {
+        setTimeout(postMessageToHangout, 10);
+    }
+};
 var event = new models.Event(EVENT_ATTRS);
 var session = new models.Session(SESSION_ATTRS);
 var sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
@@ -591,3 +637,4 @@ session.on("change:connectedParticipants", function() {
         connectedParticipants: session.get("connectedParticipants")
     });
 });
+

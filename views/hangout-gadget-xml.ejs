@@ -117,6 +117,19 @@
                                 case "hide":
                                     gapi.hangout.hideApp();
                                     break;
+                                case "show-video":
+                                    gapi.hangout.layout.getVideoCanvas().setVisible(true);
+                                    break;
+                                case "hide-video":
+                                    gapi.hangout.layout.getVideoCanvas().setVisible(false);
+                                    break;
+                                case "set-video-dims":
+                                    var canvas = gapi.hangout.layout.getVideoCanvas();
+                                    var args = event.data.args;
+                                    canvas.setPosition(args.left, args.top);
+                                    canvas.setWidth(args.width);
+                                    canvas.setHeight(args.height);
+                                    break;
                             }
                         }
                     }
