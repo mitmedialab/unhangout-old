@@ -77,14 +77,12 @@ describe("CREATE SESSIONS", function() {
             });
             expect(event.get("sessions").length).to.be(1);
             expect(event.get("sessions").at(0).get("title")).to.eql("My New Session");
-            done();
         });
         browser.byCss(".admin-button").click();
         browser.byLinkText("open sessions").click();
-        browser.byCsss(".icon-lock").then(function(els) {
-            expect(els.length).to.be(0);
+        browser.executeScript("return $('.icon-lock').is(':visible');").then(function(viz) {
+            expect(viz).to.be(false);
             done();
         });
     });
 });
-

@@ -218,4 +218,22 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
     });
+    it("Warns you when you're in the wrong hangout", function(done) {
+        var session = event.get("sessions").at(0);
+        var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
+                     ".document.getElementsByTagName('iframe')[0].contentWindow" +
+                     ".document.getElementById('wrong-hangout-url')"
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("regular1").then(function() {
+            session.set("hangout-url", "http://example.com/");
+        });
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.wait(function() {
+            return browser.executeScript("return !!" + button + ";");
+        });
+        browser.executeScript("return " + button + ".href").then(function(href) {
+            expect(href).to.be("http://example.com/");
+            done();
+        });
+    });
 });

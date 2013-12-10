@@ -38,11 +38,12 @@ var FacilitatorView = Backbone.View.extend({
 					window.addEventListener("message",
                                             this.handleCrossDocumentMessages,
                                             false);
-
+                    break;
                 case "session/set-hangout-url-err":
-                    // We got a different URL when we tried to set the hangout url.
-                    // TODO: notify the user that this is the wrong URL for this
-                    // hangout; the right one is in msg.args.url.
+                    console.log("Bad hangout url.");
+                    this.hideFacesIfActive();
+                    // Get out of here!
+                    new SwitchHangoutsDialog({correctUrl: msg.args.url});
                     break;
                 case "session/add-activity":
                     this.session.addActivity(msg.args.activity, {
@@ -577,7 +578,6 @@ var BaseModalView = Backbone.View.extend({
             this.remove();
         }, this));
         this.$el.modal("hide");
-
     }
 });
 
@@ -635,6 +635,20 @@ var RemoveActivity = BaseModalView.extend({
     validate: function() {
         return true;
     }
+});
+
+var SwitchHangoutsDialog = BaseModalView.extend({
+    template: _.template($("#switch-hangouts").html()),
+    initialize: function(options) {
+        this.correctUrl = options.correctUrl;
+        BaseModalView.prototype.initialize.apply(this, []);
+    },
+    render: function() {
+        this.$el.html(this.template({url: this.correctUrl})).addClass("modal");
+        this.$el.modal({backdrop: "static"});
+        this.$el.modal('show');
+    },
+    validate: function(){}
 });
 
 /****************************

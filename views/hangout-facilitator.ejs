@@ -141,6 +141,23 @@
     </div>
 </script>
 
+<script type='text/template' id='switch-hangouts'>
+    <div class="modal-header"><h3>This is the wrong hangout</h3></div>
+    <div class="modal-body">
+        <p>
+            Sorry about that.  You ended up in the wrong hangout somehow &mdash;
+            probably two people created it at once.  The hangout for your session
+            is over here:
+        </p>
+        <p style='text-align: center;'>
+            <a class='btn btn-large btn-danger'
+               href='{{= url }}' target="_top" id='wrong-hangout-url'>
+                Click to Join the Correct Hangout
+            </a>
+        </p>
+    </div>
+</script>
+
 <!-- Disconnection modal -->
 <div class="modal hide fade disconnected-modal" id="disconnected-modal">
     <div class="modal-header"><h3>Warning!</h3></div>
