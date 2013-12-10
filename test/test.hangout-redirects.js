@@ -8,6 +8,7 @@ var server = require("../lib/unhangout-server"),
     async = require('async');
 
 var session;
+var suffix;
 
 describe("HANGOUT REDIRECTS", function() {
     beforeEach(function(done) {
@@ -17,6 +18,9 @@ describe("HANGOUT REDIRECTS", function() {
                 if (e.get("sessions").length > 0) {
                     e.start();
                     session = e.get("sessions").at(0);
+                    common.server.options.HANGOUT_APP_ID = "fun";
+                    suffix = "?gid=" + common.server.options.HANGOUT_APP_ID +
+                             "&gd=sessionId:" + session.id;
                     return true;
                 }
             });
@@ -43,7 +47,7 @@ describe("HANGOUT REDIRECTS", function() {
     it("Uses existing hangout link when present", function(done) {
         var success = session.setHangoutUrl("http://example.com/hangy");
         expect(success).to.be(true);
-        checkRedirect("http://example.com/hangy", "regular1", done);
+        checkRedirect("http://example.com/hangy" + suffix, "regular1", done);
     });
     it("Waits for a link when pending, and uses it when available", function(done) {
         var user = common.server.db.users.findWhere({"sock-key": "regular1"});
@@ -63,7 +67,7 @@ describe("HANGOUT REDIRECTS", function() {
                 }, 1000);
             },
             function(done) {
-                checkRedirect("http://example.com/hangy", "regular1", done);
+                checkRedirect("http://example.com/hangy" + suffix, "regular1", done);
             },
         ], function() {
             expect(session.get("hangout-pending")).to.be(null);
@@ -72,10 +76,10 @@ describe("HANGOUT REDIRECTS", function() {
         });
     });
     it("Uses a farmed hangout link when available", function(done) {
-        common.server.options.HANGOUT_APP_ID = "fun";
         farming.reuseUrl("http://example.com/farmed", function(err) {
             expect(err).to.be(null);
-            var url = "http://example.com/farmed?gid=fun&gd=sessionId:" + session.id;
+        
+            var url = "http://example.com/farmed" + suffix;
             checkRedirect(url, "regular1", function() {
                 farming.getNextHangoutUrl(function(url) {
                     expect(url).to.be(null);
@@ -85,7 +89,6 @@ describe("HANGOUT REDIRECTS", function() {
         });
     });
     it("Uses button URL when farmed hangout links are unavailable", function(done) {
-        common.server.options.HANGOUT_APP_ID = "fun";
         // Ensure we have nothing farmed...
         farming.getNextHangoutUrl(function(url) {
             expect(url).to.be(null);
