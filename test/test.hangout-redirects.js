@@ -9,7 +9,7 @@ var server = require("../lib/unhangout-server"),
 
 var session;
 
-describe("HANGOUT SESSION REDIRECTS", function() {
+describe("HANGOUT REDIRECTS", function() {
     beforeEach(function(done) {
         common.standardSetup(function() {
             // Grab a session to work with.

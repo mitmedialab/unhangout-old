@@ -28,7 +28,8 @@ describe("CREATE SESSIONS", function() {
 
     it("Creates a permalink session", function(done) {
         var sess;
-        // Notice we don't authenticate.
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/h/");
         browser.byCss("#permalink-title").sendKeys("This won't work");
         browser.byCss("#permalink-create-submit").click();

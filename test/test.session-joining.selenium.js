@@ -174,13 +174,27 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
       
     });
+    function framedDisconnectionModalShowing(isShowing) {
+        return browser.wait(function() {
+            return browser.executeScript(
+                // Three frames deep. [[INCEPTION]]
+                "return !!(" +
+                    "document.getElementsByTagName('iframe')[0].contentWindow" +
+                    ".document.getElementsByTagName('iframe')[0].contentWindow" +
+                    ".document.getElementById('disconnected-modal')" +
+                ");"
+            ).then(function(result) {
+                return result == isShowing;
+            });
+        });
+    }
     it("Reconnects session sockets on server restart", function(done) {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         var sock;
         var session = event.get("sessions").at(0);
         browser.get(
-            "http://localhost:7777/facilitator/" + session.id + "/"
+            "http://localhost:7777/test/hangout/" + session.id + "/"
         ).then(function() {
             common.authedSock("regular2", session.getRoomId(), function(thesock) {
                 sock = thesock;
@@ -189,11 +203,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.waitTime(200).then(function () {
             expect(session.get("connectedParticipants").length).to.be(2);
             common.restartServer(function onStopped(restart) {
-                disconnectionModalShowing(true).then(function() {
+                framedDisconnectionModalShowing(true).then(function() {
                     restart();
                 });
             }, function onRestarted() {
-                disconnectionModalShowing(false).then(function() {
+                framedDisconnectionModalShowing(false);
+                browser.waitTime(100).then(function() {
                     // Refresh session from new DB.
                     event = common.server.db.events.get(event.id);
                     session = event.get("sessions").get(session.id);
