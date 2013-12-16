@@ -190,9 +190,9 @@ var SessionView = Marionette.ItemView.extend({
         }));
 	},
 
-	delete: function() {
+	"delete": function() {
 		sock.send(JSON.stringify({
-            type:"delete", args: {id: this.model.id, roomId: curEvent.getRoomId()}
+            type:"delete-session", args: {id: this.model.id, roomId: curEvent.getRoomId()}
         }));
 	}
 });
@@ -480,7 +480,6 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 var ChatLayout = Backbone.Marionette.Layout.extend({
 	template: '#chat-layout',
 	id: 'chat',
-	className: "full-size-container",
 
 	regions: {
 		chat:'#chat-container-region',
@@ -562,11 +561,11 @@ var ChatMessageView = Marionette.ItemView.extend({
 
     	//URLs starting with http://, https://, or ftp://
      	replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-     	replacedText = msg.replace(replacePattern1, "<a href='$1' target='_new'>$1</a>");
+     	replacedText = msg.replace(replacePattern1, "<a href='$1' target='_blank'>$1</a>");
 
      	//URLs starting with "www." (without // before it, or it'd re-link the ones done above).
      	replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-     	replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_new'>$2</a>");
+     	replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_blank'>$2</a>");
 
      	//Change email addresses to mailto:: links.
      	replacePattern3 = /(([a-zA-Z0-9\-?\.?]+)@(([a-zA-Z0-9\-_]+\.)+)([a-z]{2,3}))+$/;
@@ -668,45 +667,35 @@ var VideoEmbedView = Marionette.ItemView.extend({
 	player: null,
 
 	initialize: function() {
-		// TODO
-		// we need to be more clever about this. if the player is loaded already,
-		// just send it to a different youtube id. reloading it entirely doesn't
-		// seem to work. In the meantime, just zero videos out between their inclusion.
 		this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
-			// two cases. if the old attribute was empty or null, then just render.
-			// if the old attribute is a valid youtube id (ie 11 chars long) then
-			// we need to do a YT JS API dance.
-
-			var previous = model.previous("youtubeEmbed");
-			if(_.isNull(previous) || previous.length!=11) {
-				this.render();
-			} else {
-				this.player.loadVideoById(youtubeEmbed);
-			}
+            if (!youtubeEmbed) {
+                this.$el.hide();
+            } else {
+                this.$el.show();
+                this.yt.setVideoId(this.model.get("youtubeEmbed"));
+            }
 		}, this);
 	},
-
-	onShow: function() {
-		if(_.isNull(this.model.get("youtubeEmbed")) || this.model.get("youtubeEmbed").length!=11) {
+	onRender: function() {
+        console.log(users, USER_ID, users.get(USER_ID));
+        this.yt = new YoutubeVideo({
+            ytID: this.model.get("youtubeEmbed"),
+            showGroupControls: IS_ADMIN
+        });
+        this.yt.on("control-video", function(args) {
+            _.extend(args, {roomId: curEvent.getRoomId()});
+            sock.send(JSON.stringify({type: "control-video", args: args}));
+        });
+        this.$(".player").html(this.yt.el);
+		if(!this.model.get("youtubeEmbed")) {
 			this.$el.hide();
 		} else {
 			this.$el.show();
-			this.$el.draggable();
-			// do the actual YT embed code here
-			this.player = new YT.Player('player', {
-				height: 200,
-				// width: this.dimensions['small'].width,
-				videoId: this.model.get("youtubeEmbed"),
-				controls: 0,
-				events: {
-					"onReady": function(args) {
-						console.log("video ready!");
-					},
-					"onStateChange": function(args) {
-						console.log("state change");
-					}
-				}
-			});
+            this.yt.render();
+			//this.$el.draggable(); // wat
 		}
-	}
+	},
+    control: function(args) {
+        this.yt.receiveControl(args);
+    }
 });

@@ -24,11 +24,6 @@ if (typeof console === "undefined" || typeof console.log === "undefined") {
 
 
 $(document).ready(function() {
-	if($("#main").length!=1) {
-		console.log("Code running on a page that does not have an #app div.");
-		return;
-	}
-
 	console.log("Starting app!");
 
 	// The constants used heavily in this block (eg EVENT_ATTRS, SINGLE_SESSION_RSVP, USER_ID)
@@ -36,44 +31,8 @@ $(document).ready(function() {
 	// state of the event to the client - in a big JSON blob. Subsequent updates all happen
 	// over the sockJS channel, but the initial state is embedded in these constants.
 	curEvent = new models.ClientEvent(EVENT_ATTRS);
-	
-	users = new models.UserList(EVENT_ATTRS.connectedUsers);
-
-	// add in some fake users for testing user list display
-	// users.add(new models.User({displayName:"test1", picture:""}));
-	// users.add(new models.User({displayName:"test2", picture:""}));
-	// users.add(new models.User({displayName:"test3", picture:""}));
-	// users.add(new models.User({displayName:"test4", picture:""}));
-	// users.add(new models.User({displayName:"test5", picture:""}));
-	// users.add(new models.User({displayName:"test6", picture:""}));
-	// users.add(new models.User({displayName:"test7", picture:""}));
-	// users.add(new models.User({displayName:"test8", picture:""}));
-	// users.add(new models.User({displayName:"test9", picture:""}));
-	// users.add(new models.User({displayName:"test10", picture:""}));
-	// users.add(new models.User({displayName:"test11", picture:""}));
-	// users.add(new models.User({displayName:"test12", picture:""}));
-	// users.add(new models.User({displayName:"test13", picture:""}));
-	// users.add(new models.User({displayName:"test14", picture:""}));
-	// users.add(new models.User({displayName:"test15", picture:""}));
-	// users.add(new models.User({displayName:"test16", picture:""}));
-	// users.add(new models.User({displayName:"test17", picture:""}));
-	// users.add(new models.User({displayName:"test18", picture:""}));
-	// users.add(new models.User({displayName:"test19", picture:""}));
-	// users.add(new models.User({displayName:"test20", picture:""}));
-	// users.add(new models.User({displayName:"test21", picture:""}));
-	// users.add(new models.User({displayName:"test22", picture:""}));
-	// users.add(new models.User({displayName:"test23", picture:""}));
-	// users.add(new models.User({displayName:"test24", picture:""}));
-	// users.add(new models.User({displayName:"test25", picture:""}));
-	// users.add(new models.User({displayName:"test26", picture:""}));
-	// users.add(new models.User({displayName:"test27", picture:""}));
-	// users.add(new models.User({displayName:"test28", picture:""}));
-	// users.add(new models.User({displayName:"test29", picture:""}));
-	// users.add(new models.User({displayName:"test30", picture:""}));
-
-	
 	curEvent.get("sessions").add(EVENT_ATTRS.sessions);
-	
+	users = new models.UserList(EVENT_ATTRS.connectedUsers);
 	messages = new models.ChatMessageList();
 	
 	console.log("Inflated models.");
@@ -111,10 +70,6 @@ $(document).ready(function() {
 	    var firstScriptTag = document.getElementsByTagName('script')[0];
 	    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-	    window.onYouTubeIframeAPIReady = _.bind(function(playerId) {
-			this.vent.trigger("youtube-ready");
-	    }, this);
-		
 		// Pagination is a bit of a hairy situation. We're using a third party library
 		// to provide most of the pagination support:
 		// https://github.com/backbone-paginator/backbone.paginator
@@ -148,6 +103,7 @@ $(document).ready(function() {
 		// present the views in their respective regions
 		this.right.show(this.chatView);
 		this.main.show(this.sessionListView);
+        this.topLeft.show(this.youtubeEmbedView);
 		this.dialogs.show(this.dialogView);
 		this.top.show(this.aboutView);
 
@@ -224,6 +180,7 @@ $(document).ready(function() {
 	var messageShown = false ;
 	var windowBlurred = false ;
 	var isIntervalRunning = false;
+	var aboutShown = false;
 
 	// All these app.vent calls are setting up app-wide event handling. The app
 	// can trigger these events in any manner it desires. We use this to abstract
@@ -231,61 +188,11 @@ $(document).ready(function() {
 	// they're triggered by users, sometimes by the arrival of remove messages, 
 	// sometimes as side effects of other actions. 
 	app.vent.on("new-chat-message", _.bind(function() {
-		if(windowBlurred)
-			messageShown = false;
-		else 
-			messageShown = true;
-
-		if(!messageShown && isIntervalRunning && windowBlurred)
+		if(isIntervalRunning && windowBlurred) {
 			interval = window.setTimeout(this.showFlashTitle, 1000);
-
+        }
 	}, app));
 
-	var videoShown = false;
-	var aboutShown = false;
-
-	// this event handles the show-hide behavior of the video embed
-	// in the upper left corner of the UI. There are lots of finnicky details here 
-	// to handle the spacing properly.
-	app.vent.on("video-nav", _.bind(function() {
-		console.log("handling video-nav event");
-
-		// regardless of whether there's a current embed, hide the video if
-		// it's currently showon.	
-		if(videoShown) {
-			this.topLeft.$el.css("z-index", -10);
-			this.topLeft.$el.addClass("hide");
-			this.topLeft.reset();
-			videoShown = false;
-
-			this.main.$el.css("top", 0);
-			$("#video-nav").removeClass("active");
-		} else if(curEvent.hasEmbed()) {
-			// we have to make sure the current event actually has an embed to show.
-			// If we're in this branch it does. Otherwise, we ignore the click.
-
-			$(".nav .active").removeClass("active");
-	
-			if(!videoShown) {
-				this.topLeft.show(this.youtubeEmbedView);
-				videoShown = true;
-				this.topLeft.$el.removeClass("hide");
-
-				var mainHeight = this.youtubeEmbedView.$el.outerHeight()-5;
-
-				if(this.main.$el.hasClass("bar")) {
-					mainHeight += 40;
-				}
-
-				this.main.$el.css("top", mainHeight);
-				this.topLeft.$el.css("z-index", 50);
-				$("#video-nav").addClass("active");
-			}
-		} else {
-			console.log("Ignoring video click; no video available.");
-		}			
-
-	}, app));
 	
 	app.vent.on("about-nav", _.bind(function() {
 		console.log("handling about-nav event");
@@ -310,102 +217,7 @@ $(document).ready(function() {
 
 	}, app));
 
-	// We have to wait for the youtube api to load for us to embed the video. This
-	// will trigger more or less on page load, so as a user you don't really see
-	// any delay. But we do need to wait.
-	app.vent.on("youtube-ready", _.bind(function() {
-		console.log("YOUTUBE READY");
-
-		if(curEvent.hasEmbed()) {
-			app.vent.trigger("video-nav");
-		}
-	}, app));
-
-	app.vent.on("video-live", _.bind(function() {
-		$("#video-nav .label").removeClass("hide");
-	}, app));
-	
-	app.vent.on("video-off", _.bind(function() {
-		$("#video-nav .label").addClass("hide");
-	}, app));
-
-	// The 'bar' in this case is the "Your session is now live!" bar that appears
-	// under the nav bar when the session you RSVP'd for is currently running.
-	app.vent.on("show-bar", _.bind(function(sessionKey) {
-
-		this.bar.show(new SessionLiveView());
-		$(this.bar.el).show();
-
-		$("#top-left, #main-right, #main-left").addClass("bar");
-
-		// set the hangout link.
-		this.bar.$el.find("a").attr("href", "/session/" + sessionKey);
-
-		// 30 minutes later hide the bar(?)
-		setTimeout(function() {
-			app.vent.trigger("hide-bar");
-		}, 60*1000*30);
-	}, app));
-
-	app.vent.on("hide-bar", _.bind(function() {
-		this.bar.close();
-		this.bar.$el.hide();
-
-		$("#top-left, #main-right, #main-left").removeClass("bar");
-
-		// we need to do a special check for main-left, which has custom
-		// style adjustement on it.  
-		if(videoShown) {
-			this.main.$el.css("top", this.youtubeEmbedView.$el.outerHeight()-5);
-		} else {
-			this.main.$el.css("top", "");
-		}
-
-	}, app));
-
-	// This only really come into play in the SINGLE_SESSION_RSVP case. Manages
-	// the unattend/re-attend flow.
-	var queuedAttend = false;
-	app.vent.on("attend", _.bind(function(sessionId) {
-		console.log("VENT ATTEND: " + sessionId);
-		// we have to manage attend logic here in the single_session_rsvp case so
-		// we can send unattend messages first, and then attend messages.
-
-		// if they're the same, just ignore it.
-		if(curSession && curSession!=sessionId) {
-            //TODO: server isn't listening to this..
-			queuedAttend = function() {
-				var message = {type:"attend", args:{id:sessionId}};
-				sock.send(JSON.stringify(message));				
-			}
-
-			var message = {type:"unattend", args:{id:curSession}};
-			sock.send(JSON.stringify(message));
-		} else if(!curSession) {
-            //TODO: server isn't listening to this..
-			var message = {type:"attend", args:{id:sessionId}};
-			sock.send(JSON.stringify(message));				
-		}
-	}));
-
 	app.start();
-
-    //TODO: curSession seems to be dead?
-	// if the user joining has a curSession (ie a session they have RSVP'd to)
-	// check and see if it's live. If it is, show the bar.
-	// (Not sure how this will work in the non SINGLE_SESSION_RSVP mode, because
-	//  you can RSVP to as many sessions as you like. Hmm. TODO.)
-	if(curSession) {
-		var curSessionObj = curEvent.get("sessions").get(curSession);
-
-		if(curSessionObj.isLive()) {
-			app.vent.trigger("show-bar", curSessionObj.get("session-key"));
-		} 
-	}
-
-	if(curEvent.hasEmbed()) {
-		app.vent.trigger("video-live");
-	}
 
 	// if the event isn't live yet, force the about page to show.
 	if(!curEvent.isLive()) {
@@ -415,7 +227,7 @@ $(document).ready(function() {
 	}
 
 	// Handles clicks on the nav bar links.
-	$("#video-nav, #about-nav").click(function() {
+	$("#about-nav").click(function() {
 		app.vent.trigger($(this).attr("id"));
 	});
 	
@@ -456,9 +268,8 @@ $(document).ready(function() {
 		var msg = JSON.parse(message.data);
 		
 		if(msg.type.indexOf("-err")!=-1) {
-			console.log("Got an error from the server!");
+			console.log("Got an error from the server!", message);
 		}
-		
 		// All messages have a type field. 
 		switch(msg.type) {			
 			// join an EVENT
@@ -496,22 +307,11 @@ $(document).ready(function() {
 
 				curEvent.setEmbed(msg.args.ytId);
 				console.log("added yt embed id: " + JSON.stringify(msg.args));
-
-				if(msg.args.ytId.length > 0) {
-					// if it's a non-empty yt embed, show the live tag.
-					app.vent.trigger("video-live");
-
-					if(originalYoutubeId.length==0) {
-						app.vent.trigger("video-nav");
-					}
-				} else {
-					// if it's empty, hide the live tag.
-					app.vent.trigger("video-off");
-					app.vent.trigger("video-nav");
-				}
-
 				break;
-			case "delete":
+            case "control-video":
+                app.youtubeEmbedView.control(msg.args);
+                break;
+			case "delete-session":
 				var session = curEvent.get("sessions").get(msg.args.id);
 				// app.paginatedSessions.remove(session);
 				curEvent.removeSession(session);

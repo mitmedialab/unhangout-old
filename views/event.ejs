@@ -7,12 +7,12 @@
             <div id="global"></div>
             <div id="dialogs"></div>
         </div>
-        
         <div class="row" id="main">
-            <div id="bar"></div>
             <div id="top"></div>
-            <div id="top-left" class="span6 hide"></div>
-            <div id="main-left" class="span6"></div>
+            <div id="left" class="span6">
+                <div id="top-left"></div>
+                <div id="main-left"></div>
+            </div>
             <div id="main-right" class="span6"></div>
         </div>
     </div>
@@ -106,7 +106,7 @@
 </script>            
             
 <script type="text/template" id="video-embed-template">
-    <div id="player" class="player"></div>
+    <div class='player'></div>
 </script>
 
 <script type="text/template" id="admin-button-template">
@@ -185,6 +185,8 @@
     </div>
 </script>
 
+<% include _common-templates.ejs %>
+
 <script type='text/javascript'>
     <% if (user.isAdminOf(event)) { %>
         var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
@@ -195,6 +197,7 @@
 <script type="text/javascript" src="/public/js/models.js"></script>    
 <script type="text/javascript" src="/public/js/client-models.js"></script>    
 <script type="text/javascript" src="/public/js/event-app.js"></script>
+<script type="text/javascript" src="/public/js/common-views.js"></script>    
 <script type="text/javascript" src="/public/js/event-views.js"></script>    
 
 <% include _analytics.ejs %>
