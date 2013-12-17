@@ -15,19 +15,19 @@
         <a class='play-for-everyone btn btn-warning'>
             {{ if (playing) { }}
                 <i class='icon icon-pause'></i>
-                Pause for all
+                Pause <span class='for'>for </span>all
             {{ } else { }}
                 <i class='icon icon-play'></i>
-                Play for all
+                Play <span class='for'>for </span> all
             {{ } }}
         </a>
         <a class='mute-for-everyone btn btn-warning'>
             {{ if (muted) { }}
                 <i class='icon icon-volume-up'></i>
-                Unmute for all
+                Unmute <span class='for'>for </span>all
             {{ } else { }}
                 <i class='icon icon-volume-off'></i>
-                Mute for all
+                Mute <span class='for'>for </span>all
             {{ } }}
         </a>
     {{ } }}
@@ -40,7 +40,7 @@
                 {{ if (hasControl) { }}
                     Syncing..
                 {{ } else { }}
-                    Not syncing
+                    No sync
                 {{ } }}
             {{ } else { }}
                 <span class='sync-indicator unsynced'></span> Out of sync
@@ -51,7 +51,7 @@
             {{ if (intendToSync) { }}
                 <i class='icon icon-lock'></i>
             {{ } else { }}
-                <i class='icon icon-unlock'></i> Sync lock
+                <i class='icon icon-unlock'></i> Sync
             {{ } }}
 
         </a>

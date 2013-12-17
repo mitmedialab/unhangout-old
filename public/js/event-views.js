@@ -292,54 +292,109 @@ var DialogView = Backbone.Marionette.Layout.extend({
 		'click #set-embed':'setEmbed',
 		'click #remove-embed':'removeEmbed',
 		'click #disconnected-modal a':'closeDisconnected',
-		'click #create-session':'createSession'
+		'click #create-session':'createSession',
+        'change [name=session_type]': 'changeSessionType'
 	},
-	setEmbed: function() {
-		var val = $("#youtube_id").val();
-        var newId;
+    extractYoutubeId: function(val) {
+        // From http://stackoverflow.com/a/6904504 , covering any of the 15
+        // or so different variations on youtube URLs.
+        // Allow blank values, so that we can clear the embed with them.
+        if (val == "") {
+            return "";
+        }
+        var ytid;
         if (/^[-A-Za-z0-9_]{11}$/.test(val)) {
-            newId = val;
+            ytid = val;
         } else {
-            // From http://stackoverflow.com/a/6904504 , covering any of the 15
-            // or so different variations on youtube URLs.
             var re = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
             var match = re.exec(val);
             if (match) {
-                newId = match[1];
+                ytid = match[1];
             } else {
-                // Unmatched -- trigger error below.
-                newId = "bad";
+                ytid = null;
             }
         }
-		if(newId.length!=11 && newId.length!=0) {
-			this.$el.find("#embed-modal p.text-warning").removeClass("hide");
-			this.$el.find("#embed-modal .control-group").addClass("error");
+        return ytid;
+
+    },
+	setEmbed: function() {
+        var newId = this.extractYoutubeId($("#embed_youtube_id").val());
+		if(_.isNull(newId)) {
+			this.$("#embed-modal p.text-warning").show();
+			this.$("#embed-modal .control-group").addClass("error");
 		} else {
-			this.$el.find("#embed-modal p.text-warning").addClass("hide");
-			this.$el.find("#embed-modal .control-group").removeClass("error");
+			this.$("#embed-modal p.text-warning").hide();
+			this.$("#embed-modal .control-group").removeClass("error");
 			var message = {type:"embed", args: {ytId:newId, roomId: curEvent.getRoomId()}};
 			sock.send(JSON.stringify(message));
 		}
 	},
-
 	removeEmbed: function() {
 		// just send an empty message, and clear the field
-		$("#youtubue_id").val("");
-		var message = {type:"embed", args:{ytId:"", roomId: curEvent.getRoomId()}};
-		sock.send(JSON.stringify(message));
+		$("#embed_youtubue_id").val("");
+        this.setEmbed();
 	},
-
-	createSession: function() {
-		var title = $("#session_name").val();
+    changeSessionType: function() {
+        var val = this.$("[name='session_type']:checked").val();
+        switch (val) {
+            case "simple":
+                this.$(".youtube-url, .webpage-url").hide();
+                break;
+            case "video":
+                this.$(".youtube-url").show();
+                this.$(".webpage-url").hide();
+                break;
+            case "webpage":
+                this.$(".webpage-url").show();
+                this.$(".youtube-url").hide();
+                break;
+        };
+    },
+	createSession: function(event) {
+        event.preventDefault();
+        var scope = $("#create-session-modal");
+		var title = $("#session_name", scope).val();
+        var type = $("[name='session_type']:checked", scope).val();
+        var activities = [];
+        switch (type) {
+            case "simple":
+                activities.push({type: "about", autoHide: true});
+                break;
+            case "video":
+                var ytid = this.extractYoutubeId($("#session_youtube_id", scope).val());
+                if (ytid == "" || _.isNull(ytid)) {
+                    $(".yt-error", scope).show();
+                    $("#session_youtube_id", scope).parent().addClass("error");
+                    return;
+                } else {
+                    activities.push({type: "video", video: {provider: "youtube", id: ytid}});
+                }
+                break;
+            case "webpage":
+                var url = this.$("#session_webpage").val();
+                if (!/^https:\/\//.test(url)) {
+                    $(".url-error", scope).show();
+                    $("#session_webpage", scope).parent().addClass("error");
+                    return;
+                } else {
+                    activities.push({type: "webpage", url: url});
+                }
+                break;
+        }
 
 		sock.send(JSON.stringify({
             type:"create-session",
-            args:{title:title, description:"", roomId: curEvent.getRoomId()}
+            args: {
+                title: title,
+                description:"",
+                activities: activities,
+                roomId: curEvent.getRoomId()
+            }
         }));
-
-		$("#session_name").val("");
-
-		$("#create-session-modal").modal('hide');
+		$("input[type=text]", scope).val("");
+        $(".yt-error, .url-error", scope).hide();
+        $(".error", scope).removeClass(".error")
+		scope.modal('hide');
 	},
 
 	closeDisconnected: function() {
@@ -373,11 +428,11 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
         var ytId = curEvent.get("youtubeEmbed");
         if (ytId) {
             var url = "https://www.youtube.com/watch?v=" + ytId;
-            $("#youtube_id").val(url);
+            $("#embed_youtube_id").val(url);
             $("#current-yt-url").html("Current: <a target='_blank' href='" + url + "'>" + url + "</a>");
             $("#remove-embed").show();
         } else {
-            $("#youtube_id").val("");
+            $("#embed_youtube_id").val("");
             $("#current-yt-url").html("");
             $("#remove-embed").hide();
         }
@@ -677,7 +732,6 @@ var VideoEmbedView = Marionette.ItemView.extend({
 		}, this);
 	},
 	onRender: function() {
-        console.log(users, USER_ID, users.get(USER_ID));
         this.yt = new YoutubeVideo({
             ytID: this.model.get("youtubeEmbed"),
             showGroupControls: IS_ADMIN

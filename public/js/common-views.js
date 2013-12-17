@@ -93,9 +93,15 @@ var YoutubeVideo = Backbone.View.extend({
         console.log("Receive control", args);
         this.ctrl = args;
         if (!this.player) { return; }
+        // Do we have no intention of syncing?  Return.
         if (!this.intendToSync) {
             this.renderControls();
             return;
+        }
+        // Has the video finished? Tell the server to pause.
+        var dur = this.player.getDuration();
+        if (args.state == "playing" && dur > 0 && args.time > dur) {
+            this.trigger("control-video", {action: "pause"});
         }
         // Sync us up!
         if (!this.muteSynced()) {
@@ -109,10 +115,12 @@ var YoutubeVideo = Backbone.View.extend({
             this.player.seekTo(args.time);
         }
         if (!this.playStatusSynced()) {
-            if (args.state == "playing") {
-                this.player.playVideo();
-            } else {
-                this.player.pauseVideo();
+            if (this.player.getPlayerState() != YT.PlayerState.BUFFERING) {
+                if (args.state == "playing") {
+                    this.player.playVideo();
+                } else {
+                    this.player.pauseVideo();
+                }
             }
         }
         this.renderControls();
@@ -132,18 +140,24 @@ var YoutubeVideo = Backbone.View.extend({
         }, this));
     },
     playForEveryone: function(event) {
-        event.preventDefault();
+        if (event) { event.preventDefault(); }
         var playing = this.ctrl && this.ctrl.state == "playing";
         var args;
         if (playing) {
             args = {action: "pause"};
         } else {
-            args = {action: "play", time: this.player.getCurrentTime()};
+            var dur = this.player.getDuration();
+            if (this.player.getCurrentTime() >= dur) {
+                time = 0;
+            } else {
+                time = this.player.getCurrentTime();
+            }
+            args = {action: "play", time: time};
         }
         this.trigger("control-video", args);
     },
     muteForEveryone: function(event) {
-        event.preventDefault();
+        if (event) { event.preventDefault(); }
         var muted = this.ctrl && this.ctrl.muted;
         this.trigger("control-video", {action: muted ? "unmute": "mute"});
     },

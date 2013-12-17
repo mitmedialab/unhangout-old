@@ -44,10 +44,11 @@
 </script>
             
 <script type="text/template" id="session-list-template">
-    <ul id="session-list-container" class="full-size-container">
+    <div id="session-list-container" class="full-size-container">
         <div class="empty-notice hide">Sessions will appear here when they are created by an admin.</div>
         <div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
-    </ul>
+    </div>
+    <div style='clear: both;'></div>
 </script>
 
 <script type="text/template" id="pagination-template">
@@ -66,10 +67,12 @@
 </script>
             
 <script type="text/template" id="user-template">
-    {{ if(picture=="") { }}
+    {{ if(!picture) { }}
         <i class="icon-user icon-3x"></i>
-    {{ } else { }}
+    {{ } else if (link) { }}
         <a href="{{=link}}" target="_new"><img src="{{=picture}}"></a>
+    {{ } else { }}
+        <img src="{{=picture}}">
     {{ } }}
 </script>
             
@@ -131,25 +134,55 @@
 </script>
 <script type="text/template" id="dialogs-template">
     <div id="create-session-modal" class="modal hide fade">
-        <div class="modal-header">
-            <h3>CREATE SESSION</h3>
-        </div>
-        <div class="modal-body">
-            <div class="control-group">
-                <label for="session_name">SESSION NAME</label><input type="text" name="session_name" value="" id="session_name">
+        <form>
+            <div class="modal-header">
+                <h3>CREATE SESSION</h3>
             </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-primary" id="create-session">Create Session</a>
-        </div>
+            <div class="modal-body">
+                <div class="control-group">
+                    <label for="session_name">SESSION NAME</label>
+                    <input type="text" name="session_name" value="" id="session_name">
+                </div>
+                <div class="control-group">
+                    <div class='pull-left'>
+                        <label>SESSION TYPE</label>
+                        <label><input type="radio" name="session_type" value="simple" checked='checked'/> Simple</label>
+                        <label><input type="radio" name="session_type" value="video" /> Youtube Video</label>
+                        <label><input type="radio" name="session_type" value="webpage" /> Webpage</label>
+                    </div>
+                    <div class='pull-left' style='margin-left: 1em;'>
+                        <div class='youtube-url hide control-group' style='margin-top: 1.5em;'>
+                            <p class="yt-error hide">
+                                Unrecognized youtube URL.  Please use the URL for a single video.
+                            </p>
+                            <label for="session_youtube_id">Youtube video URL</label>
+                            <input type="text" name="youtube_id" value=""
+                                   id="session_youtube_id"
+                                   placeholder='https://youtube.com...'>
+                        </div>
+                        <div class='webpage-url control-group hide' style='margin-top: 3em;'>
+                            <label for='session_webpage'>Webpage URL</label>
+                            <input type='text' placeholder='https://example.com...' id='session_webpage'/>
+                            <div class='url-error hide' style='display: none;'>
+                                Sorry, but only secure pages (those starting with "https")
+                                can be embedded in hangouts.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type='submit' class="btn btn-primary" id="create-session" value="Create Session" /
+            </div>
+        </form>
     </div>
     <div id="embed-modal" class="modal hide fade">
         <div class="modal-header"><h3>Set Video URL</h3></div>
         <div class="modal-body">
             <p class="text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
             <div class="control-group">
-                <label for="youtube_id">Youtube video URL</label>
-                <input type="text" name="youtube_id" value="" id="youtube_id">
+                <label for="embed_youtube_id">Youtube video URL</label>
+                <input type="text" name="youtube_id" value="" id="embed_youtube_id">
                 <div id='current-yt-url'></div>
             </div>
         </div>

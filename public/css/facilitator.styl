@@ -35,6 +35,8 @@ body {
     vertical-align: top;
   }
   // Sidebar mode: left column is main, right column is sidebar.
+  .shrink { display: inline-block; }
+  .grow { display: none; }
   &.sidebar {
     .right-column {
       width: 300px;
@@ -42,6 +44,28 @@ body {
     .left-column {
       display: table-cell;
       width: 100%;
+    }
+    .shrink { display: none; }
+    .grow { display: inline-block; }
+    .title .name {
+      white-space: nowrap;
+      width: 200px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .video-controls {
+      font-size: 10px;
+      .for {
+        display: none;
+      }
+      .btn {
+        font-size: 12px;
+        padding: 4px 4px;
+      }
+    }
+    .footer {
+      font-size: 12px;
+      line-height: 1.5em;
     }
   }
 }
@@ -56,23 +80,27 @@ body {
   .header-row {
     display: table-row;
     background-color: #032;
+    .title-contents {
+      width: 100%;
+      height: 22px;
+      overflow: hidden;
+    }
     .title {
       display: table-cell;
+      position: relative;
       vertical-align: middle;
-      h2 {
+      .shrink, .grow {
+        vertical-align: top;
+        padding: 0px 12px;
+      }
+      .name {
+        font-weight: bold;
         color: #eee;
-        font-size: 18px;
+        font-size: 16px;
         line-height: 1.2em;
         height: 1.2em;
         display: inline-block;
         padding-left: 0.5em;
-      }
-      .brand {
-        float: right;
-        white-space: no-wrap;
-        font-style: italic;
-        color: #aaa;
-        padding-right: 1em;
       }
       .hide-app {
         float: right;
@@ -152,17 +180,9 @@ body {
 .video-activity {
   height: 100%;
   width: 100%;
-  .video-table {
-    display: table;
-    height: 100%;
+  table {
     width: 100%;
-  }
-  .player-row { display: table-row; }
-  .controls-row { display: table-row; }
-  .player-cell, .controls-cell { display: table-cell; }
-  .player-cell { height: 100%; }
-  .mute-for-everyone.active {
-    color: blue;
+    height: 100%;
   }
 }
 

@@ -9,19 +9,23 @@ var FacilitatorView = Backbone.View.extend({
         'click .hide-app': 'hide',
         'click .add-video': 'addVideo',
         'click .add-webpage': 'addWebpage',
-        'click .toggle-sidebar': 'toggleSidebar'
+        'click .grow, .shrink': 'toggleSidebar',
+        'click .toggle-toolbar': 'toggleToolbar'
     },
     initialize: function(options) {
         _.bindAll(this, "addViewForActivityData", "removeActivityView",
                   "render", "renderActivityLinks", "setActivity", "hide",
-                  "addVideo", "addWebpage", "toggleSidebar",
+                  "addVideo", "addWebpage", "toggleSidebar", "toggleToolbar",
                   "hideFacesIfActive", "showFacesIfActive");
         this.session = options.session;
         this.event = options.event;
         this.sock = options.sock;
-        this.activities = [];
-        this.session.addActivity({type: "faces"});
         console.log("Initial activities", this.session.get("activities"));
+        this.activities = [];
+        if (this.session.get("activities").length == 0) {
+            this.session.addActivity({type: "about", autoHide: true});
+        }
+        this.session.addActivity({type: "faces"});
 
         // Our socket is not just correct, not just articulate... it is *on message*.
         sock.onmessage = _.bind(function(message) {
@@ -110,7 +114,8 @@ var FacilitatorView = Backbone.View.extend({
                 view = new WebpageActivity({session: this.session, activity: activityData});
                 break;
             case "about":
-                view = new AboutActivity({session: this.session, event: this.event});
+                view = new AboutActivity({session: this.session, event: this.event,
+                                          activity: activityData});
                 break;
             case "faces":
                 view = new FacesActivity({session: this.session, activity: activityData});
@@ -160,9 +165,19 @@ var FacilitatorView = Backbone.View.extend({
             });
         }
         this.renderActivityLinks();
-        this.setActivity(this.activities[0]);
-        if (!this.session.get("mainApp")) {
-            this.toggleSidebar();
+        
+        // Set the initial state w/r/t toolbar and expansion.
+        var allButFaces = _.filter(this.activities, function(a) {
+            return a.activity.type != "faces";
+        });
+        if (allButFaces.length  == 1) {
+            this.$(".activity-list-holder").hide();
+            if (!_.contains(["webpage", "video"], allButFaces[0].activity.type)) {
+                this.toggleSidebar();
+            }
+            this.setActivity(allButFaces[0]);
+        } else {
+            this.setActivity(this.activities[0]);
         }
     },
     renderActivityLinks: function() {
@@ -172,7 +187,7 @@ var FacilitatorView = Backbone.View.extend({
         _.each(this.activities, function(activityView) {
             var li = document.createElement("li");
             li.appendChild(activityView.getLink());
-            // Add removal links for activities; but not for the 'about' activity.
+            // Add removal links for activities; but not for the 'about' or 'faces' activity.
             if (!_.contains(["about", "faces"], activityView.activity.type)) {
                 var close = document.createElement("a");
                 close.class = 'close-activity';
@@ -268,9 +283,10 @@ var FacilitatorView = Backbone.View.extend({
         if (event) { event.preventDefault(); }
         this.$el.toggleClass("sidebar");
         var isSidebar = this.$el.hasClass("sidebar");
-        $(".toggle-sidebar").html(isSidebar ? "&laquo;Expand" : "Shrink&raquo;");
+        
         // Move the faces app from the default activity list to its own space.
         if (isSidebar) {
+            // Shrink to sidebar! 
             if (!this.faces) { return; }
             this.activities = _.without(this.activities, this.faces);
             this.renderActivityLinks();
@@ -283,13 +299,19 @@ var FacilitatorView = Backbone.View.extend({
             this.faces.setActive(true);
             this.faces.resize();
         } else {
+            // Expand to main!
             if (!this.faces) { return; }
             this.$(".activity").append(this.faces.el);
             this.activities.unshift(this.faces);
-            this.renderActivityLinks();
+            var cur = this.currentActivity;
             this.setActivity(this.faces);
             this.faces.resize()
+            this.setActivity(cur);
+            this.renderActivityLinks();
         }
+    },
+    toggleToolbar: function(event) {
+        $(".activity-list-holder").toggle();
     }
 });
 
@@ -339,14 +361,38 @@ var BaseActivityView = Backbone.View.extend({
 
 var AboutActivity = BaseActivityView.extend({
     template: _.template($("#about-activity").html()),
-    events: {
-        'click #share-link': function(event) { $(event.currentTarget).select(); }
-    },
     activity: {type: "about"},
+    events: {
+        'click #share-link': function(event) { $(event.currentTarget).select(); },
+        'click .cancel-autohide': 'cancelAutohide'
+    },
+    initialize: function(options) {
+        BaseActivityView.prototype.initialize.apply(this, [options]);
+        _.bindAll(this, "cancelAutohide");
+    },
     getLinkText: function() {
         return "About";
+    },
+    onrender: function() {
+        if (this.activity.autoHide) {
+            var count = 15;
+            var that = this;
+            that.autoHideInterval = setInterval(function() {
+                that.$(".countdown").html(count);
+                count--;
+                if (count == 0) {
+                    clearInterval(that.autoHideInterval);
+                    that.$(".hide-app").click();
+                }
+            }, 1000);
+        }
+    },
+    cancelAutohide: function() {
+        if (this.autoHideInterval) {
+            clearInterval(this.autoHideInterval);
+        }
+        $(".auto-hide").hide();
     }
-
 });
 
 var FacesActivity = BaseActivityView.extend({
@@ -390,121 +436,39 @@ var FacesActivity = BaseActivityView.extend({
     }
 });
 
-// Youtube's iframe API works on a global callback.  So set up a global queue
-// from which to construct our youtube embeds once we get to rendering.
-window.YouTubeIframeAPIParams = [];
-window.onYouTubeIframeAPIReady = function() {
-    _.each(window.YouTubeIframeAPIParams, function(params) {
-        new YT.Player(params.id, params.attrs);
-    });
-    window.YouTubeIframeAPIParams = [];
-};
 var VideoActivity = BaseActivityView.extend({
     template: _.template($("#video-activity").html()),
-    DATA_API_URL: "https://gdata.youtube.com/feeds/api/videos/{id}?v=2&alt=json-in-script&callback=?",
-    events: {
-        'click .play-for-everyone': 'playForEveryone',
-        'click .mute-for-everyone': 'muteForEveryone'
-    },
     initialize: function(options) {
         BaseActivityView.prototype.initialize.apply(this, [options]);
         this.sock = options.sock;
-        _.bindAll(this, "onrender", "onPlayerReady", "onPlayerStateChange",
-                        "playForEveryone", "muteForEveryone", "controlVideo");
+        _.bindAll(this, "onrender");
         // Get the title of the video from the data API -- it's not available
         // from the iframe API.
-        var url = this.DATA_API_URL.replace("{id}", this.activity.video.id);
-        $.getJSON(url, _.bind(function(data) {
-            this.title = data.entry.title.$t.substring(0, 10) + (
-                data.entry.title.$t.length > 10 ? "..." : ""
+        this.yt = new YoutubeVideo({
+            ytID: this.activity.video.id,
+            showGroupControls: true
+        });
+        this.yt.getTitle(_.bind(function(title) {
+            this.title = title.substring(0, 10) + (
+                title.length > 10 ? "..." : ""
             );
             this.$a.find(".title").html(this.title);
+        }, this));
+        this.yt.on("control-video", _.bind(function(args) {
+            args.sessionId = this.session.id;
+            args.act
+            this.sock.sendJSON("session/control-video", args);
         }, this));
     },
     getLinkText: function() {
         return "<span class='title'>" + (this.title || "Video") + "</span>";
     },
     onrender: function() {
-        window.YouTubeIframeAPIParams.push({
-            id: 'player-' + this.cid,
-            attrs: {
-                width: '320',
-                height: '240',
-                videoId: this.activity.video.id,
-                events: {
-                    onReady: this.onPlayerReady,
-                    onStateChange: this.onPlayerStateChange
-                },
-                // Fix for z-index issues -- see http://stackoverflow.com/a/9074366
-                playerVars: {
-                    wmode: "transparent"
-                }
-            }
-        });
-        if (!window.YT) {
-            var tag = document.createElement('script');
-            tag.src = 'https://www.youtube.com/iframe_api';
-            document.body.appendChild(tag);
-        } else {
-            window.onYouTubeIframeAPIReady();
-        }
-    },
-    onPlayerReady: function(event) {
-        this.player = event.target;
-        // Fix for z-index issues -- see http://stackoverflow.com/a/9074366
-        this.$("iframe").attr("wmode", "Opaque");
-    },
-    onPlayerStateChange: function(event) {
-        switch (event.data) {
-            case YT.PlayerState.BUFFERING:
-            case YT.PlayerState.PLAYING:
-                this.$a.prepend("<span class='playing'>&#9654; </span>");
-                break;
-            default:
-                this.$a.find(".playing").remove();
-                break;
-        }
-    },
-    playForEveryone: function(event) {
-        event.preventDefault();
-        var args = {
-            sessionId: this.session.id,
-            action: "play",
-            activity: this.activity
-        }
-        this.controlVideo(args);
-        this.sock.sendJSON("session/control-video", args)
-    },
-    muteForEveryone: function(event) {
-        event.preventDefault();
-        var args = {
-            sessionId: this.session.id,
-            action: "mute",
-            activity: this.activity,
-            muted: !this.player.isMuted()
-        };
-        this.sock.sendJSON("session/control-video", args);
-        this.controlVideo(args);
+        this.$el.html(this.yt.el);
+        this.yt.render();
     },
     controlVideo: function(args) {
-        switch (args.action) {
-            case "play":
-                this.player.seekTo(0);
-                this.player.playVideo();
-                break;
-            case "mute":
-                var el = this.$(".mute-for-everyone");
-                if (args.muted) {
-                    this.player.mute();
-                    el.addClass("active");
-                    el.find(".text").html("Click to unmute for everyone");
-                } else {
-                    this.player.unMute();
-                    el.removeClass("active");
-                    el.find(".text").html("Mute for everyone");
-                }
-                break;
-        }
+        this.yt.receiveControl(args);
     }
 });
 

@@ -232,7 +232,7 @@ models.Session = Backbone.Model.extend({
 			description: "",
 			started: true,
 			connectedParticipants: [],
-            activities: [{type: "about"}, {type: "faces"}],
+            activities: [],
 			hangoutConnected: false,
 			shortCode: null
 		};
@@ -283,7 +283,7 @@ models.Session = Backbone.Model.extend({
 		return this.get("connectedParticipants").length;
 	},
     addActivity: function(activity, options) {
-        if (!_.contains(["webpage", "video", "faces"], activity.type)) {
+        if (!_.contains(["webpage", "video", "faces", "about"], activity.type)) {
             return false;
         }
         var activities = this.get("activities");
@@ -340,6 +340,7 @@ models.User = Backbone.Model.extend({
             superuser: false,
             isBlurred: false,
             displayName: "[unknown]",
+            link: null,
             emails: []
         }
 	},
