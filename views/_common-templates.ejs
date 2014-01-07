@@ -34,18 +34,12 @@
     <span class='pull-right'>
         {{ if (synced) { }}
             <span class='sync-indicator synced'></span> Synced
+        {{ } else if (!syncAvailable) { }}
+            <span class='sync-indicator'></span> No sync
+        {{ } else if (intendToSync) { }}
+            <span class='sync-indicator syncing'></span> Syncing..
         {{ } else { }}
-            {{ if (intendToSync) { }}
-                <span class='sync-indicator syncing'></span>
-                {{ if (hasControl) { }}
-                    Syncing..
-                {{ } else { }}
-                    No sync
-                {{ } }}
-            {{ } else { }}
-                <span class='sync-indicator unsynced'></span> Out of sync
-            {{ } }}
-            <!--<a class='sync btn btn-primary'>Sync</a>-->
+            <span class='sync-indicator unsynced'></span> Out of sync
         {{ } }}
         <a class='sync-lock btn'>
             {{ if (intendToSync) { }}
@@ -53,7 +47,6 @@
             {{ } else { }}
                 <i class='icon icon-unlock'></i> Sync
             {{ } }}
-
         </a>
     </span>
 </script>

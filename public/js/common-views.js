@@ -61,7 +61,7 @@ var YoutubeVideo = Backbone.View.extend({
             synced: this.isSynced(),
             showGroupControls: this.showGroupControls,
             intendToSync: this.intendToSync,
-            hasControl: !!this.ctrl
+            syncAvailable: this.syncAvailable()
         }));
     },
     setVideoId: function(id) {
@@ -70,13 +70,11 @@ var YoutubeVideo = Backbone.View.extend({
             this.render();
         }
     },
+    syncAvailable: function() {
+        return (!!this.ctrl) && (new Date().getTime() - this.timeOfLastControl) < 5000 && (this.ctrl.state == "playing");
+    },
     isSynced: function() {
-        if (!this.ctrl) {
-            return this.intendToSync && this.player && this.player.getPlayerState() != YT.PlayerState.PLAYING;
-        } else {
-            return this.playStatusSynced() && this.muteSynced() && this.timeSynced();
-        }
-                                       
+        return this.syncAvailable() && this.playStatusSynced() && this.muteSynced() && this.timeSynced();
     },
     timeSynced: function() {
         return this.player && (Math.abs(this.ctrl.time - this.player.getCurrentTime()) < 10);
@@ -91,6 +89,7 @@ var YoutubeVideo = Backbone.View.extend({
     },
     receiveControl: function(args) {
         console.log("Receive control", args);
+        this.timeOfLastControl = new Date().getTime();
         this.ctrl = args;
         if (!this.player) { return; }
         // Do we have no intention of syncing?  Return.
