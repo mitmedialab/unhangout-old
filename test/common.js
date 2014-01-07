@@ -32,7 +32,10 @@ var buildBrowser = function(callback) {
     browser.waitForSelector = function(selector) {
         return browser.wait(function() {
             return browser.byCsss(selector).then(function(els) {
-                return els.length > 0;
+                if (els.length == 0) {
+                    return false;
+                }
+                return els[0].isDisplayed();
             });
         });
     };
@@ -52,7 +55,9 @@ var buildBrowser = function(callback) {
             return browser.then(function() { return cb(); })
         })
     };
-    callback(browser);
+    browser.manage().window().setSize(1024, 768).then(function() {
+        callback(browser);
+    });
 };
 
 exports.getSeleniumBrowser = function(callback) {

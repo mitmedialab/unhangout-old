@@ -200,7 +200,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 sock = thesock;
             });
         });
-        browser.waitTime(200).then(function () {
+        browser.waitTime(500).then(function () {
             expect(session.get("connectedParticipants").length).to.be(2);
             common.restartServer(function onStopped(restart) {
                 framedDisconnectionModalShowing(true).then(function() {
@@ -208,7 +208,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 });
             }, function onRestarted() {
                 framedDisconnectionModalShowing(false);
-                browser.waitTime(100).then(function() {
+                browser.waitTime(500).then(function() {
                     // Refresh session from new DB.
                     event = common.server.db.events.get(event.id);
                     session = event.get("sessions").get(session.id);

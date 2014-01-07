@@ -32,8 +32,8 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("admin1");
         browser.get("http://localhost:7777/admin/users/")
-        browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql("http://localhost:7777/");
+        browser.getPageSource().then(function(source) {
+            expect(source.indexOf("Permission denied")).to.not.eql(-1);
             done();
         });
     });
@@ -91,12 +91,7 @@ describe("BROWSER ADMIN USERS", function() {
         // Pull up the add event modal, and add an event.
         browser.byCss(addSelector).click();
         // Wait for modal to fade in...
-        browser.wait(function() {
-            return browser.byCsss(".modal-body select").then(function(els) {
-                return els.length > 0;
-            });
-        });
-        browser.waitTime(100);
+        browser.waitForSelector(".modal-body select");
         browser.byCss(".modal-body select").sendKeys(event.get("title"));
         browser.byLinkText("Add").click().then(function() {
             expect(user.isAdminOf(event)).to.be(true);

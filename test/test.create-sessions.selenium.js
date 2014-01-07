@@ -63,13 +63,13 @@ describe("CREATE SESSIONS", function() {
         browser.get("http://localhost:7777");
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/event/" + event.id)
+        browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
         browser.byLinkText("create session").click();
         browser.waitForSelector("#session_name");
-        browser.waitTime(100);
         browser.byCss("#session_name").sendKeys("My New Session");
-        browser.byLinkText("Create Session").click();
-        browser.waitTime(200);
+        browser.waitForSelector("#create-session");
+        browser.byCss("#create-session").click();
         browser.byCsss(".session h3").then(function(els) {
             expect(els.length).to.be(1);
             els[0].getText().then(function(text) {

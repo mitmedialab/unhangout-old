@@ -18,8 +18,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
-					res.status.should.equal(302);
-					res.header['location'].should.equal("/");
+					res.status.should.equal(401);
 					done();
 				});
 		});
@@ -28,9 +27,25 @@ describe('HTTP ADMIN EVENTS API', function() {
 	describe('/admin/event/new (admin)', function() {
 		beforeEach(common.standardSetup);
 
-		it('should accept well-formed creation request from admin', function(done) {
+		it('should accept well-formed creation request from superuser', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
                 .set("x-mock-user", "superuser1")
+				.send({title:"Test Event", description:"Description of the test event."})
+				.redirects(0)
+				.end(function(res) {
+					res.status.should.equal(302);
+                    var evt = common.server.db.events.at(common.server.db.events.length-1);
+                    evt.get("title").should.equal("Test Event");
+                    evt.get("description").should.equal("Description of the test event.");
+
+					res.header['location'].should.equal("/admin");
+
+					done();
+				});
+		});
+		it('should accept well-formed creation request from admin', function(done) {
+			request.post('http://localhost:7777/admin/event/new')
+                .set("x-mock-user", "admin1")
 				.send({title:"Test Event", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {

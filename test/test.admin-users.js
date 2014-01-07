@@ -34,7 +34,7 @@ describe("HTTP ADMIN USERS API", function() {
             .set("x-mock-user", "admin1")
             .redirects(0)
             .end(function(res) {
-                expect(res.status).to.be(302);
+                expect(res.status).to.be(401);
                 done();
             });
     });
