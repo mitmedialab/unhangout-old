@@ -154,55 +154,92 @@ models.Event = Backbone.Model.extend({
         return this.id ? "event/" + this.id : null
     },
 
+    // Add the given user -- either a full user model, or an object with an
+    // "email" key -- to the list of admins, if not already present.
     addAdmin: function(user) {
         var admins = this.get("admins");
-        var emails;
-        if (user.email) {
-            emails = [user.email];
-        } else if (user.get && user.get("emails")) {
-            emails = _.pluck(user.get("emails"), "value");
-        } else {
-            throw new Error("Missing id or email");
-        }
-        var exists = _.any(admins, function(admin) {
-            return ((!_.isUndefined(admin.id) && admin.id == user.id) ||
-                    (admin.email && _.contains(emails, admin.email)));
-        });
+        var exists = _.any(admins, _.bind(function(admin) {
+            return this.adminMatchesUser(admin, user);
+        }, this));
         if (!exists) {
+            var changed = false;
             if (user.id) {
                 admins.push({id: user.id});
+                changed = true;
             } else {
-                admins.push({email: emails[0]});
+                var email;
+                if (user.email) {
+                    email = user.email;
+                } else if (user.get && user.get("emails")[0]) {
+                    email = user.get("emails")[0].value;
+                }
+                if (email) {
+                    admins.push({email: email});
+                    changed = true;
+                }
             }
-            this.set("admins", admins);
-            this.trigger("change:admins");
-            this.trigger("change");
+            if (changed) {
+                this.set("admins", admins);
+                this.trigger("change:admins", this, admins);
+                this.trigger("change", this);
+            }
         }
     },
-
+    // Remove the given user -- either a full user model, or an object with an
+    // "email" key -- from the list of admins, if present.
     removeAdmin: function(user) {
-        var userId = user.id;
-        var changed = false;
-        var emails;
-        if (user.get && user.get('emails')) {
-            emails = _.pluck(user.get('emails'), "value");
-        } else {
-            emails = [user.email];
-        }
         var admins = this.get("admins");
-        admins = _.reject(admins, function(admin) {
-            if ((!_.isUndefined(admin.id) && admin.id == userId) ||
-                  (admin.email && _.contains(emails, admin.email))) {
-                changed = true;
+        admins = _.reject(admins, _.bind(function(admin) {
+            if (this.adminMatchesUser(admin, user)) {
+                changed = true;    
                 return true;
             }
             return false;
-        });
+        }, this));
         if (changed) {
             this.set("admins", admins);
-            this.trigger("change:admins");
-            this.trigger("change");
+            this.trigger("change:admins", this, admins);
+            this.trigger("change", this);
         }
+    },
+    // "admins" is a list of Admin objects, which refer to a user.  However,
+    // the user may or may not exist in the system yet (e.g. may have never
+    // logged in).  The admin object thus represents users in two ways:
+    //
+    // 1. by id (preferred):
+    //      { id: <user.id>}
+    // 2. by email:
+    //      { email: <email> }
+    //
+    // This utility function matches a compares a user (either a full user
+    // model or an object with like {email: <email>}) to see if it matches
+    // the given admin object.
+    adminMatchesUser: function(admin, user) {
+        var userId = user.id;
+        var emails;
+        if (user.get && user.get('emails')) {
+            emails = _.pluck(user.get("emails"), "value");
+        } else if (user.email) {
+            emails = [user.email]
+        } else {
+            emails = [];
+        }
+        return ((!_.isUndefined(admin.id) && admin.id == userId) ||
+                (admin.email && _.contains(emails, admin.email)));
+    },
+    userIsAdmin: function(user) {
+        var admins = this.get("admins");
+        return _.some(admins, _.bind(function(admin) {
+            return this.adminMatchesUser(admin, user);
+        }, this));
+    },
+    // Given an admin obj and a list of users, return a user in the list
+    // matching the admin, or undefined if not found.
+    findAdminAsUser: function(admin, userList) {
+        if (!_.isUndefined(admin.id)) {
+            return userList.get(admin.id);
+        }
+        return userList.findByEmail(admin.email);
     }
 });
 
@@ -217,6 +254,13 @@ models.EventList = Backbone.Collection.extend({
             }
         });
         return session;
+    },
+    // Returns true if the user is an admin of any of the events contained in
+    // this collection.
+    userIsAdmin: function(user) {
+        return _.some(this.models, function(event) {
+            return event.userIsAdmin(user);
+        });
     }
 });
 
@@ -383,14 +427,7 @@ models.User = Backbone.Model.extend({
         if (this.isSuperuser()) { return true; }
         if (!event) { return false; }
 
-        var emails = _.pluck(this.get("emails"), "value");
-        var that = this;
-        return _.any(event.get("admins"), function(admin) {
-            if (_.isUndefined(admin.id)) {
-                return _.contains(emails, admin.email);
-            }
-            return admin.id == that.id;
-        });
+        return event.userIsAdmin(this);
 	},
 
 	isBlurred: function() {

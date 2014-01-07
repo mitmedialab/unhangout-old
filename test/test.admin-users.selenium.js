@@ -37,6 +37,26 @@ describe("BROWSER ADMIN USERS", function() {
             done();
         });
     });
+    it("Shows admin link for admins", function(done) {
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("admin1");
+        browser.get("http://localhost:7777/");
+        browser.byCss("#admin-nav a").click();
+        browser.getCurrentUrl().then(function(url) {
+            expect(url).to.eql("http://localhost:7777/admin/");
+            done();
+        });
+    });
+    it("Shows admin link for superusers", function(done) {
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("superuser1");
+        browser.get("http://localhost:7777/");
+        browser.byCss("#admin-nav a").click();
+        browser.getCurrentUrl().then(function(url) {
+            expect(url).to.eql("http://localhost:7777/admin/");
+            done();
+        });
+    });
     it("Manages superusers", function(done) {
         var user = common.server.db.users.findWhere({superuser: false});
         browser.get("http://localhost:7777/");
@@ -76,6 +96,7 @@ describe("BROWSER ADMIN USERS", function() {
                 return els.length > 0;
             });
         });
+        browser.waitTime(100);
         browser.byCss(".modal-body select").sendKeys(event.get("title"));
         browser.byLinkText("Add").click().then(function() {
             expect(user.isAdminOf(event)).to.be(true);
