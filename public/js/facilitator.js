@@ -389,7 +389,7 @@ var AddActivityDialog = BaseModalView.extend({
     },
     validate: function() {
         var val, youtubeId, url, re, match;
-        val = this.$("input[type=text]").val();
+        val = $.trim(this.$("input[type=text]").val());
         if (!val) {
             return false;
         }
