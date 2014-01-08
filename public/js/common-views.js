@@ -17,15 +17,16 @@ var YoutubeVideo = Backbone.View.extend({
     IFRAME_API_URL: "https://www.youtube.com/iframe_api",
     events: {
         'click .play-for-everyone': 'playForEveryone',
-        'click .mute-for-everyone': 'muteForEveryone',
-        'click .sync-lock': 'toggleSync'
+        'click .sync-lock': 'toggleSync',
+        'click .video-settings': 'triggerVideoSettings',
     },
     initialize: function(options) {
         this.ytID = options.ytID;
         this.showGroupControls = options.showGroupControls;
         this.intendToSync = true;
-        _.bindAll(this, "playForEveryone", "muteForEveryone", "toggleSync",
-                        "onPlayerReady", "onPlayerStateChange");
+        _.bindAll(this, "playForEveryone", "toggleSync",
+                        "onPlayerReady", "onPlayerStateChange",
+                        "triggerVideoSettings");
     },
     render: function() {
         this.$el.html(this.template({cid: this.cid}));
@@ -57,7 +58,6 @@ var YoutubeVideo = Backbone.View.extend({
         var ctrl = this.ctrl || {};
         this.$(".video-controls").html(this.controlsTemplate({
             playing: ctrl.state == "playing",
-            muted: ctrl.muted,
             synced: this.isSynced(),
             showGroupControls: this.showGroupControls,
             intendToSync: this.intendToSync,
@@ -74,13 +74,10 @@ var YoutubeVideo = Backbone.View.extend({
         return (!!this.ctrl) && (new Date().getTime() - this.timeOfLastControl) < 5000 && (this.ctrl.state == "playing");
     },
     isSynced: function() {
-        return this.syncAvailable() && this.playStatusSynced() && this.muteSynced() && this.timeSynced();
+        return this.syncAvailable() && this.playStatusSynced() && this.timeSynced();
     },
     timeSynced: function() {
         return this.player && (Math.abs(this.ctrl.time - this.player.getCurrentTime()) < 10);
-    },
-    muteSynced: function() {
-        return this.player && (this.ctrl.muted == this.player.isMuted());
     },
     playStatusSynced: function() {
         return this.player && (
@@ -103,13 +100,6 @@ var YoutubeVideo = Backbone.View.extend({
             this.trigger("control-video", {action: "pause"});
         }
         // Sync us up!
-        if (!this.muteSynced()) {
-            if (args.muted) {
-                this.player.mute();
-            } else {
-                this.player.unMute();
-            }
-        }
         if (!this.timeSynced()) {
             this.player.seekTo(args.time);
         }
@@ -131,6 +121,33 @@ var YoutubeVideo = Backbone.View.extend({
     },
     onPlayerStateChange: function(event) {
         this.renderControls();
+        // Google gives us no "onSeekTo" or seek-related player state change,
+        // so we have to be a little tricky about figuring out if someone has
+        // tried to seek to elsewhere in the video.
+        //
+        // If we get a pause signal ...
+        if (event.data == YT.PlayerState.PAUSED &&
+                // ... when 'sync' enabled ...
+                this.intendToSync &&
+                // ... and the video is playing ...
+                this.syncAvailable()) {
+            // ... interpret it as an intention to seek or pause.
+            if (this.showGroupControls) {
+                // Admin: do it for everyone.
+                // If it's more than 10 seconds, assume seek; otherwise pause. 
+                if (Math.abs(this.ctrl.time  - this.player.getCurrentTime()) > 10) {
+                    this.trigger("control-video", {
+                        action: "play",
+                        time: this.player.getCurrentTime()
+                    });
+                } else {
+                    this.trigger("control-video", {action: "pause"});
+                }
+            } else {
+                // Non-admin: just toggle intendToSync.
+                this.toggleSync();
+            }
+        }
     },
     getTitle: function(callback) {
         var url = this.DATA_API_URL.replace("{id}", this.ytID);
@@ -155,12 +172,8 @@ var YoutubeVideo = Backbone.View.extend({
         }
         this.trigger("control-video", args);
     },
-    muteForEveryone: function(event) {
-        if (event) { event.preventDefault(); }
-        var muted = this.ctrl && this.ctrl.muted;
-        this.trigger("control-video", {action: muted ? "unmute": "mute"});
-    },
     toggleSync: function(event) {
+        if (event) { event.preventDefault(); }
         if (this.intendToSync) {
             this.intendToSync = false;
             this.renderControls();
@@ -170,5 +183,8 @@ var YoutubeVideo = Backbone.View.extend({
                 this.receiveControl(this.ctrl);
             }
         }
+    },
+    triggerVideoSettings: function(event) {
+        this.trigger("video-settings", this);
     }
 });

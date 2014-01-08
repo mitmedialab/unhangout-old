@@ -116,6 +116,9 @@ $(document).ready(function() {
 		if(IS_ADMIN) {
 			this.adminButtonView = new AdminButtonView();
 			this.admin.show(this.adminButtonView);
+            this.youtubeEmbedView.on("show-embed-modal", _.bind(function() {
+                this.adminButtonView.showEmbedModal();
+            }, this));
 		}
 				
 		console.log("Initialized app.");

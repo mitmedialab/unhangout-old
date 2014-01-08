@@ -326,43 +326,16 @@ models.Session = Backbone.Model.extend({
 	getNumConnectedParticipants: function() {
 		return this.get("connectedParticipants").length;
 	},
-    addActivity: function(activity, options) {
-        if (!_.contains(["webpage", "video", "faces", "about"], activity.type)) {
-            return false;
+    validate: function(attrs, options) {
+        if (!_.isArray(attrs.activities)) {
+            return "Missing activities.";
         }
-        var activities = this.get("activities");
-        var isDup = _.any(activities, function(a) {
-            return _.isEqual(a, activity);
-        });
-        if (isDup) {
-            return false;
-        } else {
-            activities.unshift(activity);
-            this.trigger("change:activities");
-            this.trigger("addActivity", activity, options);
-            return true;
-        }
-    },
-    removeActivity: function(activity) {
-        if (activity.type == "about") {
-            // can't remove "about"
-            return false;
-        }
-        var activities = this.get("activities");
-        var index;
-        var newActivities = _.reject(activities, function(a, i) {
-            if (_.isEqual(a, activity)) {
-                index = i;
-                return true;
+        for (var i = 0; i < attrs.activities.length; i++) {
+            var activity = attrs.activities[i];
+            if (!_.contains(["video", "webpage", "about"], activity.type)) {
+                return "Invalid activity type: " + activity.type;
             }
-            return false;
-        });
-        if (newActivities.length < activities.length) {
-            this.trigger("removeActivity", activity);
-            this.set("activities", newActivities);
-            return true;
         }
-        return false;
     }
 });
 

@@ -135,10 +135,12 @@
                                 gapi.hangout.hideApp();
                                 break;
                             case "show-video":
+                                console.log("show video");
                                 gapi.hangout.layout.getVideoCanvas().setVisible(true);
                                 setDims(lastVideoDims);
                                 break;
                             case "hide-video":
+                                console.log("hide video");
                                 gapi.hangout.layout.getVideoCanvas().setVisible(false);
                                 break;
                             case "set-video-dims":

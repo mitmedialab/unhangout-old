@@ -436,6 +436,7 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
             $("#current-yt-url").html("");
             $("#remove-embed").hide();
         }
+        $("#embed-modal").modal('show');
 	},
 
 	onRender: function() {
@@ -740,6 +741,10 @@ var VideoEmbedView = Marionette.ItemView.extend({
             _.extend(args, {roomId: curEvent.getRoomId()});
             sock.send(JSON.stringify({type: "control-video", args: args}));
         });
+        this.yt.on("video-settings", _.bind(function(yt) {
+            this.trigger("show-embed-modal");
+        }, this));
+
         this.$(".player").html(this.yt.el);
 		if(!this.model.get("youtubeEmbed")) {
 			this.$el.hide();

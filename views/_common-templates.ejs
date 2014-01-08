@@ -12,22 +12,14 @@
 </script>
 <script type='text/template' id='youtube-video-controls'>
     {{ if (showGroupControls) { }}
+        <a class='video-settings btn btn-warning'><i class='icon icon-gear'></i></a>
         <a class='play-for-everyone btn btn-warning'>
             {{ if (playing) { }}
                 <i class='icon icon-pause'></i>
-                Pause <span class='for'>for </span>all
+                Pause for all
             {{ } else { }}
                 <i class='icon icon-play'></i>
-                Play <span class='for'>for </span> all
-            {{ } }}
-        </a>
-        <a class='mute-for-everyone btn btn-warning'>
-            {{ if (muted) { }}
-                <i class='icon icon-volume-up'></i>
-                Unmute <span class='for'>for </span>all
-            {{ } else { }}
-                <i class='icon icon-volume-off'></i>
-                Mute <span class='for'>for </span>all
+                Play for all
             {{ } }}
         </a>
     {{ } }}
