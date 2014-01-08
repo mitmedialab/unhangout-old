@@ -1,7 +1,6 @@
 <% include header.ejs %>
-<% include hero.ejs %>
     <div class="container">
-        <div class="section" id="about">
+        <div class="section about-container" id="about">
             <h1>About</h1>
 
             <p><strong>Unhangout</strong> is an open source
@@ -52,36 +51,49 @@
 
             <h3>The Team</h3>
 
-            <p>Our three person design and development team is
+            <p>Our four person design and development team is
             based at the MIT Media Lab in Cambridge, MA.</p>
 
-            <ul>
-                <li>
-                    <a href=
-                    "http://www.media.mit.edu/people/ps1">Philipp
-                    Schmidt</a>
-                </li>
 
-                <li>
-                    <a href="http://web.media.mit.edu/~dharry">Drew
-                    Harry</a>
-                </li>
+            <div class="participant-info">
+    
+                <a href="http://www.media.mit.edu/people/ps1" target="blank">
+                <img src="http://sharing-nicely.net/wp-content/uploads/2009/12/philipp_bw.jpg">
+                </a>
 
-                <li>
-                    <a href="http://srishtisethi.com/">Srishti
-                    Sethi</a>
-                </li>
-            </ul>
+                <span class="overlay">Philipp Schmidt</span>
+
+                <a href="http://web.media.mit.edu/~dharry" target="blank">
+                <img src="http://web.media.mit.edu/~dharry/drew_close_square_small.jpeg">
+                </a>
+
+                <span class="overlay">Drew Harry</span>
+                    
+                <a href="http://tirl.org/" target="blank">
+                <img src="http://web.media.mit.edu/~cfd/img/charlie_head_square.jpeg">
+                </a>
+             
+                <span class="overlay">Charlie DeTar</span>
+
+                <a href="http://srishtisethi.com" target="blank">
+                <img src="https://lh6.googleusercontent.com/-tzKiNJGIwys/AAAAAAAAAAI/AAAAAAAACCk/eJ7fVGxtBBA/photo.jpg">
+                </a>
+             
+                <span class="overlay">Srishti Sethi</span>
+
+                <br/><br/>
+            </div>
 
             <h3>Acknowledgements</h3>
 
             <p><strong>Unhangout</strong> is made possible by the
-            generous support of the MacArthur Foundation and the
-            MIT Media Lab</p>
+            generous support of the <a href="http://www.macfound.org/">MacArthur Foundation</a> and the
+            <a href="http://media.mit.edu">MIT Media Lab.</a></p>
+
+            <% include sponsorship.ejs %>
         </div>
     </div>
 
-<% include sponsorship.ejs %>
 <% include analytics.ejs %>
 <% include footer.ejs %>
             

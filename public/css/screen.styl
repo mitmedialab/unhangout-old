@@ -1,10 +1,24 @@
 $primary = #2F3732;
 $background = #c9c8c8;
 $background-light = #f5f5f5;
+$navbar = #1fa67a;
+$event-links = #21b384;
+$event-links-hover = #198764;
 
 body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
   }
+
+.navbar-inverse .navbar-inner
+{
+	background-image:-webkit-gradient(linear, 0 0, 0 100%, from($navbar), to($navbar)); 
+	border-color: $navbar; 
+}
+
+.brand {
+	color: #fff;	
+	font-size: 12px;
+}
 
 .admin-header {
 	width: 100%;
@@ -189,9 +203,13 @@ body {
 	}
 }
 
+.navbar .nav > li > a {
+  	color: #b0ddce;
+ }
+
 .nav {
 	li.active > a{
-		background-color: #444 !important;
+		background-color: #1b926c !important;
 	}
 
 	.circle {
@@ -200,7 +218,7 @@ body {
 		height: 12px;
 		border-radius: 5px;
 
-		margin-left: 5px;
+		margin-right: 5px;
 
 		display: block;
 		position: absolute;
@@ -215,7 +233,6 @@ body {
 	
 .identity {
 	height: 40px;
-	width: 200px;
 
 	& > div {
 		float: right;
@@ -229,7 +246,7 @@ body {
 .username, .admin-button {
 	display: block;
 	font-size: 14px;
-	color: #999;
+	color: #b0ddce;
 	padding: 10px 15px 10px 15px;
 	line-height: 20px;
 	
@@ -237,6 +254,20 @@ body {
 		color: white;
 		text-decoration: none;
 	}
+}
+
+.dropdown-menu>li>a {
+	color: #333;	
+}
+
+.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus{
+	text-decoration:none;
+	color:#fff;
+	background: $navbar;
+}
+
+.dropdown-menu>li.active >a {
+	background-color: $navbar; 
 }
 
 .user {
@@ -763,19 +794,17 @@ tr:nth-child(even) {
 
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {
-	color: white;
-	background-image: url('/public/img/dots.png');
-	height: 200px;
-	width: 100%;
+	color: $navbar;
+	height: 120px;
 	background-size: 1400px;
 	margin-top: -20px;
 	font-family: "open sans",arial,sans-serif;
 
 	h1 {
-		padding-top: 60px;
+		padding-top: 20px;
 		margin-top: 0px;
 		font-weight: 200;
-		font-size: 36px;
+		font-size: 32px;
 	}
 
 	h1,  h3{
@@ -788,6 +817,23 @@ tr:nth-child(even) {
 		font-weight: 200;
 		font-size: 20px;
 	}
+
+	.create-event-button {
+		margin-top: -100px;
+		margin-right: 250px;
+		float: right;
+	}
+
+	.btn-primary {
+		background: $navbar;
+		padding: 17px 20px;
+		font-size: 18px;
+	}
+}
+
+.profile-thumbnail {
+	margin-top: -5px;
+	border-radius: 5px;
 }
 
 .event {
@@ -796,8 +842,18 @@ tr:nth-child(even) {
 
 	.title, .description {
 		float: left;
-		color: #3c3c3c;
+		color: #333;
 		font-family: "open sans",arial,sans-serif;
+
+		a {
+			color: $event-links;
+			text-decoration:none;
+		}
+
+		a:hover,a:focus {
+			color: $event-links-hover;
+			text-decoration:underline;
+		}
 	}
 
 	.title {
@@ -809,7 +865,6 @@ tr:nth-child(even) {
 		margin-top: 20px;
 		font-size: 16px;
 		width: 780px;
-
 	}
 
 	.date {
@@ -885,6 +940,10 @@ tr:nth-child(even) {
 		color: #3c3c3c;
 		font-size: 16px;
 		font-family: "open sans",arial,sans-serif;
+	}
+
+	.btn-primary {
+		background: $navbar;
 	}
 }
 
@@ -967,6 +1026,61 @@ tr:nth-child(even) {
     line-height:40px;
     text-align:center;
     background: gray;
+}
+
+/* ------------------------- ABOUT PAGE -------------------------------*/
+.about-container {
+	h1, h3 {
+		color: #444;
+	}
+
+	h1 {
+		font-weight: 400;
+		font-size: 26px;
+	}
+
+	h3 {
+		font-weight: 400;
+		font-size: 20px;
+	}
+
+	p, li {
+		color: #333;
+		font-family: "open sans",arial,sans-serif;
+
+		a {
+			color: $event-links;
+			text-decoration:none;
+		}
+
+		a:hover,a:focus {
+			color: $event-links-hover;
+			text-decoration:underline;
+		}
+	}
+
+	.participant-info {
+
+		img {
+			border: 1px $navbar solid;
+			margin-right: 10px;
+			margin-top: 40px;
+			border-radius: 5px;
+			width: 100px;
+			height: 100px;
+		}
+
+		.overlay {
+			position: absolute;
+			color: white;
+			width: 102px;
+			margin-top: 135px;
+			margin-left: -116px;
+			text-align: center;
+			background-color: $navbar;
+			border-radius: 3px;
+		}
+	}
 }
 
 /*-------------------------- PERMALINKS -------------------------------*/

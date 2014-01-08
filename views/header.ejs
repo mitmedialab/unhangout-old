@@ -4,7 +4,10 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
 	<title>Unhangout</title>
 	<!-- <link rel="stylesheet" href="/public/css/bootstrap.css" type="text/css" media="screen"> -->
+
 	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
+
+	<link href="//fortawesome.github.io/Font-Awesome/assets/font-awesome/css/font-awesome.css" rel="stylesheet">
 	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 	
 	<link href="/public/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -12,6 +15,8 @@
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
 	<script type="text/javascript" src="/public/js/index.js"></script>
+
+	<link rel="shortcut icon" href="/public/img/unhangout-favicon.png">
 		
 	<script type="text/javascript" charset="utf-8">
 		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
@@ -32,14 +37,18 @@
 	</script>	
 </head>
 <body>
+
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
+				<span class="brand" style="color:white">Unhangouts </span>
+        	  
 				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 				</button>
+
 				<div class="nav-collapse collapse">
 					<ul class="nav">
 						<li class="active"><a href="/">Home</a></li>
@@ -54,10 +63,15 @@
 					</ul>
 					<div class="nav pull-right identity">
 					<% if(!user) {%>
-					<a class="btn btn-primary pull-left" href="/auth/google">Login</a>
+					<li><a href="/auth/google">Login</a></li>
 					<% } else { %>
 						<div class="dropdown">
-							<a class="dropdown-toggle username" data-toggle="dropdown" href="#"><%= user.get("displayName")%></a>
+							
+							<a class="dropdown-toggle username" data-toggle="dropdown" href="#">
+							<img class="profile-thumbnail" src="<%= user.get("picture")%>" width="30px" height="30px">
+							<%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
+							
+							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 								<li role="presentation">
 									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
