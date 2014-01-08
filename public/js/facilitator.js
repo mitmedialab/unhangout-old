@@ -3,6 +3,8 @@
       Activities UI
 *****************************/
 
+var logger = new Logger("FACILITATOR", "error");
+
 var FacilitatorView = Backbone.View.extend({
     template: _.template($('#facilitator').html()),
     events: {
@@ -22,7 +24,7 @@ var FacilitatorView = Backbone.View.extend({
         // Our socket is not just correct, not just articulate... it is *on message*.
         sock.onmessage = _.bind(function(message) {
             var msg = JSON.parse(message.data);
-            console.log("SOCK", msg.type, msg.args);
+            logger.debug("SOCK", msg.type, msg.args);
             switch (msg.type) {
                 case "auth-ack":
                     // When we're authorized, join the room for this session.
@@ -36,7 +38,7 @@ var FacilitatorView = Backbone.View.extend({
                                             false);
                     break;
                 case "session/set-hangout-url-err":
-                    console.log("Bad hangout url.");
+                    logger.error("Bad hangout url.");
                     this.faces.hideVideoIfActive();
                     // Get out of here!
                     new SwitchHangoutsDialog({correctUrl: msg.args.url});
@@ -57,13 +59,13 @@ var FacilitatorView = Backbone.View.extend({
 		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
 			if (event.data.type == "url") {
 				if (event.data.args.url) {
-					console.log("CDM inner set", event.data.args.url, event.origin);
+					logger.debug("CDM inner set", event.data.args.url, event.origin);
 					session.set("hangout-url", event.data.args.url);
 					HANGOUT_ORIGIN = event.origin;
 					postMessageToHangout({type: "url-ack"});
 				}
 			} else if (event.data.type == "participants") {
-				//console.log("CDM inner participants:", event.data.args);
+				logger.debug("CDM inner participants:", event.data.args);
 				var data = event.data.args.participants;
 				if (_.isString(data)) {
 					data = JSON.parse(data);
@@ -97,7 +99,7 @@ var FacilitatorView = Backbone.View.extend({
                                           activity: activityData});
                 break;
             default:
-                console.error("Unknown activity", activityData);
+                logger.error("Unknown activity", activityData);
                 return;
         }
         view.on("activity-settings", this.addActivityDialog)
@@ -251,7 +253,6 @@ var FacesView = Backbone.View.extend({
         }
     },
     hideVideoIfActive: function() {
-        console.log("UGH", this.isActive);
         if (this.isActive) { postMessageToHangout({type: "hide-video"}); }
     },
     showVideoIfActive: function() {
@@ -410,7 +411,7 @@ var AddActivityDialog = BaseModalView.extend({
         } else {
             if (/^https?:\/\/.+$/.test(val)) {
                 if (window.location.protocol == "https:" && !/^https.+$/.test(val)) {
-                    console.log("Attempt to add unsecure page to secure hangout");
+                    logger.error("Attempt to add unsecure page to secure hangout");
                     this.$(".ssl-error-message").show();
                     return false;
                 }
@@ -498,7 +499,7 @@ sock.onclose = function() {
 
 // Let the server know about changes to the hangout URL.
 session.on("change:hangout-url", function() {
-    console.log("Broadcasting new hangout URL", session.get("hangout-url"));
+    logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
     sock.sendJSON("session/set-hangout-url", {
         url: session.get("hangout-url"),
         sessionId: session.id

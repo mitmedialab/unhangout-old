@@ -16,7 +16,7 @@
                     hangoutUrl: "<%= mockHangoutUrl %>",
                     appData: "<%= mockAppData %>"
                 }
-                console.log("MOCK DATA", MOCK_DATA);
+                console.debug("MOCK DATA", MOCK_DATA);
             </script>
             <script src='/public/js/mock-hangout-api.js'></script>
         <% } else { %>
@@ -25,30 +25,62 @@
     </head>
     <body style='width: 100%; height: 100%; padding: 0; margin: 0;'>
         <script type='text/javascript'>
-            if (typeof console === "undefined") {
-                console = {log: function(){}, info: function(){}, error: function(){}};
-            }
+            var Logger = function(prefix, level) {
+                // Levels: "debug", "log", "info", "error"
+                level = level || "debug";
+                if (typeof console === "undefined") {
+                    console = {log: function(){}, info: function(){},
+                               debug: function(){}, error: function(){}};
+                }
+                var prefixLogger = function(prefix, logFunc, logFuncThis) {
+                    return function() {
+                        var args = [];
+                        for (var i = 0; i < arguments.length; i++) {
+                            args[i] = arguments[i];
+                        }
+                        if (args.length > 0) {
+                            if (typeof args[0] === "string") {
+                                args[0] = prefix + " " + args[0];
+                            } else {
+                                args.unshift(prefix);
+                            }
+                        }
+                        logFunc.apply(logFuncThis || this, args);
+                    };
+                };
+                this.debug = this.log = this.info = this.error = function() {};
+                if (level == "debug") {
+                    this.debug = prefixLogger(prefix, console.debug || console.log, console);
+                }
+                if (level == "debug" || level == "log") {
+                    this.log = prefixLogger(prefix, console.log, console);
+                }
+                if (level == "debug" || level == "log" || level == "info") {
+                    this.info = prefixLogger(prefix, console.info, console);
+                }
+                this.error = prefixLogger(prefix, console.error, console);
+            };
+            var logger = new Logger("GADGET", "error");
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
             var version = 8;
-            console.log("Unhangout Facilitator version " + version);
+            logger.info("Unhangout Facilitator version " + version);
             var load = function(event) {
                 if (event && !event.isApiReady) { return; }
                 var iframe = document.createElement('iframe');
                 var appData = gadgets.views.getParams()['appData'] || "";
-                console.log("appData:", appData);
+                logger.info("appData:", appData);
                 var parts = appData.split(":");
                 var sessionId = parts[1];
                 // Fall back to gapi.hangout.data if we have no appData.
                 if (sessionId) {
                     gapi.hangout.data.setValue("sessionId", sessionId);
-                    console.log("Session ID from appData:", sessionId);
+                    logger.debug("Session ID from appData:", sessionId);
                 } else {
                     sessionId = gapi.hangout.data.getValue("sessionId");
-                    console.log("Session ID from gapi.hangout.data:", sessionId);
+                    logger.debug("Session ID from gapi.hangout.data:", sessionId);
                 }
                 var url = "<%= unhangoutBaseUrl %>/facilitator/" + sessionId + "/";
-                console.log(url);
                 // Create the session iframe which will handle the rest.
                 iframe.src = url;
                 iframe.width = "100%";
@@ -86,9 +118,9 @@
                 // Cancel after a while if we've gotten no ack -- but warn.
                 setTimeout(function() {
                     if (tellUrl) {
-                        console.log(urlArgs);
+                        logger.debug(urlArgs);
                         alert("Error loading unhangout facilitator.");
-                        console.error("Failed to get ack; poll count: " + pollCount);
+                        logger.error("Failed to get ack; poll count: " + pollCount);
                         clearInterval(tellUrl);
                     }
                 }, 60000);
@@ -96,7 +128,7 @@
                 var lastVideoDims;
                 var _resizeTimeout;
                 var setDims = function(dims) {
-                    console.log("setDims", dims);
+                    logger.debug("setDims", dims);
                     // Throttle dimension setting to avoid crashing
                     // browsers that try to repaint the video too fast.
                     if (_resizeTimeout) {
@@ -129,18 +161,18 @@
                             case "url-ack":
                                 clearInterval(tellUrl);
                                 tellUrl = null;
-                                console.log("outerCDM", event.data.type);
+                                logger.debug("outerCDM", event.data.type);
                                 break;
                             case "hide":
                                 gapi.hangout.hideApp();
                                 break;
                             case "show-video":
-                                console.log("show video");
+                                logger.debug("show video");
                                 gapi.hangout.layout.getVideoCanvas().setVisible(true);
                                 setDims(lastVideoDims);
                                 break;
                             case "hide-video":
-                                console.log("hide video");
+                                logger.debug("hide video");
                                 gapi.hangout.layout.getVideoCanvas().setVisible(false);
                                 break;
                             case "set-video-dims":

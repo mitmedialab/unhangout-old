@@ -20,7 +20,6 @@ var FauxCanvas = function() {
         // Leave room for the outline, to aid in debugging scaling.
         div.style.left = parseInt(left + 3) + "px";
         div.style.top = parseInt(top + 3) + "px";
-        console.log(left, top, div.style.left, div.style.top);
     };
     this.getAspectRatio = function() {
         return aspectRatio;

@@ -27,6 +27,7 @@ var YoutubeVideo = Backbone.View.extend({
         _.bindAll(this, "playForEveryone", "toggleSync",
                         "onPlayerReady", "onPlayerStateChange",
                         "triggerVideoSettings");
+        this.logger = new Logger("VIDEO", "error");
     },
     render: function() {
         this.$el.html(this.template({cid: this.cid}));
@@ -85,7 +86,7 @@ var YoutubeVideo = Backbone.View.extend({
         );
     },
     receiveControl: function(args) {
-        console.log("Receive control", args);
+        this.logger.debug("Receive control", args.state);
         this.timeOfLastControl = new Date().getTime();
         this.ctrl = args;
         if (!this.player) { return; }
@@ -121,6 +122,7 @@ var YoutubeVideo = Backbone.View.extend({
     },
     onPlayerStateChange: function(event) {
         this.renderControls();
+        this.logger.debug("onPlayerStateChange", event.data);
         // Google gives us no "onSeekTo" or seek-related player state change,
         // so we have to be a little tricky about figuring out if someone has
         // tried to seek to elsewhere in the video.
@@ -132,16 +134,28 @@ var YoutubeVideo = Backbone.View.extend({
                 // ... and the video is playing ...
                 this.syncAvailable()) {
             // ... interpret it as an intention to seek or pause.
+            this.logger.debug("times", this.ctrl.time, this.player.getCurrentTime());
             if (this.showGroupControls) {
                 // Admin: do it for everyone.
                 // If it's more than 10 seconds, assume seek; otherwise pause. 
                 if (Math.abs(this.ctrl.time  - this.player.getCurrentTime()) > 10) {
+                    this.logger.debug("send control-video play");
+                    if (this._seekPauseTimeout) {
+                        this.logger.debug("clear seekPauseTimeout: seeking");
+                        clearTimeout(this._seekPauseTimeout);
+                    }
                     this.trigger("control-video", {
                         action: "play",
                         time: this.player.getCurrentTime()
                     });
                 } else {
-                    this.trigger("control-video", {action: "pause"});
+                    // Can't find any reasonable way to distinguish intentional
+                    // pauses from unintentional pauses.  YouTube throws pause
+                    // signals (sometimes more than one) whenever play is
+                    // interrupted, either from a seek, a reversion to
+                    // buffering, or whatever.  Essentially disabling the
+                    // native pause control for admins/breakout participants as
+                    // a result.
                 }
             } else {
                 // Non-admin: just toggle intendToSync.
