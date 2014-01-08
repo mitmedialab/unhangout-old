@@ -331,7 +331,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 	},
 	removeEmbed: function() {
 		// just send an empty message, and clear the field
-		$("#embed_youtubue_id").val("");
+		$("#embed_youtube_id").val("");
         this.setEmbed();
 	},
     changeSessionType: function() {
