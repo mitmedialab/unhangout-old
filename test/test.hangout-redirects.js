@@ -81,7 +81,8 @@ describe("HANGOUT REDIRECTS", function() {
         
             var url = "http://example.com/farmed" + suffix;
             checkRedirect(url, "regular1", function() {
-                farming.getNextHangoutUrl(function(url) {
+                farming.getNextHangoutUrl(function(err, url) {
+                    expect(err).to.be(null);
                     expect(url).to.be(null);
                     done();
                 });
@@ -90,7 +91,8 @@ describe("HANGOUT REDIRECTS", function() {
     });
     it("Uses button URL when farmed hangout links are unavailable", function(done) {
         // Ensure we have nothing farmed...
-        farming.getNextHangoutUrl(function(url) {
+        farming.getNextHangoutUrl(function(err, url) {
+            expect(err).to.be(null);
             expect(url).to.be(null);
             var url = "https://plus.google.com/hangouts/_?gid=fun&gd=sessionId:" + session.id;
             checkRedirect(url, "regular1", function() {
@@ -100,7 +102,7 @@ describe("HANGOUT REDIRECTS", function() {
         });
     });
     it("Lets a 2nd user be the pending creator if the 1st times out", function(done) {
-        this.timeout(20000); // We're testing long timeouts. :(
+        this.timeout(30000); // We're testing long timeouts. :(
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
         var url = "https://plus.google.com/hangouts/_?gid=fun&gd=sessionId:" + session.id;
@@ -113,6 +115,42 @@ describe("HANGOUT REDIRECTS", function() {
                 expect(session.get("hangout-pending").userId).to.be(u2.id);
                 done();
             });
-        }, 15000);
+        }, 20000);
+    });
+    it("Retains a farmed url after adding it to a session if someone joins", function(done) {
+        this.timeout(30000); // We're testing long timeouts. :(
+        var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+        var url = "http://example.com/good-url";
+        farming.reuseUrl(url, function(err) {
+            expect(err).to.be(null);
+            checkRedirect(url + suffix, "regular1", function() {
+                session.setConnectedParticipants([{id: user.id}]);
+                setTimeout(function() {
+                    expect(session.getHangoutUrl()).to.be(url);
+                    done();
+                }, 25000);
+            });
+        });
+    });
+    it("Times-out a farmed url (without re-using it) after adding it to a session if no one joins", function(done) {
+        this.timeout(30000); // We're testing long timeouts. :(
+        var url = "http://example.com/poison-url";
+        expect(farming.getNumHangoutsAvailable()).to.be(0);
+        farming.reuseUrl(url, function(err) {
+            expect(err).to.be(null);
+            // We should get the farmed (poison) url...
+            checkRedirect(url + suffix, "regular1", function() {
+                // ... but we don't enter the session, and never start it.
+                setTimeout(function() {
+                    expect(session.getHangoutUrl()).to.be(null);
+                    // Ensure the URL wasn't reused..
+                    farming.getNextHangoutUrl(function(err, url) {
+                        expect(err).to.be(null);
+                        expect(url).to.be(null);
+                        done();
+                    });
+                }, 20000);
+            });
+        });
     });
 });
