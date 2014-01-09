@@ -12,6 +12,10 @@
 	
 	<link href="/public/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
 	<script type="text/javascript" src="//code.jquery.com/jquery-2.0.0.js"></script>
+
+	<!-- Jquery validator plugin -->
+  	<script src="public/js/jquery.validate.min.js"></script>
+  	
 	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
 	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
 	<script type="text/javascript" src="/public/js/index.js"></script>
@@ -66,7 +70,6 @@
 					<li><a href="/auth/google">Login</a></li>
 					<% } else { %>
 						<div class="dropdown">
-							
 							<a class="dropdown-toggle username" data-toggle="dropdown" href="#">
 							<img class="profile-thumbnail" src="<%= user.get("picture")%>" width="30px" height="30px">
 							<%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
