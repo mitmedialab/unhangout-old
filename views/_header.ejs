@@ -28,6 +28,7 @@
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';
         var IS_ADMIN = <%= user.isAdminOf(event) %>;
+        var IS_SUPERUSER = <%= user.isSuperuser() %>;
 		<% } %>
 
 		<% if(!_.isUndefined(event)) { %>
