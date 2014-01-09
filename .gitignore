@@ -22,6 +22,7 @@ node_modules
 
 # ignore conf.json, so we can safely keep settings in there.
 conf.json
+farmingConf.json
 # ignore ssl, to ensure we never check certs in.
 ssl/
 
