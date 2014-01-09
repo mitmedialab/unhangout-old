@@ -25,7 +25,7 @@ var common = require("../test/common.js"),
 function run(callback) {
     common.getSeleniumBrowser(function(browser) {
         // Authenticate first.
-        browser.get(farmConf.url);
+        browser.get(farmConf.serverUrl);
         browser.byLinkText("Login").click();
         browser.byCss("#Email").sendKeys(farmConf.email);
         browser.byCss("#Passwd").sendKeys(farmConf.password);
@@ -41,11 +41,11 @@ function run(callback) {
             }
         });
         browser.getCurrentUrl().then(function(url) {
-            if (url.indexOf(farmConf.url) == -1) {
+            if (url.indexOf(farmConf.serverUrl) == -1) {
                 throw new Error("Unhandled sign-in interstitial!");
             }
         });
-        browser.get(farmConf.url + "/hangout-farming");
+        browser.get(farmConf.serverUrl + "/hangout-farming");
         for (var i = 0; i < farmConf.count; i++) {
             browser.byLinkText("CLICK ME").click();
         };
