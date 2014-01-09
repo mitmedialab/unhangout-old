@@ -36,6 +36,7 @@
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';
 		var IS_ADMIN = <%= user.isAdminOf(event) %>;
+        var IS_SUPERUSER = <%= user.isSuperuser() %>;
 
 		<% if(user.isAdminOf(event)) { %>
 		var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
@@ -158,7 +159,9 @@
 							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">video embed</a>
 							<a role="menuitem" tabindex="-1" id="open-sessions">open sessions</a>
 							<a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
+                            {{ if (IS_SUPERUSER) { }}
 							<a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
+                            {{ } }}
 						</li>
 					</ul>
 				</div>
