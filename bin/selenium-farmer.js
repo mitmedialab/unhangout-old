@@ -6,7 +6,7 @@
  * following:
  *
  * {
- *   "url": "https://unhangout.media.mit.edu/hangout-farming",
+ *   "serverUrl": "https://unhangout.media.mit.edu",
  *   "email": <google account email>,
  *   "password": <google password>,
  *   "count": <number of links to farm in one run>
@@ -24,7 +24,9 @@ var common = require("../test/common.js"),
 
 function run(callback) {
     common.getSeleniumBrowser(function(browser) {
+        // Authenticate first.
         browser.get(farmConf.url);
+        browser.byLinkText("Login").click();
         browser.byCss("#Email").sendKeys(farmConf.email);
         browser.byCss("#Passwd").sendKeys(farmConf.password);
         browser.byCss("#signIn").click();
@@ -39,11 +41,11 @@ function run(callback) {
             }
         });
         browser.getCurrentUrl().then(function(url) {
-            var expectedUrl = farmConf.url.replace("hangout-farming", "hangout-callback");
-            if (url.indexOf(expectedUrl) == -1) {
+            if (url.indexOf(farmConf.url) == -1) {
                 throw new Error("Unhandled sign-in interstitial!");
             }
         });
+        browser.get(farmConf.url + "/hangout-farming");
         for (var i = 0; i < farmConf.count; i++) {
             browser.byLinkText("CLICK ME").click();
         };
