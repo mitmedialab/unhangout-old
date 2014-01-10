@@ -104,3 +104,22 @@ Testing
 Tests are written with mocha; and integration tests with selenium.  Wherever possible, core functionality should be backed up with tests.  See INSTALLATION.md for instructions on running tests (with or without selenium, and with or without a headless X-server).
 
 Common functions for starting up the server and building the selenium webdriver are found in ``test/common.js``.  Selenium webdriver uses a "promise" syntax to handle asynchronous code (see http://code.google.com/p/selenium/wiki/WebDriverJs for full documentation).
+
+Analytics/logging taxonomy
+--------------------------
+
+The ``lib/logging.js`` library contains a logger to use both for informational/debug logging and for structured analytics.  Log with ``logger.debug()``, ``loger.info()``, ``loger.warn()``, ``loger.error()``, or ``logger.analytics``.  Debug messages only show up in the console during development.  Info and above are logged to a file in production (where ``NODE_ENV="production"``).  Only use these messages for information that is pertinent during development (at ``debug`` level), or pertinent to sysadmins figuring out what's going on with a live server (mostly ``error`` and ``warn``, though occasionally ``info`` helps).  If in doubt, use ``debug``.
+
+``analytics`` logging logs to a separate file in JSON format -- use these judiciously, with an intention of logging only those events that are helpful in doing post-hoc analysis on how the site is being used, not real-time analysis of what the server is up to or development.  ``logger.analytics`` takes two arguments: ``(key, opts)``.  ``key`` is a term from the taxonomy below, and ``opts`` is an object containing data to log.  Several higher-level properties are accepted, including ``req``, ``res``, ``user``, ``session``, ``event``, and ``socket`` -- these will each have the relevant bits peeled off for logging.
+
+The following taxonomy describes what things we do analytics for, used with the ``key`` parameter to ``logger.analytics``.  Use these terms if possible, and document new terms if you add them.
+
+ - ``server``: Server lifecycle events (starting, stopping, etc).  Include high-level statistical data about the current state of the server (e.g. counts for the various models in the database).
+ - ``users``: User lifecycle events (sign up, login, logout, etc).
+ - ``events``: Happenings pertinent to ``event`` models.  Creation, starting, stopping, joining, leaving, chatting, etc.
+ - ``sessions``: Happenings pertinent to ``session`` models that are part of events.  Starting, stopping, setting URLs.  Due to its complexity, we make a particular effort to log details around hangout farming.
+ - ``permalinks``: Happenings pertinent to sessions which are permalinks. Same type of stuff.
+ - ``route``: Default web request logging, done via connect middleware.
+ - ``farming``: Events pertinent to the farming of hangout URLs.
+
+Include reasonable detail for each logged event, with an eye toward automated parsing and stats rather than human consumption.
