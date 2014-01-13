@@ -25,6 +25,10 @@ $(document).on('ready', function() {
 		$("#email").val("");
 	});
 
+	$("#login-first-button").click(function() {
+		$('#login-first-modal').modal('show');
+	})
+
 	$("#create-event-button").click(function() {
 		$('#event-mini-form-modal').modal('show');
 	});

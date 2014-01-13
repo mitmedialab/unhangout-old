@@ -7,11 +7,76 @@
 
         <h3>A platform for unconferences. On the web.</h3>
 
-        <div class="create-event-button">
+        <div class="create-event-button">  
+            <% if(!user) { %>          
+            <button id="login-first-button" class="btn btn-primary"> <i class="fa fa-edit fa-lg"></i>
+            Create an Unhangout
+            </button>
+            <% } else { %>
             <button id="create-event-button" class="btn btn-primary"> <i class="fa fa-edit fa-lg"></i>
             Create an Unhangout
             </button>
+            <% } %>
         </div>
+    </div>
+
+     <div class="modal hide fade event-mini-form" id=
+            "event-mini-form-modal">
+        <div class="modal-header">
+            <h3>Create an Unhangout</h3>
+        </div>
+
+        <div class="modal-body">
+            <form id="contact-form" class="form-horizontal">             
+                <div class="control-group">
+                  <label class="control-label" for="title">Event Title</label>
+                  <div class="controls">
+                    <input type="text" class="input-xlarge" name="title" id="title">
+                  </div>
+                </div>
+
+                <div class="control-group">
+                  <label class="control-label" for="description">Event Description</label>
+                  <div class="controls">
+                    <textarea class="input-xlarge" name="description" id="description" rows="3"></textarea>
+                  </div>
+                </div>
+
+                <div class="modal-footer">
+                    <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
+                    <span class>Unhangouts</span>
+
+                    <button type="submit" id="submit-button" class="btn btn-primary btn-large">Submit</button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <div class="modal hide fade event-mini-form" id=
+            "login-first-modal">
+
+        <div class="modal-header">
+            <h3>Welcome to Unhangout!</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="">
+                <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
+                <a href="/auth/google/"><button class="btn btn-primary pull-right">Login to create an Unhangout</button></a><br/><br/>
+            </div>
+
+            <form>
+                <div class="modal-footer">
+                    <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
+                    <span class>Unhangouts</span>
+
+                    <button type="submit" id="close-button" class="btn btn-primary">Close</button>
+                </div>
+            </form>
+        </div>
+
     </div>
 
     <div class="modal hide fade event-mini-form" id=
@@ -40,7 +105,7 @@
                     <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
                     <span class>Unhangouts</span>
 
-                    <button type="submit" id="submit-button" class="btn btn-primary btn-large">Submit</button>
+                    <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
                 </div>
 
             </form>
