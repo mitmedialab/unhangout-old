@@ -21,7 +21,6 @@
 var common = require("../test/common.js"),
     farmConf = require("../farmingConf.json");
 
-
 function run(callback) {
     common.getSeleniumBrowser(function(browser) {
         // Authenticate first.
@@ -43,6 +42,13 @@ function run(callback) {
         browser.getCurrentUrl().then(function(url) {
             if (url.indexOf(farmConf.serverUrl) == -1) {
                 throw new Error("Unhandled sign-in interstitial!");
+            }
+        });
+        browser.waitTime(2000);
+        browser.getCurrentUrl().then(function(url) {
+            if (url.indexOf("oauth2") != -1) {
+                browser.byCss("#submit_approve_access").click();
+                browser.get(farmConf.serverUrl + "/hangout-farming");
             }
         });
         browser.get(farmConf.serverUrl + "/hangout-farming");
