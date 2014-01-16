@@ -27,6 +27,7 @@ describe("CREATE EVENT", function() {
         // Create a new event.
         browser.get("http://localhost:7777/admin/");
         browser.byLinkText("new").click();
+        browser.waitForSelector("[name='title']");
         browser.byCss("[name='title']").sendKeys("Test Title");
         browser.byCss("[name='shortName']").sendKeys("test-title");
         browser.byCss("[name='organizer']").sendKeys("unhangoutdev@gmail.com");

@@ -1,7 +1,7 @@
 var server = require('../lib/unhangout-server'),
 	should = require('should'),
 	_ = require('underscore')._,
-	sock_client = require('sockjs-client'),
+	sock_client = require('sockjs-client-ws'),
 	request = require('superagent'),
 	seed = require('../bin/seed.js'),
     common = require("./common");
@@ -167,8 +167,25 @@ describe('unhangout server', function() {
 		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 
+        it("should require authentication for permalinks", function(done) {
+			request.get('http://localhost:7777/h/')
+                .redirects(0)
+                .end(function(res){
+                    res.status.should.equal(302);
+                    done();
+                });
+        });
+        it("should require authentication for permalink details", function(done) {
+			request.get('http://localhost:7777/h/test')
+                .redirects(0)
+                .end(function(res){
+                    res.status.should.equal(302);
+                    done();
+                });
+        });
 		it('should direct to the landing page when there is no code', function(done){
 			request.get('http://localhost:7777/h/')
+                .set("x-mock-user", "regular1")
 				.end(function(res){
 					res.status.should.equal(200);
 					done();
@@ -177,6 +194,7 @@ describe('unhangout server', function() {
 
 		it('if :code is new, it should create a new session on the server', function(done){
 			request.get('http://localhost:7777/h/' + Math.floor(Math.random()*100000))
+                .set("x-mock-user", "regular1")
 				.redirects(0)
 				.end(function(res){
 					res.status.should.equal(302);
@@ -187,11 +205,13 @@ describe('unhangout server', function() {
 
 		it('if :code is active, multiple requests only create one session', function(done){
 			request.get('http://localhost:7777/h/test')
+                .set("x-mock-user", "regular1")
 				.redirects(0)
 				.end(function(res){
 					res.status.should.equal(302);
 					common.server.db.permalinkSessions.length.should.equal(1);
 					request.get('http://localhost:7777/h/test')
+                        .set("x-mock-user", "regular1")
 						.end(function(res){
 							res.status.should.equal(200);
 							common.server.db.permalinkSessions.length.should.equal(1);
@@ -202,9 +222,11 @@ describe('unhangout server', function() {
 
 		it('if :code is new, it should present the form only for first visitor', function(done){
 			request.get('http://localhost:7777/h/test')
+                .set("x-mock-user", "regular1")
 				.end(function(res){
 					res.text.indexOf('<input').should.not.equal(-1);
 					request.get('http://localhost:7777/h/test')
+                        .set("x-mock-user", "regular1")
 						.end(function(res){
 							res.text.indexOf('<input').should.equal(-1);
 							done();
@@ -217,6 +239,7 @@ describe('unhangout server', function() {
 		beforeEach(function(done) {
             common.standardSetup(function() {
                 request.get('http://localhost:7777/h/test')
+                    .set("x-mock-user", "regular1")
                     .end(function(res) {
                         res.status.should.equal(200);
                         done();
@@ -229,6 +252,7 @@ describe('unhangout server', function() {
 		it('should reject requests without a valid creation key in the request body', function(done){
 			var session = common.server.db.permalinkSessions[0];
 			request.post('http://localhost:7777/h/admin/test')
+                .set("x-mock-user", "regular1")
 				.send({creationKey: 'wrong1', title: 'migrate title', description: 'something cool'})
 				.end(function(res){
 					res.status.should.equal(403);
@@ -239,6 +263,7 @@ describe('unhangout server', function() {
 		it('should update session title and description when valid creation key is present', function(done){
 			var session = common.server.db.permalinkSessions.at(0);
 			request.post('http://localhost:7777/h/admin/test')
+                .set("x-mock-user", "regular1")
 				.send({creationKey: session.get('creationKey'), title: 'migrate title', description: 'something cool'})
 				.end(function(res){
 					res.status.should.equal(200);
@@ -249,89 +274,6 @@ describe('unhangout server', function() {
 		});
 	});
 
-	describe('POST /session/hangout/:id', function() {
-		beforeEach(function(done) {
-            common.standardSetup(function() {
-				// we need to start one of the sessions so it has a valid session key for any of this stuff to work.
-				session = common.server.db.events.at(0).get("sessions").at(0);
-				done();
-			})
-        });
-
-		afterEach(common.standardShutdown);
-
-		it('should handle loaded properly', function(done) {
-			var fakeUrl = "http://plus.google.com/hangout/_/abslkjasdlfkjasdf";
-
-			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
-				.send("type=loaded&url=" + encodeURIComponent(fakeUrl))
-				.end(function(res) {
-					res.status.should.equal(200);
-
-					// this indexOf check is because the actual set url has a bunch of extra
-					// url get params in it (like the hangout app gid, and startup params) 
-					// so we just make sure that it STARTS with our string.
-					session.get("hangout-url").indexOf(fakeUrl).should.equal(0);
-					done();
-				});
-		});
-
-
-
-		it('should handle participants properly', function(done) {
-			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
-				.send({type:"participants", participants:[{person:{id:1}}, {person:{id:2}}]})
-				.end(function(res) {
-					res.status.should.equal(200);
-
-					// this indexOf check is because the actual set url has a bunch of extra
-					// url get params in it (like the hangout app gid, and startup params) 
-					// so we just make sure that it STARTS with our string.
-					session.getNumConnectedParticipants().should.equal(2);
-					done();
-				});
-		});
-
-		it('should handle heartbeat properly', function(done) {
-			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
-				.send({type:"heartbeat", from:1213141235})
-				.end(function(res) {
-					res.status.should.equal(200);
-
-					session.get("last-heartbeat").should.not.equal(null);
-					done();
-				});
-		});
-
-		it('should ignore requests without an id in the url', function(done) {
-			request.post('http://localhost:7777/session/hangout/') // <--- note missing session-key in url
-				.send({type:"heartbeat", from:1213141235})
-				.end(function(res) {
-					res.status.should.equal(404);
-					done();
-				});
-		});
-
-		it('should ignore requests without a type in the body', function(done) {
-			request.post('http://localhost:7777/session/hangout/' + session.get("session-key"))
-				.send({from:1213141235})
-				.end(function(res) {
-					res.status.should.equal(400);
-					done();
-				});
-
-		});
-
-		it('should ignore requests for sessions that haven\'t started yet / have invalid session-keys', function(done) {
-			request.post('http://localhost:7777/session/hangout/' + "abe283917cd692387162bea283") // <--- note random session key
-				.send({type:"heartbeat", from:1213141235})
-				.end(function(res) {
-					res.status.should.equal(400);
-					done();
-				});
-		});
-	});
-	
 	describe('sock (mock)', function() {
 		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);

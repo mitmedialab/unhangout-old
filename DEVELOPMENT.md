@@ -3,26 +3,40 @@ DEVELOPMENT
 
 This file contains some collected notes from development to help guide future developers in adding features or understanding why existing features work the way they do. 
 
-Structure
----------
+Code Organization
+-----------------
 
-	/bin - contains all files intended to be executed directly, using, e.g. `node seed.js`
-		_get-all-user-emails.js_ helper script for extracting all emails users have logged in with
-		_seed.js_  _wipes_ and populates the redis database with basic models
-		_unhangout-server_ primary executable for starting the server
-	/lib - various server-side libraries
-		_hangout-farming.js_ - support code for farming valid unhangout urls from google calendar api
-		_passport-mock.js_ - support for faking passport users during testing
-		_server-models.js_ - extensions of the core models for use on the server
-		_unhangout-server.js_ - core code for running the server
-	/logs
-	/public - all static content, served by *express* at `/public/*`
-	/sass - sass stylesheets (which generate into `/public/css`)
-	/test - mocha and selenium unit and integration tests
-	/views - templates for rendering HTML pages
-	package.json - dependencies + other metadata
-	config.rb - configures compass, for turning sass into css
-	conf.json.example - example config file; should be copied into conf.json and edited appropriately.
+	``/bin`` - contains all files intended to be executed directly, using, e.g. `node seed.js`
+		``get-all-user-emails.js`` -  helper script for extracting all emails users have logged in with
+		``seed.js``  _wipes_ and populates the redis database with basic models
+		``unhangout-server`` primary executable for starting the server
+	``/lib`` - various server-side libraries
+        __Server lifecycle__
+        ``unhangout-server.js`` - starting, stopping Unhangout
+        ``logging.js`` - logging and analytics
+        ``redirect-https.js`` - simple http => https redirect server
+
+        __MVC__
+        ``unhangout-db.js`` - Hoisting and access to in-memory database, persistence to redis.
+        ``server-models.js`` - Models (extending those in /public/js/models.js).
+        ``unhangout-routes.js`` - Core express routes and handlers for HTTP requests
+        ``permalink-routes.js`` - Express routes and handlers for the permalink service
+        ``unhangout-sockets.js`` - Core routes for websocket messages
+
+        __Libraries__
+        ``room-manager.js`` - Manager of ``rooms``, with joining, leaving, and authentication, on top of SockJS.
+        ``redis-sync.js`` - Interface between Backbone.js and Redis
+        ``video-sync.js`` - Time-sync code for simultaneous video watching
+		``hangout-farming.js`` - support code for farming valid unhangout urls from google calendar api
+		``passport-mock.js`` - support for faking passport users during testing
+        ``utils.js`` - Common utilities that don't easily fit elsewhere.
+
+	``/logs``
+	``/public`` - all static content, served by *express* at `/public/*`
+	``/test`` - mocha and selenium unit and integration tests
+	``/views`` - templates for rendering HTML pages
+	``package.json`` - dependencies + other metadata
+	``conf.json.example`` - example config file; should be copied into conf.json and edited appropriately.
 
 
 Overall Architecture
@@ -90,4 +104,3 @@ Testing
 Tests are written with mocha; and integration tests with selenium.  Wherever possible, core functionality should be backed up with tests.  See INSTALLATION.md for instructions on running tests (with or without selenium, and with or without a headless X-server).
 
 Common functions for starting up the server and building the selenium webdriver are found in ``test/common.js``.  Selenium webdriver uses a "promise" syntax to handle asynchronous code (see http://code.google.com/p/selenium/wiki/WebDriverJs for full documentation).
-

@@ -1,0 +1,14 @@
+<script type='text/javascript'>
+    // Update navbars.
+    $(document).ready(function() {
+        $(".nav li").each(function(i, el) {
+            if ($(el).find("a").attr("href") == window.location.pathname) {
+                $(el).addClass("active");
+            } else {
+                $(el).removeClass("active");
+            }
+        });
+    });
+</script>
+</body>
+</html>
