@@ -36,10 +36,8 @@ describe("CREATE EVENT", function() {
         browser.byCss(".btn-primary").click()
         // TODO: get rid of hard-coded event ID here and below, in case we
         // change the fixture..
-        browser.byCss("#events a[href='/event/3']").then(function(el) {
-            el.getText().then(function(text) {
-                text.should.equal("Test Title (test-title)");
-            });
+        browser.byCss("#events a[href='/event/3']").getText().then(function(text) {
+            text.should.equal("Test Title (test-title)");
         });
         
         // Event hasn't started
@@ -47,6 +45,7 @@ describe("CREATE EVENT", function() {
         browser.getTitle().then(function(title) {
             title.should.equal("Test Title — powered by unhangout");
         });
+        browser.waitForSelector("#about-event h1");
         browser.byCss("#about-event h1").getText().then(function(text) {
             text.should.equal("Test Title");
         });
