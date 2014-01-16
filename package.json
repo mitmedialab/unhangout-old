@@ -1,6 +1,6 @@
 {
   "name": "unhangout-server",
-  "version": "0.1.0",
+  "version": "1.2.0",
   "author": "Drew Harry <dharry@media.mit.edu>",
   "description": "a server for managing un-hangouts; large scale online un-conference-style events using Google Hangout",
   "contributors": [ 
