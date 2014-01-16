@@ -291,7 +291,7 @@ models.User = Backbone.Model.extend({
 	},
 
     isSuperuser: function() {
-        return this.get("superuser");
+        return !!this.get("superuser");
     },
 
     hasEmail: function(email) {
