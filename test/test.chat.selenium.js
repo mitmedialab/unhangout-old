@@ -2,7 +2,7 @@ var server      = require('../lib/unhangout-server'),
     async       = require('async'),
     should      = require('should'),
     _           = require('underscore'),
-    sock_client = require("sockjs-client"),
+    sock_client = require("sockjs-client-ws"),
     common      = require('./common');
 
 var browser = null;
@@ -66,7 +66,7 @@ describe("CHAT WINDOW", function() {
             browser.byCss("#chat-input").sendKeys("msg " + i + "\n");
         }
         browser.wait(function() {
-            return browser.byCsss("div.chat-message").then(function(els) {
+            return browser.byCsss("li.chat-message").then(function(els) {
                 return els.length == msgCount + 1;
             });
         });

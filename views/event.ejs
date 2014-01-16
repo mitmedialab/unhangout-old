@@ -1,302 +1,237 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
-	<title><%= event.get("title") %> &mdash; powered by unhangout</title>
-	<!-- <link rel="stylesheet" href="/public/css/bootstrap.css" type="text/css" media="screen"> -->
-	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
-	<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-	
-	<link href="/public/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
+<% include _header.ejs %>
+<% include _event-navbar.ejs %>
 
-    <% include analytics.ejs %>
-	
-	<script type="text/javascript" src="//code.jquery.com/jquery-2.0.0.js"></script>
-	<script type="text/javascript" src="/public/js/jquery-ui-1.10.3.custom.min.js"></script>
-	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
-	<script src="//d1fxtkz8shb9d2.cloudfront.net/sockjs-0.3.min.js"></script>
-	
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone.js"></script>
-		<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.0.0-rc4-bundled/backbone.marionette.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/backbone.paginator/0.8/backbone.paginator.min.js"></script>
-		<script type="text/javascript" src="/public/js/app.js"></script>
-	
-	<script type="text/javascript" charset="utf-8">
-		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
-		_.templateSettings = {
-		    interpolate : /\{\{=(.+?)\}\}/g,
-			evaluate: /\{\{(.+?)\}\}/g
-		};
-
-		// this is where we inject a snapshot of the relevant server state to bootstrap
-		// the local models to get the client app started. These are all templated in via
-		// the express templating pass.
-		<% if(!_.isUndefined(user)) { %>
-		var SOCK_KEY = '<%= user.getSockKey() %>';
-		var USER_ID = '<%= user.id %>';
-		var IS_ADMIN = <%= user.isAdminOf(event) %>;
-        var IS_SUPERUSER = <%= user.isSuperuser() %>;
-
-		<% if(user.isAdminOf(event)) { %>
-		var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
-		<% } %>
-
-		// this is a little weak, but since we only want this for the first
-		// event we'll leave it like this for now.
-		var SINGLE_SESSION_RSVP = true;
-		<% } %>
-
-		<% if(!_.isUndefined(event)) { %>
-		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
-		<% } %>
-	</script>
-	
-		<script type="text/javascript" src="/public/js/models.js"></script>	
-		<script type="text/javascript" src="/public/js/client-models.js"></script>	
-		<script type="text/javascript" src="/public/js/views.js"></script>	
-
-		<!-- Templates for the backbone views go here. Sort of annoying to have to have them in this view,
-		     but that seems to be how we can make this work with express and no content_for equivalent. -->
-
-		    <script type="text/template" id="about-event-template">
-		    <h1>{{=title}}</h1>
-		    <h4>hosted by {{=organizer}}</h4>
-
-		    {{= description}}
-
-		    <div class="footer">This event has not yet started, so the rest of the page is disabled. Come back at the posted start time to participate!</div>
-		    </script>
-
-			<script type="text/template" id="session-template">
-			<h3>{{= title }}</h3>
-			<div class="description">{{= description }} </div>
-			<div class="empty">no one signed up yet</div>
-			<div class="attending"><div class="first"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="counter"></div><div class="full">FULL</div></div>
-			<div class="attend btn btn-info" data-toggle="button"><span class="outer"><i class="icon-lock"></i><span class="text">SIGN UP</span><span class="attend-count hide"></span></span><div class="attendance"></div></div>
-			
-			<div class="admin-buttons">
-			<div class="delete btn btn-warning"><i class="icon-trash"></i></div>
-			</div>
-			<div class="hangout-users">
-			</div>
-			<div class="hangout-offline">
-			No one has joined this session yet.
-			</div>
-			</script>
-			
-			<script type="text/template" id="session-list-template">
-				<ul id="session-list-container" class="full-size-container">
-
-				<div class="empty-notice hide">Sessions will appear here when they are created by an admin.</div>
-				<div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
-				</ul>
-			</script>
-
-			<script type="text/template" id="pagination-template">
-			<div class="footer">
-			<div id="prev">prev</div>
-			{{ _.each(info().pageSet, function(page) { }}
-				{{ if(page==currentPage) { }}
-					<div class="active page">{{= page }}</div>
-				{{ } else { }}
-					<div class="page">{{= page }}</div>
-				{{ } }}
-			{{ }) }}
-			<div id="next">next</div>
-			</div>
-			</script>
-			
-			<script type="text/template" id="user-template">
-				{{ if(picture=="") { }}
-				<i class="icon-user icon-3x"></i>
-				{{ } else { }}
-				<a href="{{=link}}" target="_new"><img src="{{=picture}}"></a>
-				{{ } }}
-			</script>
-			
-			<script type="text/template" id="user-list-template">
-			<div class="header"><span class="contents">{{=numUsers}}</span><i class="icon-user"></i></div>
-			<div id="user-list-scroll-container">
-			<ul id="user-list-container"></ul>
-			</div>
-			</script>
-			
-			<script type="text/template" id="chat-message-template">
-			<span class="from">{{=user.shortDisplayName}}</span>{{=text}}
-			</script>
-			
-			<script type="text/template" id="chat-layout">
-			<div id="chat-container-region" class="span5"></div>
-			<div id="presence-gutter"></div>
-			<div id="chat-input-region"></div>
-			</script>
-
-			<script type="text/template" id="chat-input-template">
-			<form><input type="text" id="chat-input" autocomplete="off"></input></form>
-			</script>
-
-			<script type="text/template" id="chat-template">
-			<ul id="chat-list-container"></ul>
-			</script>
-			
-			<script type="text/template" id="user-column-layout-template">
-			<div id="user-list"></div>
-			<div id="footer"></div>
-			</script>			
-			
-			<script type="text/template" id="video-embed-template">
-			<div id="player" class="player"></div>
-			</script>
-
-			<script type="text/template" id="admin-button-template">
-				<div class="dropdown">
-					<a class="dropdown-toggle admin-button" data-toggle="dropdown" href="#">Admin</a>
-					<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-						<li role="presentation">
-							<a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">create session</a>
-							<a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">edit event settings</a>
-							<a role="menuitem" href="#embed-modal" role="button" data-toggle="modal" id="show-embed-modal">video embed</a>
-							<a role="menuitem" tabindex="-1" id="open-sessions">open sessions</a>
-							<a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
-                            {{ if (IS_SUPERUSER) { }}
-							<a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
-                            {{ } }}
-						</li>
-					</ul>
-				</div>
-			</script>
-
-			<script type="text/template" id="session-live-bar-template">
-			<div>Your session is now live!</div><a class="btn btn-success" target="_blank">Join Hangout!</a>
-			</script>
-
-			<script type="text/template" id="dialogs-template">
-				<div id="create-session-modal" class="modal hide fade">
-					<div class="modal-header">
-						<h3>CREATE SESSION</h3>
-					</div>
-					<div class="modal-body">
-						<div class="control-group">
-							<label for="session_name">SESSION NAME</label><input type="text" name="session_name" value="" id="session_name">
-						</div>
-					</div>
-					<div class="modal-footer">
-						<a href="#" class="btn btn-primary" id="create-session">Create Session</a>
-					</div>
-				</div>
-				<div id="embed-modal" class="modal hide fade">
-					<div class="modal-header">
-						<h3>Set Video URL</h3>
-					</div>
-					<div class="modal-body">
-						<p class="text-warning hide">Unrecognized youtube URL. Please use the URL for a single video.</p>
-						<div class="control-group">
-                            <label for="youtube_id">Youtube video URL</label>
-                            <input type="text" name="youtube_id" value="" id="youtube_id">
-                            <div id='current-yt-url'></div>
-						</div>
-					</div>
-					<div class="modal-footer">
-                        <a href='#' class='btn pull-left' data-dismiss='modal'>Cancel</a>
-						<a href="#" class="btn btn-warning" id="remove-embed">Remove Video</a>
-						<a href="#" class="btn btn-primary" id="set-embed">Set Video</a>
-					</div>
-				</div>
-				<div class="modal hide fade started-modal">
-					<div class="modal-header">
-					<h3></h3>
-					</div>
-					<div class="modal-body">
-						<p>It is time to join your session!</p>
-						<a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
-					</div>
-				</div>	
-				<div class="modal hide fade disconnected-modal" id="disconnected-modal">
-					<div class="modal-header">
-					<h3>Warning!</h3>
-					</div>
-					<div class="modal-body">
-						<p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
-						<a href="#" class="btn">Close</a>
-					</div>
-				</div>
-				<div id="no-urls-warning" class="modal hide fade">
-					<div class="modal-header">
-						<h3>NO HANGOUT URLS AVAILABLE</h3>
-					</div>
-					<div class="modal-body">
-						<p>There are currently no hangout urls available on the server. Sessions started when there are no urls available will fall back to the callback method of hangout starting, which requires the first person to join a session to create the hangout. This is not desireable; we strongly recommend you farm some hangout urls by clicking "farm" below. For this process to work, your google acount must have "create video calls for events" set in your google calendar account settings.
-					</div>
-					<div class="modal-footer">
-						<a class="btn btn-success" id="farm-urls" href="/hangout-farming" target="_blank">Farm</a>
-						<a href="#" class="btn btn-primary" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
-					</div>
-				</div>
-
-			</script>
-		</head>
-<body>
-	<% if(user.isAdminOf(event)) {%>
-		<div class="admin-header">
-		</div>
-	<% } %>
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="navbar-inner">
-			<div class="container">
-				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="brand" href="/#"><%= event.get("title") %></a>
-				<div class="nav-collapse collapse">
-					<ul class="nav">
-						<li class="" id="video-nav"><a href="#video-nav">Video <span class="label label-success hide">live</span></a></li>
-						<li class="" id="about-nav">
-						<a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
-						</li> 
-					</ul>
-					<div class="nav pull-right identity">
-					<% if(!user) {%>
-					<a class="btn btn-primary pull-left" href="/auth/google">Login</a>
-					<% } else { %>
-						<div class="dropdown">
-							<a class="dropdown-toggle username" data-toggle="dropdown" href="#"><%= user.get("displayName")%></a>
-							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-								<li role="presentation">
-									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
-								</li>
-							</ul>
-						</div>
-					<% } %>
-					<div id="admin-region"></div>
-					</div>
-				</div><!--/.nav-collapse -->
-			</div>
-		</div>
-	</div>
-
-	<div class="container">
-<div id="app">
-
-	<div class="row">
-	<div id="global"></div>
-	<div id="dialogs"></div>
-	</div>
-	
-	<div class="row" id="main">
-	<div id="bar"></div>
-	<div id="top"></div>
-
-	<div id="top-left" class="span6 hide">
-	</div>
-	<div id="main-left" class="span6">
-	</div>
-	
-	<div id="main-right" class="span6">
-	</div>
-	</div>
+<div class="container">
+    <div id="app">
+        <div class="row">
+            <div id="global"></div>
+            <div id="dialogs"></div>
+        </div>
+        <div class="row" id="main">
+            <div id="top"></div>
+            <div id="left" class="span6">
+                <div id="top-left"></div>
+                <div id="main-left"></div>
+            </div>
+            <div id="main-right" class="span6"></div>
+        </div>
+    </div>
 </div>
 
-<% include footer.ejs %>
+<!-- event templates -->
+<script type="text/template" id="about-event-template">
+    <h1>{{=title}}</h1>
+    <h4>hosted by {{=organizer}}</h4>
+
+    {{= description}}
+
+    <div class="footer">This event has not yet started, so the rest of the page is disabled. Come back at the posted start time to participate!</div>
+</script>
+
+<script type="text/template" id="session-template">
+    <h3>{{= title }}</h3>
+    <div class="attend btn btn-info" data-toggle="button">
+        <span class="outer"><i class="icon-lock"></i><span class="text">SIGN UP</span><span class="attend-count hide"></span></span>
+        <div class="attendance"></div>
+    </div>
+    <div class="admin-buttons">
+        <div class="delete btn btn-warning"><i class="icon-trash"></i></div>
+    </div>
+    <ul class="hangout-users"></ul>
+    <div class="hangout-offline">
+        No one has joined this session yet.
+    </div>
+</script>
+            
+<script type="text/template" id="session-list-template">
+    <div id="session-list-container" class="full-size-container">
+        <div class="empty-notice hide">Sessions will appear here when they are created by an admin.</div>
+        <div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
+    </div>
+    <div style='clear: both;'></div>
+</script>
+
+<script type="text/template" id="pagination-template">
+    <div class="footer">
+        <div id="prev">prev</div>
+            {{ _.each(info().pageSet, function(page) { }}
+                {{ if(page==currentPage) { }}
+                    <div class="active page">{{= page }}</div>
+                {{ } else { }}
+                    <div class="page">{{= page }}</div>
+                {{ } }}
+            {{ }) }}
+            <div id="next">next</div>
+        </div>
+    </div>
+</script>
+            
+<script type="text/template" id="user-template">
+    {{ if(!picture) { }}
+        <i class="icon-user icon-3x"></i>
+    {{ } else if (link) { }}
+        <a href="{{=link}}" target="_new"><img src="{{=picture}}"></a>
+    {{ } else { }}
+        <img src="{{=picture}}">
+    {{ } }}
+</script>
+            
+<script type="text/template" id="user-list-template">
+    <div class="header">
+        <span class="contents">{{=numUsers}}</span><i class="icon-user"></i>
+    </div>
+    <div id="user-list-scroll-container">
+        <ul id="user-list-container"></ul>
+    </div>
+</script>
+            
+<script type="text/template" id="chat-message-template">
+    <span class="from">{{=user.shortDisplayName}}</span>{{=text}}
+</script>
+            
+<script type="text/template" id="chat-layout">
+    <div id="chat-container-region" class="span5"></div>
+    <div id="presence-gutter"></div>
+    <div id="chat-input-region"></div>
+</script>
+
+<script type="text/template" id="chat-input-template">
+    <form><input type="text" id="chat-input" autocomplete="off"></input></form>
+</script>
+
+<script type="text/template" id="chat-template">
+    <ul id="chat-list-container"></ul>
+</script>
+            
+<script type="text/template" id="user-column-layout-template">
+    <div id="user-list"></div>
+    <div id="footer"></div>
+</script>            
+            
+<script type="text/template" id="video-embed-template">
+    <div class='player'></div>
+</script>
+
+<script type="text/template" id="admin-button-template">
+    <div class="dropdown">
+        <a class="dropdown-toggle admin-button" data-toggle="dropdown" href="#">Admin</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li role="presentation">
+                <a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">create session</a>
+                <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">edit event settings</a>
+                <a role="menuitem" href="#embed-modal" role="button" id="show-embed-modal">video embed</a>
+                <a role="menuitem" tabindex="-1" id="open-sessions">open sessions</a>
+                <a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
+                <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
+            </li>
+        </ul>
+    </div>
+</script>
+
+<script type="text/template" id="session-live-bar-template">
+    <div>Your session is now live!</div>
+    <a class="btn btn-success" target="_blank">Join Hangout!</a>
+</script>
+<script type="text/template" id="dialogs-template">
+    <div id="create-session-modal" class="modal hide fade">
+        <form>
+            <div class="modal-header">
+                <h3>CREATE SESSION</h3>
+            </div>
+            <div class="modal-body">
+                <div class="control-group">
+                    <label for="session_name">SESSION NAME</label>
+                    <input type="text" name="session_name" value="" id="session_name">
+                </div>
+                <div class="control-group">
+                    <div class='pull-left'>
+                        <label>SESSION TYPE</label>
+                        <label><input type="radio" name="session_type" value="simple" checked='checked'/> Simple</label>
+                        <label><input type="radio" name="session_type" value="video" /> Youtube Video</label>
+                        <label><input type="radio" name="session_type" value="webpage" /> Webpage</label>
+                    </div>
+                    <div class='pull-left' style='margin-left: 1em;'>
+                        <div class='youtube-url hide control-group' style='margin-top: 1.5em;'>
+                            <p class="yt-error hide">
+                                Unrecognized youtube URL.  Please use the URL for a single video.
+                            </p>
+                            <label for="session_youtube_id">Youtube video URL</label>
+                            <input type="text" name="youtube_id" value=""
+                                   id="session_youtube_id"
+                                   placeholder='https://youtube.com...'>
+                        </div>
+                        <div class='webpage-url control-group hide' style='margin-top: 3em;'>
+                            <label for='session_webpage'>Webpage URL</label>
+                            <input type='text' placeholder='https://example.com...' id='session_webpage'/>
+                            <div class='url-error hide' style='display: none;'>
+                                Sorry, but only secure pages (those starting with "https")
+                                can be embedded in hangouts.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <input type='submit' class="btn btn-primary" id="create-session" value="Create Session" />
+            </div>
+        </form>
+    </div>
+    <div id="embed-modal" class="modal hide fade">
+        <div class="modal-header"><h3>Set Video URL</h3></div>
+        <div class="modal-body">
+            <p class="text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
+            <div class="control-group">
+                <label for="embed_youtube_id">Youtube video URL</label>
+                <input type="text" name="youtube_id" value="" id="embed_youtube_id">
+                <div id='current-yt-url'></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href='#' class='btn pull-left' data-dismiss='modal'>Cancel</a>
+            <a href="#" class="btn btn-warning" id="remove-embed">Remove Video</a>
+            <a href="#" class="btn btn-primary" id="set-embed">Set Video</a>
+        </div>
+    </div>
+    <div class="modal hide fade started-modal">
+        <div class="modal-header"><h3></h3></div>
+        <div class="modal-body">
+            <p>It is time to join your session!</p>
+            <a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
+        </div>
+    </div>    
+    <div class="modal hide fade disconnected-modal" id="disconnected-modal">
+        <div class="modal-header"><h3>Warning!</h3></div>
+        <div class="modal-body">
+            <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+            <a href="#" class="btn">Close</a>
+        </div>
+    </div>
+    <div id="no-urls-warning" class="modal hide fade">
+        <div class="modal-header"><h3>NO HANGOUT URLS AVAILABLE</h3></div>
+        <div class="modal-body">
+            <p>There are currently no hangout urls available on the server. Sessions started when there are no urls available will fall back to the callback method of hangout starting, which requires the first person to join a session to create the hangout. This is not desireable; we strongly recommend you farm some hangout urls by clicking "farm" below. For this process to work, your google acount must have "create video calls for events" set in your google calendar account settings.
+        </div>
+        <div class="modal-footer">
+            <a class="btn btn-success" id="farm-urls" href="/hangout-farming" target="_blank">Farm</a>
+            <a href="#" class="btn btn-primary" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
+        </div>
+    </div>
+</script>
+
+<% include _common-templates.ejs %>
+
+<script type='text/javascript'>
+    <% if (user.isAdminOf(event)) { %>
+        var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
+    <% } %>
+</script>
+    
+<% include _sockjs.ejs %>
+<script type="text/javascript" src="/public/js/models.js"></script>    
+<script type="text/javascript" src="/public/js/client-models.js"></script>    
+<script type="text/javascript" src="/public/js/event-app.js"></script>
+<script type="text/javascript" src="/public/js/common-views.js"></script>    
+<script type="text/javascript" src="/public/js/event-views.js"></script>    
+
+<% include _analytics.ejs %>
+<% include _footer.ejs %>

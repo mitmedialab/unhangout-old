@@ -9,7 +9,7 @@ models.ClientSessionList = models.SessionList.extend({
 
 		// disabling sorting for now.
 		// this.on("add", _.bind(function(session) {
-		// 	session.on("change:attendeeIds change:connectedParticipantIds", _.bind(function() {
+		// 	session.on("change:attendeeIds change:connectedParticipants", _.bind(function() {
 		// 		this.sort();
 		// 	}, this));
 		// }, this));
