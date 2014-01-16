@@ -25,6 +25,7 @@ node_modules
 conf.json
 # ignore fabfile, to avoid sharing production details
 fabfile.py
+farmingConf.json # for auto-farming
 # ignore ssl, to ensure we never check certs in.
 ssl/
 
