@@ -170,7 +170,7 @@ var FacilitatorView = Backbone.View.extend({
     displayEventMessage: function(args) {
         this.faces.hideVideoIfActive();
         if (this.messageView) {
-            this.messageView.modal('hide');
+            this.messageView.$el.modal('hide');
         }
         this.messageView = new EventMessageView(args);
         this.messageView.on("close", _.bind(function() {
