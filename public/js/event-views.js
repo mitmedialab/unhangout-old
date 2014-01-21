@@ -20,15 +20,10 @@ var SessionView = Marionette.ItemView.extend({
 	template: '#session-template',
 	className: 'session',
 	firstUserView: null,
-	mini: true,
-
 	ui: {
 		attend: '.attend',
 		start:'.start',
 		deleteButton: '.delete',		// delete is reserved word
-		attending: '.attending',
-		empty: '.empty',
-		description: '.description',
 		hangoutUsers: '.hangout-users',
 		hangoutOffline: '.hangout-offline'
 	},
@@ -43,11 +38,13 @@ var SessionView = Marionette.ItemView.extend({
 	initialize: function() {
 		// if we get a notice that someone has connected to the associated participant,
 		// re-render to show them.
-		this.listenTo(this.model, 'change:connectedParticipantIds change:hangoutConnected', this.render, this);
+		this.listenTo(this.model, 'change:connectedParticipants change:hangoutConnected', this.render, this);
 	},
 
 	onRender: function() {
 		var start = new Date().getTime();
+        this.$el.attr("data-session-id", this.model.id);
+        console.log("render SessionView", _.pluck(this.model.get("connectedParticipants"), 'id'));
 		// mostly just show/hide pieces of the view depending on 
 		// model state.
 
@@ -77,17 +74,6 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.removeClass("live");
 
 			this.ui.attend.find(".text").text("SIGN UP");
-		}
-
-		// check and see if we're in mini mode. If we are, hide the description and attendee counting in large form.
-		if(this.mini) {
-			this.ui.description.hide();
-			this.ui.empty.hide();
-			this.ui.attending.hide();
-		} else {
-			this.ui.description.show();
-			this.ui.empty.show();
-			this.ui.attending.show();
 		}
 
 		if(this.model.get("stopped")) {
@@ -132,22 +118,19 @@ var SessionView = Marionette.ItemView.extend({
 
 		var fragment = document.createDocumentFragment();
 
-		_.each(this.model.get("connectedParticipantIds"), _.bind(function(id) {
-			// make a new user view and append it here.
-			var user = users.get(id);
-
-			if(_.isUndefined(user)) {
-				// console.log("skipping connected user, because can't find user data for them yet");
-				return;
-			}
-
+		_.each(this.model.get("connectedParticipants"), _.bind(function(udata) {
 			// try looking up the user view from the main user list.
 			var userView;
-			if(user.id in userViewCache) {
-				userView = userViewCache[user.id];
+			if(udata.id in userViewCache) {
+				userView = userViewCache[udata.id];
 			} else {
-				userView = new UserView({model:user});
-				userViewCache[user.id] = userView;
+                // vivify the user into a model when passing it in.  Note that
+                // any events bound on the `users` collection of connected
+                // participants won't work here.  When users join a session
+                // without being connected to the `events` page, they won't appear
+                // in that collection anyway.
+				userView = new UserView({model:new models.User(udata)});
+				userViewCache[udata.id] = userView;
 			}
 
 			fragment.appendChild(userView.render().el.cloneNode(true));
@@ -207,9 +190,9 @@ var SessionView = Marionette.ItemView.extend({
         }));
 	},
 
-	delete: function() {
+	"delete": function() {
 		sock.send(JSON.stringify({
-            type:"delete", args: {id: this.model.id, roomId: curEvent.getRoomId()}
+            type:"delete-session", args: {id: this.model.id, roomId: curEvent.getRoomId()}
         }));
 	}
 });
@@ -309,54 +292,109 @@ var DialogView = Backbone.Marionette.Layout.extend({
 		'click #set-embed':'setEmbed',
 		'click #remove-embed':'removeEmbed',
 		'click #disconnected-modal a':'closeDisconnected',
-		'click #create-session':'createSession'
+		'click #create-session':'createSession',
+        'change [name=session_type]': 'changeSessionType'
 	},
-	setEmbed: function() {
-		var val = $("#youtube_id").val();
-        var newId;
+    extractYoutubeId: function(val) {
+        // From http://stackoverflow.com/a/6904504 , covering any of the 15
+        // or so different variations on youtube URLs.
+        // Allow blank values, so that we can clear the embed with them.
+        if (val == "") {
+            return "";
+        }
+        var ytid;
         if (/^[-A-Za-z0-9_]{11}$/.test(val)) {
-            newId = val;
+            ytid = val;
         } else {
-            // From http://stackoverflow.com/a/6904504 , covering any of the 15
-            // or so different variations on youtube URLs.
             var re = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
             var match = re.exec(val);
             if (match) {
-                newId = match[1];
+                ytid = match[1];
             } else {
-                // Unmatched -- trigger error below.
-                newId = "bad";
+                ytid = null;
             }
         }
-		if(newId.length!=11 && newId.length!=0) {
-			this.$el.find("#embed-modal p.text-warning").removeClass("hide");
-			this.$el.find("#embed-modal .control-group").addClass("error");
+        return ytid;
+
+    },
+	setEmbed: function() {
+        var newId = this.extractYoutubeId($("#embed_youtube_id").val());
+		if(_.isNull(newId)) {
+			this.$("#embed-modal p.text-warning").show();
+			this.$("#embed-modal .control-group").addClass("error");
 		} else {
-			this.$el.find("#embed-modal p.text-warning").addClass("hide");
-			this.$el.find("#embed-modal .control-group").removeClass("error");
+			this.$("#embed-modal p.text-warning").hide();
+			this.$("#embed-modal .control-group").removeClass("error");
 			var message = {type:"embed", args: {ytId:newId, roomId: curEvent.getRoomId()}};
 			sock.send(JSON.stringify(message));
 		}
 	},
-
 	removeEmbed: function() {
 		// just send an empty message, and clear the field
-		$("#youtubue_id").val("");
-		var message = {type:"embed", args:{ytId:"", roomId: curEvent.getRoomId()}};
-		sock.send(JSON.stringify(message));
+		$("#embed_youtube_id").val("");
+        this.setEmbed();
 	},
-
-	createSession: function() {
-		var title = $("#session_name").val();
+    changeSessionType: function() {
+        var val = this.$("[name='session_type']:checked").val();
+        switch (val) {
+            case "simple":
+                this.$(".youtube-url, .webpage-url").hide();
+                break;
+            case "video":
+                this.$(".youtube-url").show();
+                this.$(".webpage-url").hide();
+                break;
+            case "webpage":
+                this.$(".webpage-url").show();
+                this.$(".youtube-url").hide();
+                break;
+        };
+    },
+	createSession: function(event) {
+        event.preventDefault();
+        var scope = $("#create-session-modal");
+		var title = $("#session_name", scope).val();
+        var type = $("[name='session_type']:checked", scope).val();
+        var activities = [];
+        switch (type) {
+            case "simple":
+                activities.push({type: "about", autoHide: true});
+                break;
+            case "video":
+                var ytid = this.extractYoutubeId($("#session_youtube_id", scope).val());
+                if (ytid == "" || _.isNull(ytid)) {
+                    $(".yt-error", scope).show();
+                    $("#session_youtube_id", scope).parent().addClass("error");
+                    return;
+                } else {
+                    activities.push({type: "video", video: {provider: "youtube", id: ytid}});
+                }
+                break;
+            case "webpage":
+                var url = this.$("#session_webpage").val();
+                if (!/^https:\/\//.test(url)) {
+                    $(".url-error", scope).show();
+                    $("#session_webpage", scope).parent().addClass("error");
+                    return;
+                } else {
+                    activities.push({type: "webpage", url: url});
+                }
+                break;
+        }
 
 		sock.send(JSON.stringify({
             type:"create-session",
-            args:{title:title, description:"", roomId: curEvent.getRoomId()}
+            args: {
+                title: title,
+                description:"",
+                activities: activities,
+                roomId: curEvent.getRoomId()
+            }
         }));
-
-		$("#session_name").val("");
-
-		$("#create-session-modal").modal('hide');
+		$("input[type=text]", scope).val("");
+        $(".yt-error, .url-error", scope).hide();
+        $(".error", scope).removeClass(".error")
+		scope.modal('hide');
 	},
 
 	closeDisconnected: function() {
@@ -390,14 +428,15 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
         var ytId = curEvent.get("youtubeEmbed");
         if (ytId) {
             var url = "https://www.youtube.com/watch?v=" + ytId;
-            $("#youtube_id").val(url);
+            $("#embed_youtube_id").val(url);
             $("#current-yt-url").html("Current: <a target='_blank' href='" + url + "'>" + url + "</a>");
             $("#remove-embed").show();
         } else {
-            $("#youtube_id").val("");
+            $("#embed_youtube_id").val("");
             $("#current-yt-url").html("");
             $("#remove-embed").hide();
         }
+        $("#embed-modal").modal('show');
 	},
 
 	onRender: function() {
@@ -453,7 +492,7 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 			// going to manually update the current user counter because
 			// doing it during render doesn't seem to work. There's some 
 			// voodoo in how marionette decides how much of the view to
-			// re-render on events, and it seems to excludethe piece out-
+			// re-render on events, and it seems to exclude the piece out-
 			// side the item-view-container, assuming it doesn't have
 			// reactive bits.
 			// I would also expect this to be .totalRecords, but for
@@ -497,7 +536,6 @@ var UserListView = Backbone.Marionette.CompositeView.extend({
 var ChatLayout = Backbone.Marionette.Layout.extend({
 	template: '#chat-layout',
 	id: 'chat',
-	className: "full-size-container",
 
 	regions: {
 		chat:'#chat-container-region',
@@ -566,6 +604,7 @@ var ChatInputView = Marionette.ItemView.extend({
 var ChatMessageView = Marionette.ItemView.extend({
 	template: '#chat-message-template',
 	className: 'chat-message',
+    tagName: 'li',
 
 	initialize: function() {
 		this.model.set("text", this.linkify(this.model.get("text")));
@@ -578,11 +617,11 @@ var ChatMessageView = Marionette.ItemView.extend({
 
     	//URLs starting with http://, https://, or ftp://
      	replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-     	replacedText = msg.replace(replacePattern1, "<a href='$1' target='_new'>$1</a>");
+     	replacedText = msg.replace(replacePattern1, "<a href='$1' target='_blank'>$1</a>");
 
      	//URLs starting with "www." (without // before it, or it'd re-link the ones done above).
      	replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-     	replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_new'>$2</a>");
+     	replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_blank'>$2</a>");
 
      	//Change email addresses to mailto:: links.
      	replacePattern3 = /(([a-zA-Z0-9\-?\.?]+)@(([a-zA-Z0-9\-_]+\.)+)([a-z]{2,3}))+$/;
@@ -684,45 +723,38 @@ var VideoEmbedView = Marionette.ItemView.extend({
 	player: null,
 
 	initialize: function() {
-		// TODO
-		// we need to be more clever about this. if the player is loaded already,
-		// just send it to a different youtube id. reloading it entirely doesn't
-		// seem to work. In the meantime, just zero videos out between their inclusion.
 		this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
-			// two cases. if the old attribute was empty or null, then just render.
-			// if the old attribute is a valid youtube id (ie 11 chars long) then
-			// we need to do a YT JS API dance.
-
-			var previous = model.previous("youtubeEmbed");
-			if(_.isNull(previous) || previous.length!=11) {
-				this.render();
-			} else {
-				this.player.loadVideoById(youtubeEmbed);
-			}
+            if (!youtubeEmbed) {
+                this.$el.hide();
+            } else {
+                this.$el.show();
+                this.yt.setVideoId(this.model.get("youtubeEmbed"));
+            }
 		}, this);
 	},
+	onRender: function() {
+        this.yt = new YoutubeVideo({
+            ytID: this.model.get("youtubeEmbed"),
+            showGroupControls: IS_ADMIN
+        });
+        this.yt.on("control-video", function(args) {
+            _.extend(args, {roomId: curEvent.getRoomId()});
+            sock.send(JSON.stringify({type: "control-video", args: args}));
+        });
+        this.yt.on("video-settings", _.bind(function(yt) {
+            this.trigger("show-embed-modal");
+        }, this));
 
-	onShow: function() {
-		if(_.isNull(this.model.get("youtubeEmbed")) || this.model.get("youtubeEmbed").length!=11) {
+        this.$(".player").html(this.yt.el);
+		if(!this.model.get("youtubeEmbed")) {
 			this.$el.hide();
 		} else {
 			this.$el.show();
-			this.$el.draggable();
-			// do the actual YT embed code here
-			this.player = new YT.Player('player', {
-				height: 200,
-				// width: this.dimensions['small'].width,
-				videoId: this.model.get("youtubeEmbed"),
-				controls: 0,
-				events: {
-					"onReady": function(args) {
-						console.log("video ready!");
-					},
-					"onStateChange": function(args) {
-						console.log("state change");
-					}
-				}
-			});
+            this.yt.render();
+			//this.$el.draggable(); // wat
 		}
-	}
+	},
+    control: function(args) {
+        this.yt.receiveControl(args);
+    }
 });

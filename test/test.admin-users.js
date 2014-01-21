@@ -34,7 +34,7 @@ describe("HTTP ADMIN USERS API", function() {
             .set("x-mock-user", "admin1")
             .redirects(0)
             .end(function(res) {
-                expect(res.status).to.be(302);
+                expect(res.status).to.be(401);
                 done();
             });
     });
@@ -105,7 +105,7 @@ describe("HTTP ADMIN USERS API", function() {
             done()
         });
     });
-    it("creates user for unknown email with superuser", function(done) {
+    it("rejects request to grant superuser to unknown email", function(done) {
         var user = common.server.db.users.findByEmail("newone@example.com");
         expect(user).to.be(undefined);
         postUsers("superuser1", {
@@ -131,8 +131,9 @@ describe("HTTP ADMIN USERS API", function() {
             eventId: event.id
         }, function(res) {
             expect(res.status).to.be(200);
-            expect(user.isAdminOf(event)).to.be(true)
-            done()
+            expect(user.isAdminOf(event)).to.be(true);
+            expect(user.adminCache[event.id]).to.be(true);
+            done();
         });
     });
     it("removes event admins by id", function(done) {
@@ -148,8 +149,9 @@ describe("HTTP ADMIN USERS API", function() {
         }, function(res) {
             expect(res.status).to.be(200);
             expect(user.isAdminOf(event)).to.be(false);
+            expect(user.adminCache[event.id]).to.be(undefined);
             expect(event.get("admins")).to.eql([]);
-            done()
+            done();
         });
     });
     it("adds event admins by known email", function(done) {
@@ -162,8 +164,9 @@ describe("HTTP ADMIN USERS API", function() {
             eventId: event.id
         }, function(res) {
             expect(res.status).to.be(200);
-            expect(user.isAdminOf(event)).to.be(true)
-            done()
+            expect(user.isAdminOf(event)).to.be(true);
+            expect(user.adminCache[event.id]).to.be(true);
+            done();
         });
     });
     it("removes event admins by known email", function(done) {
@@ -179,6 +182,7 @@ describe("HTTP ADMIN USERS API", function() {
         }, function(res) {
             expect(res.status).to.be(200);
             expect(user.isAdminOf(event)).to.be(false);
+            expect(user.adminCache[event.id]).to.be(undefined);
             expect(event.get("admins")).to.eql([]);
             done()
         });
@@ -196,6 +200,13 @@ describe("HTTP ADMIN USERS API", function() {
             expect(res.status).to.be(200);
             var user = new models.ServerUser({emails: [{value: "nonexistent@example.com"}]});
             expect(user.isAdminOf(event)).to.be(true)
+            
+            // No admin cache unless the user is added to our list of users.
+            expect(user.adminCache[event.id]).to.be(undefined);
+            common.server.db.users.add(user);
+            expect(user.adminCache[event.id]).to.be(true);
+            common.server.db.users.remove(user);
+
             done()
         });
     });
@@ -210,8 +221,17 @@ describe("HTTP ADMIN USERS API", function() {
             eventId: event.id
         }, function(res) {
             expect(res.status).to.be(200);
+            var user = new models.ServerUser({emails: [{value: "nonexistent@example.com"}]})
             expect(event.get("admins")).to.eql([]);
-            expect(new models.ServerUser({emails: [{value: "nonexistent@example.com"}]}).isAdminOf(event)).to.be(false);
+            expect(user.isAdminOf(event)).to.be(false);
+
+            // No cache -- never been populated...
+            expect(user.adminCache[event.id]).to.be(undefined);
+            common.server.db.users.add(user);
+            // but even after population, isn't filled, cause we're no longer admin.
+            expect(user.adminCache[event.id]).to.be(undefined);
+            common.server.db.users.remove(user);
+
             done();
         });
     });
@@ -230,6 +250,7 @@ describe("HTTP ADMIN USERS API", function() {
         }, function(res) {
             expect(res.status).to.be(200);
             expect(user.isAdminOf(event)).to.be(false);
+            expect(user.adminCache[event.id]).to.be(undefined);
             expect(event.get("admins")).to.eql([]);
             done();
         });
@@ -246,6 +267,7 @@ describe("HTTP ADMIN USERS API", function() {
         }, function(res) {
             expect(res.status).to.be(200);
             expect(user.isAdminOf(event)).to.be(false);
+            expect(user.adminCache[event.id]).to.be(undefined);
             expect(event.get("admins")).to.eql([]);
             done();
         });

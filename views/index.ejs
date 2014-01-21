@@ -1,4 +1,5 @@
-<% include header.ejs %>
+<% include _header.ejs %>
+<% include _navbar.ejs %>
 
 <div class="container">
 
@@ -69,10 +70,8 @@
 
                     <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
                 </div>
-
             </form>
         </div>
-
     </div>
 
     <div class="section" id="home">
@@ -296,9 +295,12 @@
                     </div>
                 </div>
             </div>
-            <% include sponsorship.ejs %>
 
         </div>
+    </div>
+</div>
 
-<% include analytics.ejs %>
-<% include footer.ejs %>
+<script type='text/javascript' src='/public/js/index.js'></script>
+<% include _sponsorship.ejs %>
+<% include _analytics.ejs %>
+<% include _footer.ejs %>

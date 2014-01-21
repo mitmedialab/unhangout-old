@@ -1,0 +1,43 @@
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+                <span class="brand" style="color:white">Unhangouts </span>
+
+				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<div class="nav-collapse collapse">
+					<ul class="nav">
+						<li class="active"><a href="/">Home</a></li>
+						<li><a href="/about/">About</a></li>
+						<li><a href="/how-to-unhangout/">How to Unhangout</a></li>
+						<% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent())) { %>
+							<li id="admin-nav"><a href="/admin/">Admin</a></li>
+						<% } %>
+                        <% if(user && user.isSuperuser()) { %>
+                            <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
+                        <% } %>
+					</ul>
+					<div class="nav pull-right identity">
+					<% if(!user) {%>
+					<a class="btn btn-primary pull-left" href="/auth/google">Login</a>
+					<% } else { %>
+						<div class="dropdown">
+							<a class="dropdown-toggle username" data-toggle="dropdown" href="#">
+                                <%= user.get("displayName")%>
+                                <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
+                            </a>
+							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+								<li role="presentation">
+									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
+								</li>
+							</ul>
+						</div>
+					<% } %>
+					</div>
+				</div><!--/.nav-collapse -->
+			</div>
+		</div>
+	</div>

@@ -36,14 +36,13 @@ describe("YOUTUBE EMBEDS", function() {
                 browser.byCss(".admin-button").click();
                 browser.byLinkText("video embed").click();
                 // Wait for the modal to show.
-                browser.waitForSelector("#youtube_id");
-                browser.waitTime(100);
-                browser.byCss("#youtube_id").sendKeys(url);
+                browser.waitForSelector("#embed_youtube_id");
+                browser.byCss("#embed_youtube_id").sendKeys(url);
                 browser.byCss("#set-embed").click();
                 if (success) {
                     // Wait for embed to finish..
-                    browser.waitForSelector("#player");
-                    return browser.byCss("#player").getAttribute("src").then(function(src) {
+                    browser.waitForSelector("iframe");
+                    return browser.byCss("iframe").getAttribute("src").then(function(src) {
                         var url = "http://www.youtube.com/embed/" + ytId + "?";
                         expect(src.substring(0, url.length)).to.eql(url);
                         expect(event.get("youtubeEmbed")).to.eql(ytId);

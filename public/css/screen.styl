@@ -68,34 +68,6 @@ body {
 	padding: 10px;
 }
 
-#top-left {
-	position: absolute;
-/*	padding-top: 30px;
-	padding-bottom: 60px;
-	padding-right: 30px;
-*/	
-
-	/*top: -250px;*/
-
-	background-color: white;
-	/*box-shadow: 1px 1px 1px #bbb;*/
-	/*border: 1px solid #aaa;*/
-	z-index: -10;
-
-	height: 210px;
-
-	/*width: 720px;*/
-	/*max-height: 400px;*/
-	/*overflow-y: scroll;*/
-
-	box-shadow: 3px -5px 3px #aaa;
-	border-right: 1px solid #aaa;
-	box-sizing: border-box;
-
-	&.bar {
-		top: 40px;
-	}
-}
 
 #main-right {
 	position: absolute;
@@ -119,7 +91,7 @@ body {
 	overflow: hidden;
 }
 
-#main-left {
+#left {
 	position: absolute;
 
 	box-sizing: border-box;
@@ -132,11 +104,8 @@ body {
 	bottom: 0px;
 	top: 0px;
 
-	overflow-y: scroll;
-
-	&.bar {
-		top: 40px;
-	}
+	overflow-y: auto;
+  padding-bottom: 40px;
 }
 
 #main {
@@ -196,7 +165,7 @@ body {
 
 
 	#user-list-scroll-container {
-		overflow-y: scroll;
+		overflow-y: auto;
 
 		position: absolute;
 		bottom: 0px;
@@ -661,15 +630,6 @@ body {
 	}
 }
 
-
-.full-size-container {
-		top: 0px;
-		left: 0px;
-		right: 0px;
-		bottom: 0px;
-		position: absolute;		
-}
-
 #chat-input-region {
 		position: absolute;
 		bottom: 0px;
@@ -762,59 +722,33 @@ body {
 	z-index: 1000;
 }
 
-#video-embed {
-	position: absolute;
-	left: 0px;
-	right: 0px;
-	/*padding-top: 50px;*/
-	
-	/*box-shadow: 3px 3px 5px #aaa;*/
-		
-	.player {
-		background-color: #aaa;
-		width: 100%;
-	}
+#video-embed .player {
+  height: 360px;
+  table {
+    width: 100%;
+    height: 100%;
+  }
 }
 
-#bar {
-	position: absolute;
-	top: 0px;
-
-	left: 0px;
-	right: 0px;
-
-	height: 30px;
-	background-color: #efefef;
-
-	padding: 5px;
-
-	border-right: 1px solid #aaa;
-	border-left: 1px solid #aaa;
-	border-bottom: 1px solid #aaa;
-
-	z-index: 59;
-
-	#session-live-bar {
-		width: 400px;
-		margin-left: auto;
-		margin-right: auto;
-
-		div {
-			float: left;
-			font-weight: bold;
-			font-size: 1.6em;
-			padding-top: 5px;
-		}
-
-		.btn {
-			float: left;
-			margin-left: 15px;
-		}
-	}
-
-
-	box-shadow: 3px 3px 3px #aaa;
+.sync-indicator {
+  display: inline-block;
+  vertical-align: middle;
+  margin-top: 0px;
+  width: 6px;
+  height: 6px;
+  border-radius: 6px;
+  background-color: #aaa;
+  box-shadow: 0px 0px 5px rgba(200, 200, 200, 1);
+  &.synced {
+    background-color: #0f0;
+    box-shadow: 0px 0px 5px rgba(0, 200, 0, 1);
+  }
+  &.unsynced {
+    background-color: #f00;
+    box-shadow: 0px 0px 5px rgba(200, 0, 0, 1);
+  }
 }
+
 
 /*---------------------------- ADMIN STYLES ---------------------------*/
 

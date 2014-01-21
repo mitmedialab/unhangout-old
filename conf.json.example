@@ -15,6 +15,7 @@
 	"UNHANGOUT_MANAGERS": ["srishakatux@gmail.com"],
 
 	"UNHANGOUT_HANGOUT_APP_ID":123456789012,
+    "UNHANGOUT_HANGOUT_ORIGIN_REGEX": "^https://[-a-z0-9]+hangout-opensocial.googleusercontent.com$",
 
 	"UNHANGOUT_USE_SSL":false,
 	"UNHANGOUT_REDIRECT_HTTP":true,

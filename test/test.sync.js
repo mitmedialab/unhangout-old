@@ -4,7 +4,6 @@ var models = require('../public/js/models.js'),
     logger = require('../lib/logging').getLogger(),
 	should = require('should');
 
-
 var event;
 
 

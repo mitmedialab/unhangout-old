@@ -1,4 +1,6 @@
-<% include header.ejs %>
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+
 <style type='text/css'>
     label.success {
         background-color: #efe;
@@ -83,20 +85,13 @@
     </div>
 </script>
 
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.0.0/backbone.js"></script>
-<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.0.0-rc4-bundled/backbone.marionette.min.js"></script>
 <script type="text/javascript" src="/public/js/models.js"></script>	
 <script type="text/javascript" src="/public/js/client-models.js"></script>	
-
 <script type='text/javascript'>
-    $(".nav li.active").removeClass("active");
-    $("#admin-users-nav").addClass("active");
-
     var users = new models.UserList(<%- JSON.stringify(users) %>);
     var events = new models.EventList(<%- JSON.stringify(events) %>);
-    var USER_ID = <%- user.id %>;
 </script>
 
 <script type="text/javascript" src="/public/js/admin-users.js"></script>
 
-<% include footer.ejs %>
+<% include _footer.ejs %>
