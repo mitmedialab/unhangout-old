@@ -183,6 +183,21 @@
                                 document.body.removeChild(iframe);
                                 load();
                                 break;
+                            case "display-notice-if-hidden":
+                                if (!gapi.hangout.isAppVisible()) {
+                                    gapi.hangout.layout.displayNotice(
+                                        event.data.args[0], event.data.args[1]
+                                    )
+                                }
+                                break;
+                            case "display-notice":
+                                gapi.hangout.layout.displayNotice(
+                                    event.data.args[0], event.data.args[1]
+                                )
+                                break;
+                            case "dismiss-notice":
+                                gapi.hangout.layout.dismissNotice();
+                                break;
                         }
                     }
                 }

@@ -1,5 +1,3 @@
-// Make global -- no 'var'.
-
 var FauxCanvas = function() {
     var div = document.createElement('div');
     div.style.position = 'absolute';
@@ -44,8 +42,60 @@ var FauxCanvas = function() {
         div.style.height = (width/aspectRatio - 6) + "px";
     };
 }
-var fauxCanvas = new FauxCanvas();
+var FauxNotice = function() {
+    var div = document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.height = '100px';
+    div.style.backgroundColor = 'rgb(0, 120, 255)';
+    div.style.boxSizing = div.style.mozBoxSizing = div.style.webkitBoxSizing = 'border-box';
+    div.style.padding = '1em';
+    div.style.color = "white";
+    div.style.zIndex = '200000';
+    div.style.display = 'none';
+    div.style.top = '10px';
+    div.style.right = '10px';
 
+    var messageEl = document.createElement('p');
+    div.appendChild(messageEl);
+
+    var show = function() { div.style.display = 'block'; }
+    var hide = function() { div.style.display = 'none'; }
+
+    var closeEl = document.createElement('a');
+    closeEl.innerHTML = 'X';
+    closeEl.style.position = 'absolute';
+    closeEl.style.top = 0;
+    closeEl.style.right = 0;
+    closeEl.style.cursor = 'pointer';
+    closeEl.addEventListener('click', hide);
+    div.appendChild(closeEl);
+
+    var appended = false;
+
+    this.hasNotice = function() {
+        return div.style.display == 'block';
+    };
+    var timeout;
+    this.displayNotice = function(message, opt_permanent) {
+        if (!appended) {
+            document.body.appendChild(div);
+            appended = true;
+        }
+        messageEl.innerHTML = message;
+        show();
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        if (!opt_permanent) {
+            timeout = setTimeout(hide, 5000);
+        }
+    };
+    this.dismissNotice = hide;
+};
+var fauxCanvas = new FauxCanvas();
+var fauxNotice = new FauxNotice();
+
+// Make global -- no 'var'.
 gadgets = {
     util: {
         registerOnLoadHandler: function(cb) {
@@ -59,8 +109,12 @@ gadgets = {
     }
 };
 // Make global -- no 'var'.
+var _APP_IS_VISIBLE = true;
 gapi = {
     hangout: {
+        isAppVisible: function() {
+            return _APP_IS_VISIBLE;
+        },
         onApiReady: {
             add: function(cb) {
                 cb({isApiReady: true});
@@ -73,7 +127,13 @@ gapi = {
             return MOCK_DATA.users;
         },
         hideApp: function() {
-            alert("Hangout got 'hideApp' call");
+            if (_APP_IS_VISIBLE) {
+                alert("Hangout got 'hideApp' call; app is now 'invisible'. Click again to toggle.");
+                _APP_IS_VISIBLE = false;
+            } else {
+                alert("App is 'visible' again.");
+                _APP_IS_VISIBLE = true;
+            }
         },
         data: {
             setValue: function(){},
@@ -86,7 +146,10 @@ gapi = {
         layout: {
             getVideoCanvas: function() {
                 return fauxCanvas;
-            }
+            },
+            displayNotice: fauxNotice.displayNotice,
+            dismissNotice: fauxNotice.dismissNotice,
+            hasNotice:     fauxNotice.hasNotice
         }
     }
 };
