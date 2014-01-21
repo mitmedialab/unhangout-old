@@ -169,8 +169,11 @@ var FacilitatorView = Backbone.View.extend({
     },
     displayEventMessage: function(args) {
         this.faces.hideVideoIfActive();
-        var messageView = new EventMessageView(args);
-        messageView.on("close", _.bind(function() {
+        if (this.messageView) {
+            this.messageView.modal('hide');
+        }
+        this.messageView = new EventMessageView(args);
+        this.messageView.on("close", _.bind(function() {
             this.faces.showVideoIfActive();
         }, this));
     }
@@ -373,7 +376,7 @@ var EventMessageView = Backbone.View.extend({
             });
         }
 
-        this.$el.addClass("modal hide fade");
+        this.$el.addClass("modal hide fade event-message-window");
         this.$el.html(this.template({
             sender: sender,
             message: message,

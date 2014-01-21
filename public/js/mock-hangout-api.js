@@ -44,6 +44,7 @@ var FauxCanvas = function() {
 }
 var FauxNotice = function() {
     var div = document.createElement('div');
+    div.id = "mock-hangout-notice";
     div.style.position = 'absolute';
     div.style.height = '100px';
     div.style.backgroundColor = 'rgb(0, 120, 255)';
@@ -68,6 +69,7 @@ var FauxNotice = function() {
     closeEl.style.right = 0;
     closeEl.style.cursor = 'pointer';
     closeEl.addEventListener('click', hide);
+    closeEl.className = 'dismiss-notice';
     div.appendChild(closeEl);
 
     var appended = false;
@@ -128,11 +130,8 @@ gapi = {
         },
         hideApp: function() {
             if (_APP_IS_VISIBLE) {
-                alert("Hangout got 'hideApp' call; app is now 'invisible'. Click again to toggle.");
+                alert("Hangout got 'hideApp' call; app is now 'invisible'.");
                 _APP_IS_VISIBLE = false;
-            } else {
-                alert("App is 'visible' again.");
-                _APP_IS_VISIBLE = true;
             }
         },
         data: {
