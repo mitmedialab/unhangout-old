@@ -33,30 +33,49 @@ $(document).on('ready', function() {
 		$('#event-mini-form-modal').modal('show');
 	});
 
-	$('#submit-button').click(function() {		
-		$('#contact-form').validate(
-		 {
-		  rules: {
-		    title: {
-		      minlength: 5,
-		      required: true
-		    },
-		   
-		    description: {
-		      minlength: 100,
-		      required: true
-		    }
-		  },
+	$('#contact-form').validate(
+	 {
+	  rules: {
+	    title: {
+	      minlength: 5,
+	      required: true
+	    },
+	   
+	    description: {
+	      minlength: 100,
+	      required: true
+	    }
+	  },
 
-		  highlight: function(element) {
-		    $(element).closest('.control-group').removeClass('success').addClass('error');
-		  },
+	  highlight: function(element) {
+	    $(element).closest('.control-group').removeClass('success').addClass('error');
+	  },
 
-		  success: function(element) {
-		    element
-		    .text('OK!').addClass('valid')
-		    .closest('.control-group').removeClass('error').addClass('success');
-		  }
-		 });
+	  success: function(element) {
+	    element
+	    .text('OK!').addClass('valid')
+	    .closest('.control-group').removeClass('error').addClass('success');
+	  },
 	});
+
+
+	$("#contact-form").submit(function(event) {
+		//Step form from submitting normally 
+		event.preventDefault();
+
+		var event_title = $("#title").val();
+		var event_description = $("#description").val();
+
+		$.ajax({
+			url:"/submit",
+			type:"POST",
+			data: {event_title:event_title, event_description: event_description}
+		}).done(function() {
+			$('#event-mini-form-modal').modal('hide');
+			$('#session-submission-modal').modal('show');
+		});
+
+		$("#title").val(" ");
+		$("#description").val(" ");
+	})
 });
