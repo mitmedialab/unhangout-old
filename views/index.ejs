@@ -228,20 +228,21 @@
             </div>
 
 
-            <div class="modal hide fade session-submission-modal" id=
+            <div class="modal hide fade event-mini-form" id=
             "session-submission-modal">
                     <div class="modal-header">
-                        <h3>Event description submitted</h3>
+                        <h3>Thank you!!!</h3>
                     </div>
 
                     <div class="modal-body">
-                        <p>You have successfully requested for an admin account to create an event. We'll get back to you in next 24 hours.</p>
-                    </div>
+                        <p>That’s all we need right now. We’ll be in touch very soon. </p>
 
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" data-dismiss=
-                        "modal">Close</button>
-                    </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary" data-dismiss=
+                            "modal">Close</button>
+                        </div>
+
+                    </div>  
                 </div>
             </div>
 
@@ -250,17 +251,19 @@
 
     <div id="login-first-modal" class="modal hide fade event-mini-form">
       <div class="modal-header">
-          <h3>Welcome to Unhangout!</h3>
+          <h3>Please log in!</h3>
       </div>
       <div class="modal-body">
-        <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
-        <a href="/auth/google/"><button class="btn btn-primary pull-right" >Login to create an Unhangout</button></a><br/><br/>
-      </div>
-      <div class="modal-footer">
+        <p>You need to be logged in to create an event or join one. It’s easy. You can use your Google account and it only takes 0.83 seconds.</p>
+
+        <div class="modal-footer">
           <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
           <span class>Unhangouts</span>
-          <button id="close-button" data-dismiss="modal" class="btn btn-primary">Close</button>
+           <a href="/auth/google/"><button class="btn btn-primary pull-right" >Login to create an Unhangout</button></a>
       </div>
+
+      </div>
+      
     </div>
 
     <div id="event-mini-form-modal" class="modal hide fade event-mini-form">
