@@ -1,6 +1,6 @@
 {
   "name": "unhangout-server",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "author": "Drew Harry <dharry@media.mit.edu>",
   "description": "a server for managing un-hangouts; large scale online un-conference-style events using Google Hangout",
   "contributors": [ 
@@ -17,9 +17,9 @@
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
     "test": "NODE_ENV=testing mocha",
-    "forever-start": "sudo forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o out.log -e err.log bin/unhangout-server",
-    "forever-stop": "sudo forever stop bin/unhangout-server",
-    "forever-restart": "sudo forever restart bin/unhangout-server",
+    "forever-start": "sudo NODE_ENV=production forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o out.log -e err.log bin/unhangout-server",
+    "forever-stop": "sudo NODE_ENV=production forever stop bin/unhangout-server",
+    "forever-restart": "sudo NODE_ENV=production forever restart bin/unhangout-server",
     "forever-list": "sudo forever list"
   },
   "main": "./lib/unhangout-server.js",
@@ -48,7 +48,8 @@
   	"googleapis": "0.4.5",
   	"gapitoken" : "0.0.3",
     "stylus" : "0.40.2",
-    "nib" : "1.0.1"
+    "nib" : "1.0.1",
+    "nodemailer": "0.6.0"
   },
   "analyze": false,
   "devDependencies": {
@@ -56,8 +57,9 @@
 	"superagent": "0.15.4",
 	"should"    : "1.2.2",
   	"expect.js" :  "0.2.0",
-	"sockjs-client": "0.1.3",
-    "selenium-webdriver": "~2"
+	"sockjs-client-ws": "0.1.0",
+    "selenium-webdriver": "~2",
+    "libxmljs": "*"
   },
   "license": "BSD",
   "engines": {

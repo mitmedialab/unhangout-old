@@ -27,6 +27,7 @@ describe("CREATE EVENT", function() {
         // Create a new event.
         browser.get("http://localhost:7777/admin/");
         browser.byLinkText("new").click();
+        browser.waitForSelector("[name='title']");
         browser.byCss("[name='title']").sendKeys("Test Title");
         browser.byCss("[name='shortName']").sendKeys("test-title");
         browser.byCss("[name='organizer']").sendKeys("unhangoutdev@gmail.com");
@@ -35,10 +36,8 @@ describe("CREATE EVENT", function() {
         browser.byCss(".btn-primary").click()
         // TODO: get rid of hard-coded event ID here and below, in case we
         // change the fixture..
-        browser.byCss("#events a[href='/event/3']").then(function(el) {
-            el.getText().then(function(text) {
-                text.should.equal("Test Title (test-title)");
-            });
+        browser.byCss("#events a[href='/event/3']").getText().then(function(text) {
+            text.should.equal("Test Title (test-title)");
         });
         
         // Event hasn't started
@@ -46,6 +45,7 @@ describe("CREATE EVENT", function() {
         browser.getTitle().then(function(title) {
             title.should.equal("Test Title — powered by unhangout");
         });
+        browser.waitForSelector("#about-event h1");
         browser.byCss("#about-event h1").getText().then(function(text) {
             text.should.equal("Test Title");
         });

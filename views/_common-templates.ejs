@@ -1,0 +1,44 @@
+<script type='text/template' id='youtube-video'>
+    <!-- Tables are the cleanest way I know of for a sticky-footer effect. -->
+        <tr>
+            <td style='height: 100%;'>
+                <div id='player-{{= cid}}' style='display: block; width: 100%; height: 100%;'></div>
+            </td>
+        </tr>
+        <tr>
+            <td class='video-controls'>
+            </td>
+        </tr>
+</script>
+<script type='text/template' id='youtube-video-controls'>
+    {{ if (showGroupControls) { }}
+        <a class='video-settings btn btn-warning'><i class='icon icon-gear'></i></a>
+        <a class='play-for-everyone btn btn-warning'>
+            {{ if (playing) { }}
+                <i class='icon icon-pause'></i>
+                Pause for all
+            {{ } else { }}
+                <i class='icon icon-play'></i>
+                Play for all
+            {{ } }}
+        </a>
+    {{ } }}
+    <span class='pull-right'>
+        {{ if (synced) { }}
+            <span class='sync-indicator synced'></span> Synced
+        {{ } else if (!syncAvailable) { }}
+            <span class='sync-indicator'></span> No sync
+        {{ } else if (intendToSync) { }}
+            <span class='sync-indicator syncing'></span> Syncing..
+        {{ } else { }}
+            <span class='sync-indicator unsynced'></span> Out of sync
+        {{ } }}
+        <a class='sync-lock btn'>
+            {{ if (intendToSync) { }}
+                <i class='icon icon-lock'></i>
+            {{ } else { }}
+                <i class='icon icon-unlock'></i> Sync
+            {{ } }}
+        </a>
+    </span>
+</script>

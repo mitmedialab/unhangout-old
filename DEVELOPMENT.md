@@ -3,26 +3,40 @@ DEVELOPMENT
 
 This file contains some collected notes from development to help guide future developers in adding features or understanding why existing features work the way they do. 
 
-Structure
----------
+Code Organization
+-----------------
 
-	/bin - contains all files intended to be executed directly, using, e.g. `node seed.js`
-		_get-all-user-emails.js_ helper script for extracting all emails users have logged in with
-		_seed.js_  _wipes_ and populates the redis database with basic models
-		_unhangout-server_ primary executable for starting the server
-	/lib - various server-side libraries
-		_hangout-farming.js_ - support code for farming valid unhangout urls from google calendar api
-		_passport-mock.js_ - support for faking passport users during testing
-		_server-models.js_ - extensions of the core models for use on the server
-		_unhangout-server.js_ - core code for running the server
-	/logs
-	/public - all static content, served by *express* at `/public/*`
-	/sass - sass stylesheets (which generate into `/public/css`)
-	/test - mocha and selenium unit and integration tests
-	/views - templates for rendering HTML pages
-	package.json - dependencies + other metadata
-	config.rb - configures compass, for turning sass into css
-	conf.json.example - example config file; should be copied into conf.json and edited appropriately.
+	``/bin`` - contains all files intended to be executed directly, using, e.g. `node seed.js`
+		``get-all-user-emails.js`` -  helper script for extracting all emails users have logged in with
+		``seed.js``  _wipes_ and populates the redis database with basic models
+		``unhangout-server`` primary executable for starting the server
+	``/lib`` - various server-side libraries
+        __Server lifecycle__
+        ``unhangout-server.js`` - starting, stopping Unhangout
+        ``logging.js`` - logging and analytics
+        ``redirect-https.js`` - simple http => https redirect server
+
+        __MVC__
+        ``unhangout-db.js`` - Hoisting and access to in-memory database, persistence to redis.
+        ``server-models.js`` - Models (extending those in /public/js/models.js).
+        ``unhangout-routes.js`` - Core express routes and handlers for HTTP requests
+        ``permalink-routes.js`` - Express routes and handlers for the permalink service
+        ``unhangout-sockets.js`` - Core routes for websocket messages
+
+        __Libraries__
+        ``room-manager.js`` - Manager of ``rooms``, with joining, leaving, and authentication, on top of SockJS.
+        ``redis-sync.js`` - Interface between Backbone.js and Redis
+        ``video-sync.js`` - Time-sync code for simultaneous video watching
+		``hangout-farming.js`` - support code for farming valid unhangout urls from google calendar api
+		``passport-mock.js`` - support for faking passport users during testing
+        ``utils.js`` - Common utilities that don't easily fit elsewhere.
+
+	``/logs``
+	``/public`` - all static content, served by *express* at `/public/*`
+	``/test`` - mocha and selenium unit and integration tests
+	``/views`` - templates for rendering HTML pages
+	``package.json`` - dependencies + other metadata
+	``conf.json.example`` - example config file; should be copied into conf.json and edited appropriately.
 
 
 Overall Architecture
@@ -91,3 +105,21 @@ Tests are written with mocha; and integration tests with selenium.  Wherever pos
 
 Common functions for starting up the server and building the selenium webdriver are found in ``test/common.js``.  Selenium webdriver uses a "promise" syntax to handle asynchronous code (see http://code.google.com/p/selenium/wiki/WebDriverJs for full documentation).
 
+Analytics/logging taxonomy
+--------------------------
+
+The ``lib/logging.js`` library contains a logger to use both for informational/debug logging and for structured analytics.  Log with ``logger.debug()``, ``loger.info()``, ``loger.warn()``, ``loger.error()``, or ``logger.analytics``.  Debug messages only show up in the console during development.  Info and above are logged to a file in production (where ``NODE_ENV="production"``).  Only use these messages for information that is pertinent during development (at ``debug`` level), or pertinent to sysadmins figuring out what's going on with a live server (mostly ``error`` and ``warn``, though occasionally ``info`` helps).  If in doubt, use ``debug``.
+
+``analytics`` logging logs to a separate file in JSON format -- use these judiciously, with an intention of logging only those events that are helpful in doing post-hoc analysis on how the site is being used, not real-time analysis of what the server is up to or development.  ``logger.analytics`` takes two arguments: ``(key, opts)``.  ``key`` is a term from the taxonomy below, and ``opts`` is an object containing data to log.  Several higher-level properties are accepted, including ``req``, ``res``, ``user``, ``session``, ``event``, and ``socket`` -- these will each have the relevant bits peeled off for logging.
+
+The following taxonomy describes what things we do analytics for, used with the ``key`` parameter to ``logger.analytics``.  Use these terms if possible, and document new terms if you add them.
+
+ - ``server``: Server lifecycle events (starting, stopping, etc).  Include high-level statistical data about the current state of the server (e.g. counts for the various models in the database).
+ - ``users``: User lifecycle events (sign up, login, logout, etc).
+ - ``events``: Happenings pertinent to ``event`` models.  Creation, starting, stopping, joining, leaving, chatting, etc.
+ - ``sessions``: Happenings pertinent to ``session`` models that are part of events.  Starting, stopping, setting URLs.  Due to its complexity, we make a particular effort to log details around hangout farming.
+ - ``permalinks``: Happenings pertinent to sessions which are permalinks. Same type of stuff.
+ - ``route``: Default web request logging, done via connect middleware.
+ - ``farming``: Events pertinent to the farming of hangout URLs.
+
+Include reasonable detail for each logged event, with an eye toward automated parsing and stats rather than human consumption.
