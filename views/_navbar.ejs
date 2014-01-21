@@ -22,13 +22,15 @@
 					</ul>
 					<div class="nav pull-right identity">
 					<% if(!user) {%>
-					<a class="btn btn-primary pull-left" href="/auth/google">Login</a>
+					<li><a href="/auth/google">Login</a></li>
 					<% } else { %>
 						<div class="dropdown">
-							<a class="dropdown-toggle username" data-toggle="dropdown" href="#">
-                                <%= user.get("displayName")%>
-                                <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
-                            </a>
+						
+                            <a class="dropdown-toggle username" data-toggle="dropdown" href="#">
+							<img class="profile-thumbnail" src="<%= user.get("picture")%>" width="30px" height="30px">
+							<%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
+							
+							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 								<li role="presentation">
 									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
