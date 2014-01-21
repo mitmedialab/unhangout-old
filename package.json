@@ -48,7 +48,8 @@
   	"googleapis": "0.4.5",
   	"gapitoken" : "0.0.3",
     "stylus" : "0.40.2",
-    "nib" : "1.0.1"
+    "nib" : "1.0.1",
+    "nodemailer": "0.6.0"
   },
   "analyze": false,
   "devDependencies": {

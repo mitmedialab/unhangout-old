@@ -8,69 +8,18 @@
 
         <h3>A platform for unconferences. On the web.</h3>
 
-        <div class="create-event-button">  
-            <% if(!user) { %>          
-            <button id="login-first-button" class="btn btn-primary"> <i class="fa fa-edit fa-lg"></i>
-            Create an Unhangout
-            </button>
+        <div class="create-event-button">
+            <% if (!user) { %>
+                <button id="login-first-button" class="btn btn-primary">
+                    <i class="fa fa-edit fa-lg"></i>
+                    Create an Unhangout
+                </button>
             <% } else { %>
-            <button id="create-event-button" class="btn btn-primary"> <i class="fa fa-edit fa-lg"></i>
-            Create an Unhangout
-            </button>
+                <button id="create-event-button" class="btn btn-primary">
+                    <i class="fa fa-edit fa-lg"></i>
+                    Create an Unhangout
+                </button>
             <% } %>
-        </div>
-    </div>
-
-    <div class="modal hide fade event-mini-form" id=
-            "login-first-modal">
-
-        <div class="modal-header">
-            <h3>Welcome to Unhangout!</h3>
-        </div>
-
-        <div class="modal-body">
-            <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
-            <a href="/auth/google/"><button class="btn btn-primary pull-right" >Login to create an Unhangout</button></a><br/><br/>
-
-            <div class="modal-footer">
-                <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
-                <span class>Unhangouts</span>
-
-                <button id="close-button" data-dismiss="modal" class="btn btn-primary">Close</button>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="modal hide fade event-mini-form" id=
-            "event-mini-form-modal">
-        <div class="modal-header">
-            <h3>Create an Unhangout</h3>
-        </div>
-
-        <div class="modal-body">
-            <form method="POST" id="contact-form" class="form-horizontal">             
-                <div class="control-group">
-                  <label class="control-label" for="title">Event Title</label>
-                  <div class="controls">
-                    <input type="text" class="input-xlarge" name="title" id="title">
-                  </div>
-                </div>
-
-                <div class="control-group">
-                  <label class="control-label" for="description">Event Description</label>
-                  <div class="controls">
-                    <textarea class="input-xlarge" name="description" id="description" rows="3"></textarea>
-                  </div>
-                </div>
-
-                <div class="modal-footer">
-                    <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
-                    <span class>Unhangouts</span>
-
-                    <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
-                </div>
-            </form>
         </div>
     </div>
 
@@ -94,7 +43,7 @@
 
                 <div class="description lead">
                     We want to experiment this year with a number of different ways to advance ideas, i.e. to put Ideas in Action. We have the opportunity to try an interesting new format - virtual conversations using the Unhangout Platform. We are inviting some of our speakers to be hosts of virtual discussion rooms on Feb 12. On the day of the event, there will be a kick-off webinar, after which people will proceed to the session they are interested in. In the individual discussion room, participants will hear from a speaker, view a TEDxBeaconStreet talk and discuss it. We hope this catalyzes interest, ideas, and the potential for follow-up to help advance the idea.
-                </div>  
+                </div>
             </div>
         </div>
         
@@ -125,7 +74,7 @@
                     "http://www.nwp.org/" style=
                     "font-style: italic" target="_blank">National
                     Writing Project.</a> <br/> <br/>
-                </div>  
+                </div>
             </div>
         </div>
 
@@ -200,7 +149,7 @@
                     "_blank"><i>National Writing
                     Project.</i><br>
                     <br></a>
-                </div>   
+                </div>
             </div>
         </div>
 
@@ -298,6 +247,49 @@
 
         </div>
     </div>
+
+    <div id="login-first-modal" class="modal hide fade event-mini-form">
+      <div class="modal-header">
+          <h3>Welcome to Unhangout!</h3>
+      </div>
+      <div class="modal-body">
+        <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
+        <a href="/auth/google/"><button class="btn btn-primary pull-right" >Login to create an Unhangout</button></a><br/><br/>
+      </div>
+      <div class="modal-footer">
+          <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
+          <span class>Unhangouts</span>
+          <button id="close-button" data-dismiss="modal" class="btn btn-primary">Close</button>
+      </div>
+    </div>
+
+    <div id="event-mini-form-modal" class="modal hide fade event-mini-form">
+      <div class="modal-header">
+          <h3>Create an Unhangout</h3>
+      </div>
+      <form method="POST" id="contact-form" class="form-horizontal">
+        <div class="modal-body">
+          <div class="control-group">
+            <label class="control-label" for="title">Event Title</label>
+            <div class="controls">
+              <input type="text" class="input-xlarge" name="title" id="title">
+            </div>
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="description">Event Description</label>
+            <div class="controls">
+              <textarea class="input-xlarge" name="description" id="description" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+              <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
+              <span class>Unhangouts</span>
+              <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+
 </div>
 
 <script type='text/javascript' src='/public/js/index.js'></script>

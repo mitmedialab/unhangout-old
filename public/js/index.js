@@ -24,29 +24,28 @@ $(document).on('ready', function() {
 		$('#event-mini-form-modal').modal('show');
 	});
 
-	$('#contact-form').validate(
-	 {
-	  rules: {
-	    title: {
-	      minlength: 5,
-	      required: true
-	    },
-	   
-	    description: {
-	      minlength: 100,
-	      required: true
-	    }
-	  },
+	$('#contact-form').validate({
+        rules: {
+            title: {
+                minlength: 5,
+                required: true
+            },
 
-	  highlight: function(element) {
-	    $(element).closest('.control-group').removeClass('success').addClass('error');
-	  },
+            description: {
+                minlength: 100,
+                required: true
+            }
+        },
 
-	  success: function(element) {
-	    element
-	    .text('OK!').addClass('valid')
-	    .closest('.control-group').removeClass('error').addClass('success');
-	  },
+        highlight: function(element) {
+            $(element).closest('.control-group').removeClass('success').addClass('error');
+        },
+
+        success: function(element) {
+            element
+            .addClass('valid')
+            .closest('.control-group').removeClass('error').addClass('success');
+        },
 	});
 
 
@@ -66,7 +65,7 @@ $(document).on('ready', function() {
 			$('#session-submission-modal').modal('show');
 		});
 
-		$("#title").val(" ");
-		$("#description").val(" ");
-	})
+		$("#title").val("");
+		$("#description").val("");
+	});
 });
