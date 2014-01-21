@@ -322,7 +322,7 @@ var WebpageActivity = BaseActivityView.extend({
             alert("There was a problem loading that webpage.");
         }
 
-        var loadTimeout = setTimeout(iframe.onerror, 20000);
+        var loadTimeout = setTimeout(iframe.onerror, 5000);
         var isLoaded = function() {
             clearTimeout(loadTimeout);
             $(".loading").remove();
