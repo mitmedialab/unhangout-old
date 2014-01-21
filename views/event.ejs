@@ -122,7 +122,10 @@
                 <a role="menuitem" href="#embed-modal" role="button" id="show-embed-modal">video embed</a>
                 <a role="menuitem" tabindex="-1" id="open-sessions">open sessions</a>
                 <a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
-                <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
+                <a role="menuitem" tabindex="-1" id="message-sessions">send message to sessions</a>
+                {{ if (IS_SUPERUSER) { }}
+                    <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
+                {{ } }}
             </li>
         </ul>
     </div>
@@ -175,6 +178,30 @@
                 <input type='submit' class="btn btn-primary" id="create-session" value="Create Session" />
             </div>
         </form>
+    </div>
+    <div id="message-sessions-modal" class="modal hide fade">
+        <div class="modal-header"><h3>Send Message to All Hangout Sessions</h3></div>
+        <div class="modal-body">
+            <p>Send a message to be displayed in every event session hangout.</p>
+            <div class='control-group'>
+                <label for='session_message'>Message</label>
+                <textarea id='session_message'></textarea>
+            </div>
+            <div class='control-group'>
+                <label>
+                    <input type='checkbox' id='session_message_insistent'>
+                    Make message persistent.
+                </label>
+                <span class='help-block'>
+                    If checked, users will not be able to make it go away.
+                    <nobr>Be careful. :)</nobr>
+                </span>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <a href='#' class='btn pull-left' data-dismiss='modal'>Cancel</a>
+            <a href='#' class='btn btn-primary' id='send-session-message'>Send Message</a>
+        </div>
     </div>
     <div id="embed-modal" class="modal hide fade">
         <div class="modal-header"><h3>Set Video URL</h3></div>

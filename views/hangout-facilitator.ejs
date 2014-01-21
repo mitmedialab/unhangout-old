@@ -13,10 +13,10 @@
   <!-- parent has class "main-window" -->
   <div class='columns'>
     <div class='left-column'>
-      <!-- "Main" area if in sidebar mode; hidden otherwise -->
+      <!-- Video area if in sidebar mode; hidden otherwise -->
     </div>
     <div class='right-column'>
-      <!-- Sidebar app, or main app -->
+      <!-- Sidebar or main -->
       <div class='facilitator'>
         <div class='header-row'>
           <div class='title'>
@@ -39,6 +39,23 @@
       </div> <!-- /facilitator -->
     </div> <!-- /right-column -->
   </div> <!-- /columns -->
+</script>
+
+<script type='text/template' id='event-message-view'>
+    <div class='modal-header'>
+        {{ if (dismissable) { }}
+             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        {{ } }}
+        <h3>Message from {{= sender }}</h3>
+    </div>
+    <div class='modal-body'>
+        <b>{{= sender }}</b>: {{= message }}
+    </div>
+    {{ if (dismissable) { }}
+        <div class='modal-footer' style='text-align: center;'>
+            <a href='#' class='btn' data-dismiss='modal'>Close</a>
+        </div>
+    {{ } }}
 </script>
 
 <script type='text/template' id='about-activity'>

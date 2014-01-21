@@ -290,6 +290,7 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 	events: {
 		'click #set-embed':'setEmbed',
+        'click #send-session-message': 'sendSessionMessage',
 		'click #remove-embed':'removeEmbed',
 		'click #disconnected-modal a':'closeDisconnected',
 		'click #create-session':'createSession',
@@ -329,6 +330,22 @@ var DialogView = Backbone.Marionette.Layout.extend({
 			sock.send(JSON.stringify(message));
 		}
 	},
+    sendSessionMessage: function(event) {
+        event.preventDefault();
+        var args = {
+            message: $.trim($("#session_message").val()),
+            insistent: $("#session_message_insistent").is(":checked"),
+            roomId: curEvent.getRoomId()
+        }
+        if (!args.message) {
+            return;
+        }
+        sock.send(JSON.stringify({
+            type: "broadcast-message-to-sessions",
+            args: args
+        }));
+        $("#message-sessions-modal").modal('hide');
+    },
 	removeEmbed: function() {
 		// just send an empty message, and clear the field
 		$("#embed_youtube_id").val("");
@@ -413,7 +430,8 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	events: {
 		'click #show-embed-modal':'showEmbedModal',
 		'click #open-sessions':'openSessions',
-		'click #close-sessions':'closeSessions'
+		'click #close-sessions':'closeSessions',
+        'click #message-sessions': 'messageSessions'
 	},
 
 	openSessions: function() {
@@ -423,6 +441,11 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	closeSessions: function() {
 		sock.send(JSON.stringify({type:"close-sessions", args:{roomId: curEvent.getRoomId()}}));
 	},
+
+    messageSessions: function() {
+        $("#message-sessions-modal").modal('show');
+
+    },
 
 	showEmbedModal: function() {
         var ytId = curEvent.get("youtubeEmbed");

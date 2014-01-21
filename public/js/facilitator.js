@@ -51,6 +51,9 @@ var FacilitatorView = Backbone.View.extend({
                         this.currentActivity.controlVideo(msg.args);
                     }
                     break;
+                case "session/event-message":
+                    this.displayEventMessage(msg.args);
+                    break;
             }
         }, this);
         this.session.on("change:activities", this.renderActivities);
@@ -163,6 +166,16 @@ var FacilitatorView = Backbone.View.extend({
             // Expand to main!
             this.faces.setActive(false);
         }
+    },
+    displayEventMessage: function(args) {
+        this.faces.hideVideoIfActive();
+        if (this.messageView) {
+            this.messageView.$el.modal('hide');
+        }
+        this.messageView = new EventMessageView(args);
+        this.messageView.on("close", _.bind(function() {
+            this.faces.showVideoIfActive();
+        }, this));
     }
 });
 
@@ -309,7 +322,7 @@ var WebpageActivity = BaseActivityView.extend({
             alert("There was a problem loading that webpage.");
         }
 
-        var loadTimeout = setTimeout(iframe.onerror, 20000);
+        var loadTimeout = setTimeout(iframe.onerror, 5000);
         var isLoaded = function() {
             clearTimeout(loadTimeout);
             $(".loading").remove();
@@ -332,6 +345,59 @@ var WebpageActivity = BaseActivityView.extend({
 /*
  * Modal dialogs
  */
+
+// View for messages from event admins into sessions.
+var EventMessageView = Backbone.View.extend({
+    template: _.template($("#event-message-view").html()),
+    initialize: function(options) {
+        this.options = options;
+        _.bindAll(this, "render");
+        $("body").append(this.el);
+        this.render();
+        this.$el.on("hidden", _.bind(function() {
+            this.trigger("close");
+            this.remove();
+            postMessageToHangout({type: "dismiss-notice"});
+            if (this._interval) { clearInterval(this._interval); }
+        }, this));
+    },
+    render: function() {
+        var sender = this.options.sender;
+        var message = this.options.message;
+        var dismissable = !this.options.insistent;
+        var postMessage = function() {
+            // Always post hangout notices as "permanent", so they don't
+            // disappear on their own.  For insistent (not dismisable)
+            // messages, we'll spam the noticer at an interval so that even if
+            // dismissed they'll reappear.
+            postMessageToHangout({
+                type: "display-notice-if-hidden",
+                args: [sender + ": " + message, true]
+            });
+        }
+
+        this.$el.addClass("modal hide fade event-message-window");
+        this.$el.html(this.template({
+            sender: sender,
+            message: message,
+            dismissable: dismissable}));
+        if (dismissable) {
+            this.$el.modal('show'); // Normal, closeable
+        } else {
+            this.$el.modal({
+                backdrop: "static", // prevent close on backdrop-click
+                keyboard: false,    // prevent close on keyboard
+                show: true
+            });
+        }
+        postMessage();
+        if (!dismissable) {
+            // Post notice repeatedly.
+            if (this._interval) { clearInterval(this._interval); }
+            this._interval = setInterval(postMessage, 20000);
+        }
+    }
+});
 
 var BaseModalView = Backbone.View.extend({
     events: {
@@ -365,6 +431,8 @@ var BaseModalView = Backbone.View.extend({
         this.$el.modal("hide");
     }
 });
+
+
 
 
 var AddActivityDialog = BaseModalView.extend({
