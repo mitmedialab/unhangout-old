@@ -157,7 +157,7 @@ var EventAdminAdder = Backbone.View.extend({
         this.$el.modal("show");
     },
     add:  function() {
-        this.trigger("add", events.get(parseInt(this.$("[name=event]").val())));
+        this.trigger("add", events.get(this.$("[name=event]").val()));
         this.close();
     },
     close: function() {

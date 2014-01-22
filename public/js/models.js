@@ -297,7 +297,9 @@ models.Session = Backbone.Model.extend({
     },
     removeConnectedParticipant: function(user) {
         var participants = this.get("connectedParticipants");
-        var newParticipants = _.reject(participants, function (u) { u.id == user.id });
+        var newParticipants = _.reject(participants, function (u) {
+            return u.id == user.id
+        });
         return this.setConnectedParticipants(newParticipants);
     },
 	setConnectedParticipants: function(users) {
