@@ -57,7 +57,7 @@
 	"superagent": "0.15.4",
 	"should"    : "1.2.2",
   	"expect.js" :  "0.2.0",
-	"sockjs-client-ws": "0.1.0",
+	"sockjs-client-ws": "git://github.com/yourcelf/sockjs-client-node.git#master",
     "selenium-webdriver": "~2",
     "libxmljs": "*",
     "simplesmtp": "~0",

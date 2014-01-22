@@ -1,52 +1,100 @@
 #!/usr/bin/env node
+// This is a load simulator, designed to hammer an Unhangout server with a huge
+// number of sockets and connection traffic, to help us identify places where
+// optimization is needed.
 //
-// Fire up the server, and create a large number of socket connections to
-// simulate a lot of traffic in ``event/1`` and its sessions.
+// To use:
 //
-// NOTE: always runs with USE_SSL=false and mockAuth=true, as required by the
-// mock users' sockets.
+// 1. On both the client and the server, copy the ``simulatorConf.js.example``
+//    files to ``simulatorConf.js``, and edit the values inside.  Be sure to use
+//    the same EVENT_ID for both CLIENT and SERVER configuration on both hosts.
+//    Particular things to pay attention to:
+//
+//     - on the client: the UNHANGOUT_SESSION_SECRET parameter must be set to
+//       the value of UNHANGOUT_SESSION_SECRET used by the server's
+//       ``conf.json`` (that's its regular conf.json, not simulatorConf.js).
+//
+//     - both client and server must use the same EVENT_ID. Set it properly
+//       in both places.  Set it to a sacrificial event that we can fill up
+//       with test sessions.
+//
+// 2. On the server, run ``bin/prepare-load-simulator-data.js``.  This will
+//    create a large number of sessions in the specified EVENT_ID event, 
+//    as well as a large number of test users.
+//
+// 3. Finally, on the client, run ``bin/load-simulator.js``, which will
+//    commence the barrage.  You can use multiple different clients
+//    simultaneously -- you may want to use different USER_RANGE values
+//    for each client so that you get unique users from the different machines.
+//
+// 4. When finished, on the server, run:
+//      
+//      bin/prepare-load-simulator-data.js --delete
+//
+//    which will delete all of the test users, sessions, and event indicated by
+//    simulatorConf.js's SERVER section.
+//    
+// If you get the error EMFILE (too many open files), try fixing it with:
+// 
+//      ulimit -n 2048
 //
 
 var logger = require("../lib/logging.js").getLogger(),
+    models = require("../lib/server-models.js"),
+    simConf = require("../simulatorConf.js").CLIENT,
     _ = require("underscore"),
     events = require("events"),
-    config = require("../conf.json"),
-    createUsers = require("../lib/passport-mock.js").createUsers,
-    sock_client = require("sockjs-client-ws"),
-    unhangoutServer = require("../lib/unhangout-server.js");
+    sock_client = require("sockjs-client-ws");
+
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = simConf.NODE_TLS_REJECT_UNAUTHORIZED;
+
+var EVENT_ROOM_ID = "event/" + simConf.EVENT_ID;
+models.USER_KEY_SALT = simConf.UNHANGOUT_SESSION_SECRET;
 
 /*
  * Object holding a socket and its authorization/join state.
  */
 function AuthSock(options) {
     this.state = "disconnected";
-    this.server = options.server;
-    this.sockKey = options.sockKey;
-    this.user = this.server.db.users.findWhere({"sock-key": this.sockKey});
-    this.sock = sock_client.create(this.server.options.baseUrl + "/sock");
+    this.userId = options.userId;
+    this.sockKey = models.generateSockKey(this.userId);
+    this.sock = sock_client.create(simConf.SERVER_URL + "/sock");
     this.init();
 }
 AuthSock.prototype = _.extend({
     init: function() {
         _.bindAll(this, "onerror", "write");
         this.sock.on("connection", _.bind(function() {
-            this.write("auth", {key: this.sockKey, id: this.user.id});
+            this.write("auth", {key: this.sockKey, id: this.userId});
         }, this));
         this.sock.on("data", _.bind(function(message) {
             var msg = JSON.parse(message);
-            if (msg.type.indexOf("-err") != -1) {
-                this.onerror(msg);
-            } else if (msg.type == "auth-ack") {
-                this.state = "authorized";
-            } else if (msg.type == "join-ack") {
-                this.state = "joined";
+            switch (msg.type) {
+                case 'join-err':
+                    if (this.state == "joining") {
+                        this.room = null;
+                        this.state = "authorized";
+                    } else {
+                        this.onerror(msg);
+                    }
+                    break;
+                case 'auth-ack':
+                    this.state = "authorized";
+                    break;
+                case "join-ack":
+                    this.state = "joined";
+                default:
+                    if (msg.type.indexOf("-err") != -1) {
+                        this.onerror(msg);
+                    }
+                    break;
             }
             this.emit("data", msg);
         }, this));
         this.sock.on("error", this.onerror);
     },
     onerror: function(err) {
-        logger.error(this.sockKey + " error", err);
+        logger.error(this.userId + " error", err);
 
     },
     write: function(type, args) {
@@ -59,9 +107,8 @@ AuthSock.prototype = _.extend({
  * joins sessions, and connects and disconnects, and focuses/unfocuses.
  */
 function Rando(options) {
-    this.server = options.server;
     this.event = options.event;
-    this.sockKey = options.sockKey;
+    this.userId = options.userId;
     // Initialize with a random timeout, to mix up the clock ticks.
     setTimeout(_.bind(function() {
         this.init();
@@ -70,8 +117,8 @@ function Rando(options) {
 Rando.prototype = {
     init: function() {
         _.bindAll(this, "ontick");
-        this.eventSock = new AuthSock({server: this.server, sockKey: this.sockKey});
-        this.sessionSock = new AuthSock({server: this.server, sockKey: this.sockKey});
+        this.eventSock = new AuthSock({userId: this.userId});
+        this.sessionSock = new AuthSock({userId: this.userId});
         setInterval(this.ontick, 1000);
     },
     ontick: function() {
@@ -82,34 +129,36 @@ Rando.prototype = {
                 break;
             case "authorized":
                 // If we're authorized, but haven't started joining, join the
-                // event with a 50% probability.
-                if (Math.random() > 0.5) {
-                    logger.debug(this.sockKey + " joining");
+                // event with a 70% probability.
+                if (Math.random() > 0.7) {
+                    logger.debug(this.userId + " joining");
                     this.eventSock.state = "joining";
-                    this.eventSock.write("join", {id: this.event.getRoomId()});
+                    this.eventSock.write("join", {id: EVENT_ROOM_ID});
                 }
                 break;
             case "joined":
                 if (Math.random() > 0.99) {
-                    logger.debug(this.sockKey + " chatting");
+                    logger.debug(this.userId + " chatting");
                     this.eventSock.write("chat", {
-                        roomId: this.event.getRoomId(),
+                        roomId: EVENT_ROOM_ID,
                         text: this.chatMessages[
                             Math.floor(Math.random() * this.chatMessages.length)
                         ]
                     });
-                } else if (Math.random() > 0.99) {
+                } else if (Math.random() > 0.995) {
                     this.eventSock.write("leave", {
-                        id: this.event.getRoomId(),
+                        id: EVENT_ROOM_ID,
                     });
                     this.eventSock.state = "authorized";
                 } else if (Math.random() > 0.9) {
-                    if (this.eventSock.focused) {
-                        this.eventSock.write("blur", {roomId: this.event.getRoomId()});
-                        this.eventSock.focused = false;
-                    } else {
-                        this.eventSock.write("focus", {roomId: this.event.getRoomId()});
-                        this.eventSock.focused = true;
+                    if (!simConf.DISABLE_BLUR) { 
+                        if (this.eventSock.focused) {
+                            this.eventSock.write("blur", {roomId: EVENT_ROOM_ID});
+                            this.eventSock.focused = false;
+                        } else {
+                            this.eventSock.write("focus", {roomId: EVENT_ROOM_ID});
+                            this.eventSock.focused = true;
+                        }
                     }
                 }
                 break;
@@ -120,14 +169,14 @@ Rando.prototype = {
             case "joining":
                 break;
             case "authorized":
-                if (this.event.get("sessionsOpen") && Math.random() > 0.9) {
-                    var sessions = this.event.get("sessions");
-                    var session = sessions.at(Math.floor(sessions.length * Math.random()));
-                    if (session.getNumConnectedParticipants() < 10) {
-                        this.sessionSock.write("join", {id: session.getRoomId()});
-                        this.sessionSock.state = "joining";
-                        this.sessionSock.room = session.getRoomId();
-                    }
+                if (Math.random() > 0.9) {
+                    var sessionId = simConf.SESSION_RANGE[0] + Math.floor(
+                        (simConf.SESSION_RANGE[1] - simConf.SESSION_RANGE[0]) * Math.random()
+                    );
+                    var roomId = "session/loadSession" + sessionId;
+                    this.sessionSock.write("join", {id: roomId});
+                    this.sessionSock.state = "joining";
+                    this.sessionSock.room = roomId;
                 }
                 break;
             case "joined":
@@ -160,36 +209,13 @@ Rando.prototype = {
     ]
 };
 
-function init(callback) {
-    var server = new unhangoutServer.UnhangoutServer();
-    server.on("inited", function() {
-        server.start();
-    });
-    server.on("started", function() {
-        createUsers(server.db.users);
-        callback(server);
-    });
-    var options = _.extend({}, config, {mockAuth: true, UNHANGOUT_USE_SSL: false});
-    _.each(options, function(value, key) {
-        if (key.indexOf('UNHANGOUT_') != -1) {
-            options[key.slice(10)] = value;
-        }
-    });
-    server.init(options);
-    return server;
-}
 function main() {
-    init(function(server) {
-        var event = server.db.events.at(0)
-        for (var i = 0; i < 100; i++) {
-            new Rando({
-                server: server,
-                sockKey: "loader" + i,
-                event: event
-            });
-        }
-        logger.warn("Random users loading page: " + server.options.baseUrl + "/event/" + event.id);
-    });
+    for (var i = simConf.USER_RANGE[0]; i < simConf.USER_RANGE[1]; i++) {
+        new Rando({userId: "loadUser" + i});
+    }
+    logger.warn(
+        "Random users loading page: " + simConf.SERVER_URL + "/" + EVENT_ROOM_ID
+    );
 }
 
 if (require.main === module) {

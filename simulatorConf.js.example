@@ -1,0 +1,41 @@
+// This file is javascript so we can have comments, but the semantics are JSON.
+module.exports = {
+    "CLIENT": {
+        // The URL for the server we will be hammering.
+        "SERVER_URL": "https://localhost:7777",
+        // The range of user IDs for this client to use.  If you're using
+        // multiple machines to load test the server, you may want to set each
+        // one to a different subset of the range, so that you get different
+        // users.
+        "USER_RANGE": [0, 300],
+        // Disable sending of blur/focus socket traffic?
+        "DISABLE_BLUR": false,
+        // The range of sessions our users will attempt to join.  There may be
+        // more sessions available on the server for users to join -- reducing
+        // the range ensures that sessions fill up.
+        "SESSION_RANGE": [0, 30],
+        // The ID for the event on the server which contains the load simulator
+        // sessions, generated with ``bin/prepare-load-simulator-data.js``.
+        "EVENT_ID": 10,
+        // Tell node to ignore self-signed certificates, in case the server
+        // uses one by setting this to "0".  To validate certificates, set it
+        // to "1".
+        "NODE_TLS_REJECT_UNAUTHORIZED": "0",
+        // The session secret used by the server we're attacking.  We need this
+        // in order to authenticate the sockets we're hammering it with.  Keep
+        // this value private.
+        "UNHANGOUT_SESSION_SECRET": "sessionsecret"
+    },
+    "SERVER": {
+        // The ID of the event in which to generate sessions.
+        "EVENT_ID": 10,
+        // The range of session IDs to generate. in that event.
+        "SESSION_RANGE": [0, 50],
+        // The range of users to generate.
+        "USER_RANGE": [0, 500],
+        // The REDIS DB to use when generating.  This should be the same as the
+        // setting in conf'json's UNHANGOUT_REDIS_DB when load testing is in
+        // progress.  The default production value is 0 and test DB is 1.
+        "REDIS_DB_ID": 1
+    }
+}

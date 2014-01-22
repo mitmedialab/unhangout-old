@@ -27,6 +27,8 @@ conf.json
 fabfile.py
 # for auto-farming
 farmingConf.json
+# For load simulation
+simulatorConf.js
 # ignore ssl, to ensure we never check certs in.
 ssl/
 
