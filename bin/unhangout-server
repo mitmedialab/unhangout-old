@@ -17,9 +17,6 @@ var s = new server.UnhangoutServer();
 s.on("inited", function() {
 	s.start();
 });
-
-// the extend here is to add defaults to config that we definitely need to have
-// in scope to make choices about how to set up the server.
 s.init(options);
 
 // catch all to make sure uncaught exceptions don't bring down the whole server.
