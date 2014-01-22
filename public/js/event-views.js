@@ -277,6 +277,11 @@ var UserView = Marionette.ItemView.extend({
 	}
 });
 
+// Turn a string into a session message.
+function formatSessionMessage(val) {
+    return "##unhangouts## " + USER_NAME + ": " + $.trim(val);
+}
+
 // The DialogView contains all our dialog boxes. This is a little awkward, but
 // when we tried associated dialog boxes with the views that actually trigger them
 // we ran into all sorts of z-index issues, because those views were all
@@ -294,7 +299,11 @@ var DialogView = Backbone.Marionette.Layout.extend({
 		'click #remove-embed':'removeEmbed',
 		'click #disconnected-modal a':'closeDisconnected',
 		'click #create-session':'createSession',
-        'change [name=session_type]': 'changeSessionType'
+        'change [name=session_type]': 'changeSessionType',
+        'click .add-url-to-message': 'addUrlToSessionMessage',
+        'change #session_message': 'updateSessionMessage',
+        'keydown #session_message': 'updateSessionMessage',
+        'keyup #session_message': 'updateSessionMessage'
 	},
     extractYoutubeId: function(val) {
         // From http://stackoverflow.com/a/6904504 , covering any of the 15
@@ -330,15 +339,25 @@ var DialogView = Backbone.Marionette.Layout.extend({
 			sock.send(JSON.stringify(message));
 		}
 	},
+    addUrlToSessionMessage: function(event) {
+        event.preventDefault();
+        var el = $("#message-sessions-modal textarea");
+        var val = el.val();
+        el.val(val + "\n Copy and paste: " + window.location.href.split("#")[0]);
+        el.change();
+    },
+    updateSessionMessage: function(event) {
+        $("#message-sessions-modal .faux-hangout-notice .message").html(
+            formatSessionMessage($("#session_message").val())
+        );
+    },
     sendSessionMessage: function(event) {
         event.preventDefault();
+        var val = $("#session_message").val();
+        if (!val) { return; }
         var args = {
-            message: $.trim($("#session_message").val()),
-            insistent: $("#session_message_insistent").is(":checked"),
+            message: formatSessionMessage(val),
             roomId: curEvent.getRoomId()
-        }
-        if (!args.message) {
-            return;
         }
         sock.send(JSON.stringify({
             type: "broadcast-message-to-sessions",
