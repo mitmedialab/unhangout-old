@@ -1,4 +1,4 @@
-var conf            = require("../conf.json"),
+var conf            = require("../lib/options"),
     unhangoutServer = require('../lib/unhangout-server'),
     seed            = require('../bin/seed.js'),
     path            = require("path"),
@@ -7,7 +7,18 @@ var conf            = require("../conf.json"),
     async           = require('async'),
     webdriver       = require('selenium-webdriver'),
     sock_client     = require("sockjs-client-ws"),
-    SeleniumServer  = require('selenium-webdriver/remote').SeleniumServer;
+    SeleniumServer  = require('selenium-webdriver/remote').SeleniumServer,
+    emailServer     = require("../bin/email-server.js");
+
+var TEST_CONF = _.extend({}, conf, {
+    "UNHANGOUT_USE_SSL": false,
+    "UNHANGOUT_GOOGLE_CLIENT_ID": true,
+    "UNHANGOUT_GOOGLE_CLIENT_SECRET": true,
+    "UNHANGOUT_HANGOUT_APP_ID": "rofl",
+    "UNHANGOUT_REDIS_DB": 1,
+    "mockAuth": true,
+    "baseUrl": "http://localhost:7777"
+});
 
 var seleniumServer = null;
 var buildBrowser = function(callback) {
@@ -79,15 +90,6 @@ exports.getSeleniumBrowser = function(callback) {
     }
 }
 exports.server = null;
-
-var SERVER_OPTIONS = {
-    "GOOGLE_CLIENT_ID":true,
-    "GOOGLE_CLIENT_SECRET":true,
-    "REDIS_DB":1,
-    "timeoutHttp":true,
-    "mockAuth": true
-}
-
 // A list of all open connections to the HTTP server, which we can nuke to
 // allow us to force-restart the server.
 
@@ -118,11 +120,18 @@ exports.standardSetup = function(done, skipSeed) {
     });
     if (!skipSeed) {
         seed.run(1, redis, function() {
-            exports.server.init(SERVER_OPTIONS);
+            exports.server.init(TEST_CONF);
         });
     } else {
-        exports.server.init(SERVER_OPTIONS);
+        exports.server.init(TEST_CONF);
     }
+};
+exports.startEmailServer = function(done) {
+    exports.outbox = emailServer.outbox;
+    emailServer.start(function(){}, conf.UNHANGOUT_SMTP.port, done);
+};
+exports.stopEmailServer = function(done) {
+    emailServer.stop(done);
 };
 
 var shutDown = function(server, done) {

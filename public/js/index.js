@@ -5,13 +5,15 @@ $(document).on('ready', function() {
 		var email = $("#email").val();
 
 		$.ajax({
-			url:"/subscribe",
+			url:"/subscribe/",
 			type:"POST",
 			data: {email:email}
 		}).done(function() {
 			$('#subscription-modal').modal('show');
 			console.log("posted email");
-		});
+		}).fail(function() {
+            alert("Server error.. please try later.");
+        });
 
 		$("#email").val("");
 	});
@@ -46,26 +48,24 @@ $(document).on('ready', function() {
             .addClass('valid')
             .closest('.control-group').removeClass('error').addClass('success');
         },
-	});
+        submitHandler: function(form) {
+            var eventTitle = $("#title").val();
+            var eventDescription = $("#description").val();
+
+            $.ajax({
+                url:"/admin-request/",
+                type:"POST",
+                data: {eventTitle: eventTitle, eventDescription: eventDescription}
+            }).done(function() {
+                $('#event-mini-form-modal').modal('hide');
+                $('#session-submission-modal').modal('show');
+                $("#title").val("");
+                $("#description").val("");
+            }).fail(function() {
+                alert("Server error.. please try later.");
+            });
 
 
-	$("#contact-form").submit(function(event) {
-		//Step form from submitting normally 
-		event.preventDefault();
-
-		var event_title = $("#title").val();
-		var event_description = $("#description").val();
-
-		$.ajax({
-			url:"/submit",
-			type:"POST",
-			data: {event_title:event_title, event_description: event_description}
-		}).done(function() {
-			$('#event-mini-form-modal').modal('hide');
-			$('#session-submission-modal').modal('show');
-		});
-
-		$("#title").val("");
-		$("#description").val("");
+        }
 	});
 });

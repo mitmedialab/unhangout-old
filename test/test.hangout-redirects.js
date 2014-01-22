@@ -18,9 +18,7 @@ describe("HANGOUT REDIRECTS", function() {
                 if (e.get("sessions").length > 0) {
                     e.start();
                     session = e.get("sessions").at(0);
-                    common.server.options.HANGOUT_APP_ID = "fun";
-                    suffix = "?gid=" + common.server.options.HANGOUT_APP_ID +
-                             "&gd=sessionId:" + session.id;
+                    suffix = "?gid=rofl&gd=sessionId:" + session.id;
                     return true;
                 }
             });
@@ -94,7 +92,7 @@ describe("HANGOUT REDIRECTS", function() {
         farming.getNextHangoutUrl(function(err, url) {
             expect(err).to.be(null);
             expect(url).to.be(null);
-            var url = "https://plus.google.com/hangouts/_?gid=fun&gd=sessionId:" + session.id;
+            var url = "https://plus.google.com/hangouts/_?gid=rofl&gd=sessionId:" + session.id;
             checkRedirect(url, "regular1", function() {
                 expect(session.isHangoutPending()).to.be(true);
                 done();
@@ -105,7 +103,7 @@ describe("HANGOUT REDIRECTS", function() {
         this.timeout(30000); // We're testing long timeouts. :(
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
-        var url = "https://plus.google.com/hangouts/_?gid=fun&gd=sessionId:" + session.id;
+        var url = "https://plus.google.com/hangouts/_?gid=rofl&gd=sessionId:" + session.id;
         // u1 is the user with the pending hangout...
         session.startHangoutWithUser(u1);
         // Make sure this timeout is greater than the "pending" timeout

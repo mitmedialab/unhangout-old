@@ -59,7 +59,9 @@
   	"expect.js" :  "0.2.0",
 	"sockjs-client-ws": "0.1.0",
     "selenium-webdriver": "~2",
-    "libxmljs": "*"
+    "libxmljs": "*",
+    "simplesmtp": "~0",
+    "mailparser": "~0"
   },
   "license": "BSD",
   "engines": {

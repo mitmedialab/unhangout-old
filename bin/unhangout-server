@@ -5,22 +5,13 @@
 
 var _ = require('underscore'),
     logger = require('../lib/logging.js').getLogger(),
-    config = require('../conf.json'),
+    options = require('../lib/options.js'),
 	server = require('../lib/unhangout-server.js');
 
 // TODO switch this to a file. Had trouble with getting that working, though.
 
 logger.info("Starting unhangout-server.");
-
-// show all related config variables
-var env = {};
-_.each(config, function(value, key) {
-	if(key.indexOf("UNHANGOUT_")!=-1) {
-		env[key.slice(10)] = value;
-	}
-});
-
-logger.info("config: " + JSON.stringify(env));
+logger.info("config: " + JSON.stringify(options));
 
 var s = new server.UnhangoutServer();
 s.on("inited", function() {
@@ -29,7 +20,7 @@ s.on("inited", function() {
 
 // the extend here is to add defaults to config that we definitely need to have
 // in scope to make choices about how to set up the server.
-s.init(_.extend(env, {"mockAuth":false}));
+s.init(options);
 
 // catch all to make sure uncaught exceptions don't bring down the whole server.
 process.on('uncaughtException', function(err) {

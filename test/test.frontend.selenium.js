@@ -31,7 +31,7 @@ describe("FRONT PAGE", function() {
     it("gets home page and nav links activate", function(done) {
         browser.get("http://localhost:7777/");
         browser.byCss("h1").getText().then(function(text) {
-            text.should.equal("The Unhangout Project");
+            text.should.equal("Unhangouts");
         });
         browser.byLinkText("About").click().then(navLinkActive("/about/"));
         browser.byLinkText("How to Unhangout").click().then(navLinkActive('/how-to-unhangout/'));

@@ -36,6 +36,9 @@ describe('unhangout server', function() {
 			s = new server.UnhangoutServer();
 		});
 		
+        /* Leaving this one out for now -- we have many more required params
+         * than just google credentials, and having moved conf to
+         * lib/options.js, that file does the error-throwing.
 		it('should not initialize without google credentials', function(done) {
 			s.on("error", function() {
 				done();
@@ -45,6 +48,7 @@ describe('unhangout server', function() {
 			});
 			s.init({});
 		});
+        */
 		
 		it('#start should fail if init is not called first', function(done) {
 			s.on("error", function() {
@@ -86,7 +90,7 @@ describe('unhangout server', function() {
 		beforeEach(function(done) {
 			s = new server.UnhangoutServer();
 			s.on("inited", done);
-			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true});
+			s.init({"UNHANGOUT_GOOGLE_CLIENT_ID":true, "UNHANGOUT_GOOGLE_CLIENT_SECRET":true});
 		});
 
 		afterEach(function(done) {
@@ -143,12 +147,12 @@ describe('unhangout server', function() {
 		});
 	});
 
-	describe('POST /subscribe', function() {
+	describe('POST /subscribe/', function() {
 		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 
 		it('should accept email addresses', function(done) {
-			request.post('http://localhost:7777/subscribe')
+			request.post('http://localhost:7777/subscribe/')
 			.send("email=email@example.com")
 			.end(function(res) {
 				res.status.should.equal(200);

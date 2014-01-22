@@ -1,6 +1,6 @@
 var common = require("./common.js"),
     models = require("../lib/server-models.js"),
-    conf = require('../conf.json'),
+    conf = require('../lib/options'),
     expect = require('expect.js'),
     _ = require('underscore'),
     Backbone = require("backbone");
