@@ -51,6 +51,43 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = simConf.NODE_TLS_REJECT_UNAUTHORIZED;
 var EVENT_ROOM_ID = "event/" + simConf.EVENT_ID;
 models.USER_KEY_SALT = simConf.UNHANGOUT_SESSION_SECRET;
 
+function RunningVariance() {
+    // Numerically stable calculation of a running variance.
+    // from http://math.stackexchange.com/a/116344/6677 and
+    // http://www.johndcook.com/standard_deviation.html.
+    // Calculate a running variance.
+    var m, s, old_m, k;
+    k = 0;
+    this.nextSample = function(x) {
+        k++;
+        if (k == 1) {
+            m = x;
+            s = 0;
+        } else {
+            old_m = m;
+            m = old_m + (x - old_m) / k;
+            s = s + (x - old_m) * (x - m);
+        };
+    };
+    this.getMean = function() {
+        return m;
+    };
+    this.getVariance = function() {
+        return (k <= 2) ? 0 : s / (k - 1);
+    };
+    this.getSD = function() {
+        return Math.pow(this.getVariance(), 0.5);
+    };
+}
+
+// Total variance for ack delays of various types for all users:
+var ackDelays = {};
+var queueLengths = {};
+_.each(["chat", "blur", "focus", "join", "leave", "auth"], function(key) {
+    ackDelays[key] = new RunningVariance();
+    queueLengths[key] = new RunningVariance();
+});
+
 /*
  * Object holding a socket and its authorization/join state.
  */
@@ -61,14 +98,53 @@ function AuthSock(options) {
     this.sock = sock_client.create(simConf.SERVER_URL + "/sock");
     this.init();
 }
+
 AuthSock.prototype = _.extend({
     init: function() {
         _.bindAll(this, "onerror", "write");
+
         this.sock.on("connection", _.bind(function() {
             this.write("auth", {key: this.sockKey, id: this.userId});
         }, this));
+        this.messagesReceived = 0;
+        this.messagesSent = 0;
+        this.ackTable = {
+            'auth': [],
+            'join': [],
+            'leave': [],
+            'chat': [],
+            'focus': [],
+            'blur': [],
+        }
+        // Assume that any ack/err we get is responding to the oldest request
+        // -- that is, we never get responses out of order.  May not be a
+        // correct assumption, but probably good enough to get a sense of how
+        // the server's performing.
+        this.acknowledged = _.bind(function(type) {
+            if (type in this.ackTable) {
+                var last = this.ackTable[type].shift();
+                if (last) {
+                    ackDelays[type].nextSample(new Date().getTime() - last);
+                } else {
+                    logger.error("Received " + type +
+                                 " -ack or -err without corresponding request");
+                }
+            }
+        }, this);
+        this.updateQueueLength = _.bind(function() {
+            for (var type in this.ackTable) {
+                queueLengths[type].nextSample(this.ackTable[type].length);
+            }
+        }, this);
+
         this.sock.on("data", _.bind(function(message) {
+            this.messagesReceived += 1;
             var msg = JSON.parse(message);
+            var isAck = msg.type.indexOf("-ack") != -1;
+            var isErr = msg.type.indexOf("-err") != -1;
+            if (isAck || isErr) {
+                this.acknowledged(msg.type.substring(0, msg.type.length - 4));
+            }
             switch (msg.type) {
                 case 'join-err':
                     if (this.state == "joining") {
@@ -83,6 +159,17 @@ AuthSock.prototype = _.extend({
                     break;
                 case "join-ack":
                     this.state = "joined";
+                    break;
+                case "blur":
+                    if (msg.args.id == this.userId) {
+                        this.acknowledged("blur");
+                    }
+                    break;
+                case "focus":
+                    if (msg.args.id == this.userId) {
+                        this.acknowledged("focus");
+                    }
+                    break;
                 default:
                     if (msg.type.indexOf("-err") != -1) {
                         this.onerror(msg);
@@ -98,6 +185,10 @@ AuthSock.prototype = _.extend({
 
     },
     write: function(type, args) {
+        this.messagesSent += 1;
+        if (type in this.ackTable) {
+            this.ackTable[type].push(new Date().getTime());
+        }
         this.sock.write(JSON.stringify({type: type, args: args}));
     }
 }, events.EventEmitter.prototype);
@@ -122,6 +213,8 @@ Rando.prototype = {
         setInterval(this.ontick, 1000);
     },
     ontick: function() {
+        this.eventSock.updateQueueLength();
+        this.sessionSock.updateQueueLength();
         // Event actions
         switch (this.eventSock.state) {
             case "disconnected":
@@ -131,25 +224,25 @@ Rando.prototype = {
                 // If we're authorized, but haven't started joining, join the
                 // event with a 70% probability.
                 if (Math.random() > 0.7) {
-                    logger.debug(this.userId + " joining");
                     this.eventSock.state = "joining";
                     this.eventSock.write("join", {id: EVENT_ROOM_ID});
                 }
                 break;
             case "joined":
                 if (Math.random() > 0.99) {
-                    logger.debug(this.userId + " chatting");
-                    this.eventSock.write("chat", {
-                        roomId: EVENT_ROOM_ID,
-                        text: this.chatMessages[
-                            Math.floor(Math.random() * this.chatMessages.length)
-                        ]
-                    });
-                } else if (Math.random() > 0.995) {
-                    this.eventSock.write("leave", {
-                        id: EVENT_ROOM_ID,
-                    });
-                    this.eventSock.state = "authorized";
+                    if (!simConf.DISABLE_CHAT) {
+                        this.eventSock.write("chat", {
+                            roomId: EVENT_ROOM_ID,
+                            text: this.chatMessages[
+                                Math.floor(Math.random() * this.chatMessages.length)
+                            ]
+                        });
+                    }
+                } else if (Math.random() > 0.99) {
+                    if (!simConf.DISABLE_EVENT_LEAVING) {
+                        this.eventSock.write("leave", { id: EVENT_ROOM_ID, });
+                        this.eventSock.state = "authorized";
+                    }
                 } else if (Math.random() > 0.9) {
                     if (!simConf.DISABLE_BLUR) { 
                         if (this.eventSock.focused) {
@@ -169,7 +262,7 @@ Rando.prototype = {
             case "joining":
                 break;
             case "authorized":
-                if (Math.random() > 0.9) {
+                if (!simConf.DISABLE_SESSION_JOINING && Math.random() > 0.9) {
                     var sessionId = simConf.SESSION_RANGE[0] + Math.floor(
                         (simConf.SESSION_RANGE[1] - simConf.SESSION_RANGE[0]) * Math.random()
                     );
@@ -180,7 +273,7 @@ Rando.prototype = {
                 }
                 break;
             case "joined":
-                if (Math.random() > 0.9) {
+                if (!simConf.DISABLE_SESSION_LEAVING && Math.random() > 0.9) {
                     this.sessionSock.write("leave", {id: this.sessionSock.room});
                     this.sessionSock.state = "authorized";
                     this.sessionSock.room = null;
@@ -210,12 +303,66 @@ Rando.prototype = {
 };
 
 function main() {
+    randos = [];
     for (var i = simConf.USER_RANGE[0]; i < simConf.USER_RANGE[1]; i++) {
-        new Rando({userId: "loadUser" + i});
+        randos.push(new Rando({userId: "loadUser" + i}));
     }
     logger.warn(
         "Random users loading page: " + simConf.SERVER_URL + "/" + EVENT_ROOM_ID
     );
+    function printAggregations(agg, key) {
+        var mean = agg.getMean();
+        mean = mean ? mean.toFixed(2) : mean;
+        var sd = agg.getSD();
+        sd = sd ? sd.toFixed(2) : sd;
+        while (key.length < 8) {
+            key = key + " ";
+        }
+        logger.info("  " + key + ": mean " + mean + "; std dev " + sd);
+    }
+    // Reporting to the console
+    var messagesSentPerSecond = new RunningVariance();
+    var messagesReceivedPerSecond = new RunningVariance();
+    var then = new Date().getTime();
+    var now;
+    setInterval(function() {
+        logger.info("------------------");
+        logger.info("Average ack delays:");
+        _.each(ackDelays, printAggregations);
+        logger.info("Average queue lengths:");
+        _.each(queueLengths, printAggregations);
+        var eventStates = {}
+        var sessionStates = {}
+        var totalConnected = 0;
+        var totalMessagesSent = 0;
+        var totalMessagesReceived = 0;
+        var now = new Date().getTime();
+        for (var i = 0; i < randos.length; i++) {
+            // Count socket states
+            eventStates[randos[i].eventSock.state] = (eventStates[randos[i].eventSock.state] || 0) + 1;
+            sessionStates[randos[i].sessionSock.state] = (sessionStates[randos[i].sessionSock.state] || 0) + 1;
+            _.each([randos[i].eventSock, randos[i].sessionSock], function(sock) {
+                if (sock.state != "disconnected") {
+                    totalConnected += 1;
+                }
+                totalMessagesSent += sock.messagesSent;
+                totalMessagesReceived += sock.messagesReceived;
+                sock.messagesSent = 0;
+                sock.messagesReceived = 0;
+            });
+        }
+        messagesSentPerSecond.nextSample(totalMessagesSent / ((now - then) / 1000));
+        messagesReceivedPerSecond.nextSample(totalMessagesReceived / ((now - then) / 1000));
+        then = now;
+        logger.info("Event socket states:");
+        for (var key in eventStates)   { logger.info("  " + key + ": " + eventStates[key]); }
+        logger.info("Session socket states:");
+        for (var key in sessionStates) { logger.info("  " + key + ": " + sessionStates[key]); }
+        logger.info("Total messages/sec:")
+        printAggregations(messagesSentPerSecond, "sent");
+        printAggregations(messagesReceivedPerSecond, "received");
+        logger.info("Total connected sockets: " + totalConnected + " / " + (randos.length*2));
+    }, 5000);
 }
 
 if (require.main === module) {
