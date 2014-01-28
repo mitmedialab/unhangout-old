@@ -1,72 +1,80 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-<div class='container-fluid'>
-    <div class='row-fluid'>
-        <div class='span6 offset3'>
-            <form class="form-horizontal" action="/admin/event/<%= create ? "new":event.id%>" method="post" encoding="application/x-www-form-urlencoded">
-                <input type="hidden" name="create" value="<%= create %>">
-  
-                <div class="control-group">
-                    <label class="control-label">Link</label>
-                    <div class="controls">
-                        <% if(event) { %>
-                            <a href="/event/<%= event.id%>">EVENT PAGE</a>
-                        <% } %>
-                        <%= (event &&event.isLive()) ? " LIVE" : "" %>
-                    </div>
-                </div>
-  
-                <div class="control-group">
-                    <label class="control-label" for="inputTitle">Title</label>
-                    <div class="controls">
-                        <input type="text" id="inputTitle" name="title" placeholder="Title" value="<%=create ? "":event.get("title") %>">
-                    </div>
-                </div>
-  
-                <div class="control-group">
-                    <label class="control-label" for="inputShortName">Short name</label>
-                    <div class="controls">
-                        <input type="text" id="inputShortName" name="shortName" placeholder="Short name" value="<%=create? "":event.get("shortName") %>">
-                    </div>
-                </div>
-  
-                <div class="control-group">
-                    <label class="control-label" for="inputOrganizer">Organizer</label>
-                    <div class="controls">
-                        <input type="text" id="inputOrganizer" placeholder="Organizer" name="organizer" value="<%=create? "":event.get("organizer") %>">
-                    </div>
-                </div>
-  
-                <div class="control-group">
-                    <label class="control-label" for="inputDescription">Description</label>
-                    <div class="controls">
-                        <textarea rows=5 cols=40 type="text" id="inputDescription" name="description" placeholder="Description" style='width: 300px;'><%=create? "":event.get("description")%></textarea>
-                    </div>
-                </div>
-  
-                <div class="control-group">
-                    <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
-                    <div class="controls">
-                        <textarea rows=5 cols=40 type="text" id="inputWelcomeMessage" name="welcomeMessage" placeholder="welcome message" style='width: 300px;'><%=create? "":event.get("welcomeMessage")%></textarea>
-                    </div>
-                </div>
-  
-                <div class="control-group">
-                    <label class="control-label" for="inputBlurDisabled">Disable Blur</label>
-                    <div class="controls">
-                        <input type="checkbox" name="blurDisabled" id="inputBlurDisabled" <%= event && event.get("blurDisabled") ? "checked":""%>>
-                    </div>
-                </div>
-  
-                <div class="control-group">
-                    <div class='controls'>
-                        <button class="btn btn-primary" type='submit'><%= create? "Create": "Update" %></button>
-                    </div>
-                </div>
-            </form>
+<div class="jumbotron">
+    <h1><img class="" src="/public/img/unhangout-logo.png" width="77px" height="68px"> Unhangouts </h1>
+
+    <h3>Create an Unhangout <small>It's free and always will be.</small></h3>
+</div>
+
+<div class="container event-form-container">
+    <br/>
+
+    <form class="form-horizontal" action="/admin/event/<%= create ? "new":event.id%>" method="post" encoding="application/x-www-form-urlencoded">
+
+    <input type="hidden" name="create" value="<%= create %>">
+
+    <div class="control-group">
+        <label class="control-label" for="inputTitle">Event Title</label>
+        <div class="controls">
+            <input class="span7" type="text" id="inputTitle" name="title" placeholder="Give your event a catchy title" value="<%=create ? "":event.get("title") %>">
         </div>
     </div>
+
+    <div class="control-group">
+        <label class="control-label" for="inputOrganizer">Event Organizer</label>
+        <div class="controls">
+            <input class="span7" type="text" id="inputOrganizer" placeholder="Tell your attendees who is organizing this event" name="organizer" value="<%=create? "":event.get("organizer") %>">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="inputShortName">Event URL</label>
+        <div class="controls">
+            <input class="span4" type="text" id="eventURL" placeholder="http://unhangout.media.mit.edu/event/" readOnly>
+            <input class="span3" style="width: 222px;" type="text" id="inputShortName" name="shortName" placeholder="event-url" value="<%=create? "":event.get("shortName") %>">
+        </div>
+    </div>
+
+    <div class="control-group">
+        <label class="control-label" for="inputDate">Event Date/Time</label>
+        <div class="controls">
+            <div class="input-append date form_datetime">
+            <input style="width: 500px;" size="16" type="text" value="05 December 2014 - 09:25" readonly>
+            <span class="add-on"><i class="icon-th"></i></span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
+        <div class="controls">
+            <textarea rows=2 cols=40 type="text" id="inputWelcomeMessage" name="welcomeMessage" placeholder="Welcome Message for Participants" style='width: 525px;'><%=create? "":event.get("welcomeMessage")%></textarea>
+        </div>
+    </div>
+    
+    <div class="control-group">
+        <label class="control-label" for="inputDescription">Event Description</label>
+        <div class="controls">
+            <textarea rows=8 cols=1000 type="text" id="inputDescription" name="description" placeholder="Tell us a little bit more about your event" style='width: 525px;'><%=create? "":event.get("description")%></textarea>
+        </div>
+    </div>
+
+    <div class="control-group">
+        <div class="controls">
+            <button style="margin-left: -0px;" class="span7 btn btn-primary" type='submit'><%= create? "Create My Unhangout Event": "Update My Event" %></button>
+        </div>
+    </div>
+            
+    </form>
 </div>
+
+<script>
+    $(function(){
+         $(".form_datetime").datetimepicker({
+            format: "dd MM yyyy - hh:ii"
+        });
+    });
+</script>
 
 <% include _footer.ejs %>

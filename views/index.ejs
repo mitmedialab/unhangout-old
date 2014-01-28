@@ -15,11 +15,21 @@
                     Create an Unhangout
                 </button>
             <% } else { %>
-                <button id="create-event-button" class="btn btn-primary">
+
+                <% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent())) { %>
+
+                <a href="/admin/event/new" class="btn btn-primary">
+                    <i class="fa fa-edit fa-lg"></i>
+                    Create an Unhangout
+                </a>
+
+                <% } else { %>
+                    <button id="create-event-button" class="btn btn-primary">
                     <i class="fa fa-edit fa-lg"></i>
                     Create an Unhangout
                 </button>
-            <% } %>
+
+            <% } } %>
         </div>
     </div>
 
