@@ -55,6 +55,7 @@ models.Event = Backbone.Model.extend({
 			youtubeEmbed: null,
 			sessionsOpen: false,
 			blurDisabled: false,
+			dateAndTime: null,
             admins: []
 		}
 	},

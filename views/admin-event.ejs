@@ -40,7 +40,7 @@
         <label class="control-label" for="inputDate">Event Date/Time</label>
         <div class="controls">
             <div class="input-append date form_datetime">
-            <input style="width: 500px;" size="16" type="text" value="05 December 2014 - 09:25" readonly>
+            <input style="width: 500px;" size="16" type="text" value="05 December 2014 - 09:25 A.M" name="dateAndTime" id="dateAndTime" readonly>
             <span class="add-on"><i class="icon-th"></i></span>
             </div>
         </div>
@@ -72,7 +72,10 @@
 <script>
     $(function(){
          $(".form_datetime").datetimepicker({
-            format: "dd MM yyyy - hh:ii"
+            format: "dd MM yyyy - hh:ii P",
+            showMeridian: true,
+            autoclose: true,
+            todayBtn: true
         });
     });
 </script>
