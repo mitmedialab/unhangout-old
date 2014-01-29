@@ -16,6 +16,7 @@
         "auth": { "user": "", "password": "" },
         "secureConnection": false
     },
+
     "UNHANGOUT_SERVER_EMAIL_ADDRESS": "node@yourserver.example.com",
 
 	"UNHANGOUT_SUPERUSER_EMAILS": ["user1@example.com", "user2@example.com"],
