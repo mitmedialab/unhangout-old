@@ -7,13 +7,19 @@ module.exports = {
         // multiple machines to load test the server, you may want to set each
         // one to a different subset of the range, so that you get different
         // users.
-        "USER_RANGE": [0, 300],
-        // Disable sending of blur/focus socket traffic?
-        "DISABLE_BLUR": false,
+        "USER_RANGE": [0, 500],
         // The range of sessions our users will attempt to join.  There may be
         // more sessions available on the server for users to join -- reducing
         // the range ensures that sessions fill up.
-        "SESSION_RANGE": [0, 30],
+        "SESSION_RANGE": [0, 50],
+        // Disable sending of blur/focus socket traffic?
+        "DISABLE_BLUR": true,
+        // Disable sending of chat traffic?
+        "DISABLE_CHAT": false,
+        // Disable session joining and leaving? (If you can't join, you can't leave).
+        "DISABLE_SESSION_JOINING": false,
+        // Disable session leaving?  (You can checkout any time you like, but...)
+        "DISABLE_SESSION_LEAVING": true,
         // The ID for the event on the server which contains the load simulator
         // sessions, generated with ``bin/prepare-load-simulator-data.js``.
         "EVENT_ID": 10,
