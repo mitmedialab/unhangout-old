@@ -11,6 +11,10 @@ body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
   }
 
+.btn-primary {
+	background: $navbar;	
+}
+
 .navbar-inverse .navbar-inner
 {
   // Use nib's linear-gradient expander to target all browsers.
@@ -1180,4 +1184,30 @@ td form {
    border-radius: 4px;
    background-color: rgba(0,0,0,.5);
    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+
+
+/* ---------------------EVENT FORM -------------------------*/
+
+.event-form-container {
+	margin-top: 30px;
+	background: #FAFAFA;
+    border-radius: 10px;
+    border: solid #DfDFDf;
+    border-width: 1px;
+    
+    .btn-primary {
+    	background: $navbar;
+    	width: 572px;
+    }
+
+    .control-label, span {
+    	color: #999;
+    }
+
+    .container {
+    	width: 573px;
+    	margin-left: -0px; 
+    }
 }
