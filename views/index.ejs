@@ -16,7 +16,7 @@
                 </button>
             <% } else { %>
 
-                <% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent())) { %>
+                <% if(user && user.hasPerm("createEvents")) { %>
 
                 <a href="/admin/event/new" class="btn btn-primary">
                     <i class="fa fa-edit fa-lg"></i>

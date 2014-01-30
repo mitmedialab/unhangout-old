@@ -6,7 +6,8 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
     events: {
         'click input.superuser': 'setSuperuser',
         'click .add-event': 'addEvent',
-        'click .remove-event': 'removeEvent'
+        'click .remove-event': 'removeEvent',
+        'click input.perm': 'setPerm'
     },
     modelEvents: {
         'change': 'render'
@@ -22,13 +23,11 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         var model = this.model;
         var context = model.toJSON();
         context.adminEvents = [];
+        context.user = model
         events.each(function(event) {
             var admins = event.get("admins");
-            for (var i = 0; i < admins.length; i++) {
-                if (admins[i].id == model.id || model.hasEmail(admins[i].email)) {
-                    context.adminEvents.push(event.toJSON());
-                    return;
-                }
+            if (event.userIsAdmin(model)) {
+                context.adminEvents.push(event.toJSON());
             }
         });
         return context;
@@ -40,7 +39,7 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         modal.render();
         modal.on("add", _.bind(function(event) {
             this.postUserData({
-                action: "add-admin",
+                action: "add-event-admin",
                 eventId: event.id
             }, function() {
                 event.addAdmin(user);
@@ -56,12 +55,34 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         var user = this.model;
         var event = events.get($(jqevt.currentTarget).attr("data-event-id"));
         this.postUserData({
-            action: "remove-admin",
+            action: "remove-event-admin",
             eventId: event.id
         }, function() {
             event.removeAdmin(user);
             user.trigger("change", user);
         }, function(error) {
+            alert("Server error");
+            console.error(error);
+        });
+    },
+    setPerm: function(jqevt) {
+        var user = this.model;
+        var el = $(jqevt.currentTarget);
+        var perm = el.attr("data-perm");
+        var val = el.is(":checked");
+        var post = {}
+        post[perm] = val;
+
+        var parent = el.parent();
+        parent.addClass("loading").removeClass("success");
+        this.postUserData({
+            action: "set-perms",
+            perms: JSON.stringify(post)
+        }, function() {
+            parent.removeClass("loading").addClass("success");
+            user.setPerm(perm, val, {silent: true});
+        }, function(error) {
+            parent.addClass("error").removeClass("loading");
             alert("Server error");
             console.error(error);
         });

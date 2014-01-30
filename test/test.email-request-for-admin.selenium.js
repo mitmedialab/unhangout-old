@@ -29,7 +29,7 @@ describe("BROWSER REQUEST EVENT EMAIL", function() {
 
     it("Is prompted to login when unauthenticated", function(done) {
         browser.get("http://localhost:7777/");
-        browser.byCss(".create-event-button button").click();
+        browser.byCss(".create-event-button .btn-primary").click();
         browser.waitForSelector("#login-first-modal h3");
         browser.byCss("#login-first-modal h3").getText().then(function(text) {
             expect(text).to.eql("Please log in!");
@@ -37,11 +37,23 @@ describe("BROWSER REQUEST EVENT EMAIL", function() {
         });
     });
 
-    it("Has a functioning request form when authenticated", function(done) {
+    it("Is redirected to add-event when has permission to do so", function(done) {
+        var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+        user.setPerm("createEvents", true);
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/");
-        browser.byCss(".create-event-button button").click();
+        browser.byCss(".create-event-button .btn-primary").click()
+        browser.getCurrentUrl().then(function(url) {
+            expect(url).to.be("http://localhost:7777/admin/event/new");
+            done();
+        });
+    });
+    it("Has a functioning request form when authenticated", function(done) {
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("regular2");
+        browser.get("http://localhost:7777/");
+        browser.byCss(".create-event-button .btn-primary").click();
         browser.waitForSelector("#event-mini-form-modal h3");
         browser.byCss("#event-mini-form-modal h3").getText().then(function(text) {
             expect(text).to.eql("Tell us about your event!");

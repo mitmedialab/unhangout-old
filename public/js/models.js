@@ -353,10 +353,13 @@ models.SessionList = Backbone.Collection.extend({
 });
 
 models.User = Backbone.Model.extend({
+    // list of available permission keys for enumerating permissions
+    PERMISSION_KEYS: ["createEvents"],
 
 	defaults: function() {
         return {
             picture: "",
+            perms: {},
             superuser: false,
             isBlurred: false,
             displayName: "[unknown]",
@@ -391,20 +394,61 @@ models.User = Backbone.Model.extend({
 		}
 	},
 
+    /*
+     * Permissions
+     */
+
+    // Enumerate the permissions this user has, giving the current value of
+    // each.  Note that unlike `hasPerm`, the value given does not take
+    // super-user-ness into account.
+    eachPerm: function(callback) {
+        var perms = this.get("perms");
+        _.each(this.PERMISSION_KEYS, function(key) {
+            var humanKey = key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+            callback(key, !!perms[key], humanKey);
+        });
+    },
+
+    // Returns true if the user has permission `perm`.  For superusers, always
+    // returns true.
+    hasPerm: function(perm) {
+        if (this.isSuperuser()) {
+            return true;
+        }
+        var perms = this.get("perms");
+        return !!perms && !!perms[perm];
+
+    },
+
+    setPerm: function(perm, val, options) {
+        if (!this.get("perms")) {
+            this.set("perms", {}, {silent: true});
+        }
+        this.get("perms")[perm] = val;
+        if (!(options && options.silent)) {
+            this.trigger("change:perms");
+        }
+    },
+
     isSuperuser: function() {
         return !!this.get("superuser");
     },
 
-    hasEmail: function(email) {
-        return !_.isUndefined(email) && _.contains(_.pluck(this.get('emails', 'value')), email);
-    },
-
+    // Returns true if the admin is allowed to administer a particular event.
+    // For superusers, always returns true.
 	isAdminOf: function(event) {
         if (this.isSuperuser()) { return true; }
         if (!event) { return false; }
 
         return event.userIsAdmin(this);
 	},
+
+    /*
+     * Data access
+     */
+    hasEmail: function(email) {
+        return !_.isUndefined(email) && _.contains(_.pluck(this.get('emails', 'value')), email);
+    },
 
 	isBlurred: function() {
 		return this.get("isBlurred");
