@@ -52,17 +52,25 @@ function run(callback) {
             }
         });
         browser.get(farmConf.serverUrl + "/hangout-farming");
-        for (var i = 0; i < farmConf.count; i++) {
-            browser.byLinkText("CLICK ME").click();
-        };
-        browser.then(function() {
-            browser.quit().then(callback);
+        browser.executeScript("return document.body.innerHTML;").then(function(text) {
+            var match = /urls available: (\d+)/.exec(text);
+            if (!match) {
+                throw new Error("Can't find current URL count.");
+            }
+            var count = parseInt(match[1]);
+            for (var i = count; i < farmConf.count; i++) {
+                browser.byLinkText("CLICK ME").click();
+                browser.waitTime(5000);
+            };
+            browser.then(function() {
+                browser.quit().then(callback);
+            });
         });
     });
 }
 if (require.main === module) {
     run(function() {
-        console.log("Successfully farmed", farmConf.count, "urls.");
+        console.log("Successfully farmed up to ", farmConf.count, "urls.");
         process.exit();
     });
 }
