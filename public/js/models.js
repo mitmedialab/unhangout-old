@@ -56,6 +56,8 @@ models.Event = Backbone.Model.extend({
 			sessionsOpen: false,
 			blurDisabled: false,
 			dateAndTime: null,
+			timeZoneValue: null,
+			timeZoneAbbr: null,
             admins: []
 		}
 	},
