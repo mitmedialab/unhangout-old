@@ -47,7 +47,7 @@
     </div>
 
     <div class="control-group">
-        <label id="tzLabel" class="control-label" for="timeZone"> Time Zone</label>
+        <label id="tzLabel" class="control-label" for="timeZone">Time Zone</label>
         <div class="controls">
             <select id = "timeZoneValue" style="width: 570px;" name="timeZoneValue" class="form-control" value="<%=create? "":event.get("timeZoneValue") %>">
             <option selected="true" value="<%=create? "":event.get("timeZoneValue") %>"><%=create? "":event.get("timeZoneValue") %></option>
@@ -103,6 +103,14 @@
 
               height: 150
         });       
+
+        //Automatic TimeZone Detection of the browser client 
+        var tz = jstz.determine(); 
+        var tz1 = tz.name(); 
+
+        if($("#timeZoneValue").val() == "")
+            $("#timeZoneValue").val(tz1);
+        
     });
 </script>
 
