@@ -74,7 +74,8 @@
 
     <div class="control-group">
         <div class="controls">
-            <button class="btn btn-primary" type='submit'><%= create? "Create My Unhangout Event": "Update My Event" %></button>
+            <button class="btn btn-primary" type='submit'><%= 
+            create? "Create My Unhangout Event": "Update My Event" %></button>
         </div>
     </div>
             
@@ -84,10 +85,7 @@
 <script>
     $(function(){
          $(".form_datetime").datetimepicker({
-            format: "dd MM yyyy - hh:ii P",
-            showMeridian: true,
-            autoclose: true,
-            todayBtn: true
+            format: "yyyy-MM-dd hh:ii:ss ",
         });
 
          $('#summernote').summernote();
@@ -105,6 +103,20 @@
 
               height: 150
         });       
+
+        //Automatic TimeZone Detection of the browser client 
+        var tz = jstz.determine(); 
+        var tz1 = tz.name(); 
+
+        if($("#timeZoneValue").val() == "")
+            $("#timeZoneValue").val(tz1);
+
+
+        //Default date and time setting
+        var twoWeeksAfter = moment().add('days', 7).format("YYYY-MMMM-DD HH:mm:SS"); 
+
+        if($("#dateAndTime").val() == "")
+            $("#dateAndTime").val(twoWeeksAfter);
     });
 </script>
 
