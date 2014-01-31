@@ -110,7 +110,13 @@
 
         if($("#timeZoneValue").val() == "")
             $("#timeZoneValue").val(tz1);
-        
+
+
+        //Default date and time setting
+        var twoWeeksAfter = moment().add('days', 7).format("YYYY-MMMM-DD HH:mm:SS"); 
+
+        if($("#dateAndTime").val() == "")
+            $("#dateAndTime").val(twoWeeksAfter);
     });
 </script>
 
