@@ -60,7 +60,7 @@
 
 <% } %>
 
-<a href="/session/<%= session.get("session-key") %>" class="btn btn-success btn-large" target="_new">JOIN HANGOUT</a>
+<a href="/session/<%= session.get("session-key") %>?nocache=<%= new Date().getTime() %>" class="btn btn-success btn-large" target="_new">JOIN HANGOUT</a>
 
 </div>
 

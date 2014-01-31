@@ -178,7 +178,8 @@ var SessionView = Marionette.ItemView.extend({
 		if(this.model.isLive()) {
 			// if the event has started, button presses should attempt to join
 			// the hangout.
-			var url = "/session/" + this.model.get("session-key");
+            var url = "/session/" + this.model.get("session-key") +
+                      "?nocache=" + new Date().getTime();
 			window.open(url);
 		}
 	},
