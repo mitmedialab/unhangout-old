@@ -10,29 +10,38 @@
 <div class="container event-form-container">
     <br/>
 
-    <form class="form-horizontal" action="/admin/event/<%= create ? "new":event.id%>" method="post" encoding="application/x-www-form-urlencoded">
-
-    <input type="hidden" name="create" value="<%= create %>">
+    <form class="form-horizontal"
+          action="/admin/event/<%= create ? 'new' : event.id %>"
+          method="post" encoding="application/x-www-form-urlencoded">
 
     <div class="control-group">
         <label class="control-label" for="inputTitle">Event Title</label>
         <div class="controls">
-            <input style="width: 560px;" type="text" id="inputTitle" name="title" placeholder="Give your event a catchy title" value="<%=create ? "":event.get("title") %>">
+            <input style="width: 560px;" type="text" id="inputTitle" name="title"
+                   placeholder="Give your event a catchy title"
+                   value="<%=create ? "":event.get("title") %>"
+                   required>
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label" for="inputOrganizer">Event Organizer</label>
         <div class="controls">
-            <input style="width: 560px;" type="text" id="inputOrganizer" placeholder="Tell your attendees who is organizing this event" name="organizer" value="<%=create? "":event.get("organizer") %>">
+            <input style="width: 560px;" type="text" id="inputOrganizer"
+                   placeholder="Tell your attendees who is organizing this event"
+                   name="organizer"
+                   value="<%= create ? "" : event.get("organizer") %>">
         </div>
     </div>
 
     <div class="control-group">
         <label class="control-label" for="inputShortName">Event URL</label>
         <div class="controls">
-            <input style="width: 300px;" type="text" id="eventURL" placeholder="http://unhangout.media.mit.edu/event/" readOnly>
-            <input style="width: 242px;" type="text" id="inputShortName" name="shortName" placeholder="event-url" value="<%=create? "":event.get("shortName") %>">
+            <input style="width: 300px;" type="text" id="eventURL"
+                   placeholder="http://unhangout.media.mit.edu/event/" readonly>
+            <input style="width: 242px;" type="text" id="inputShortName" name="shortName"
+                   placeholder="event-url"
+                   value="<%= create ? "" :event.get("shortName") %>">
         </div>
     </div>
 
@@ -40,8 +49,10 @@
         <label class="control-label" for="inputDate">Event Date/Time</label>
         <div class="controls">
             <div class="input-append date form_datetime">
-            <input style="width: 532px;" size="16" type="text" value="<%=create? "":event.get("dateAndTime") %>" name="dateAndTime" id="dateAndTime" readonly>
-            <span class="add-on"><i class="icon-th"></i></span>
+                <input style="width: 532px;" size="16" type="text"
+                       value="<%= create ? "" : event.get("dateAndTime") %>"
+                       name="dateAndTime" id="dateAndTime" readonly>
+                <span class="add-on"><i class="icon-th"></i></span>
             </div>
         </div>
     </div>
@@ -49,9 +60,11 @@
     <div class="control-group">
         <label id="tzLabel" class="control-label" for="timeZone">Time Zone</label>
         <div class="controls">
-            <select id = "timeZoneValue" style="width: 570px;" name="timeZoneValue" class="form-control" value="<%=create? "":event.get("timeZoneValue") %>">
-            <option selected="true" value="<%=create? "":event.get("timeZoneValue") %>"><%=create? "":event.get("timeZoneValue") %></option>
-            <% include timezones.ejs %>
+            <select id="timeZoneValue" style="width: 570px;" name="timeZoneValue"
+                    class="form-control"
+                    value="<%= create ? "" : event.get("timeZoneValue") %>">
+                <option value=""></option>
+                <!-- options created in script below -->
             </select> 
         </div>
     </div>
@@ -59,7 +72,10 @@
     <div class="control-group">
         <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
         <div class="controls">
-            <textarea rows=1 cols=40 type="text" id="inputWelcomeMessage" name="welcomeMessage" placeholder="Welcome Message for Participants" style='width: 560px;'><%=create? "":event.get("welcomeMessage")%></textarea>
+            <textarea rows=1 cols=40 type="text" id="inputWelcomeMessage"
+                      name="welcomeMessage" placeholder="Welcome Message for Participants"
+                      style='width: 560px;'
+                ><%= create ? "" : event.get("welcomeMessage") %></textarea>
         </div>
     </div>
     
@@ -67,31 +83,40 @@
         <label class="control-label" for="inputDescription">Event Description </label>
         <div class="controls">
             <div class="container">
-                <textarea class="summernote" name="description"><%=create? "":event.get("description")%></textarea>
+                <textarea class="summernote" name="description" rows=5 style='width: 100%;'
+                          required><%= create ? "" : event.cleanDescription() %></textarea>
             </div>
         </div>
     </div>
 
     <div class="control-group">
         <div class="controls">
-            <button class="btn btn-primary" type='submit'><%= 
-            create? "Create My Unhangout Event": "Update My Event" %></button>
+            <button class="btn btn-primary create-event" type='submit'>
+                <%= create? "Create My Unhangout Event": "Update My Event" %>
+            </button>
         </div>
     </div>
             
     </form>
 </div>
 
+<!--<script type="text/javascript" src="/public/js/summernote.min.js"></script>-->
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.js"></script>
+<script type="text/javascript" src="/public/js/bootstrap-datetimepicker.min.js"></script>
+
 <script>
     $(function(){
-         $(".form_datetime").datetimepicker({
-            format: "yyyy-MM-dd hh:ii:ss ",
+        $(".form_datetime").datetimepicker({
+            format: "MM dd, yyyy hh:ii",
+            showMeridian: true,
+            autoclose: true,
+            pickerPosition: 'bottom-left',
+            viewSelect: 'decade'
         });
 
-         $('#summernote').summernote();
-
-         $('.summernote').summernote({
-              toolbar: [
+        /*
+        $('.summernote').summernote({
+            toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
@@ -99,24 +124,52 @@
                 ['height', ['height']],
                 ['insert', ['picture', 'link']], 
                 ['codeview', ['codeview']],
-              ],
+            ],
+            height: 150
+        });
+        */
 
-              height: 150
-        });       
+        // Append timezones to option box.
+        var zones = _.map(moment.tz.zones(), function(z) { return z.displayName; });
+        zones.sort(function(a, b) {
+            var aIsAmerica = /^America/.test(a);
+            var bIsAmerica = /^America/.test(b);
+            if (aIsAmerica != bIsAmerica) {
+                return aIsAmerica ? -1 : 1;
+            } else {
+                return a < b ? -1 : a > b ? 1 : 0;
+            }
+        });
+        var frag = document.createDocumentFragment();
+        _.each(zones, function(zone) {
+            var option = document.createElement("option");
+            option.value = zone;
+            option.textContent = zone.replace(/_/g, " ");
+            if (zone === "<%= create ? "" : event.get("timeZoneValue") %>") {
+                option.selected = true;
+            }
+            frag.appendChild(option);
+        });
+        $("#timeZoneValue").append(frag);
+        
+        
 
-        //Automatic TimeZone Detection of the browser client 
-        var tz = jstz.determine(); 
-        var tz1 = tz.name(); 
-
-        if($("#timeZoneValue").val() == "")
-            $("#timeZoneValue").val(tz1);
-
-
+        if($("#timeZoneValue").val() == "") {
+            var currentTimezone = 
+            // Automatic TimeZone Detection of the browser client 
+            $("#timeZoneValue").val(jstz.determine().name());
+        }
+        
         //Default date and time setting
-        var twoWeeksAfter = moment().add('days', 7).format("YYYY-MMMM-DD HH:mm:SS"); 
-
-        if($("#dateAndTime").val() == "")
-            $("#dateAndTime").val(twoWeeksAfter);
+        if($("#dateAndTime").val() == "") {
+            // NB: moment uses a different format syntax from bootstrap-datetimepicker.
+            var oneWeekAfter = moment()
+                .add('days', 7)
+                .second(0)
+                .minute(0)
+                .format("MMMM DD, YYYY HH:mm"); 
+            $("#dateAndTime").val(oneWeekAfter);
+        }
     });
 </script>
 

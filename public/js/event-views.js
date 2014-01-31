@@ -748,6 +748,11 @@ var AboutEventView = Marionette.ItemView.extend({
 			this.render();
 		}, this), this);
 	},
+    serializeData: function() {
+		var context = this.model.toJSON();
+        context.event = this.model;
+        return context;
+    },
 
 	onRender: function() {
 		if(this.model.isLive()) {
