@@ -47,7 +47,7 @@
     </div>
 
     <div class="control-group">
-        <label id="tzLabel" class="control-label" for="timeZone">Time Zone</label>
+        <label id="tzLabel" class="control-label" for="timeZone"> Time Zone</label>
         <div class="controls">
             <select id = "timeZoneValue" style="width: 570px;" name="timeZoneValue" class="form-control" value="<%=create? "":event.get("timeZoneValue") %>">
             <option selected="true" value="<%=create? "":event.get("timeZoneValue") %>"><%=create? "":event.get("timeZoneValue") %></option>
@@ -74,7 +74,8 @@
 
     <div class="control-group">
         <div class="controls">
-            <button class="btn btn-primary" type='submit'><%= create? "Create My Unhangout Event": "Update My Event" %></button>
+            <button class="btn btn-primary" type='submit'><%= 
+            create? "Create My Unhangout Event": "Update My Event" %></button>
         </div>
     </div>
             
@@ -84,10 +85,7 @@
 <script>
     $(function(){
          $(".form_datetime").datetimepicker({
-            format: "dd MM yyyy - hh:ii P",
-            showMeridian: true,
-            autoclose: true,
-            todayBtn: true
+            format: "yyyy-MM-dd hh:ii:ss ",
         });
 
          $('#summernote').summernote();
