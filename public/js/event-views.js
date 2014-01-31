@@ -761,19 +761,38 @@ var AboutEventView = Marionette.ItemView.extend({
 var VideoEmbedView = Marionette.ItemView.extend({
 	template: '#video-embed-template',
 	id: 'video-embed',
+    ui: {
+        player: ".player",
+        placeholder: ".placeholder"
+    },
+    events: {
+        'click .set-youtube-embed': 'setYoutubeEmbed'
+    },
 
 	player: null,
 
 	initialize: function() {
 		this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
-            if (!youtubeEmbed) {
-                this.$el.hide();
-            } else {
-                this.$el.show();
+            if (youtubeEmbed) {
+                this.setPlayerVisibility(true);
                 this.yt.setVideoId(this.model.get("youtubeEmbed"));
+            } else {
+                this.setPlayerVisibility(false);
             }
 		}, this);
 	},
+    setYoutubeEmbed: function() {
+        this.trigger("show-embed-modal");
+    },
+    setPlayerVisibility: function(visible) {
+        if (visible) {
+            this.ui.player.show();
+            this.ui.placeholder.hide();
+        } else {
+            this.ui.player.hide();
+            this.ui.placeholder.toggle(IS_ADMIN);
+        }
+    },
 	onRender: function() {
         this.yt = new YoutubeVideo({
             ytID: this.model.get("youtubeEmbed"),
@@ -788,13 +807,10 @@ var VideoEmbedView = Marionette.ItemView.extend({
         }, this));
 
         this.$(".player").html(this.yt.el);
-		if(!this.model.get("youtubeEmbed")) {
-			this.$el.hide();
-		} else {
-			this.$el.show();
+        this.setPlayerVisibility(!!this.model.get("youtubeEmbed"));
+        if (this.model.get("youtubeEmbed")) {
             this.yt.render();
-			//this.$el.draggable(); // wat
-		}
+        }
 	},
     control: function(args) {
         this.yt.receiveControl(args);

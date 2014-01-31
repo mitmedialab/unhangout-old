@@ -112,6 +112,15 @@
             
 <script type="text/template" id="video-embed-template">
     <div class='player'></div>
+    <div class='placeholder'>
+        <button class='btn btn-warning set-youtube-embed'>
+            <i class='fa fa-youtube-play'></i> Add Youtube Video
+        </button>
+        <a class='btn btn-warning create-hoa' target='_blank'
+           href='/event/{{- id }}/create-hoa/'>
+            <i class='fa fa-users'></i> Create Hangout-on-Air
+        </a>
+    </div>
 </script>
 
 <script type="text/template" id="admin-button-template">
@@ -164,6 +173,7 @@
                             <input type="text" name="youtube_id" value=""
                                    id="session_youtube_id"
                                    placeholder='https://youtube.com...'>
+                            <span class='help-block'>Paste the URL or embed code for a youtube video.</span>
                         </div>
                         <div class='webpage-url control-group hide' style='margin-top: 3em;'>
                             <label for='session_webpage'>Webpage URL</label>
@@ -214,7 +224,8 @@
             <p class="text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
             <div class="control-group">
                 <label for="embed_youtube_id">Youtube video URL</label>
-                <input type="text" name="youtube_id" value="" id="embed_youtube_id">
+                <input type="text" name="youtube_id" value="" id="embed_youtube_id" placeholder="https://youtube.com...">
+                <span class='help-block'>Paste the URL or embed code for a youtube video.</span>
                 <div id='current-yt-url'></div>
             </div>
         </div>

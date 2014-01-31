@@ -344,42 +344,6 @@ var WebpageActivity = BaseActivityView.extend({
  */
 
 
-var BaseModalView = Backbone.View.extend({
-    events: {
-        'click input[type=submit]': 'validateAndGo'
-    },
-    initialize: function() {
-        _.bindAll(this, "render", "validateAndGo", "validate", "close");
-        $("body").append(this.el);
-        this.render();
-        this.$el.on("hidden", _.bind(function() {
-            this.trigger("close");
-        }, this));
-    },
-    render: function() {
-        this.$el.html(this.template()).addClass("modal hide fade");
-        this.$el.modal('show');
-    },
-    validateAndGo: function(event) {
-        event.preventDefault();
-        var data = this.validate();
-        if (data) {
-            this.trigger("submit", data);
-            this.close();
-        }
-    },
-    close: function() {
-        this.$el.on("hidden", _.bind(function() {
-            this.trigger("close");
-            this.remove();
-        }, this));
-        this.$el.modal("hide");
-    }
-});
-
-
-
-
 var AddActivityDialog = BaseModalView.extend({
     template: _.template($("#add-activity-dialog").html()),
     events: {
