@@ -181,6 +181,7 @@
                                 break;
                             case "reload":
                                 document.body.removeChild(iframe);
+                                clearTimeout(tellParticipants);
                                 load();
                                 break;
                         }
