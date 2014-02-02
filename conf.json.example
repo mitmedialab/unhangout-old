@@ -26,7 +26,7 @@
     "UNHANGOUT_HANGOUT_ORIGIN_REGEX": "^https://[-a-z0-9]+hangout-opensocial.googleusercontent.com$",
 
 	"UNHANGOUT_USE_SSL":false,
-	"UNHANGOUT_REDIRECT_HTTP":true,
+	"UNHANGOUT_REDIRECT_HTTP":false,
 	"UNHANGOUT_PRIVATE_KEY":"ssl/private.pem",
 	"UNHANGOUT_CERTIFICATE":"ssl/cert.pem",
 
