@@ -45,6 +45,7 @@
     "uuid"      : "1.4.1",
     "validator":"1.4.0",
   	"moment"    : "2.1.0",
+  	"moment-timezone": "*",
   	"googleapis": "0.4.5",
   	"gapitoken" : "0.0.3",
     "stylus" : "0.40.2",
