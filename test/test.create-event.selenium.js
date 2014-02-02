@@ -44,9 +44,8 @@ describe("CREATE EVENT", function() {
         browser.byCss(".btn-primary.create-event").click()
         var eventId;
         browser.getCurrentUrl().then(function(url) {
-            var match = /^http:\/\/localhost:7777\/event\/(\d+)$/.exec(url);
-            expect(match == null).to.be(false);
-            eventId = match[1];
+            expect(url).to.be("http://localhost:7777/event/test-title");
+            eventId = common.server.db.events.findWhere({shortName: "test-title"}).id
         }).then(function() {
             browser.get("http://localhost:7777/admin/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
@@ -114,7 +113,7 @@ describe("CREATE EVENT", function() {
                     title: att.title,
                     organizer: att.organizer,
                     shortName: att.shortName, 
-                    dateAndTime: att.dateAndTime,
+                    dateAndTime: moment(att.dateAndTime).format(event.DATE_DISPLAY_FORMAT),
                     timeZoneValue: att.timeZoneValue,
                     welcomeMessage: att.welcomeMessage,
                     description: att.description

@@ -40,6 +40,7 @@ if(server) {
 models.Event = Backbone.Model.extend({
 	idRoot: "event",
 	urlRoot: "event",
+    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
 	
 	defaults: function() {
 		return {
@@ -75,10 +76,14 @@ models.Event = Backbone.Model.extend({
         if (this.get("dateAndTime") && this.get("timeZoneValue")) {
             var date = moment.tz(this.get("dateAndTime"), this.get("timeZoneValue"));
             if (date.isValid()) {
-                return date.format("dddd, MMMM Do YYYY, hh:mm ") + date.zoneName();
+                return date.format(this.DATE_DISPLAY_FORMAT) + " " + date.zoneName();
             }
         }
         return "";
+    },
+
+    getEventUrl: function() {
+        return "/event/" + (this.get("shortName") ? this.get("shortName") : this.id);
     },
 	
 	toJSON: function() {

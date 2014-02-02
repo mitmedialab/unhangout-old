@@ -64,6 +64,13 @@ describe('HTTP ADMIN EVENTS API', function() {
 	});
 
 	describe('/admin/event/new (admin)', function() {
+        function expectError(res, msg) {
+            expect(res.status).to.be(200);
+            expect(
+                res.text.indexOf("<span class='help-inline'>" + msg + "</span>")
+            ).to.not.eql(-1);
+        }
+
 
 		it('should accept well-formed creation request from superuser', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
@@ -110,8 +117,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 				.send({description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
-                    expect(res.text).to.eql("Missing parameter `title`.");
-                    expect(res.status).to.be(400);
+                    expectError(res, "A title is required.");
 					done();
 				});
 		});
@@ -124,10 +130,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                       shortName: evt.get("shortName")})
                 .redirects(0)
                 .end(function(res) {
-                    expect(res.status).to.be(400);
-                    expect(JSON.parse(res.text)).to.eql({
-                        "shortName": "That name is already taken."
-                    })
+                    expectError(res, "That name is already taken.");
                     done();
                 });
         });
@@ -138,10 +141,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                       shortName: "oh/kay"})
                 .redirects(0)
                 .end(function(res) {
-                    expect(res.status).to.be(400);
-                    expect(JSON.parse(res.text)).to.eql({
-                        "shortName": "Only letters, numbers, - and _ allowed in event URLs."
-                    })
+                    expectError(res, "Only letters, numbers, - and _ allowed in event URLs.");
                     done();
                 });
         });
@@ -159,10 +159,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 .send(params)
                 .redirects(0)
                 .end(function(res) {
-                    expect(res.status).to.be(400);
-                    expect(JSON.parse(res.text)).to.eql({
-                        "dateAndTime": "Invalid date or timezone."
-                    })
+                    expectError(res, "Invalid date or timezone.");
                     done();
                 });
         });
@@ -172,7 +169,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 title: "Excellent",
                 description: "Party time",
                 shortName: "unique-city",
-                dateAndTime: "2014-11-11T11:11:11",
+                dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
                 timeZoneValue: "wat"
             };
             request.post("http://localhost:7777/admin/event/new")
@@ -180,10 +177,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 .send(params)
                 .redirects(0)
                 .end(function(res) {
-                    expect(res.status).to.be(400);
-                    expect(JSON.parse(res.text)).to.eql({
-                        "dateAndTime": "Invalid date or timezone."
-                    })
+                    expectError(res, "Invalid date or timezone.");
                     done();
                 });
         });
@@ -193,16 +187,17 @@ describe('HTTP ADMIN EVENTS API', function() {
                 title: "Excellent",
                 shortName: 'unique-city',
                 description: "Party time",
-                dateAndTime: "null",
+                dateAndTime: "",
                 timeZoneValue: "America/Denver"
             };
             request.post("http://localhost:7777/admin/event/new")
                 .set("x-mock-user", "superuser1")
                 .send(params)
-                .redirects(1)
+                .redirects(0)
                 .end(function(res) {
-                    expect(res.status).to.be(200);
+                    expect(res.status).to.be(302);
                     var evt = common.server.db.events.findWhere({shortName: "unique-city"});
+                    expect(evt).to.not.be(undefined);
                     expect(evt.get("dateAndTime")).to.be(null);
                     expect(evt.get("timeZoneValue")).to.be(null);
                     expect(evt.formatDate()).to.eql("");
@@ -215,19 +210,20 @@ describe('HTTP ADMIN EVENTS API', function() {
                 title: "Excellent",
                 description: "Party time",
                 shortName: "unique-city",
-                dateAndTime: "2014-11-11T11:11:11",
+                dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
                 timeZoneValue: "America/Denver"
             };
             request.post("http://localhost:7777/admin/event/new")
                 .set("x-mock-user", "superuser1")
                 .send(params)
-                .redirects(1)
+                .redirects(0)
                 .end(function(res) {
-                    expect(res.status).to.be(200);
+                    expect(res.status).to.be(302);
                     var evt = common.server.db.events.findWhere({shortName: "unique-city"});
-                    expect(evt.get("dateAndTime")).to.eql("2014-11-11T11:11:11-07:00");
+                    expect(evt).to.not.be(undefined);
+                    expect(evt.get("dateAndTime")).to.eql("2014-11-11T23:32:00-07:00");
                     expect(evt.get("timeZoneValue")).to.eql("America/Denver");
-                    expect(evt.formatDate()).to.eql("Tuesday, November 11th 2014, 11:11 MST");
+                    expect(evt.formatDate()).to.eql("Tuesday Nov 11, 2014 11:32 pm MST");
                     done();
 
                 });
@@ -249,7 +245,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 title: "My title",
                 organizer: "My organizer",
                 shortName: "my-shortName",
-                dateAndTime: "2014-11-11T11:11:11",
+                dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
                 timeZoneValue: "America/Denver",
                 welcomeMessage: "Wilkommen",
                 description: "My description"
@@ -257,14 +253,16 @@ describe('HTTP ADMIN EVENTS API', function() {
 			request.post('http://localhost:7777/admin/event/new')
                 .set("x-mock-user", "superuser1")
 				.send(params)
+                .redirects(0)
 				.end(function(res) {
-                    expect(res.status).to.be(200);
+                    expect(res.status).to.be(302);
                     var evt = common.server.db.events.findWhere({shortName: "my-shortName"});
+                    expect(evt).to.not.be(undefined);
                     var att = evt.attributes;
                     expect(att.title).to.eql("My title");
                     expect(att.organizer).to.eql("My organizer");
                     expect(att.shortName).to.eql("my-shortName");
-                    expect(att.dateAndTime).to.eql("2014-11-11T11:11:11-07:00");
+                    expect(att.dateAndTime).to.eql("2014-11-11T23:32:00-07:00");
                     expect(att.timeZoneValue).to.eql("America/Denver");
                     expect(att.welcomeMessage).to.eql("Wilkommen");
                     expect(att.description).to.eql("My description");
@@ -277,7 +275,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                             title: "My title",
                             organizer: "",
                             shortName: "",
-                            dateAndTime: "null",
+                            dateAndTime: "",
                             welcomeMessage: "",
                             description: "My description"
                         })
