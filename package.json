@@ -63,7 +63,8 @@
     "selenium-webdriver": "~2",
     "libxmljs": "*",
     "simplesmtp": "~0",
-    "mailparser": "~0"
+    "mailparser": "~0",
+    "sinon": "1.8.1"
   },
   "license": "BSD",
   "engines": {
