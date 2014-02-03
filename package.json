@@ -45,10 +45,13 @@
     "uuid"      : "1.4.1",
     "validator":"1.4.0",
   	"moment"    : "2.1.0",
+  	"moment-timezone": "*",
   	"googleapis": "0.4.5",
   	"gapitoken" : "0.0.3",
     "stylus" : "0.40.2",
-    "nib" : "1.0.1"
+    "nib" : "1.0.1",
+    "nodemailer": "0.6.0",
+    "caja-sanitizer": "*"
   },
   "analyze": false,
   "devDependencies": {
@@ -56,9 +59,12 @@
 	"superagent": "0.15.4",
 	"should"    : "1.2.2",
   	"expect.js" :  "0.2.0",
-	"sockjs-client-ws": "0.1.0",
+	"sockjs-client-ws": "git://github.com/yourcelf/sockjs-client-node.git#master",
     "selenium-webdriver": "~2",
-    "libxmljs": "*"
+    "libxmljs": "*",
+    "simplesmtp": "~0",
+    "mailparser": "~0",
+    "sinon": "1.8.1"
   },
   "license": "BSD",
   "engines": {

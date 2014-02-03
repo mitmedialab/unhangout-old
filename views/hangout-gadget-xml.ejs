@@ -92,6 +92,7 @@
                 iframe.style.position = "absolute";
                 iframe.style.left = "0px";
                 iframe.style.top = "0px";
+                iframe.name = "facilitator_frame";
                 document.body.appendChild(iframe);
 
                 var urlArgs = { url: gapi.hangout.getHangoutUrl() };
@@ -183,6 +184,21 @@
                                 document.body.removeChild(iframe);
                                 clearTimeout(tellParticipants);
                                 load();
+                                break;
+                            case "display-notice-if-hidden":
+                                if (!gapi.hangout.isAppVisible()) {
+                                    gapi.hangout.layout.displayNotice(
+                                        event.data.args[0], event.data.args[1]
+                                    )
+                                }
+                                break;
+                            case "display-notice":
+                                gapi.hangout.layout.displayNotice(
+                                    event.data.args[0], event.data.args[1]
+                                )
+                                break;
+                            case "dismiss-notice":
+                                gapi.hangout.layout.dismissNotice();
                                 break;
                         }
                     }

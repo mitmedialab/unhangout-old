@@ -16,7 +16,11 @@ var joinEventSetup = function(userKey) {
             sock = newSock;
             sock.write(JSON.stringify({
                 type: "join",
-                args: {id: common.server.db.events.at(0).getRoomId()}
+                args: {
+                    id: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
+                }
             }));
             sock.once("data", function(message) {
                 var data = JSON.parse(message);
@@ -36,6 +40,9 @@ describe('unhangout server', function() {
 			s = new server.UnhangoutServer();
 		});
 		
+        /* Leaving this one out for now -- we have many more required params
+         * than just google credentials, and having moved conf to
+         * lib/options.js, that file does the error-throwing.
 		it('should not initialize without google credentials', function(done) {
 			s.on("error", function() {
 				done();
@@ -45,6 +52,7 @@ describe('unhangout server', function() {
 			});
 			s.init({});
 		});
+        */
 		
 		it('#start should fail if init is not called first', function(done) {
 			s.on("error", function() {
@@ -86,7 +94,7 @@ describe('unhangout server', function() {
 		beforeEach(function(done) {
 			s = new server.UnhangoutServer();
 			s.on("inited", done);
-			s.init({"transport":"file", "level":"debug", "GOOGLE_CLIENT_ID":true, "GOOGLE_CLIENT_SECRET":true});
+			s.init({"UNHANGOUT_GOOGLE_CLIENT_ID":true, "UNHANGOUT_GOOGLE_CLIENT_SECRET":true});
 		});
 
 		afterEach(function(done) {
@@ -143,12 +151,12 @@ describe('unhangout server', function() {
 		});
 	});
 
-	describe('POST /subscribe', function() {
+	describe('POST /subscribe/', function() {
 		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
 
 		it('should accept email addresses', function(done) {
-			request.post('http://localhost:7777/subscribe')
+			request.post('http://localhost:7777/subscribe/')
 			.send("email=email@example.com")
 			.end(function(res) {
 				res.status.should.equal(200);
@@ -282,7 +290,7 @@ describe('unhangout server', function() {
 			beforeEach(joinEventSetup("regular1"));
 
 			it("should accept create session messages", function(done) {
-                var event = common.server.db.events.at(0);
+                var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
 				sock.on("data", function(message) {
 					var msg = JSON.parse(message);
 
@@ -294,7 +302,8 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+				user.set("superuser", true);
 				
 				sock.write(JSON.stringify({
                     type:"create-session",
@@ -330,7 +339,8 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+				user.set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{title: "New Session"}}));
 			});
@@ -345,7 +355,8 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"create-session", args:{description:"This is a description."}}));
 			});
@@ -364,14 +375,17 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
 				
 				sock.write(JSON.stringify({
                     type:"create-session",
                     args: {
                         title: "New Session",
                         description:"This is a description.",
-                        roomId: common.server.db.events.at(0).getRoomId()
+                        roomId: common.server.db.events.findWhere({
+                            shortName: "writers-at-work"
+                        }).getRoomId()
                     }
                 }));
 			});
@@ -392,10 +406,15 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+				user.set("superuser", true);
 				sock.write(JSON.stringify({
                     type:"open-sessions",
-                    args: { roomId: common.server.db.events.at(0).getRoomId() }
+                    args: {
+                        roomId: common.server.db.events.findWhere({
+                            shortName: "writers-at-work"
+                        }).getRoomId()
+                    }
                 }));
 			});
 			
@@ -409,9 +428,13 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
+
 				sock.write(JSON.stringify({type:"open-sessions", args:{
-                    roomId: common.server.db.events.at(0).getRoomId()
+                    roomId: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
                 }}));
 			});
 
@@ -426,9 +449,13 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
+
 				sock.write(JSON.stringify({type:"close-sessions", args: {
-                    roomId: common.server.db.events.at(0).getRoomId()
+                    roomId: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
                 }}));
 			});
 			
@@ -442,9 +469,13 @@ describe('unhangout server', function() {
 					}
 				});
 
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
+
 				sock.write(JSON.stringify({type:"close-sessions", args:{
-                    roomId: common.server.db.events.at(0).getRoomId()
+                    roomId: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
                 }}));
 			});
 
@@ -478,7 +509,9 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
+				
 				
 				sock.write(JSON.stringify({type:"embed", args:{}}));
 			});
@@ -494,11 +527,14 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{
                     ytId:"QrsIICQ1eg8",
-                    roomId: common.server.db.events.at(0).getRoomId()
+                    roomId: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
                 }}));
 			});
 			
@@ -513,11 +549,14 @@ describe('unhangout server', function() {
 					}
 				});
 				
-				common.server.db.users.at(0).set("superuser", true);
+                var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+                user.set("superuser", true);
 				
 				sock.write(JSON.stringify({type:"embed", args:{
                     ytId:"QrsIICQ1eg8",
-                    roomId: common.server.db.events.at(0).getRoomId()
+                    roomId: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
                 }}));
 			});	
 		});
@@ -536,7 +575,9 @@ describe('unhangout server', function() {
 				});
 				
 				sock.write(JSON.stringify({type:"chat", args:{
-                    roomId: common.server.db.events.at(0).getRoomId()
+                    roomId: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
                 }}));
 			});
 			
@@ -551,7 +592,9 @@ describe('unhangout server', function() {
 				});				
 				sock.write(JSON.stringify({type:"chat", args: {
                     text:"hello world",
-                    roomId: common.server.db.events.at(0).getRoomId()
+                    roomId: common.server.db.events.findWhere({
+                        shortName: "writers-at-work"
+                    }).getRoomId()
                 }}));
 			});
 			

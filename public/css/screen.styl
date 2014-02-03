@@ -2,9 +2,29 @@ $primary = #2F3732;
 $background = #c9c8c8;
 $background-light = #f5f5f5;
 
+$navbar = #2E7DAA;
+$navbar-li = #DBF2FD;
+$navbar-li-bgcolor = #205877;
+$event-links = $navbar;
+
 body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
   }
+
+.btn-primary {
+	background: $navbar;	
+}
+
+.navbar-inverse .navbar-inner
+{
+  // Use nib's linear-gradient expander to target all browsers.
+  background-image: linear-gradient(top, $navbar, $navbar);
+	border-color: $navbar;
+}
+
+.brand, .navbar-inverse .brand {
+	color: #fff;
+}
 
 .admin-header {
 	width: 100%;
@@ -25,6 +45,7 @@ body {
 	width: auto;
 	height: auto;
 }
+
 
 #app {
 	position: absolute;
@@ -158,9 +179,13 @@ body {
 	}
 }
 
+.navbar .nav > li > a {
+  	color: $navbar-li;
+ }
+
 .nav {
 	li.active > a{
-		background-color: #444 !important;
+		background-color: $navbar-li-bgcolor !important;
 	}
 
 	.circle {
@@ -169,7 +194,7 @@ body {
 		height: 12px;
 		border-radius: 5px;
 
-		margin-left: 5px;
+		margin-right: 5px;
 
 		display: block;
 		position: absolute;
@@ -184,7 +209,6 @@ body {
 	
 .identity {
 	height: 40px;
-	width: 200px;
 
 	& > div {
 		float: right;
@@ -195,10 +219,40 @@ body {
 	}
 }
 
+.event-mini-form {
+	width: 500px;
+	overflow: hidden;
+
+	.btn-primary {
+		background: $navbar;
+	}
+
+	img, span {
+		float: left;
+	}
+
+	span {
+		margin-top: 10px;
+		margin-left: 10px;
+		font-size: 16px;
+	}
+
+	.modal-body {
+		overflow: hidden;
+	}
+
+	.modal-footer {
+		margin-bottom: -35px;
+		margin-left: -15px;
+		margin-right: -15px;
+		height: 55px;
+	}
+}
+
 .username, .admin-button {
 	display: block;
 	font-size: 14px;
-	color: #999;
+	color: $navbar-li;
 	padding: 10px 15px 10px 15px;
 	line-height: 20px;
 	
@@ -206,6 +260,20 @@ body {
 		color: white;
 		text-decoration: none;
 	}
+}
+
+.dropdown-menu>li>a {
+	color: #333;
+}
+
+.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus{
+	text-decoration:none;
+	color:#fff;
+	background: $navbar;
+}
+
+.dropdown-menu>li.active >a {
+	background-color: $navbar;
 }
 
 .user {
@@ -632,14 +700,14 @@ body {
 				span.from {
 					margin-left: -120px;
 					float: left;
-					display: block;	
+					display: block;
 					font-weight: bold;
 
 					width: 115px;
 					text-align: right;
 
 					&.admin {
-						color: orange;					
+						color: orange;
 					}
 				}
 			}
@@ -679,6 +747,33 @@ body {
   }
 }
 
+.fifty-fifty {
+  width: 100%;
+  box-sizing: border-box;
+  .fifty {
+    box-sizing: border-box;
+    width: 50%;
+    float: left;
+  }
+}
+
+.faux-hangout-notice {
+  position: relative;
+  background-color: #69f;
+  color: white;
+  font-size: 13px;
+  line-height: 1.2em;
+  font-family: "Arial",sans-serif;
+  padding: 1em;
+  border-radius: 5px;
+  .close {
+    color: white;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+}
+
 
 /*---------------------------- ADMIN STYLES ---------------------------*/
 
@@ -697,19 +792,17 @@ tr:nth-child(even) {
 
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {
-	color: white;
-	background-image: url('/public/img/dots.png');
-	height: 200px;
-	width: 100%;
+	color: $navbar;
+	height: 120px;
 	background-size: 1400px;
 	margin-top: -20px;
 	font-family: "open sans",arial,sans-serif;
 
 	h1 {
-		padding-top: 60px;
+		padding-top: 20px;
 		margin-top: 0px;
 		font-weight: 200;
-		font-size: 36px;
+		font-size: 32px;
 	}
 
 	h1,  h3{
@@ -722,6 +815,22 @@ tr:nth-child(even) {
 		font-weight: 200;
 		font-size: 20px;
 	}
+
+	.create-event-button {
+		margin-top: -100px;
+		float: right;
+	}
+
+	.btn-primary {
+		background: $navbar;
+		padding: 17px 20px;
+		font-size: 18px;
+	}
+}
+
+.profile-thumbnail {
+	margin-top: -5px;
+	border-radius: 5px;
 }
 
 .event {
@@ -730,8 +839,17 @@ tr:nth-child(even) {
 
 	.title, .description {
 		float: left;
-		color: #3c3c3c;
+		color: #333;
 		font-family: "open sans",arial,sans-serif;
+
+		a {
+			color: $event-links;
+			text-decoration:none;
+		}
+
+		a:hover,a:focus {
+			text-decoration:underline;
+		}
 	}
 
 	.title {
@@ -743,7 +861,6 @@ tr:nth-child(even) {
 		margin-top: 20px;
 		font-size: 16px;
 		width: 780px;
-
 	}
 
 	.date {
@@ -819,6 +936,10 @@ tr:nth-child(even) {
 		color: #3c3c3c;
 		font-size: 16px;
 		font-family: "open sans",arial,sans-serif;
+	}
+
+	.btn-primary {
+		background: $navbar;
 	}
 }
 
@@ -903,7 +1024,70 @@ tr:nth-child(even) {
     background: gray;
 }
 
+/* ------------------------- ABOUT PAGE -------------------------------*/
+.about-container {
+	h1, h3 {
+		color: #444;
+	}
+
+	h1 {
+		font-weight: 400;
+		font-size: 26px;
+	}
+
+	h3 {
+		font-weight: 400;
+		font-size: 20px;
+	}
+
+	p, li {
+		color: #333;
+		font-family: "open sans",arial,sans-serif;
+
+		a {
+			color: $event-links;
+			text-decoration:none;
+		}
+
+		a:hover,a:focus {
+			text-decoration:underline;
+		}
+	}
+
+}
+
 /*-------------------------- PERMALINKS -------------------------------*/
+
+.permalink-container {
+	p {
+		color: #333;
+		font-family: "open sans",arial,sans-serif;
+
+		a {
+			color: $event-links;
+			text-decoration:none;
+		}
+
+		a:hover,a:focus {
+			text-decoration:underline;
+		}
+	}	
+
+	.footer {
+		a {
+			color: $event-links;
+			text-decoration:none;
+		}
+
+		a:hover,a:focus {
+			text-decoration:underline;
+		}
+	}
+
+	.btn-primary {
+		background: $navbar;
+	}
+}
 
 .permalink-title {
 	font-size: 34px;
@@ -945,29 +1129,38 @@ tr:nth-child(even) {
 	margin-right: 20px;
 	margin-top: -10px;
 	size: 2;
-	border-top: 1px #DfDfDf solid; 
+	border-top: 1px #DfDfDf solid;
 }
 
 .participant-info {
-		margin-top: -40px;
+  position: relative;
+  .participant {
+    display: inline-block;
+    position: relative;
+    box-sizing: border-box;
+    width: 100px;
+    height: 100px;
+    img {
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      border: 1px $navbar solid;
+      border-radius: 5px;
+    }
+    .overlay {
+      box-sizing: border-box;
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100px;
+      color: white;
+      text-align: center;
+      background-color: $navbar;
+      border-radius: 0px 0px 3px 3px;
+    }
+  }
 
-	img {
-		border: 1px #57AF57 solid;
-		margin-right: 25px;
-		margin-top: 40px;
-		border-radius: 5px;
-	}
 
-	.overlay {
-		position: absolute;
-		color: white;
-		width: 102px;
-		margin-top: 135px;
-		margin-left: -131px;
-		text-align: center;
-		background-color: #57AF57;
-		border-radius: 3px;
-	}
 }
 
 #permalinks {
@@ -991,4 +1184,30 @@ td form {
    border-radius: 4px;
    background-color: rgba(0,0,0,.5);
    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+
+
+/* ---------------------EVENT FORM -------------------------*/
+
+.event-form-container {
+	margin-top: 30px;
+	background: #FAFAFA;
+    border-radius: 10px;
+    border: solid #DfDFDf;
+    border-width: 1px;
+    
+    .btn-primary {
+    	background: $navbar;
+    	width: 572px;
+    }
+
+    .control-label, span {
+    	color: #999;
+    }
+
+    .container {
+    	width: 573px;
+    	margin-left: -0px; 
+    }
 }

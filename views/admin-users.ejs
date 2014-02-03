@@ -29,6 +29,7 @@
                     <th>Username</th>
                     <th>Emails</th>
                     <th>Superuser?</th>
+                    <th>Permissions</th>
                     <th>Event admin</th>
                 </tr>
             </thead>
@@ -49,6 +50,14 @@
             <input type='checkbox' class='superuser'
                 {{- superuser ? "checked='checked'" : "" }} />
         </label>
+    </td>
+    <td class='permissions'>
+        {{ user.eachPerm(function(key, val, label) { }}
+            <label class='inline'> {{- label }}
+                <input type='checkbox' class='perm' data-perm='{{- key }}'
+                    {{- val ? "checked='checked'" : "" }} />
+            </label>
+        {{ }); }}
     </td>
     <td class='admins'>
         {{ _.each(adminEvents, function(event) { }}

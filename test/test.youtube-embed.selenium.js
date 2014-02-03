@@ -23,7 +23,7 @@ describe("YOUTUBE EMBEDS", function() {
 
     describe("YOUTUBE EMBED", function() {
         it("Tries a variety of YouTube urls", function (done) {
-            var event = common.server.db.events.at(0);
+            var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
             var ytId = "pco91kroVgQ";
             event.start();
 

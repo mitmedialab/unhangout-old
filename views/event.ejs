@@ -20,16 +20,22 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    <h1>{{=title}}</h1>
-    <h4>hosted by {{=organizer}}</h4>
-
-    {{= description}}
+    <h1>{{- title }}</h1>
+    {{ if (organizer) { }}
+        <h4 style="color: #2E7DAA">hosted by {{- organizer }}</h4>
+    {{ } }}
+    <br/>
+    {{ if (formattedDate) { }}
+        <b>{{- formattedDate }}</b>
+    {{ } }}
+    <br/><br/>
+    {{= cleanDescription }}
 
     <div class="footer">This event has not yet started, so the rest of the page is disabled. Come back at the posted start time to participate!</div>
 </script>
 
 <script type="text/template" id="session-template">
-    <h3>{{= title }}</h3>
+    <h3>{{- title }}</h3>
     <div class="attend btn btn-info" data-toggle="button">
         <span class="outer"><i class="icon-lock"></i><span class="text">SIGN UP</span><span class="attend-count hide"></span></span>
         <div class="attendance"></div>
@@ -56,9 +62,9 @@
         <div id="prev">prev</div>
             {{ _.each(info().pageSet, function(page) { }}
                 {{ if(page==currentPage) { }}
-                    <div class="active page">{{= page }}</div>
+                    <div class="active page">{{- page }}</div>
                 {{ } else { }}
-                    <div class="page">{{= page }}</div>
+                    <div class="page">{{- page }}</div>
                 {{ } }}
             {{ }) }}
             <div id="next">next</div>
@@ -70,15 +76,15 @@
     {{ if(!picture) { }}
         <i class="icon-user icon-3x"></i>
     {{ } else if (link) { }}
-        <a href="{{=link}}" target="_new"><img src="{{=picture}}"></a>
+        <a href="{{- link }}" target="_new"><img src="{{- picture}}"></a>
     {{ } else { }}
-        <img src="{{=picture}}">
+        <img src="{{- picture}}">
     {{ } }}
 </script>
             
 <script type="text/template" id="user-list-template">
     <div class="header">
-        <span class="contents">{{=numUsers}}</span><i class="icon-user"></i>
+        <span class="contents">{{- numUsers}}</span><i class="icon-user"></i>
     </div>
     <div id="user-list-scroll-container">
         <ul id="user-list-container"></ul>
@@ -86,7 +92,7 @@
 </script>
             
 <script type="text/template" id="chat-message-template">
-    <span class="from">{{=user.shortDisplayName}}</span>{{=text}}
+    <span class="from">{{- user.shortDisplayName}}</span>{{- text}}
 </script>
             
 <script type="text/template" id="chat-layout">
@@ -122,7 +128,10 @@
                 <a role="menuitem" href="#embed-modal" role="button" id="show-embed-modal">video embed</a>
                 <a role="menuitem" tabindex="-1" id="open-sessions">open sessions</a>
                 <a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
-                <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
+                <a role="menuitem" tabindex="-1" id="message-sessions">send message to sessions</a>
+                {{ if (IS_SUPERUSER) { }}
+                    <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{- numFarmedHangouts}}</span> available</a>
+                {{ } }}
             </li>
         </ul>
     </div>
@@ -175,6 +184,33 @@
                 <input type='submit' class="btn btn-primary" id="create-session" value="Create Session" />
             </div>
         </form>
+    </div>
+    <div id="message-sessions-modal" class="modal hide fade">
+        <div class="modal-header"><h3>Send Message to All Hangout Sessions</h3></div>
+        <div class="modal-body">
+            <p>Send a message to be displayed in every event session hangout.</p>
+            <div class='fifty-fifty clearfix'>
+                <div class='fifty'>
+                    <label for='session_message'>Message</label>
+                    <textarea id='session_message' rows=5 cols=30></textarea><br />
+                    <a class='add-url-to-message' style='cursor: pointer;'>
+                        Add URL to event page
+                        <i class='fa fa-level-up'></i>
+                    </a>
+                </div>
+                <div class='fifty'>
+                    Message will show up as:<br />
+                    <div class='faux-hangout-notice'>
+                        <div class='message'></div>
+                        <div class='close'>&times;</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class='modal-footer'>
+            <a href='#' class='btn pull-left' data-dismiss='modal'>Cancel</a>
+            <a href='#' class='btn btn-primary' id='send-session-message'>Send Message</a>
+        </div>
     </div>
     <div id="embed-modal" class="modal hide fade">
         <div class="modal-header"><h3>Set Video URL</h3></div>

@@ -278,6 +278,11 @@ var UserView = Marionette.ItemView.extend({
 	}
 });
 
+// Turn a string into a session message.
+function formatSessionMessage(val) {
+    return "##unhangouts## " + USER_NAME + ": " + $.trim(val);
+}
+
 // The DialogView contains all our dialog boxes. This is a little awkward, but
 // when we tried associated dialog boxes with the views that actually trigger them
 // we ran into all sorts of z-index issues, because those views were all
@@ -291,10 +296,15 @@ var DialogView = Backbone.Marionette.Layout.extend({
 
 	events: {
 		'click #set-embed':'setEmbed',
+        'click #send-session-message': 'sendSessionMessage',
 		'click #remove-embed':'removeEmbed',
 		'click #disconnected-modal a':'closeDisconnected',
 		'click #create-session':'createSession',
-        'change [name=session_type]': 'changeSessionType'
+        'change [name=session_type]': 'changeSessionType',
+        'click .add-url-to-message': 'addUrlToSessionMessage',
+        'change #session_message': 'updateSessionMessage',
+        'keydown #session_message': 'updateSessionMessage',
+        'keyup #session_message': 'updateSessionMessage'
 	},
     extractYoutubeId: function(val) {
         // From http://stackoverflow.com/a/6904504 , covering any of the 15
@@ -330,6 +340,32 @@ var DialogView = Backbone.Marionette.Layout.extend({
 			sock.send(JSON.stringify(message));
 		}
 	},
+    addUrlToSessionMessage: function(event) {
+        event.preventDefault();
+        var el = $("#message-sessions-modal textarea");
+        var val = el.val();
+        el.val(val + "\n Copy and paste: " + window.location.href.split("#")[0]);
+        el.change();
+    },
+    updateSessionMessage: function(event) {
+        $("#message-sessions-modal .faux-hangout-notice .message").html(
+            formatSessionMessage($("#session_message").val())
+        );
+    },
+    sendSessionMessage: function(event) {
+        event.preventDefault();
+        var val = $("#session_message").val();
+        if (!val) { return; }
+        var args = {
+            message: formatSessionMessage(val),
+            roomId: curEvent.getRoomId()
+        }
+        sock.send(JSON.stringify({
+            type: "broadcast-message-to-sessions",
+            args: args
+        }));
+        $("#message-sessions-modal").modal('hide');
+    },
 	removeEmbed: function() {
 		// just send an empty message, and clear the field
 		$("#embed_youtube_id").val("");
@@ -414,7 +450,8 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	events: {
 		'click #show-embed-modal':'showEmbedModal',
 		'click #open-sessions':'openSessions',
-		'click #close-sessions':'closeSessions'
+		'click #close-sessions':'closeSessions',
+        'click #message-sessions': 'messageSessions'
 	},
 
 	openSessions: function() {
@@ -424,6 +461,11 @@ var AdminButtonView = Backbone.Marionette.Layout.extend({
 	closeSessions: function() {
 		sock.send(JSON.stringify({type:"close-sessions", args:{roomId: curEvent.getRoomId()}}));
 	},
+
+    messageSessions: function() {
+        $("#message-sessions-modal").modal('show');
+
+    },
 
 	showEmbedModal: function() {
         var ytId = curEvent.get("youtubeEmbed");
@@ -706,6 +748,11 @@ var AboutEventView = Marionette.ItemView.extend({
 			this.render();
 		}, this), this);
 	},
+    serializeData: function() {
+		var context = this.model.toJSON();
+        context.event = this.model;
+        return context;
+    },
 
 	onRender: function() {
 		if(this.model.isLive()) {

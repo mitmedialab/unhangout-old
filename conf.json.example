@@ -10,18 +10,25 @@
 	"UNHANGOUT_REDIS_PORT":6379,
 	"UNHANGOUT_REDIS_DB":0,
 
+    "UNHANGOUT_SMTP": {
+        "host": "localhost",
+        "port": "2525",
+        "secureConnection": false
+    },
+
     "UNHANGOUT_SERVER_EMAIL_ADDRESS": "node@yourserver.example.com",
 
 	"UNHANGOUT_SUPERUSER_EMAILS": ["user1@example.com", "user2@example.com"],
+	"UNHANGOUT_MANAGERS": ["manager1@example.com"],
 
-	"UNHANGOUT_HANGOUT_APP_ID":123456789012,
+	"UNHANGOUT_HANGOUT_APP_ID": 123456789012,
     "UNHANGOUT_HANGOUT_ORIGIN_REGEX": "^https://[-a-z0-9]+hangout-opensocial.googleusercontent.com$",
 
 	"UNHANGOUT_USE_SSL":false,
-	"UNHANGOUT_REDIRECT_HTTP":true,
+	"UNHANGOUT_REDIRECT_HTTP":false,
 	"UNHANGOUT_PRIVATE_KEY":"ssl/private.pem",
 	"UNHANGOUT_CERTIFICATE":"ssl/cert.pem",
 
-    "EMAIL_LOG_RECIPIENTS": [],
+    "EMAIL_LOG_RECIPIENTS": ["sysadmin1@example.com"],
     "TESTING_SELENIUM_PATH": "bin/selenium-server-standalone.jar"
 }

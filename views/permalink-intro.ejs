@@ -1,7 +1,7 @@
 <% include _header.ejs %>
 <% include _permalink-navbar.ejs %>
 
-<div class="container">
+<div class="container permalink-container">
 
 
 	<h1>Hangout Permalinks</h1>
@@ -21,14 +21,14 @@
 			<label class="control-label" for="permalink">http://unhangout.media.mit.edu/h/</label>
 			<div class="controls">
 				<input type="text" id="permalink-title" placeholder="permalink">
-				<button class="btn btn-success" id="permalink-create-submit">CREATE</button>
+				<button class="btn btn-primary" id="permalink-create-submit">CREATE</button>
                 <span class='help-block alert-error' style='display: none;'>The permalink can only have letters, numbers, dashes, and underscores. Suggestion: <a href='#' class='suggestion'></a></span>
 			</div>
 		</div>
 	</form>
 
 
-	<div class="footer">This service is part of the <a href="/"><b>Unhangout Project</b></a> from the MIT Media Lab and MacArthur Foundation. Source available at <a href="http://github.com/drewww/unhangout">Github</a>.</div>
+	<div class="footer">This service is part of the <a href="/">Unhangout Project</a> from the MIT Media Lab and MacArthur Foundation. Source available at <a href="http://github.com/drewww/unhangout">Github</a>.</div>
 </div>
 
 <script type="text/javascript">

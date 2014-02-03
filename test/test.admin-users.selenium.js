@@ -76,7 +76,7 @@ describe("BROWSER ADMIN USERS", function() {
     });
     it("Manages admins", function(done) {
         var user = common.server.db.users.findWhere({"sock-key": 'regular1'});
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var eventUrl = "http://localhost:7777/admin/event/" + event.id;
         var addSelector = "tr[data-user-id='" + user.id + "'] .add-event";
         var removeSelector = "[data-event-id='" + event.id + "'].remove-event";
@@ -109,7 +109,6 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get("http://localhost:7777/admin/users/");
         browser.byCss(removeSelector).click().then(function() {
             expect(user.isAdminOf(event)).to.be(false);
-            done();
         });
 
         // Ensure the new admin can no longer access the admin page.
@@ -117,7 +116,40 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get(eventUrl);
         browser.getCurrentUrl().then(function(url) {
             expect(url).to.eql("http://localhost:7777/");
+            done();
         });
+    });
+    it("Manages perms", function(done) {
+        var user = common.server.db.users.findWhere({"sock-key": 'regular1'});
+        var permSelector = "tr[data-user-id='" + user.id + "']" +
+                           " input.perm[data-perm='createEvents']";
+
+        expect(user.hasPerm("createEvents")).to.be(false);
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("superuser1");
+        browser.get("http://localhost:7777/admin/users/");
+        browser.byCss(permSelector).click();
+        browser.wait(function() {
+            if (user.hasPerm("createEvents") === true) {
+                return true;
+            }
+        });
+        browser.get("http://localhost:7777/admin/users/");
+        browser.executeScript('return $("'+permSelector+'").is(":checked");').then(function(checked) {
+            expect(checked).to.be(true);
+        });
+        browser.byCss(permSelector).click();
+        browser.wait(function() {
+            if (user.hasPerm("createEvents") === false) {
+                return true;
+            }
+        });
+        browser.get("http://localhost:7777/admin/users/");
+        browser.executeScript('return $("'+permSelector+'").is(":checked");').then(function(checked) {
+            expect(checked).to.be(false);
+            done();
+        });
+
     });
     it("Filters users", function(done) {
         browser.get("http://localhost:7777/");

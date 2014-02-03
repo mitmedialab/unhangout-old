@@ -51,6 +51,9 @@ var FacilitatorView = Backbone.View.extend({
                         this.currentActivity.controlVideo(msg.args);
                     }
                     break;
+                case "session/event-message":
+                    this.displayEventMessage(msg.args);
+                    break;
             }
         }, this);
         this.session.on("change:activities", this.renderActivities);
@@ -122,6 +125,7 @@ var FacilitatorView = Backbone.View.extend({
     hide: function(event) {
         // Hide the unhangout facilitator app.
         if (event) { event.preventDefault(); }
+        console.log("EVENT HIDE???");
         postMessageToHangout({type: "hide"});
     },
     // Add a youtube video activity, complete with controls for simultaneous
@@ -163,6 +167,12 @@ var FacilitatorView = Backbone.View.extend({
             // Expand to main!
             this.faces.setActive(false);
         }
+    },
+    displayEventMessage: function(args) {
+        postMessageToHangout({
+            type: "display-notice",
+            args: [args.message, true]
+        });
     }
 });
 
@@ -207,8 +217,8 @@ var AboutActivity = BaseActivityView.extend({
             var count = 15;
             var that = this;
             that.autoHideInterval = setInterval(function() {
-                that.$(".countdown").html(count);
                 count--;
+                that.$(".countdown").html(count);
                 if (count == 0) {
                     clearInterval(that.autoHideInterval);
                     that.$(".hide-app").click();
@@ -309,7 +319,7 @@ var WebpageActivity = BaseActivityView.extend({
             alert("There was a problem loading that webpage.");
         }
 
-        var loadTimeout = setTimeout(iframe.onerror, 20000);
+        var loadTimeout = setTimeout(iframe.onerror, 5000);
         var isLoaded = function() {
             clearTimeout(loadTimeout);
             $(".loading").remove();
@@ -332,6 +342,7 @@ var WebpageActivity = BaseActivityView.extend({
 /*
  * Modal dialogs
  */
+
 
 var BaseModalView = Backbone.View.extend({
     events: {
@@ -365,6 +376,8 @@ var BaseModalView = Backbone.View.extend({
         this.$el.modal("hide");
     }
 });
+
+
 
 
 var AddActivityDialog = BaseModalView.extend({

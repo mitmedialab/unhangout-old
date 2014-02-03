@@ -15,7 +15,7 @@ describe("CREATE SESSIONS", function() {
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
-                event = common.server.db.events.at(0);
+                event = common.server.db.events.findWhere({shortName: "writers-at-work"});
                 done();
             });
         });

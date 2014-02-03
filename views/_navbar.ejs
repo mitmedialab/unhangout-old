@@ -1,6 +1,8 @@
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="navbar-inner">
 			<div class="container">
+                <span class="brand">Unhangouts </span>
+
 				<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
@@ -11,7 +13,7 @@
 						<li class="active"><a href="/">Home</a></li>
 						<li><a href="/about/">About</a></li>
 						<li><a href="/how-to-unhangout/">How to Unhangout</a></li>
-						<% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent())) { %>
+						<% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent() || user.hasPerm("createEvents"))) { %>
 							<li id="admin-nav"><a href="/admin/">Admin</a></li>
 						<% } %>
                         <% if(user && user.isSuperuser()) { %>
@@ -20,10 +22,15 @@
 					</ul>
 					<div class="nav pull-right identity">
 					<% if(!user) {%>
-					<a class="btn btn-primary pull-left" href="/auth/google">Login</a>
+					<li><a href="/auth/google">Login</a></li>
 					<% } else { %>
 						<div class="dropdown">
-							<a class="dropdown-toggle username" data-toggle="dropdown" href="#"><%= user.get("displayName")%></a>
+						
+                            <a class="dropdown-toggle username" data-toggle="dropdown" href="#">
+							<img class="profile-thumbnail" src="<%= user.get("picture")%>" width="30px" height="30px">
+							<%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
+							
+							</a>
 							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
 								<li role="presentation">
 									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
