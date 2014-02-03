@@ -22,14 +22,14 @@
 <script type="text/template" id="about-event-template">
     <h1>{{- title }}</h1>
     {{ if (organizer) { }}
-        <h4 style="color: #2E7DAA">hosted by {{- organizer }}</h4>
+        <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
     {{ } }}
     <br/>
     {{ if (formattedDate) { }}
         <b>{{- formattedDate }}</b>
     {{ } }}
     <br/><br/>
-    {{= cleanDescription }}
+    {{= description }}
 
     <div class="footer">This event has not yet started, so the rest of the page is disabled. Come back at the posted start time to participate!</div>
 </script>
