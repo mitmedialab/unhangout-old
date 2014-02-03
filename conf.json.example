@@ -13,7 +13,6 @@
     "UNHANGOUT_SMTP": {
         "host": "localhost",
         "port": "2525",
-        "auth": { "user": "", "password": "" },
         "secureConnection": false
     },
 

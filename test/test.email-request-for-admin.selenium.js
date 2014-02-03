@@ -5,7 +5,7 @@ var browser = null;
 
 var longEnough = "This is a description that is long enough to meet the 100 char length validation for descriptions..."
 
-describe("BROWSER REQUEST EVENT EMAIL", function() {
+describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }

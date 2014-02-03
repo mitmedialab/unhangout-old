@@ -11,7 +11,7 @@ var session;
 var longEnough = "This is a description that is long enough to meet the 100 char length validation for descriptions..."
 var validBody = {eventTitle: "This is fun", eventDescription: longEnough};
 
-describe("BROWSER REQUEST EVENT EMAIL", function() {
+describe("EMAIL REQUEST FOR ADMIN", function() {
     beforeEach(function(done) {
         common.standardSetup(function() {
             common.startEmailServer(done);
@@ -50,16 +50,19 @@ describe("BROWSER REQUEST EVENT EMAIL", function() {
     it("Sends email on well-formed request", function(done) {
         postSignupRequest("regular1", validBody, function(res) {
             expect(res.status).to.be(200);
-            expect(common.outbox.length).to.be(1);
-            var msg = common.outbox[0];
-            expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, recipientify));
-            expect(msg.from).to.eql([recipientify(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS)]);
-            expect(msg.subject).to.eql("Unhangout: Request for Admin Account");
-            expect(msg.html.indexOf(validBody.eventTitle)).to.not.eql(-1); 
-            expect(msg.html.indexOf(validBody.eventDescription)).to.not.eql(-1);
-            // Clear the outbox.
-            common.outbox.length = 0;
-            done();
+            // Next tick..
+            setTimeout(function() {
+                expect(common.outbox.length).to.be(1);
+                var msg = common.outbox[0];
+                expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, recipientify));
+                expect(msg.from).to.eql([recipientify(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS)]);
+                expect(msg.subject).to.eql("Unhangout: Request for Admin Account");
+                expect(msg.html.indexOf(validBody.eventTitle)).to.not.eql(-1); 
+                expect(msg.html.indexOf(validBody.eventDescription)).to.not.eql(-1);
+                // Clear the outbox.
+                common.outbox.length = 0;
+                done();
+            }, 1);
         });
     });
 
