@@ -76,7 +76,7 @@ describe("BROWSER ADMIN USERS", function() {
     });
     it("Manages admins", function(done) {
         var user = common.server.db.users.findWhere({"sock-key": 'regular1'});
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var eventUrl = "http://localhost:7777/admin/event/" + event.id;
         var addSelector = "tr[data-user-id='" + user.id + "'] .add-event";
         var removeSelector = "[data-event-id='" + event.id + "'].remove-event";

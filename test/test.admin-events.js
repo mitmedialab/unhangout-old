@@ -75,12 +75,12 @@ describe('HTTP ADMIN EVENTS API', function() {
 		it('should accept well-formed creation request from superuser', function(done) {
 			request.post('http://localhost:7777/admin/event/new')
                 .set("x-mock-user", "superuser1")
-				.send({title:"Test Event", description:"Description of the test event."})
+				.send({title:"Test Event 1234", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
                     expect(res.status).to.be(302);
-                    var evt = common.server.db.events.at(common.server.db.events.length-1);
-                    expect(evt.get('title')).to.be("Test Event");
+                    var evt = common.server.db.events.findWhere({title: "Test Event 1234"});
+                    expect(evt.get('title')).to.be("Test Event 1234");
                     expect(evt.get("description")).to.be("Description of the test event.");
                     expect(res.header['location']).to.be("/event/" + evt.id);
                     // Superusers don't get added as admins automatically.
@@ -94,12 +94,12 @@ describe('HTTP ADMIN EVENTS API', function() {
 
 			request.post('http://localhost:7777/admin/event/new')
                 .set("x-mock-user", "admin1")
-				.send({title:"Test Event", description:"Description of the test event."})
+				.send({title:"Test Event 2345", description:"Description of the test event."})
 				.redirects(0)
 				.end(function(res) {
                     expect(res.status).to.be(302);
-                    var evt = common.server.db.events.at(common.server.db.events.length-1);
-                    expect(evt.get("title")).to.be("Test Event");
+                    var evt = common.server.db.events.findWhere({title:"Test Event 2345"});
+                    expect(evt.get("title")).to.be("Test Event 2345");
                     expect(evt.get("description")).to.be("Description of the test event.");
                     expect(evt.get("admins").length).to.be(1);
                     expect(evt.get("admins")[0].id).to.eql(user.id);
@@ -329,7 +329,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 
 		it('should accept well-formed creation request from admin', function(done) {
             var user = common.server.db.users.findWhere({"sock-key": "admin1"});
-            var evt = common.server.db.events.at(0);
+            var evt = common.server.db.events.findWhere({shortName: "writers-at-work"});
             // the user should be an admin of this event..
             expect(evt.userIsAdmin(user)).to.be(true);
             // .. but they shouldn't need createEvents permission.
@@ -341,7 +341,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 				.redirects(0)
 				.end(function(res) {
                     expect(res.status).to.be(302);
-                    var evt = common.server.db.events.at(0);
+                    var evt = common.server.db.events.get(1);
                     expect(evt.get("title")).to.be("Test Event");
                     expect(evt.get("description")).to.be("Description of the test event.");
 					done();
@@ -354,7 +354,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 				.redirects(0)
 				.end(function(res) {
                     expect(res.status).to.be(302);
-                    var evt = common.server.db.events.at(0);
+                    var evt = common.server.db.events.get(1);
                     expect(evt.get("title")).to.be("Test Event");
                     expect(evt.get("description")).to.be("Description of the test event.");
 					done();

@@ -23,7 +23,7 @@ describe("CHAT WINDOW", function() {
             },
             function(done) {
                 common.standardSetup(function() {
-                    evt = common.server.db.events.at(0);
+                    evt = common.server.db.events.findWhere({shortName: "writers-at-work"});
                     evt.start();
                     done();
                 });
