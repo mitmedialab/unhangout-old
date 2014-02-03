@@ -9,7 +9,7 @@ describe("EVENT SESSION MESSAGES", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
-    this.timeout(40000); // Extra long timeout for selenium :(
+    this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
         common.getSeleniumBrowser(function (theBrowser) {
@@ -95,6 +95,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.waitForSelector("#mock-hangout-notice p");
         browser.byCss("#mock-hangout-notice p").getText().then(function(text) {
             expect(text).to.eql("##unhangouts## Superuser1 Mock: Hey there session");
+            sock.close();
             done();
         });
     });
