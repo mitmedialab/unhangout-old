@@ -3,15 +3,17 @@ var server = require('../lib/unhangout-server'),
 	expect = require('expect.js'),
 	_ = require('underscore'),
     sinon = require('sinon'),
-    Backbone = require("backbone"),
+    sync = require("../lib/redis-sync"),
     common = require('./common');
 
-Backbone.sync = require("../lib/redis-sync").dummySync;
 
 
 var participants = [{id: 1, displayName: "Fun"}, {id: 2, displayName: "Times"}];
 
-describe('RESTARTING SESSIONS', function() {
+describe('SESSION RESTART', function() {
+    beforeEach(function() {
+        sync.setPersist(false);
+    });
     it("Removes connected participants on restart", function() {
         var session = new models.ServerSession({connectedParticipants: participants});
         session.onRestart();
@@ -43,6 +45,7 @@ describe('RESTARTING SESSIONS', function() {
         session.setConnectedParticipants(participants);
         clock.tick(session.RESTART_HANGOUT_URL_EXPIRATION_TIMEOUT);
         expect(session.get("hangout-url")).to.be("http://example.com");
+        clock.restore();
     });
 
 });

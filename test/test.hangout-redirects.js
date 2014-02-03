@@ -75,7 +75,7 @@ describe("HANGOUT REDIRECTS", function() {
         ], function() {
             expect(session.get("hangout-pending")).to.be(null);
             expect(session.isHangoutPending()).to.be(false);
-            clock.reset();
+            clock.restore();
             done();
         });
     });
@@ -117,7 +117,7 @@ describe("HANGOUT REDIRECTS", function() {
         // Second user tries to connect...
         checkRedirect(url, u2.get("sock-key"), function() {
             expect(session.get("hangout-pending").userId).to.be(u2.id);
-            clock.reset();
+            clock.restore();
             done();
         });
         // First user never returns -- time advances.
