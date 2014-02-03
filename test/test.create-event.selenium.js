@@ -89,7 +89,6 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-nav a").click();
             browser.byCss("#session-list").getText().then(function(text) {
                 expect(text.indexOf("Sessions will appear here")).to.not.eql(-1);
-                done();
             });
 
 
@@ -118,6 +117,7 @@ describe("CREATE EVENT", function() {
                     welcomeMessage: att.welcomeMessage,
                     description: att.description
                 });
+                done();
             });
         });
     });

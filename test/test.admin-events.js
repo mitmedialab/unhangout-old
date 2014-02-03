@@ -330,7 +330,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 		it('should accept well-formed creation request from admin', function(done) {
             var user = common.server.db.users.findWhere({"sock-key": "admin1"});
             var evt = common.server.db.events.at(0);
-            // the user should bean admin of this event..
+            // the user should be an admin of this event..
             expect(evt.userIsAdmin(user)).to.be(true);
             // .. but they shouldn't need createEvents permission.
             user.setPerm("createEvents", false);

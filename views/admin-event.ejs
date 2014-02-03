@@ -179,6 +179,7 @@
                 return a < b ? -1 : a > b ? 1 : 0;
             }
         });
+        zones.unshift("Etc/UTC");
         var frag = document.createDocumentFragment();
         _.each(zones, function(zone) {
             var option = document.createElement("option");
