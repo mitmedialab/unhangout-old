@@ -74,7 +74,7 @@ models.Event = Backbone.Model.extend({
 
     formatDate: function() {
         if (this.get("dateAndTime") && this.get("timeZoneValue")) {
-            var date = moment.tz(this.get("dateAndTime"), this.get("timeZoneValue"));
+            var date = moment(this.get("dateAndTime")).tz(this.get("timeZoneValue"))
             if (date.isValid()) {
                 return date.format(this.DATE_DISPLAY_FORMAT) + " " + date.zoneName();
             }
