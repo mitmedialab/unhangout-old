@@ -5,6 +5,7 @@ var server = require("../lib/unhangout-server"),
     expect = require("expect.js"),
     _ = require("underscore"),
     request = require("superagent"),
+    sinon = require('sinon'),
     async = require('async');
 
 var session;
@@ -33,7 +34,7 @@ describe("HANGOUT REDIRECTS", function() {
 
     function checkRedirect(expected, user, done) {
         request.get("http://localhost:7777/session/" + session.get('session-key'))
-            .timeout(20000)
+            .timeout(models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT + 2)
             .set("x-mock-user", user)
             .redirects(0)
             .end(function(res) {
@@ -52,24 +53,27 @@ describe("HANGOUT REDIRECTS", function() {
         session.startHangoutWithUser(user);
         expect(session.get("hangout-pending").userId).to.eql(user.id);
         expect(session.isHangoutPending()).to.be(true);
+
+        var clock = sinon.useFakeTimers();
         async.parallel([
+            function(done) {
+                checkRedirect("http://example.com/hangy" + suffix, "regular1", done);
+            },
             function(done) {
                 // Make sure this timeout is greater than the express default
                 // timeout, so we can ensure that we've increased it on the express
                 // route handler appropriately.
-                setTimeout(function() {
-                    session.setHangoutUrl("http://example.com/hangy");
-                    expect(session.isHangoutPending()).to.be(false);
-                    expect(session.get('hangout-url')).to.eql('http://example.com/hangy');
-                    done();
-                }, 1000);
-            },
-            function(done) {
-                checkRedirect("http://example.com/hangy" + suffix, "regular1", done);
+                clock.tick(10000);
+
+                session.setHangoutUrl("http://example.com/hangy");
+                expect(session.isHangoutPending()).to.be(false);
+                expect(session.get('hangout-url')).to.eql('http://example.com/hangy');
+                done();
             },
         ], function() {
             expect(session.get("hangout-pending")).to.be(null);
             expect(session.isHangoutPending()).to.be(false);
+            clock.restore();
             done();
         });
     });
@@ -100,54 +104,59 @@ describe("HANGOUT REDIRECTS", function() {
         });
     });
     it("Lets a 2nd user be the pending creator if the 1st times out", function(done) {
-        this.timeout(30000); // We're testing long timeouts. :(
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
         var url = "https://plus.google.com/hangouts/_?gid=rofl&gd=sessionId:" + session.id;
+
+        var clock = sinon.useFakeTimers();
+
         // u1 is the user with the pending hangout...
         session.startHangoutWithUser(u1);
-        // Make sure this timeout is greater than the "pending" timeout
-        // set in lib/server-models.js
-        setTimeout(function() {
-            checkRedirect(url, u2.get("sock-key"), function() {
-                expect(session.get("hangout-pending").userId).to.be(u2.id);
-                done();
-            });
-        }, 20000);
+        // Second user tries to connect...
+        checkRedirect(url, u2.get("sock-key"), function() {
+            expect(session.get("hangout-pending").userId).to.be(u2.id);
+            clock.restore();
+            done();
+        });
+        // First user never returns -- time advances.
+        clock.tick(models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT + 1);
+
     });
     it("Retains a farmed url after adding it to a session if someone joins", function(done) {
-        this.timeout(30000); // We're testing long timeouts. :(
         var user = common.server.db.users.findWhere({"sock-key": "regular1"});
         var url = "http://example.com/good-url";
+
+        var clock = sinon.useFakeTimers();
+
         farming.reuseUrl(url, function(err) {
             expect(err).to.be(null);
             checkRedirect(url + suffix, "regular1", function() {
                 session.setConnectedParticipants([{id: user.id}]);
-                setTimeout(function() {
-                    expect(session.getHangoutUrl()).to.be(url);
-                    done();
-                }, 25000);
+                clock.tick(models.ServerSession.prototype.HANGOUT_CONNECTION_TIMEOUT - 1);
+                expect(session.getHangoutUrl()).to.be(url);
+                clock.restore();
+                done();
             });
         });
     });
     it("Times-out a farmed url (without re-using it) after adding it to a session if no one joins", function(done) {
-        this.timeout(30000); // We're testing long timeouts. :(
         var url = "http://example.com/poison-url";
+        var clock = sinon.useFakeTimers();
         expect(farming.getNumHangoutsAvailable()).to.be(0);
+
         farming.reuseUrl(url, function(err) {
             expect(err).to.be(null);
             // We should get the farmed (poison) url...
             checkRedirect(url + suffix, "regular1", function() {
                 // ... but we don't enter the session, and never start it.
-                setTimeout(function() {
-                    expect(session.getHangoutUrl()).to.be(null);
-                    // Ensure the URL wasn't reused..
-                    farming.getNextHangoutUrl(function(err, url) {
-                        expect(err).to.be(null);
-                        expect(url).to.be(null);
-                        done();
-                    });
-                }, 20000);
+                clock.tick(models.ServerSession.prototype.HANGOUT_CONNECTION_TIMEOUT + 1);
+                expect(session.getHangoutUrl()).to.be(null);
+                farming.getNextHangoutUrl(function(err, url) {
+                    expect(err).to.be(null);
+                    expect(url).to.be(null);
+                    clock.restore();
+                    done();
+                });
             });
         });
     });

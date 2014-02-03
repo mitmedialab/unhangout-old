@@ -1,11 +1,13 @@
 var models = require('../lib/server-models.js'),
 	client_models = require('../public/js/models.js'),
 	should = require('should'),
-    Backbone = require("backbone");
-
-Backbone.sync = require("../lib/redis-sync").dummySync;
+    sync = require("../lib/redis-sync.js");
 
 describe("SERVEREVENT", function() {
+    beforeEach(function() {
+        sync.setPersist(false);
+    });
+
 	describe("#new", function() {
 		it('should construct a default model', function() {
 			var event = new models.ServerEvent();

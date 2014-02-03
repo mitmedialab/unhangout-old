@@ -1,12 +1,9 @@
 var common = require("./common.js"),
     models = require("../lib/server-models.js"),
     conf = require('../lib/options'),
+    sync = require("../lib/redis-sync"),
     expect = require('expect.js'),
-    _ = require('underscore'),
-    Backbone = require("backbone");
-
-Backbone.sync = require("../lib/redis-sync").dummySync;
-
+    _ = require('underscore');
 
 // This module tests the basic registration functions that are called by our
 // authentication wrapper (passport).  It does *not* test the actual
@@ -28,6 +25,10 @@ function buildProfile(attrs) {
 }
 
 describe("REGISTRATION", function() {
+    beforeEach(function() {
+        sync.setPersist(false);
+    });
+
     it("adds new users on register", function(done) {
         // Create a new user list to run tests with.
         var users = new models.ServerUserList();
