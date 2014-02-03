@@ -19,6 +19,7 @@ var TEST_CONF = _.extend({}, conf, {
     "mockAuth": true,
     "baseUrl": "http://localhost:7777"
 });
+TEST_CONF.UNHANGOUT_HANGOUT_ORIGIN_REGEX = TEST_CONF.baseUrl;
 
 var seleniumServer = null;
 var buildBrowser = function(callback) {
