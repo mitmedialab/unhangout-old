@@ -8,10 +8,6 @@ before_install:
  - sudo apt-get install -qq build-essential libssl-dev curl
  - sh -e /etc/init.d/xvfb start
 before_script:
- - npm install --dev
  - curl -L https://selenium.googlecode.com/files/selenium-server-standalone-2.39.0.jar > bin/selenium-server-standalone.jar
  - cp conf.json.example conf.json
 script: "npm test"
-branches:
-  only:
-    - master
