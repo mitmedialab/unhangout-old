@@ -20,6 +20,7 @@ describe('sync', function() {
 			redis.select(1, function(err, res) {
 				redis.flushdb(function() {
 					sync.init(logger, redis);
+                    sync.setPersist(true);
 					logger.info("calling init");
 					done();
 				});

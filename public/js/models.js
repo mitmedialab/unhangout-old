@@ -11,7 +11,8 @@
 	// put everything in exports and behave like a module. If it's on the client,
 	// fake it and expect the client to understand how to deal with things.
 	var _ = require('underscore')._,
-	    Backbone = require('backbone');
+	    Backbone = require('backbone'),
+        moment = require("moment");
 
   } else {
     models = this.models = {};
@@ -40,6 +41,7 @@ if(server) {
 models.Event = Backbone.Model.extend({
 	idRoot: "event",
 	urlRoot: "event",
+    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
 	
 	defaults: function() {
 		return {
@@ -57,7 +59,6 @@ models.Event = Backbone.Model.extend({
 			blurDisabled: false,
 			dateAndTime: null,
 			timeZoneValue: null,
-			timeZoneAbbr: null,
             admins: []
 		}
 	},
@@ -71,6 +72,20 @@ models.Event = Backbone.Model.extend({
 	numUsersConnected: function() {
 		return this.get("connectedUsers").length;
 	},
+
+    formatDate: function() {
+        if (this.get("dateAndTime") && this.get("timeZoneValue")) {
+            var date = moment(this.get("dateAndTime")).tz(this.get("timeZoneValue"))
+            if (date.isValid()) {
+                return date.format(this.DATE_DISPLAY_FORMAT) + " " + date.zoneName();
+            }
+        }
+        return "";
+    },
+
+    getEventUrl: function() {
+        return "/event/" + (this.get("shortName") ? this.get("shortName") : this.id);
+    },
 	
 	toJSON: function() {
 		var attrs = _.clone(this.attributes);
@@ -84,10 +99,6 @@ models.Event = Backbone.Model.extend({
 		delete attrs["sessions"];
 		
 		return attrs;
-	},
-	
-	toClientJSON: function() {
-		return _.clone(this.attributes);
 	},
 	
 	addSession: function(session) {

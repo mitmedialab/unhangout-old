@@ -127,35 +127,110 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
 });
 var UserTableView = Backbone.Marionette.CompositeView.extend({
     template: '#user-table',
+    resultCountTemplate: _.template($("#user-result-count").html()),
     itemView: UserRowView,
     itemViewContainer: 'tbody',
     events: {
-        'keyup input.filter-input': 'filterUsers'
+        'keyup input.filter-name': 'filterUsers',
+        'change input.filter-superusers': 'filterSuperusers',
+        'change input.filter-admins': 'filterAdmins',
+        'change select.filter-perms': 'filterPerms',
+        'click .show-more': 'showMore'
     },
     ui: {
-        'filterInput': 'input.filter-input'
+        'filterName': 'input.filter-name',
+        'filterSuperusers': 'input.filter-superusers',
+        'filterAdmins': 'input.filter-admins',
+        'filterPerms': 'select.filter-perms',
+        'resultCount': 'div.result-count'
     },
     initialize: function(options) {
-        _.bindAll(this, 'filterUsers');
+        _.bindAll(this, 'applyFilters', 'filterUsers', 'filterSuperusers',
+                        'filterAdmins', 'filterPerms', 'showMore');
         // Clone users so we can manipulate it later.
-        this.collection = new models.UserList(users.models);
+        this.limit = 20;
+        this.filter = {};
+        this.collection = new models.UserList();
+        this.applyFilters();
     },
-    filterUsers: function(jqevt) {
-        var val = this.ui.filterInput.val();
-        if (val == "") {
-            this.collection.reset(users.models);
-        } else {
-            var tokens = val.toLowerCase().split(" ");
-            this.collection.reset(_.filter(users.models, function(user) {
-                var search = user.get("displayName") + " " + _.pluck(user.get("emails"), "value").join(" ");
+    serializeData: function() {
+        var context = Backbone.Marionette.CompositeView.prototype.serializeData.apply(this);
+        context.permissions = [];
+        if (users.length > 0) {
+            users.at(0).eachPerm(function(key, has, human) {
+                context.permissions.push([key, human]);
+            });
+        }
+        context.totalCount = this.totalCount;
+        context.limit = this.limit;
+        return context;
+    },
+    applyFilters: function() {
+        var models =_.filter(users.models, _.bind(function(user) {
+            if (this.filter.superuser) {
+                if (!user.isSuperuser()) {
+                    return false;
+                }
+            }
+            if (this.filter.perm) {
+                if (!user.hasPerm(this.filter.perm)) {
+                    return false;
+                }
+            }
+            if (this.filter.name) {
+                var tokens = this.filter.name.toLowerCase().split(" ");
+                var search = user.get("displayName") + " " +
+                    _.pluck(user.get("emails"), "value").join(" ");
+
                 for (var i = 0; i < tokens.length; i++) {
                     if (search.indexOf(tokens[i]) == -1) {
                         return false;
                     }
                 }
-                return true;
-            }));
-        }
+            }
+            if (this.filter.admin) {
+                var isAdmin = _.some(events.models, function(event) {
+                    return event.userIsAdmin(user);
+                });
+                if (!isAdmin) {
+                    return false;
+                }
+            }
+            return true;
+        }, this));
+        this.totalCount = models.length;
+        this.collection.reset(models.slice(0, this.limit));
+    },
+    onAfterItemAdded: function() {
+        this.renderCounts();
+    },
+    onItemRemoved: function() {
+        this.renderCounts();
+    },
+    renderCounts: function() {
+        this.ui.resultCount.html(this.resultCountTemplate({
+            limit: this.limit, totalCount: this.totalCount
+        }));
+    },
+    filterUsers: function(jqevt) {
+        this.filter.name = this.ui.filterName.val();
+        this.applyFilters();
+    },
+    filterSuperusers: function() {
+        this.filter.superuser = this.ui.filterSuperusers.is(":checked");
+        this.applyFilters();
+    },
+    filterAdmins: function() {
+        this.filter.admin = this.ui.filterAdmins.is(":checked");
+        this.applyFilters();
+    },
+    filterPerms: function() {
+        this.filter.perm = this.ui.filterPerms.val();
+        this.applyFilters();
+    },
+    showMore: function() {
+        this.limit += 20;
+        this.applyFilters();
     }
 });
 

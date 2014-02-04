@@ -123,7 +123,7 @@ describe("HTTP ADMIN USERS API", function() {
 
     it("adds event admins by id", function(done) {
         var user = common.server.db.users.findByEmail("regular1@example.com");
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         expect(user.isAdminOf(event)).to.be(false);
         postUsers("superuser1", {
             action: "add-event-admin",
@@ -137,7 +137,7 @@ describe("HTTP ADMIN USERS API", function() {
         });
     });
     it("removes event admins by id", function(done) {
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var user = common.server.db.users.findByEmail(event.get("admins")[0].email);
         event.set("admins", [{id: user.id}]);
 
@@ -156,7 +156,7 @@ describe("HTTP ADMIN USERS API", function() {
     });
     it("adds event admins by known email", function(done) {
         var user = common.server.db.users.findByEmail("regular1@example.com");
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         expect(user.isAdminOf(event)).to.be(false);
         postUsers("superuser1", {
             action: "add-event-admin",
@@ -170,7 +170,7 @@ describe("HTTP ADMIN USERS API", function() {
         });
     });
     it("removes event admins by known email", function(done) {
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var email = event.get("admins")[0].email;
         var user = common.server.db.users.findByEmail(email);
 
@@ -190,7 +190,7 @@ describe("HTTP ADMIN USERS API", function() {
     it("adds event admins by unknown email", function(done) {
         var user = common.server.db.users.findByEmail("nonexistent@example.com");
         expect(user).to.be(undefined);
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         event.set("admins", []);
         postUsers("superuser1", {
             action: "add-event-admin",
@@ -211,7 +211,7 @@ describe("HTTP ADMIN USERS API", function() {
         });
     });
     it("removes event admins by unknown email", function(done) {
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         event.set("admins", [{email: "nonexistent@example.com"}]);
         expect(new models.ServerUser({emails: [{value: "nonexistent@example.com"}]}).isAdminOf(event)).to.be(true);
 
@@ -236,7 +236,7 @@ describe("HTTP ADMIN USERS API", function() {
         });
     });
     it("removes event admins by email when they were added by id", function(done) {
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var user = common.server.db.users.findWhere({superuser: false});
         event.set("admins", [{id: user.id}]);
         expect(user.isAdminOf(event)).to.be(true);
@@ -256,7 +256,7 @@ describe("HTTP ADMIN USERS API", function() {
         });
     });
     it("removes event admins by id when they were added by email", function(done) {
-        var event = common.server.db.events.at(0);
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var user = common.server.db.users.findWhere({superuser: false});
         event.set("admins", [{email: user.get('emails')[0].value}]);
         expect(user.isAdminOf(event)).to.be(true);

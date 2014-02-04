@@ -20,18 +20,22 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    <h1>{{=title}}</h1>
-    <h4 style="color: #2E7DAA">hosted by {{=organizer}}</h4>
+    <h1>{{- title }}</h1>
+    {{ if (organizer) { }}
+        <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
+    {{ } }}
     <br/>
-    <b>{{= dateAndTime}} {{= timeZoneAbbr}}</b>
+    {{ if (formattedDate) { }}
+        <b>{{- formattedDate }}</b>
+    {{ } }}
     <br/><br/>
-    {{= description}}
+    {{= description }}
 
     <div class="footer">This event has not yet started, so the rest of the page is disabled. Come back at the posted start time to participate!</div>
 </script>
 
 <script type="text/template" id="session-template">
-    <h3>{{= title }}</h3>
+    <h3>{{- title }}</h3>
     <div class="attend btn btn-info" data-toggle="button">
         <span class="outer"><i class="icon-lock"></i><span class="text">SIGN UP</span><span class="attend-count hide"></span></span>
         <div class="attendance"></div>
@@ -58,9 +62,9 @@
         <div id="prev">prev</div>
             {{ _.each(info().pageSet, function(page) { }}
                 {{ if(page==currentPage) { }}
-                    <div class="active page">{{= page }}</div>
+                    <div class="active page">{{- page }}</div>
                 {{ } else { }}
-                    <div class="page">{{= page }}</div>
+                    <div class="page">{{- page }}</div>
                 {{ } }}
             {{ }) }}
             <div id="next">next</div>
@@ -72,15 +76,15 @@
     {{ if(!picture) { }}
         <i class="icon-user icon-3x"></i>
     {{ } else if (link) { }}
-        <a href="{{=link}}" target="_new"><img src="{{=picture}}"></a>
+        <a href="{{- link }}" target="_new"><img src="{{- picture}}"></a>
     {{ } else { }}
-        <img src="{{=picture}}">
+        <img src="{{- picture}}">
     {{ } }}
 </script>
             
 <script type="text/template" id="user-list-template">
     <div class="header">
-        <span class="contents">{{=numUsers}}</span><i class="icon-user"></i>
+        <span class="contents">{{- numUsers}}</span><i class="icon-user"></i>
     </div>
     <div id="user-list-scroll-container">
         <ul id="user-list-container"></ul>
@@ -88,7 +92,7 @@
 </script>
             
 <script type="text/template" id="chat-message-template">
-    <span class="from">{{=user.shortDisplayName}}</span>{{=text}}
+    <span class="from">{{- user.shortDisplayName}}</span>{{- text}}
 </script>
             
 <script type="text/template" id="chat-layout">
@@ -135,7 +139,7 @@
                 <a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
                 <a role="menuitem" tabindex="-1" id="message-sessions">send message to sessions</a>
                 {{ if (IS_SUPERUSER) { }}
-                    <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{=numFarmedHangouts}}</span> available</a>
+                    <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{- numFarmedHangouts}}</span> available</a>
                 {{ } }}
             </li>
         </ul>

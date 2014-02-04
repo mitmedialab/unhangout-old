@@ -10,90 +10,152 @@
 <div class="container event-form-container">
     <br/>
 
-    <form class="form-horizontal" action="/admin/event/<%= create ? "new":event.id%>" method="post" encoding="application/x-www-form-urlencoded">
+    <form class="form-horizontal"
+          action="/admin/event/<%= event.id || "new" %>"
+          method="post" encoding="application/x-www-form-urlencoded">
 
-    <input type="hidden" name="create" value="<%= create %>">
-
-    <div class="control-group">
+    <div class="control-group<%= errors.title ? " error" : "" %>">
         <label class="control-label" for="inputTitle">Event Title</label>
         <div class="controls">
-            <input style="width: 560px;" type="text" id="inputTitle" name="title" placeholder="Give your event a catchy title" value="<%=create ? "":event.get("title") %>">
+            <input style="width: 560px;" type="text" id="inputTitle" name="title"
+                   placeholder="Give your event a catchy title"
+                   value="<%= event.get("title") || "" %>"
+                   required>
+            <% if (errors.title) { %>
+                <span class='help-inline'><%= errors.title %></span>
+            <% } %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group<%= errors.organizer ? " error" : "" %>">
         <label class="control-label" for="inputOrganizer">Event Organizer</label>
         <div class="controls">
-            <input style="width: 560px;" type="text" id="inputOrganizer" placeholder="Tell your attendees who is organizing this event" name="organizer" value="<%=create? "":event.get("organizer") %>">
+            <input style="width: 560px;" type="text" id="inputOrganizer"
+                   placeholder="Tell your attendees who is organizing this event"
+                   name="organizer"
+                   value="<%= event.get("organizer") || "" %>">
+            <% if (errors.organizer) { %>
+                <span class='help-inline'><%= errors.organizer %></span>
+            <% } %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group<%= errors.shortName ? " error" : "" %>">
         <label class="control-label" for="inputShortName">Event URL</label>
         <div class="controls">
-            <input style="width: 300px;" type="text" id="eventURL" placeholder="http://unhangout.media.mit.edu/event/" readOnly>
-            <input style="width: 242px;" type="text" id="inputShortName" name="shortName" placeholder="event-url" value="<%=create? "":event.get("shortName") %>">
+            <input style="width: 300px; text-align: right;" type="text" id="eventURL"
+                   placeholder="<%= baseUrl %>/event/" disabled>
+            <input style="width: 242px;" type="text" id="inputShortName" name="shortName"
+                   placeholder="event-url"
+                   value="<%= event.get("shortName") || "" %>">
+            <% if (errors.shortName) { %>
+                <span class='help-inline'><%= errors.shortName %></span>
+            <% } %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group<%= errors.dateAndTime ? " error" : "" %>">
         <label class="control-label" for="inputDate">Event Date/Time</label>
         <div class="controls">
             <div class="input-append date form_datetime">
-            <input style="width: 532px;" size="16" type="text" value="<%=create? "":event.get("dateAndTime") %>" name="dateAndTime" id="dateAndTime" readonly>
-            <span class="add-on"><i class="icon-th"></i></span>
+                <input size="16" type="text" style="cursor: pointer; width: 504px;"
+                       <% if (!event.get("dateAndTime")) { %>
+                           value=""
+                       <% } else { %>
+                           value="<%= moment(event.get("dateAndTime")).format(event.DATE_DISPLAY_FORMAT) %>"
+                       <% } %>
+                       name="dateAndTime" id="dateAndTime" readonly>
+                <span class="add-on"><i class="icon-remove"></i></span>
+                <span class="add-on"><i class="icon-th"></i></span>
             </div>
+            <% if (errors.dateAndTime) { %>
+                <span class='help-inline'><%= errors.dateAndTime %></span>
+            <% } %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group<%= errors.timeZoneValue ? " error" : "" %>">
         <label id="tzLabel" class="control-label" for="timeZone">Time Zone</label>
         <div class="controls">
-            <select id = "timeZoneValue" style="width: 570px;" name="timeZoneValue" class="form-control" value="<%=create? "":event.get("timeZoneValue") %>">
-            <option selected="true" value="<%=create? "":event.get("timeZoneValue") %>"><%=create? "":event.get("timeZoneValue") %></option>
-            <% include timezones.ejs %>
+            <select id="timeZoneValue" style="width: 570px;" name="timeZoneValue"
+                    class="form-control">
+                <option value=""></option>
+                <!-- options created in script below -->
             </select> 
+            <% if (errors.timeZoneValue) { %>
+                <span class='help-inline'><%= errors.timeZoneValue %></span>
+            <% } %>
         </div>
     </div>
 
-    <div class="control-group">
+    <div class="control-group<%= errors.welcomeMessage ? " error" : "" %>">
         <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
         <div class="controls">
-            <textarea rows=1 cols=40 type="text" id="inputWelcomeMessage" name="welcomeMessage" placeholder="Welcome Message for Participants" style='width: 560px;'><%=create? "":event.get("welcomeMessage")%></textarea>
+            <textarea rows=1 cols=40 type="text" id="inputWelcomeMessage"
+                      name="welcomeMessage" placeholder="Welcome Message for Participants"
+                      style='width: 560px;'
+                ><%= event.get("welcomeMessage") || "" %></textarea>
+            <% if (errors.welcomeMessage) { %>
+                <span class='help-inline'><%= errors.welcomeMessage %></span>
+            <% } %>
         </div>
     </div>
     
-    <div class="control-group">
+    <div class="control-group<%= errors.description ? " error" : "" %>">
         <label class="control-label" for="inputDescription">Event Description </label>
         <div class="controls">
             <div class="container">
-                <textarea class="summernote" name="description"><%=create? "":event.get("description")%></textarea>
+                <textarea class="summernote" name="description" rows=5 style='width: 100%;'
+                          required><%= event.cleanDescription() || "" %></textarea>
             </div>
+            <% if (errors.description) { %>
+                <span class='help-inline'><%= errors.description %></span>
+            <% } %>
         </div>
     </div>
 
     <div class="control-group">
         <div class="controls">
-            <button class="btn btn-primary create-event" type='submit'><%= create? "Create My Unhangout Event": "Update My Event" %></button>
+            <button class="btn btn-primary create-event" type='submit'>
+                <%= event.id ? "Update My Event" : "Create My Unhangout Event" %>
+            </button>
         </div>
     </div>
             
     </form>
 </div>
 
+<!--<script type="text/javascript" src="/public/js/summernote.min.js"></script>-->
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jstimezonedetect/1.0.4/jstz.js"></script>
+<script type="text/javascript" src="/public/js/bootstrap-datetimepicker.min.js"></script>
+
 <script>
     $(function(){
-         $(".form_datetime").datetimepicker({
-            format: "dd MM yyyy - hh:ii P",
+        <% if (!event.id) { %>
+            var oneWeekAfter = moment()
+                .add('days', 7)
+                .second(0)
+                .minute(0)
+                .format("<%= event.DATE_DISPLAY_FORMAT %>"); 
+            $("#dateAndTime").val(oneWeekAfter);
+        <% } %>
+        // Using http://www.malot.fr/bootstrap-datetimepicker/
+        $(".form_datetime").datetimepicker({
+            // NOTE: the parser fails if there isn't whitespace or punctuation
+            // between each component.  You can't do "H:iip", it has to be
+            // "H:ii p".  Also note: this should be identical to
+            // event.DATE_DISPLAY_FORMAT, which uses moment.js syntax instead.
+            format: "DD M d, yyyy H:ii p",
             showMeridian: true,
-            autoclose: true,
+            forceParse: true,
+            pickerPosition: 'bottom-left',
+            viewSelect: 'decade',
             todayBtn: true
         });
 
-         $('#summernote').summernote();
-
-         $('.summernote').summernote({
-              toolbar: [
+        /*
+        $('.summernote').summernote({
+            toolbar: [
                 ['style', ['bold', 'italic', 'underline', 'clear']],
                 ['fontsize', ['fontsize']],
                 ['color', ['color']],
@@ -101,10 +163,41 @@
                 ['height', ['height']],
                 ['insert', ['picture', 'link']], 
                 ['codeview', ['codeview']],
-              ],
+            ],
+            height: 150
+        });
+        */
 
-              height: 150
-        });       
+        // Append timezones to option box.
+        var zones = _.map(moment.tz.zones(), function(z) { return z.displayName; });
+        zones.sort(function(a, b) {
+            var aIsAmerica = /^America/.test(a);
+            var bIsAmerica = /^America/.test(b);
+            if (aIsAmerica != bIsAmerica) {
+                return aIsAmerica ? -1 : 1;
+            } else {
+                return a < b ? -1 : a > b ? 1 : 0;
+            }
+        });
+        zones.unshift("Etc/UTC");
+        var frag = document.createDocumentFragment();
+        _.each(zones, function(zone) {
+            var option = document.createElement("option");
+            option.value = zone;
+            option.textContent = zone.replace(/_/g, " ");
+            <% if (event.get("timeZoneValue")) { %>
+                if (zone === "<%= event.get("timeZoneValue") %>") {
+                    option.selected = true;
+                }
+            <% } %>
+            frag.appendChild(option);
+        });
+        $("#timeZoneValue").append(frag);
+
+        if($("#timeZoneValue").val() == "") {
+            // Automatic TimeZone Detection of the browser client 
+            $("#timeZoneValue").val(jstz.determine().name());
+        }
     });
 </script>
 

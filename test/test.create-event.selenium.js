@@ -1,5 +1,6 @@
-var should      = require('should'),
-    common      = require('./common');
+var expect      = require('expect.js'),
+    common      = require('./common'),
+    moment      = require('moment');
 
 var browser = null;
 
@@ -31,37 +32,41 @@ describe("CREATE EVENT", function() {
         browser.byCss("[name='title']").sendKeys("Test Title");
         browser.byCss("[name='shortName']").sendKeys("test-title");
         browser.byCss("[name='organizer']").sendKeys("unhangoutdev@gmail.com");
-        browser.byCss("[name='welcomeMessage']").sendKeys("<em>Welcome!</em>");
+        browser.byCss("[name='welcomeMessage']").sendKeys("Welcome!");
+        browser.byCss("[name='description']").sendKeys("<b>Fun event!</b>");
+        
+        /* Disabled until we can figure out sanitization issues.
         // richtext editor control.
         browser.waitForSelector(".note-editable");
         browser.byCss(".note-editable").sendKeys("This is my description");
+        */
+
         browser.byCss(".btn-primary.create-event").click()
         var eventId;
         browser.getCurrentUrl().then(function(url) {
-            var match = /^http:\/\/localhost:7777\/event\/(\d+)$/.exec(url);
-            (match == null).should.equal(false);
-            eventId = match[1];
+            expect(url).to.be("http://localhost:7777/event/test-title");
+            eventId = common.server.db.events.findWhere({shortName: "test-title"}).id
         }).then(function() {
             browser.get("http://localhost:7777/admin/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
-                    text.should.equal("Test Title (test-title)");
+                    expect(text).to.be("Test Title (test-title)");
                 });
             
             // Event hasn't started
             browser.get("http://localhost:7777/event/" + eventId)
             browser.getTitle().then(function(title) {
-                title.should.equal("Test Title — powered by unhangout");
+                expect(title).to.be("Test Title — powered by unhangout");
             });
             browser.waitForSelector("#about-event h1");
             browser.byCss("#about-event h1").getText().then(function(text) {
-                text.should.equal("Test Title");
+                expect(text).to.be("Test Title");
             });
             browser.byCss("#about-event h4").getText().then(function(text) {
-                text.should.equal("hosted by unhangoutdev@gmail.com");
+                expect(text).to.be("hosted by unhangoutdev@gmail.com");
             });
             browser.byCss("#about-event .footer").getText().then(function(text) {
-                text.indexOf("has not yet started").should.not.equal(-1);
+                expect(text.indexOf("has not yet started")).to.not.eql(-1);
             });
 
             // Start the event.
@@ -78,12 +83,40 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-nav a").click();
             browser.executeScript("return $('#about-event .footer').is(':visible');").then(function(res) {
                 // No longer have footer message.
-                res.should.equal(false);
+                expect(res).to.be(false);
             });
             // Hide the 'about' div
             browser.byCss("#about-nav a").click();
             browser.byCss("#session-list").getText().then(function(text) {
-                text.indexOf("Sessions will appear here").should.not.equal(-1);
+                expect(text.indexOf("Sessions will appear here")).to.not.eql(-1);
+            });
+
+
+            // Edit the event
+            browser.byCss(".admin-button").click();
+            browser.waitForSelector("#admin-page-for-event");
+            browser.byCss("#admin-page-for-event").click();
+            // Ensure event stuff is there
+            browser.executeScript("return {" +
+                                  " title: $('#inputTitle').val(), " +
+                                  " organizer: $('#inputOrganizer').val(), " +
+                                  " shortName: $('#inputShortName').val(), " +
+                                  " dateAndTime: $('#dateAndTime').val(), " +
+                                  " timeZoneValue: $('#timeZoneValue').val(), " +
+                                  " welcomeMessage: $('#inputWelcomeMessage').val(), " +
+                                  " description: $('[name=description]').val()};")
+            .then(function(attrs) {
+                var event = common.server.db.events.get(eventId);
+                var att = event.attributes;
+                expect(attrs).to.eql({
+                    title: att.title,
+                    organizer: att.organizer,
+                    shortName: att.shortName, 
+                    dateAndTime: moment(att.dateAndTime).format(event.DATE_DISPLAY_FORMAT),
+                    timeZoneValue: att.timeZoneValue,
+                    welcomeMessage: att.welcomeMessage,
+                    description: att.description
+                });
                 done();
             });
         });

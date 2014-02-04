@@ -24,7 +24,7 @@
                 <a class='shrink btn' href='#'>Shrink &rArr;</a>
                 <a class='grow btn' href='#'>&lArr; Grow</a>
                 <div class='hide-app'>Hide</div>
-                <span class='name'>{{= session.get('title') || session.get('shortCode') || "Hangout Permalink" }}</span>
+                <span class='name'>{{- session.get('title') || session.get('shortCode') || "Hangout Permalink" }}</span>
             </div>
           </div>
         </div>
@@ -46,10 +46,10 @@
         {{ if (dismissable) { }}
              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         {{ } }}
-        <h3>Message from {{= sender }}</h3>
+        <h3>Message from {{- sender }}</h3>
     </div>
     <div class='modal-body'>
-        <b>{{= sender }}</b>: {{= message }}
+        <b>{{- sender }}</b>: {{- message }}
     </div>
     {{ if (dismissable) { }}
         <div class='modal-footer' style='text-align: center;'>
@@ -145,7 +145,7 @@
         </p>
         <p style='text-align: center;'>
             <a class='btn btn-large btn-danger'
-               href='{{= url }}' target="_top" id='wrong-hangout-url'>
+               href='{{- url }}' target="_top" id='wrong-hangout-url'>
                 Click to Join the Correct Hangout
             </a>
         </p>

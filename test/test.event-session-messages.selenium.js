@@ -9,13 +9,13 @@ describe("EVENT SESSION MESSAGES", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
-    this.timeout(40000); // Extra long timeout for selenium :(
+    this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
-                event = common.server.db.events.at(0);
+                event = common.server.db.events.findWhere({shortName: "writers-at-work"});
                 event.start();
                 done();
             });
@@ -66,9 +66,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.byCss("#send-session-message").click();
     });
 
-    it("Sessions display message sent by admin, app hidden", function(done) {
-        // Test that a message sent by admin to the session generates a hangout
-        // notice when the app is not visible.
+    it("Sessions display message sent by admin", function(done) {
         
         var sock;
         var session = event.get("sessions").at(0);
@@ -78,6 +76,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
         browser.waitForSelector("iframe[name='gadget_frame']");
         browser.switchTo().frame("gadget_frame");
+        browser.waitForSelector("iframe[name='facilitator_frame']");
 
         // Generate an event message.
         browser.then(function() {
@@ -96,6 +95,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.waitForSelector("#mock-hangout-notice p");
         browser.byCss("#mock-hangout-notice p").getText().then(function(text) {
             expect(text).to.eql("##unhangouts## Superuser1 Mock: Hey there session");
+            sock.close();
             done();
         });
     });
