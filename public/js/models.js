@@ -367,7 +367,7 @@ models.SessionList = Backbone.Collection.extend({
 
 models.User = Backbone.Model.extend({
     // list of available permission keys for enumerating permissions
-    PERMISSION_KEYS: ["createEvents"],
+    PERMISSION_KEYS: ["createEvents", "farmHangouts"],
 
 	defaults: function() {
         return {
