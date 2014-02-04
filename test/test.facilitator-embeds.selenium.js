@@ -47,11 +47,11 @@ describe("FACILITATOR EMBEDS", function() {
         browser.mockAuthenticate("regular1");
         
         // Load a session page with a webpage activity.
-        session.set("activities", [{type: "webpage", url: "http://localhost:7777/about/"}]);
+        session.set("activities", [{type: "webpage", url: "http://example.com"}]);
         browser.get("http://localhost:7777/facilitator/" + session.id + "/");
         // Ensure the webpage is displayed.
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
-            expect(src).to.eql("http://localhost:7777/about/");
+            expect(src).to.eql("http://example.com");
 
         });
         // Remove the embed.
@@ -73,16 +73,14 @@ describe("FACILITATOR EMBEDS", function() {
         // Nothing should happen... the next call should fail if the modal is closed.
         
         // Allows non-blank URLs.
-        browser.byCss(".modal-body input[type='text']").sendKeys(
-            "http://localhost:7777/how-to-unhangout/"
-        );
+        browser.byCss(".modal-body input[type='text']").sendKeys("http://example.com");
         browser.byCss(".modal input[type='submit']").click();
         browser.waitForSelector("iframe");
         browser.byCss(".webpage-activity"); // throws error if it's not there
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
-            expect(src).to.eql("http://localhost:7777/how-to-unhangout/");
+            expect(src).to.eql("http://example.com");
             expect(session.get("activities")).to.eql([{
-                'type': 'webpage', 'url': "http://localhost:7777/how-to-unhangout/"
+                'type': 'webpage', 'url': "http://example.com"
             }]);
         });
         // Embeds youtube videos.

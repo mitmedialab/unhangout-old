@@ -48,4 +48,43 @@ describe('SESSION RESTART', function() {
         clock.restore();
     });
 
+    it("Calculates total seconds active", function() {
+        var session = new models.ServerSession();
+
+        var clock = sinon.useFakeTimers();
+
+        session.onHangoutStarted();
+        clock.tick(10000);
+        session.onHangoutStopped();
+
+        expect(session.get("total-seconds")).to.be(10);
+        expect(session.get("hangout-start-time")).to.be(null);
+
+        session.onHangoutStarted();
+        clock.tick(10000);
+        session.onHangoutStopped();
+
+        expect(session.get("total-seconds")).to.be(20);
+        expect(session.get("hangout-start-time")).to.be(null);
+
+        expect(session.get("total-instances")).to.be(2);
+
+        clock.restore();
+    });
+
+    it("Continues counting after restart", function() {
+        var clock = sinon.useFakeTimers();
+        var start = new Date().getTime();
+        clock.tick(10000);
+        var session = new models.ServerSession({
+            hangoutConnected: true,
+            "hangout-start-time": start,
+        });
+        clock.tick(10000);
+        session.onHangoutStopped();
+
+        expect(session.get("total-seconds")).to.be(20);
+
+        clock.restore();
+    });
 });
