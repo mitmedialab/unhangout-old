@@ -11,7 +11,8 @@
 	// put everything in exports and behave like a module. If it's on the client,
 	// fake it and expect the client to understand how to deal with things.
 	var _ = require('underscore')._,
-	    Backbone = require('backbone');
+	    Backbone = require('backbone'),
+        moment = require("moment");
 
   } else {
     models = this.models = {};
