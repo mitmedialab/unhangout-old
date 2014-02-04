@@ -21,7 +21,20 @@
     <div class='span10 offset2'>
         <h1>Users</h1>
         <div>
-            Filter by email or name: <input class='filter-input' type='text' />
+            <form class='form-inline'>
+                Filter:
+                <input class='filter-name' type='text' placeholder='Name or email' />
+                <label>Superusers: <input class='filter-superusers' type='checkbox' /></label>
+                <label>Admins: <input class='filter-admins' type='checkbox' /></label>
+                <nobr>
+                <select class='filter-perms'>
+                    <option value=''>Permission:</option>
+                    {{ _.each(permissions, function(perms) { }}
+                        <option value='{{- perms[0] }}'>{{- perms[1] }}</option>
+                    {{ }); }}
+                </select>
+                </nobr>
+            </form>
         </div>
         <table style='width: 100%;' class='user-table'>
             <thead>
@@ -35,8 +48,17 @@
             </thead>
             <tbody></tbody>
         </table>
+        <div class='result-count'></div>
     </div>
 </script>
+
+<script type='text/template' id='user-result-count'>
+    <p>Showing {{- Math.min(limit, totalCount) }} of {{- totalCount }} Results.</p>
+    {{ if (limit < totalCount) { }}
+        <p><button class='show-more'>Show more</button></p>
+    {{ } }}
+</script>
+
 <script type='text/template' id='user-row'>
     <td class='name'>{{- displayName }}</td>
     <td class='emails'>

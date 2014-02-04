@@ -285,6 +285,7 @@ describe('unhangout server', function() {
 	describe('sock (mock)', function() {
 		beforeEach(common.standardSetup);
 		afterEach(common.standardShutdown);
+        this.timeout(5000); // Socket tests take a little extra time on slow systems.
 
 		describe("CREATE-SESSION", function() {
 			beforeEach(joinEventSetup("regular1"));
