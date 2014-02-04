@@ -341,19 +341,6 @@ $(document).ready(function() {
 				session.setConnectedParticipants(msg.args.participants);
 				break;
 
-			// mark a session as having its hangout connected and communicating
-			case "session-hangout-connected":
-				var session = curEvent.get("sessions").get(msg.args.id);
-				session.set("hangoutConnected", true);
-				break;
-
-			// mark a session as disconnected
-			case "session-hangout-disconnected":
-				var session = curEvent.get("sessions").get(msg.args.id);
-				session.setConnectedParticipants([]);
-				session.set("hangoutConnected", false);
-				break;
-
 			case "open-sessions":
 				curEvent.openSessions();
 				app.sessionListView.render();		

@@ -1,0 +1,54 @@
+<% if (sessions && sessions.length > 0) { %>
+    <table class='table table-bordered table-condensed'>
+        <tr>
+            <th>Title</th>
+            <th><i class='fa fa-users' title='Number of currently connected participants'></i></th>
+            <th><i class='fa fa-clock-o' title='Total active time'></i></th>
+            <th><span title='Total number of hangouts created'>#</span></th>
+            <th><span title='Session status'>?</span></th>
+            <% if (user.isSuperuser()) { %> <th></th> <% } %>
+        </tr>
+        <% _.each(sessions || [], function(session) { %>
+            <tr>
+                <td>
+                    <% if (session.get("isPermalinkSession")) { %>
+                        <a href="/h/<%= session.get("shortCode") %>">
+                            <%= session.get("shortCode") %>
+                        </a>
+                    <% } else { %>
+                        <a href="/event/<%= session.collection.event.id %>">
+                            <%= session.get("title") %>
+                        </a>
+                    <% } %>
+                </td>
+                <td title='Number of currently connected participants'><%= session.getNumConnectedParticipants() %></td>
+                <td title='Total active time'><%= moment.duration(session.get("total-seconds")).humanize() %></td>
+                <td title='Total number of hangouts created'><%= session.get("total-instances") %></td>
+
+                <% var state = session.getState(); %>
+                <td title='<%= state %>'
+                    data-content='<%= session.explainState() %>'
+                    data-trigger='hover'
+                    rel='popover'>
+                        <div class="hide"><%= JSON.stringify(session) %></div>
+                        <% if (state === "started") { %>
+                            <i class='fa fa-play-circle'></i>
+                        <% } else if (state === "stopped") { %>
+                            <i class='fa fa-stop'></i>
+                        <% } else { %>
+                            <i class='fa fa-exclamation-triangle'></i>
+                        <% } %>
+                </td>
+                <% if (user.isSuperuser()) { %>
+                    <td>
+                    <% if (session.getState() != "stopped") { %>
+                        <form action="/session/<%- session.id %>/stop" method="post">
+                            <button type="submit" class="btn btn-danger btn-link">reset</submit>
+                        </form>
+                    <% } %>			
+                    </td>
+                <% } %>
+            </tr>
+        <% }); %>
+    </table>
+<% } %>

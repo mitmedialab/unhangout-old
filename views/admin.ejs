@@ -13,61 +13,44 @@
         </div>
     </div>
     <div class='row-fluid'>
-        <div class='span6'>
+        <div class='span6' id='events'>
             <h3>Events <a href="/admin/event/new" class="btn btn-primary">new</a></h3>
-            <table id="events">
             <% events.forEach(function(event) { %>
-            <tr>
-                <td>
-                    <a href="/admin/event/<%=event.id%>" class="btn btn-small"><i class='icon-pencil' title='Edit'></i></a>
-                    <a href="/event/<%= event.id %>"><%= event.get("title") + " (" + event.get("shortName") + ")" + (event.isLive() ? " LIVE  " : "") %></a>
-                </td>
-    
-                <td class="admin-table-buttons">
+                <div class='admin-event-row'>
                     <% if(event.isLive()) { %>
                     <form action="/admin/event/<%=event.id%>/stop" method="post">
-                        <button type="submit" class="btn btn-danger">stop</submit>
+                        <button type="submit" class="btn btn-danger stop-event"
+                                data-event='<%= event.id %>'>stop</button>
                     </form>
                     <% } else { %>
                     <form action="/admin/event/<%=event.id%>/start" method="post">
-                        <button type="submit" class="btn btn-success">start</submit>
+                        <button type="submit" class="btn btn-success start-event"
+                                data-event='<%= event.id %>'>start</button>
                     </form>
                     <% } %>
-                </td>
-            </tr>
+                    <a href="/admin/event/<%=event.id%>" class="btn btn-small">
+                        <i class='icon-pencil' title='Edit'></i>
+                    </a>
+                    <a href="/event/<%= event.id %>">
+                        <%= event.get("title") + " (" + event.get("shortName") + ")" %>
+                    </a>
+                    <% var sessions = event.get("sessions").models; %>
+                    <% include _admin_session_table.ejs %>
+                </div>
             <% }); %>
-            </table>
           </div>
+        <% if (permalinkSessions) { %>
           <div class='span6'>
-            <h3>Sessions</h3>
-    
-            <table id="permalinks">
-                <tr><th>shortcode</th><th># ppl connected</th><th>total seconds active</th><th># hangouts created</th><th>actions</th></tr>
-                <% sessions.forEach(function(session) { %>
-                <tr>
-                    <% if(session.get("isPermalinkSession")) { %>
-                        <td><a href="/h/<%= session.get("shortCode") %>"><%= session.get("shortCode") %></a></td>
-                    <% } else { %>
-                        <td><a href="/event/<%= session.collection.event.id %>"><%= session.get("title") %></a></td>
-                    <% } %>
-                    <td><%= session.getNumConnectedParticipants() %></td>
-                    <td><%= session.get("total-seconds") %></td>
-                    <td><%= session.get("total-instances") %></td>
-                    <td>
-                    <div class="hide">
-                    <%= JSON.stringify(session) %>
-                    </div>
-                    <% if(session.get("hangoutConnected")) { %>
-                    <form action="/h/<%= session.get("shortCode") %>/stop" method="post">
-                        <button type="submit" class="btn btn-danger btn-link">stop</submit>
-                    </form>
-                    <% } %>			
-                    </td>
-                </tr>
-                <% }) %>
-            </table>
+            <h3>Permalink Sessions</h3>
+            <% var sessions = permalinkSessions; %>
+            <% include _admin_session_table.ejs %>
         </div>
+      <% } %>
     </div>
 </div>
+<script type='text/javascript'>
+    $("[rel=popover]").popover();
+    $("[title]").not("[rel=popover]").tooltip({container: "body"});
+</script>
 
 <% include _footer.ejs %>

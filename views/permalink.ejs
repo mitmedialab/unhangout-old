@@ -18,14 +18,14 @@
 	<span class="permalink-title"><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></span>
 
 	<div class="hangout-status">
-		<% if(session.get("hangoutConnected")) { %>
+		<% if(session.getState() != "stopped") { %>
 			<i class="icon-facetime-video"></i>
 		<% } else { %>
 			<i class="icon-remove-sign"></i>
 		<% } %> 
 
 		<span>
-		<%= session.get("hangoutConnected") ? "LIVE" : "OFFLINE" %>
+		<%= session.getState() == "started" ? "LIVE" : "OFFLINE" %>
 		</span>
 	</div>
 
@@ -38,7 +38,7 @@
 
 <br><br>
 
-<% if(session.get("hangoutConnected")) { %>
+<% if(session.getState() == "started") { %>
 
 <span class="participants-header">Currently connected particpants</span>
 <hr noshade size=2 class="line">

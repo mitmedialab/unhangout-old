@@ -196,7 +196,11 @@
 
         if($("#timeZoneValue").val() == "") {
             // Automatic TimeZone Detection of the browser client 
-            $("#timeZoneValue").val(jstz.determine().name());
+            var zone = jstz.determine().name();
+            if (!zone) {
+                zone = "Etc/UTC";
+            }
+            $("#timeZoneValue").val(zone);
         }
     });
 </script>

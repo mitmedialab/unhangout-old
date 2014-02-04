@@ -38,7 +38,7 @@ var SessionView = Marionette.ItemView.extend({
 	initialize: function() {
 		// if we get a notice that someone has connected to the associated participant,
 		// re-render to show them.
-		this.listenTo(this.model, 'change:connectedParticipants change:hangoutConnected', this.render, this);
+		this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
 	},
 
 	onRender: function() {
@@ -57,55 +57,21 @@ var SessionView = Marionette.ItemView.extend({
 			this.$el.find(".admin-buttons").hide();			
 		}
 
-		if(this.model.isLive()) {
-			this.$el.addClass("live");
+        this.$el.addClass("live");
 
-			// remove the toggle-ness of the button once the event starts.
-			this.ui.attend.attr("data-toggle", "");
-			this.ui.attend.removeClass("btn-info");			
-			this.ui.attend.removeClass("active");
-			this.ui.attend.addClass("btn-success");
+        // remove the toggle-ness of the button once the event starts.
+        this.ui.attend.attr("data-toggle", "");
+        this.ui.attend.removeClass("btn-info");			
+        this.ui.attend.removeClass("active");
+        this.ui.attend.addClass("btn-success");
 
-			this.ui.attend.find(".text").text("JOIN");
+        this.ui.attend.find(".text").text("JOIN");
 
-			// don't show the x of 10 when it's live (at least until we have live data for that)
-			this.ui.attend.find(".attend-count").hide();
-		} else {
-			this.$el.removeClass("live");
+        // don't show the x of 10 when it's live (at least until we have live data for that)
+        this.$el.find(".start").show();
 
-			this.ui.attend.find(".text").text("SIGN UP");
-		}
+		var numAttendees = this.model.getNumConnectedParticipants();
 
-		if(this.model.get("stopped")) {
-			this.ui.attend.attr("disabled", true);
-			this.ui.attend.addClass("disabled");
-
-			this.$el.undelegate('.attend', 'click');
-
-			this.$el.find(".start").hide();
-
-			this.ui.attend.find(".text").text("SESSION FINISHED");
-			this.ui.attend.find(".attend-count").hide();
-
-		} else {
-			this.$el.find(".attend").attr("disabled", false);
-			this.$el.find(".attend").removeClass("disabled");
-
-			this.$el.delegate('.attend', 'click');
-
-			this.$el.find(".start").show();
-		}
-
-		var numAttendees;
-
-		// if we're live, make the bar fill up based on how many people are currently there
-		if(this.model.isLive()) {
-			numAttendees = this.model.getNumConnectedParticipants();
-		} else {
-			numAttendees = this.model.numAttendees();
-		}
-
-		this.$el.find(".attend-count").text("(" + numAttendees + " of " + this.model.MAX_ATTENDEES + ")");
 		this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");
 
 		// now check and see if the hangout is communicating properly with the server. if it is, show
@@ -175,7 +141,7 @@ var SessionView = Marionette.ItemView.extend({
 			return;
 		}
 
-		if(this.model.isLive()) {
+		if(true) {
 			// if the event has started, button presses should attempt to join
 			// the hangout.
             var url = "/session/" + this.model.get("session-key") +

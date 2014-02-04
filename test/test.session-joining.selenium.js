@@ -57,7 +57,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Now we should have a user show up in the participant list.
         browser.waitForSelector(participantList + " i.icon-user").then(function() {
             expect(session.getNumConnectedParticipants()).to.be(1);
-            expect(session.get('hangoutConnected')).to.be(true);
+            expect(session.getState()).to.be("no url");
             sock.close();
         });
         // The participant list should clear when the socket closes.
@@ -67,7 +67,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {
             expect(session.getNumConnectedParticipants()).to.be(0);
-            expect(session.get('hangoutConnected')).to.be(false);
+            expect(session.getState()).to.be("stopped");
             done();
         });
     });
@@ -106,7 +106,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.byCsss(participantList + " i.icon-user").then(function(els) {
             expect(els.length).to.be(1);
             expect(session.getNumConnectedParticipants()).to.be(1);
-            expect(session.get('hangoutConnected')).to.be(true);
+            expect(session.getState()).to.be("no url");
         }).then(function() {
             // Leave!
             sock2.close();
@@ -118,7 +118,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {;
             expect(session.getNumConnectedParticipants()).to.be(0);
-            expect(session.get('hangoutConnected')).to.be(false);
+            expect(session.getState()).to.be("stopped");
             done();
         });
     });

@@ -286,17 +286,14 @@ models.Session = Backbone.Model.extend({
 
 	defaults: function() {
 		return {
+            // Description
 			title: "",
 			description: "",
-			started: true,
+			shortCode: null,
+            // State
 			connectedParticipants: [],
-            activities: [],
-			hangoutConnected: false,
-			shortCode: null
+            activities: []
 		};
-	},
-	isLive: function() {
-		return true;
 	},
     getRoomId: function() {
         return this.id ? "session/" + this.id : null

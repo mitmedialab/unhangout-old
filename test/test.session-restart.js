@@ -77,14 +77,48 @@ describe('SESSION RESTART', function() {
         var start = new Date().getTime();
         clock.tick(10000);
         var session = new models.ServerSession({
-            hangoutConnected: true,
-            "hangout-start-time": start,
+            "total-instances": 1,
+            "hangout-start-time": start
         });
         clock.tick(10000);
         session.onHangoutStopped();
 
         expect(session.get("total-seconds")).to.be(20);
+        // No new instance for a re-start.
+        expect(session.get("total-instances")).to.be(1);
 
         clock.restore();
+    });
+
+    it("Interprets state as expected", function() {
+        function expectState(state, params) {
+            var session = new models.ServerSession(params);
+            expect(session.getState()).to.eql(state);
+        }
+        expectState("started", {
+            connectedParticipants: [{id: 1, displayName: "foo"}],
+            "hangout-start-time": 10,
+            "hangout-url": "http://example.com"
+        });
+        expectState("stopped", {
+            connectedParticipants: [],
+            "hangout-start-time": null,
+            "hangout-url": null
+        });
+        expectState("unstopped", {
+            connectedParticipants: [],
+            "hangout-start-time": 10,
+            "hangout-url": null
+        });
+        expectState("stale url", {
+            connectedParticipants: [],
+            "hangout-start-time": null,
+            "hangout-url": "http://example.com"
+        });
+        expectState("stale url; unstopped", {
+            connectedParticipants: [],
+            "hangout-start-time": 10,
+            "hangout-url": "http://example.com"
+        });
     });
 });
