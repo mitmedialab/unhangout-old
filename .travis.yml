@@ -5,7 +5,7 @@ env: DISPLAY=:99.0
 services:
  - redis-server
 before_install:
- - sudo apt-get install -qq build-essential libssl-dev curl
+ - sudo apt-get update && sudo apt-get install -qq build-essential libssl-dev curl
  - sh -e /etc/init.d/xvfb start
 before_script:
  - curl -L https://selenium.googlecode.com/files/selenium-server-standalone-2.39.0.jar > bin/selenium-server-standalone.jar
