@@ -120,5 +120,13 @@ describe('SESSION RESTART', function() {
             "hangout-start-time": 10,
             "hangout-url": "http://example.com"
         });
+        expectState("pending overdue; uncleared pending", {
+            connectedParticipants: [],
+            "hangout-start-time": null,
+            "hangout-url": null,
+            "hangout-pending": {
+                time: new Date().getTime() - models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT -1
+            }
+        });
     });
 });
