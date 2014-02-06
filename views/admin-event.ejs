@@ -106,7 +106,7 @@
         <div class="controls">
             <div class="container">
                 <textarea class="summernote" name="description" rows=5 style='width: 100%;'
-                          required><%= event.cleanDescription() || "" %></textarea>
+                          required><%= event.get("description") || "" %></textarea>
             </div>
             <% if (errors.description) { %>
                 <span class='help-inline'><%= errors.description %></span>
