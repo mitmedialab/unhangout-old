@@ -65,7 +65,14 @@ function checkFarmingDb(list, callback) {
 };
 
 describe("FARMING", function() {
-    beforeEach(common.standardSetup);
+    beforeEach(function(done) {
+        common.standardSetup(function() {
+            common.server.db.users.findWhere({
+                "sock-key": "regular1"
+            }).setPerm("farmHangouts", true);
+            done();
+        });
+    });
     afterEach(common.standardShutdown);
 
     it("test mock setup", function(done) {
@@ -90,7 +97,7 @@ describe("FARMING", function() {
 
     });
 
-    it("denies GET to hangout-farming from non-superusers", function(done) {
+    it("denies GET to hangout-farming to those without permission", function(done) {
         request.get(FARM_URL)
             .set("x-mock-user", "admin1")
             .redirects(0)
@@ -99,7 +106,7 @@ describe("FARMING", function() {
                 done()
             });
     });
-    it("denies GET to hangout-callback from non-superusers", function(done) {
+    it("denies GET to hangout-callback to those without permission", function(done) {
         request.get(CALLBACK_URL)
             .set("x-mock-user", "admin1")
             .redirects(0)
@@ -118,10 +125,20 @@ describe("FARMING", function() {
                 done();
             });
     });
+    it("allows GET to hangout-farming to non-superusers with perms", function(done) {
+        request.get(FARM_URL)
+            .set("x-mock-user", "regular1")
+            .redirects(0)
+            .end(function(res) {
+                expect(res.status).to.be(302);
+                expect(res.headers.location).to.be(MOCK_AUTH_URL);
+                done();
+            });
+    });
     it("farms URL with GET to hangout-callback", function(done) {
         LINK_COUNTER = 0;
         request.get(CALLBACK_URL)
-            .set("x-mock-user", "superuser1")
+            .set("x-mock-user", "regular1")
             .end(function(res) {
                 expect(res.status).to.be(200);
                 var count = /urls available: (\d+)/.exec(res.text)[1];
@@ -133,7 +150,7 @@ describe("FARMING", function() {
     it("displays error on token error", function(done) {
         TOKEN_ERROR = "error";
         request.get(CALLBACK_URL)
-            .set("x-mock-user", "superuser1")
+            .set("x-mock-user", "regular1")
             .end(function(res) {
                 TOKEN_ERROR = null; // reset global error state before any test failure
                 expect(res.status).to.be(500);
@@ -145,7 +162,7 @@ describe("FARMING", function() {
     it("displays error on calender error", function(done) {
         CALENDAR_ERROR = {message: "error"};
         request.get(CALLBACK_URL)
-            .set("x-mock-user", "superuser1")
+            .set("x-mock-user", "regular1")
             .end(function(res) {
                 CALENDAR_ERROR = null; // reset global error state before any test failure
                 expect(res.status).to.be(200); // 200 status because it's not really our fault (?)
@@ -157,7 +174,7 @@ describe("FARMING", function() {
     it("displays an error on non-existing hangout link in event", function(done) {
         RETURN_CALENDAR_EVENT = false;
         request.get(CALLBACK_URL)
-            .set("x-mock-user", "superuser1")
+            .set("x-mock-user", "regular1")
             .end(function(res) {
                 RETURN_CALENDAR_EVENT = true; // reset global error state before any test failure
                 expect(res.status).to.be(200); // 200 status because it's not really our fault (?)
