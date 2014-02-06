@@ -96,6 +96,7 @@ describe("CREATE EVENT", function() {
             browser.byCss(".admin-button").click();
             browser.waitForSelector("#admin-page-for-event");
             browser.byCss("#admin-page-for-event").click();
+            browser.waitForSelector("option[value='Europe/Zurich']");
             // Ensure event stuff is there
             browser.executeScript("return {" +
                                   " title: $('#inputTitle').val(), " +
