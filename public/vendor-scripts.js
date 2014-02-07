@@ -1,0 +1,12 @@
+//= require vendor/jquery-2.0.0.js
+//= require vendor/jquery.validate.min.js
+//= require vendor/jquery-ui-1.10.3.custom.min.js
+//= require vendor/moment.min.js
+//= require vendor/moment-timezone.min.js
+//= require vendor/timezone-data.js
+//= require vendor/underscore-min.js
+//= require vendor/backbone.js
+//= require vendor/backbone.marionette.min.js
+//= require vendor/backbone.paginator.min.js
+//= require vendor/bootstrap/js/bootstrap.js
+//= require js/logger.js
