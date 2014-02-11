@@ -1,6 +1,7 @@
 var expect = require('expect.js'),
     _ = require("underscore"),
-    common = require('./common');
+    common = require('./common'),
+    models = require("../lib/server-models.js");
 
 var browser = null,
     event = null;
@@ -67,7 +68,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {
             expect(session.getNumConnectedParticipants()).to.be(0);
-            expect(session.get('hangoutConnected')).to.be(false);
+            //expect(session.get('hangoutConnected')).to.be(false); // after 5 mins..
             done();
         });
     });
@@ -118,7 +119,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {;
             expect(session.getNumConnectedParticipants()).to.be(0);
-            expect(session.get('hangoutConnected')).to.be(false);
+            //expect(session.get('hangoutConnected')).to.be(false); // timeout-bound..
             done();
         });
     });
@@ -235,5 +236,39 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             expect(href).to.be("http://example.com/");
             done();
         });
+    });
+    it("Doesn't clear hangout URL immediately, but rather after a delay.", function(done) {
+        var session = event.get("sessions").at(1);
+        session.set("hangoutConnected", false);
+        session.set("hangout-url", null);
+        common.authedSock("regular1", session.getRoomId(), function(sock) {
+            sock.on("data", function(message) {
+                var msg = JSON.parse(message);
+                if (msg.type == "session/set-hangout-url-ack") {
+                    expect(session.get("hangout-url")).to.not.be(null);
+                    sock.write(JSON.stringify({
+                        type: "leave",
+                        args: {id: session.getRoomId()}
+                    }));
+                } else if (msg.type == "leave-ack") {
+                    expect(session.getNumConnectedParticipants()).to.be(0);
+                    expect(session.get("hangout-url")).to.not.be(null);
+                    // We don't test that it actually gets invalidated here,
+                    // because the delay is LONG, and sinon doesn't play well
+                    // with asynchronous socket comms.
+                    done();
+                } else {
+                    done(new Error(message));
+                }
+            });
+            sock.write(JSON.stringify({
+                type: "session/set-hangout-url",
+                args: {
+                    url: "http://example.com",
+                    sessionId: session.id
+                },
+            }));
+        });
+
     });
 });
