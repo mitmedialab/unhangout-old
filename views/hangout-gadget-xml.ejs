@@ -95,7 +95,10 @@
                 iframe.name = "facilitator_frame";
                 document.body.appendChild(iframe);
 
-                var urlArgs = { url: gapi.hangout.getHangoutUrl() };
+                var urlArgs = {
+                    url: gapi.hangout.getHangoutUrl(),
+                    id: gapi.hangout.getHangoutId()
+                };
                 var pollCount = 0;
 
                 // Poll the inner iframe with our data until it ack's.
