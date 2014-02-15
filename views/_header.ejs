@@ -12,26 +12,9 @@
 	<link href="/public/css/bootstrap-datetimepicker.css" type="text/css" rel="stylesheet">
 	<link href="/public/css/summernote.css" type="text/css" rel="stylesheet">
 
-    <script type="text/javascript" src="/public/vendor/jquery-2.0.0.js"></script>
-    <script type="text/javascript" src="/public/vendor/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/jquery-ui-1.10.3.custom.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/moment.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/moment-timezone.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/timezone-data.js"></script>
-    <script type="text/javascript" src="/public/vendor/underscore-min.js"></script>
-    <script type="text/javascript" src="/public/vendor/backbone.js"></script>
-    <script type="text/javascript" src="/public/vendor/backbone.marionette.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/backbone.paginator.min.js"></script>
-    <script type="text/javascript" src="/public/vendor/bootstrap/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/public/js/logger.js"></script>
 	<script type="text/javascript" charset="utf-8">
-		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
-		_.templateSettings = {
-		    interpolate : /\{\{=(.+?)\}\}/g,
-            escape: /\{\{-(.+?)\}\}/g,
-            evaluate: /\{\{(.+?)\}\}/g
-		};
-	
+        // Set global datastructures for use by js.
+        // TODO: only set these when used, rather than assuming they're there.
 		<% if(!_.isUndefined(user)) { %>
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';
@@ -41,6 +24,7 @@
 		<% } %>
 
 		<% if(!_.isUndefined(event)) { %>
+        // TODO: This should only be on event.ejs.
 		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
 		<% } %>
 	</script>

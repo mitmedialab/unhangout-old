@@ -38,4 +38,5 @@ bin/selenium-server-standalone.jar
 # ignore files compiled by .styl
 public/css/screen.css
 public/css/facilitator.css
-builtAssets
+public/build
+
