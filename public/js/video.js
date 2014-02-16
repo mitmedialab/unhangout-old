@@ -1,3 +1,10 @@
+define([
+   "underscore", "backbone", "logger",
+   "underscore-template-config"
+], function(_, Backbone, logger) {
+
+var video = {};
+
 if (!window.YouTubeLoadQueue) {
     window.YouTubeLoadQueue = [];
 }
@@ -9,7 +16,7 @@ if (!window.onYouTubeIframeAPIReady) {
         window.YouTubeLoadQueue = [];
     }
 }
-var YoutubeVideo = Backbone.View.extend({
+video.YoutubeVideo = Backbone.View.extend({
     tagName: "table",
     template: _.template($("#youtube-video").html()),
     controlsTemplate: _.template($("#youtube-video-controls").html()),
@@ -27,7 +34,7 @@ var YoutubeVideo = Backbone.View.extend({
         _.bindAll(this, "playForEveryone", "toggleSync",
                         "onPlayerReady", "onPlayerStateChange",
                         "triggerVideoSettings");
-        this.logger = new Logger("VIDEO", "error");
+        this.logger = new logger.Logger("VIDEO", "error");
     },
     render: function() {
         this.$el.html(this.template({cid: this.cid}));
@@ -201,4 +208,8 @@ var YoutubeVideo = Backbone.View.extend({
     triggerVideoSettings: function(event) {
         this.trigger("video-settings", this);
     }
+});
+
+return video;
+
 });

@@ -263,11 +263,6 @@
 </script>
     
 <% include _sockjs.ejs %>
-<script type="text/javascript" src="/public/js/models.js"></script>    
-<script type="text/javascript" src="/public/js/client-models.js"></script>    
-<script type="text/javascript" src="/public/js/event-app.js"></script>
-<script type="text/javascript" src="/public/js/common-views.js"></script>    
-<script type="text/javascript" src="/public/js/event-views.js"></script>    
-
+<%- requireScripts("/public/js/event-app.js") %>
 <% include _analytics.ejs %>
 <% include _footer.ejs %>

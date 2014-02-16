@@ -10,29 +10,29 @@
         "jquery-ui": "../vendor/jquery-ui-1.10.3.custom.min",
         "underscore": "../vendor/underscore-min",
         "backbone": "../vendor/backbone",
-        "backbone.marionette": "../vendor/backbone.marionette.min",
-        "backbone.paginator": "../vendor/backbone.paginator.min",
+        "backbone.marionette": "../vendor/backbone.marionette",
         "bootstrap": "../vendor/bootstrap/js/bootstrap.min",
         "bootstrap-datetimepicker": "../vendor/bootstrap-datetimepicker.min",
         "summernote": "../vendor/summernote.min",
         "moment": "../vendor/moment.min",
         "moment-timezone": "../vendor/moment-timezone.min",
-        "moment-timezone-data": "../vendor/timezone-data"
+        "moment-timezone-data": "../vendor/timezone-data",
+        "sockjs": "../vendor/sockjs-0.3.min"
     },
     "shim": {
         "jquery": { "exports": "jQuery" },
         "jquery-ui": { "deps": ["jquery"], "exports": "jQuery.fn.ui" },
         "jquery.validate": { "deps": ["jquery"], "exports": "jQuery.fn.validate" },
         "underscore": { "exports": "_" },
-        "backbone": { "deps": ["underscore", "vendor/jquery"], "exports": "Backbone" },
+        "backbone": { "deps": ["jquery", "underscore"], "exports": "Backbone" },
         "backbone.marionette": { "deps": ["backbone"], "exports": "Backbone.Marionette" },
-        "backbone.paginator": { "deps": ["backbone"], "exports": "Backbone.Paginator" },
         "bootstrap": { "deps": ["jquery"], "exports": "jQuery.fn.tooltip" },
         "bootstrap-datetimepicker": { "deps": ["bootstrap"], "exports": "jQuery.fn.datetimepicker" },
         "summernote": { "deps": ["bootstrap"], "exports": "jQuery.fn.summernote" },
         "moment": { "exports": "moment" },
         "moment-timezone": { "deps": ["moment"], "exports": "moment.tz" },
         "moment-timezone-data": { "deps": ["moment.tz"] },
-        "jstz": { "exports": "jstz" }
+        "jstz": { "exports": "jstz" },
+        "sockjs": { "exports": "sockjs" }
     }
 }
