@@ -51,6 +51,11 @@ var buildBrowser = function(callback) {
             });
         });
     };
+    browser.waitForScript = function(exportName) {
+        return browser.wait(function() {
+            return browser.executeScript("return typeof " + exportName + " !== 'undefined';");
+        });
+    };
     // hack to get a promise... is there a better way?
     browser.then = function(cb) {
         return browser.executeScript("return true;").then(cb);

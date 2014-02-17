@@ -17,9 +17,9 @@
 // state. 
 
 define([
-   "underscore", "backbone", "video", "logger",
+   "underscore", "backbone", "video", "logger", "models",
    "backbone.marionette", "underscore-template-config"
-], function(_, Backbone, video, logging) {
+], function(_, Backbone, video, logging, models) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -195,15 +195,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         }
     },
 
-    start: function() {
-        //TODO: Server isn't listening for this..
-        sock.send(JSON.stringify({
-            type:"start", args: {id: this.model.id, roomid: this.options.event.getRoomId()}
-        }));
-    },
-
     "delete": function() {
-        sock.send(JSON.stringify({
+        this.options.sock.send(JSON.stringify({
             type: "delete-session",
             args: {
                 id: this.model.id, roomId: this.options.event.getRoomId()
@@ -219,18 +212,13 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     template: "#session-list-template",
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
+    emptyView: Backbone.Marionette.ItemView.extend({
+        template: "#session-list-empty-template"
+    }),
     id: "session-list",
 
     itemViewOptions: function() {
-        return {event: this.options.event};
-    },
-
-    onRender: function() {
-        if(this.collection.length === 0) {
-            this.$el.find(".empty-notice").removeClass("hide");
-        } else {
-            this.$el.find(".empty-notice").addClass("hide");
-        }
+        return {event: this.options.event, sock: this.options.sock};
     }
 })
 
@@ -352,7 +340,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             var message = {
                 type:"embed",
                 args: {ytId:newId, roomId: this.options.event.getRoomId()}};
-            sock.send(JSON.stringify(message));
+            this.options.sock.send(JSON.stringify(message));
         }
     },
     addUrlToSessionMessage: function(event) {
@@ -375,7 +363,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             message: formatSessionMessage(val),
             roomId: this.options.event.getRoomId()
         }
-        sock.send(JSON.stringify({
+        this.options.sock.send(JSON.stringify({
             type: "broadcast-message-to-sessions",
             args: args
         }));
@@ -434,7 +422,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 break;
         }
 
-        sock.send(JSON.stringify({
+        this.options.sock.send(JSON.stringify({
             type:"create-session",
             args: {
                 title: title,
@@ -470,14 +458,14 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     },
 
     openSessions: function() {
-        sock.send(JSON.stringify({
+        this.options.sock.send(JSON.stringify({
             type: "open-sessions",
             args: {roomId: this.options.event.getRoomId()}
         }));
     },
 
     closeSessions: function() {
-        sock.send(JSON.stringify({
+        this.options.sock.send(JSON.stringify({
             type: "close-sessions",
             args: {roomId: this.options.event.getRoomId()}
         }));
@@ -608,6 +596,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     },
 
     initialize: function(options) {
+        console.log(options);
         Backbone.Marionette.View.prototype.initialize.call(this, options);
         this.chatView = new views.ChatView({
             collection: this.options.messages,
@@ -617,7 +606,10 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
             collection: this.options.users,
             event: this.options.event
         });
-        this.chatInputView = new views.ChatInputView({event: this.options.event});
+        this.chatInputView = new views.ChatInputView({
+            event: this.options.event,
+            sock: this.options.sock
+        });
 
         logger.log("initializing chat layout with: " + JSON.stringify(this.options.messages));
         logger.log("and users: " + JSON.stringify(this.options.users));
@@ -650,7 +642,7 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
         var msg = this.ui.chatInput.val();
 
         if(msg.length>0) {
-            sock.send(JSON.stringify({
+            this.options.sock.send(JSON.stringify({
                 type:"chat", args: {text: msg, roomId: this.options.event.getRoomId()}
             }));
             this.ui.chatInput.val("");
@@ -815,7 +807,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         });
         this.yt.on("control-video", function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
-            sock.send(JSON.stringify({type: "control-video", args: args}));
+            this.options.sock.send(JSON.stringify({type: "control-video", args: args}));
         });
         this.yt.on("video-settings", _.bind(function(yt) {
             this.trigger("show-embed-modal");

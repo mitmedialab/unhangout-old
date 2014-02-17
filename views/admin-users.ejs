@@ -12,6 +12,9 @@
         cursor: pointer;
     }
 </style>
+<script>
+    document.querySelector("#admin-users-nav").className = "active";
+</script>
 
 <div id='app'>
     <div id='main'></div>
@@ -116,13 +119,10 @@
     </div>
 </script>
 
-<script type="text/javascript" src="/public/js/models.js"></script>	
-<script type="text/javascript" src="/public/js/client-models.js"></script>	
 <script type='text/javascript'>
-    var users = new models.UserList(<%- JSON.stringify(users) %>);
-    var events = new models.EventList(<%- JSON.stringify(events) %>);
+    var USER_DATA = <%- JSON.stringify(users) %>;
+    var EVENT_DATA = <%- JSON.stringify(events) %>;
 </script>
 
-<script type="text/javascript" src="/public/js/admin-users.js"></script>
-
+<%- requireScripts("/public/js/admin-users.js") %>
 <% include _footer.ejs %>

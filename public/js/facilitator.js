@@ -1,9 +1,11 @@
+require([
+    "jquery", "underscore-template-config", "backbone", "sockjs", "client-models",
+    "video", "logger",
+    "bootstrap"
+], function($, _, Backbone, SockJS, models, video, logging) {
 
-/****************************
-      Activities UI
-*****************************/
 
-var logger = new Logger("FACILITATOR", "error");
+var logger = new logging.Logger("FACILITATOR", "error");
 
 var FacilitatorView = Backbone.View.extend({
     template: _.template($('#facilitator').html()),
@@ -115,7 +117,7 @@ var FacilitatorView = Backbone.View.extend({
     render: function() {
         // This should only be called once -- all subsequent renders are
         // done in `renderActivities`.
-        this.$el.html(this.template()).addClass("main-window");
+        this.$el.html(this.template({session: this.session})).addClass("main-window");
         var activitiesData = this.session.get('activities');
         this.renderActivities();
         this.faces = new FacesView();
@@ -278,7 +280,7 @@ var VideoActivity = BaseActivityView.extend({
         _.bindAll(this, "onrender");
         // Get the title of the video from the data API -- it's not available
         // from the iframe API.
-        this.yt = new YoutubeVideo({
+        this.yt = new video.YoutubeVideo({
             ytID: this.activity.video.id,
             showGroupControls: true
         });
@@ -525,3 +527,4 @@ session.on("change:connectedParticipants", function() {
     });
 });
 
+});

@@ -22,207 +22,6 @@ var logger = new logging.Logger("event-app");
 
 $(document).ready(function() {
     logger.log("Starting app!");
-
-    // The constants used heavily in this block (eg EVENT_ATTRS, SINGLE_SESSION_RSVP, USER_ID)
-    // come from the event.ejs file. They are the way that the server communicates the initial 
-    // state of the event to the client - in a big JSON blob. Subsequent updates all happen
-    // over the sockJS channel, but the initial state is embedded in these constants.
-    curEvent = new models.ClientEvent(EVENT_ATTRS);
-    curEvent.get("sessions").add(EVENT_ATTRS.sessions);
-    users = new models.UserList(EVENT_ATTRS.connectedUsers);
-    messages = new models.ChatMessageList();
-    
-    logger.log("Inflated models.");
-
-    // documentation for Marionette applications can be found here:
-    // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.application.md
-    app = new Backbone.Marionette.Application();
-    
-
-    // the notion of regions comes from Marionette. 
-    // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.region.md
-    // 
-    // Basically, they give us a way to create containers in the application, that different
-    // views are added and removed from. It handles various event cleanup work on add/remove.
-    // In this app, we don't often swap stuff in and out. It's primarily just a useful 
-    // organizational abstraction.
-    app.addRegions({
-        right: '#main-right',
-        main: '#main-left',
-        topLeft: '#top-left',
-        global: '#global',
-        dialogs: '#dialogs',
-        admin: '#admin-region',
-        bar:'#bar',
-        top:'#top'
-    });
-    
-    // This is code that runs when the application initializes. 
-    app.addInitializer(function(options) {
-        
-        // include the youtube JS api per docs:
-        // https://developers.google.com/youtube/iframe_api_reference
-        var tag = document.createElement('script');
-        tag.src = "//www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        // create all the basic views
-        this.sessionListView = new eventViews.SessionListView({
-            collection: curEvent.get("sessions"),
-            event: curEvent
-        });
-        this.chatView = new eventViews.ChatLayout({
-            messages: messages,
-            users: users,
-            event: curEvent
-        });
-        this.youtubeEmbedView = new eventViews.VideoEmbedView({model: curEvent});
-        this.dialogView = new eventViews.DialogView({event: curEvent});
-
-        this.aboutView = new eventViews.AboutEventView({model: curEvent});
-
-        // present the views in their respective regions
-        this.right.show(this.chatView);
-        this.main.show(this.sessionListView);
-        this.topLeft.show(this.youtubeEmbedView);
-        this.dialogs.show(this.dialogView);
-        this.top.show(this.aboutView);
-
-        // this is a little unorthodox, but not sure how else
-        // to do it.
-        $(this.bar.el).hide();
-        
-        // obviously this is not secure, but any admin requests are re-authenticated on
-        // the server. Showing the admin UI is harmless if a non-admin messes with it.
-        if(IS_ADMIN) {
-            this.adminButtonView = new eventViews.AdminButtonView({event: curEvent});
-            this.admin.show(this.adminButtonView);
-            this.youtubeEmbedView.on("show-embed-modal", _.bind(function() {
-                this.adminButtonView.showEmbedModal();
-            }, this));
-        }
-                
-        logger.log("Initialized app.");
-
-        $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
-
-        // This section sets up the blur/focus tracking. This serves two purposes. The first
-        // is to represent users differently in the presence gutter as well as in the
-        // session list, depending on whether or not they have the lobby window focused
-        //
-        // We also use this to decide whether or not to show new messages coming in
-        // by changing the tab title.
-
-        if(!curEvent.get("blurDisabled")) {
-            var startingTitle = window.document.title;
-            var isAlreadyBlurred; 
-            $(window).blur(function() {
-                if(isAlreadyBlurred)
-                    return ;
-
-                isIntervalRunning = true ;
-                windowBlurred = true ;
-                messageShown = true ;
-
-                var message = {type:"blur", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
-                sock.send(JSON.stringify(message));    
-
-                isAlreadyBlurred = true; 
-            })
-
-            $(window).focus(function() {
-                isIntervalRunning = false;
-                windowBlurred = false;
-                messageShown = false ;
-                clearInterval(interval);
-                window.document.title = startingTitle;
-
-                var message = {type:"focus", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
-                sock.send(JSON.stringify(message));    
-
-                isAlreadyBlurred = false;
-            })
-        }
-
-
-    });
-
-    // toggles the tab title to show new messages, but only if the window
-    // is blurred (as detected above)
-    app.showFlashTitle = function () {
-        if(isIntervalRunning && !messageShown) {
-            if(window.document.title == 'Unhangout')
-                window.document.title = 'New Message ...';
-            else
-                window.document.title = 'Unhangout';
-
-            interval = window.setTimeout(app.showFlashTitle , 1000);
-        }
-    };
-    
-    var interval = 0;
-    var messageShown = false ;
-    var windowBlurred = false ;
-    var isIntervalRunning = false;
-    var aboutShown = false;
-
-    // All these app.vent calls are setting up app-wide event handling. The app
-    // can trigger these events in any manner it desires. We use this to abstract
-    // the logic about where the events might come from, because in some situations
-    // they're triggered by users, sometimes by the arrival of remove messages, 
-    // sometimes as side effects of other actions. 
-    app.vent.on("new-chat-message", _.bind(function() {
-        if(isIntervalRunning && windowBlurred) {
-            interval = window.setTimeout(this.showFlashTitle, 1000);
-        }
-    }, app));
-
-    
-    app.vent.on("about-nav", _.bind(function() {
-        logger.log("handling about-nav event");
-
-        $(".updated").addClass("hide");
-        if(aboutShown) {
-            if(!curEvent.isLive()) {
-                // don't let people dismiss the about screen if the event isn't live.
-                return;
-            }
-
-            this.top.$el.animate({"top":(-1*this.top.$el.outerHeight()-15)});
-
-            aboutShown = false;
-            $("#about-nav").removeClass("active");
-        } else {
-            this.top.$el.animate({"top":0});
-            aboutShown = true;
-
-            $("#about-nav").addClass("active");
-        }
-
-    }, app));
-
-    app.start();
-
-    // if the event isn't live yet, force the about page to show.
-    if(!curEvent.isLive()) {
-        app.vent.trigger("about-nav");
-    } else {
-        app.top.$el.animate({"top":(-1*app.top.$el.outerHeight() - 200)});
-    }
-
-    // Handles clicks on the nav bar links.
-    $("#about-nav").click(function() {
-        app.vent.trigger($(this).attr("id"));
-    });
-    
-    logger.log("Setup regions.");
-
-    if(!_.isNull(curEvent.get("welcomeMessage"))) {
-        // if there is a welcome message, put it in chat.
-        messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
-    }
-
     //------------------------------------------------------------------------//
     //                                                                          //
     //                                NETWORKING                                  //
@@ -231,10 +30,7 @@ $(document).ready(function() {
     // 
     // From here down, we're mostly concerned with managing networking and 
     // communication. 
-    //
-    // First up, create the SockJS object.
     sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
-
     // Register a bunch of listeners on the major events it will fire.
     sock.onopen = function() {        
         // on connect, send the auth message.
@@ -410,6 +206,221 @@ $(document).ready(function() {
 
         checkIfServerUp();
     };
+
+
+    //------------------------------------------------------------------------//
+    //                                                                          //
+    //                                APP SETUP                                   //
+    //                                                                          //
+    //------------------------------------------------------------------------//
+
+    // The constants used heavily in this block (eg EVENT_ATTRS, SINGLE_SESSION_RSVP, USER_ID)
+    // come from the event.ejs file. They are the way that the server communicates the initial 
+    // state of the event to the client - in a big JSON blob. Subsequent updates all happen
+    // over the sockJS channel, but the initial state is embedded in these constants.
+    curEvent = new models.ClientEvent(EVENT_ATTRS);
+    curEvent.get("sessions").add(EVENT_ATTRS.sessions);
+    users = new models.UserList(EVENT_ATTRS.connectedUsers);
+    messages = new models.ChatMessageList();
+    
+    logger.log("Inflated models.");
+
+    // documentation for Marionette applications can be found here:
+    // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.application.md
+    app = new Backbone.Marionette.Application();
+    
+
+    // the notion of regions comes from Marionette. 
+    // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.region.md
+    // 
+    // Basically, they give us a way to create containers in the application, that different
+    // views are added and removed from. It handles various event cleanup work on add/remove.
+    // In this app, we don't often swap stuff in and out. It's primarily just a useful 
+    // organizational abstraction.
+    app.addRegions({
+        right: '#main-right',
+        main: '#main-left',
+        topLeft: '#top-left',
+        global: '#global',
+        dialogs: '#dialogs',
+        admin: '#admin-region',
+        bar:'#bar',
+        top:'#top'
+    });
+    
+    // This is code that runs when the application initializes. 
+    app.addInitializer(function(options) {
+        
+        // include the youtube JS api per docs:
+        // https://developers.google.com/youtube/iframe_api_reference
+        var tag = document.createElement('script');
+        tag.src = "//www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // create all the basic views
+        this.sessionListView = new eventViews.SessionListView({
+            collection: curEvent.get("sessions"),
+            event: curEvent,
+            sock: sock
+        });
+        this.chatView = new eventViews.ChatLayout({
+            messages: messages,
+            users: users,
+            event: curEvent,
+            sock: sock
+        });
+        this.youtubeEmbedView = new eventViews.VideoEmbedView({
+            model: curEvent, sock: sock
+        });
+        this.dialogView = new eventViews.DialogView({
+            event: curEvent, sock: sock
+        });
+
+        this.aboutView = new eventViews.AboutEventView({model: curEvent});
+
+        // present the views in their respective regions
+        this.right.show(this.chatView);
+        this.main.show(this.sessionListView);
+        this.topLeft.show(this.youtubeEmbedView);
+        this.dialogs.show(this.dialogView);
+        this.top.show(this.aboutView);
+
+        // this is a little unorthodox, but not sure how else
+        // to do it.
+        $(this.bar.el).hide();
+        
+        // obviously this is not secure, but any admin requests are re-authenticated on
+        // the server. Showing the admin UI is harmless if a non-admin messes with it.
+        if(IS_ADMIN) {
+            this.adminButtonView = new eventViews.AdminButtonView({
+                event: curEvent, sock: sock
+            });
+            this.admin.show(this.adminButtonView);
+            this.youtubeEmbedView.on("show-embed-modal", _.bind(function() {
+                this.adminButtonView.showEmbedModal();
+            }, this));
+        }
+                
+        logger.log("Initialized app.");
+
+        $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
+
+        // This section sets up the blur/focus tracking. This serves two purposes. The first
+        // is to represent users differently in the presence gutter as well as in the
+        // session list, depending on whether or not they have the lobby window focused
+        //
+        // We also use this to decide whether or not to show new messages coming in
+        // by changing the tab title.
+
+        if(!curEvent.get("blurDisabled")) {
+            var startingTitle = window.document.title;
+            var isAlreadyBlurred; 
+            $(window).blur(function() {
+                if(isAlreadyBlurred)
+                    return ;
+
+                isIntervalRunning = true ;
+                windowBlurred = true ;
+                messageShown = true ;
+
+                var message = {type:"blur", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
+                sock.send(JSON.stringify(message));    
+
+                isAlreadyBlurred = true; 
+            })
+
+            $(window).focus(function() {
+                isIntervalRunning = false;
+                windowBlurred = false;
+                messageShown = false ;
+                clearInterval(interval);
+                window.document.title = startingTitle;
+
+                var message = {type:"focus", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
+                sock.send(JSON.stringify(message));    
+
+                isAlreadyBlurred = false;
+            })
+        }
+
+
+    });
+
+    // toggles the tab title to show new messages, but only if the window
+    // is blurred (as detected above)
+    app.showFlashTitle = function () {
+        if(isIntervalRunning && !messageShown) {
+            if(window.document.title == 'Unhangout')
+                window.document.title = 'New Message ...';
+            else
+                window.document.title = 'Unhangout';
+
+            interval = window.setTimeout(app.showFlashTitle , 1000);
+        }
+    };
+    
+    var interval = 0;
+    var messageShown = false ;
+    var windowBlurred = false ;
+    var isIntervalRunning = false;
+    var aboutShown = false;
+
+    // All these app.vent calls are setting up app-wide event handling. The app
+    // can trigger these events in any manner it desires. We use this to abstract
+    // the logic about where the events might come from, because in some situations
+    // they're triggered by users, sometimes by the arrival of remove messages, 
+    // sometimes as side effects of other actions. 
+    app.vent.on("new-chat-message", _.bind(function() {
+        if(isIntervalRunning && windowBlurred) {
+            interval = window.setTimeout(this.showFlashTitle, 1000);
+        }
+    }, app));
+
+    
+    app.vent.on("about-nav", _.bind(function() {
+        logger.log("handling about-nav event");
+
+        $(".updated").addClass("hide");
+        if(aboutShown) {
+            if(!curEvent.isLive()) {
+                // don't let people dismiss the about screen if the event isn't live.
+                return;
+            }
+
+            this.top.$el.animate({"top":(-1*this.top.$el.outerHeight()-15)});
+
+            aboutShown = false;
+            $("#about-nav").removeClass("active");
+        } else {
+            this.top.$el.animate({"top":0});
+            aboutShown = true;
+
+            $("#about-nav").addClass("active");
+        }
+
+    }, app));
+
+    app.start();
+
+    // if the event isn't live yet, force the about page to show.
+    if(!curEvent.isLive()) {
+        app.vent.trigger("about-nav");
+    } else {
+        app.top.$el.animate({"top":(-1*app.top.$el.outerHeight() - 200)});
+    }
+
+    // Handles clicks on the nav bar links.
+    $("#about-nav").click(function() {
+        app.vent.trigger($(this).attr("id"));
+    });
+    
+    logger.log("Setup regions.");
+
+    if(!_.isNull(curEvent.get("welcomeMessage"))) {
+        // if there is a welcome message, put it in chat.
+        messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
+    }
 });
 
 });

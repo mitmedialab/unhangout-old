@@ -1,5 +1,8 @@
 // Generated at http://momentjs.com/timezone/data/ -- re-generate there rather
-// than manually editing.
+// than manually editing zone info.  The only modification here is to add the
+// requirejs define wrapper.
+define(["moment-timezone"], function(moment) {
+
 moment.tz.add({
     "zones": {
         "Africa/Abidjan": [
@@ -5037,4 +5040,6 @@ moment.tz.add({
         "Europe/Vatican": "Europe/Rome",
         "Europe/Zagreb": "Europe/Belgrade"
     }
+});
+
 });
