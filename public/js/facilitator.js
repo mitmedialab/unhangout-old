@@ -64,7 +64,9 @@ var FacilitatorView = Backbone.View.extend({
 		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
 			if (event.data.type == "url") {
 				if (event.data.args.url) {
-					logger.debug("CDM inner set", event.data.args.url, event.origin);
+					logger.debug("CDM inner set", event.data.args.url,
+                                 event.data.args.id, event.origin);
+                    session.set("hangout-id", event.data.args.id);
 					session.set("hangout-url", event.data.args.url);
 					HANGOUT_ORIGIN = event.origin;
 					postMessageToHangout({type: "url-ack"});
@@ -517,6 +519,7 @@ session.on("change:hangout-url", function() {
     logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
     sock.sendJSON("session/set-hangout-url", {
         url: session.get("hangout-url"),
+        id: session.get("hangout-id"),
         sessionId: session.id
     });
 });
