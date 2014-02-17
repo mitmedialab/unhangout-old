@@ -33,7 +33,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.get("http://localhost:7777/")
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/facilitator/" + session.id + "/");
-        browser.byLinkText("Cancel auto-hide"); // throw error if it's not there
+        browser.waitForSelector(".cancel-autohide");
         browser.executeScript(
             "return $('.main-window').hasClass('sidebar');"
         ).then(function(val) {
