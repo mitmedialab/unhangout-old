@@ -38,6 +38,7 @@
         "event-app.js": { "include": "event-app" },
         "admin-users.js": { "include": "admin-users" },
         "admin-event.js": { "include": "admin-event" },
-        "permalink-intro.js": { "include": "permalink-intro" }
+        "permalink-intro.js": { "include": "permalink-intro" },
+        "facilitator.js": { "include": "facilitator" }
     }
 }
