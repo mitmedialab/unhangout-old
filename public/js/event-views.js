@@ -26,7 +26,7 @@ var logger = new logging.Logger("event-views");
 
 var userViewCache = {};
 
-var views.SessionView = Backbone.Marionette.ItemView.extend({
+views.SessionView = Backbone.Marionette.ItemView.extend({
     template: '#session-template',
     className: 'session',
     firstUserView: null,

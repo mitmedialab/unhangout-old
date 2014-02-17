@@ -22,6 +22,13 @@ var logger = new logging.Logger("event-app");
 
 $(document).ready(function() {
     logger.log("Starting app!");
+
+    var interval = 0;
+    var messageShown = false ;
+    var windowBlurred = false ;
+    var isIntervalRunning = false;
+    var aboutShown = false;
+
     //------------------------------------------------------------------------//
     //                                                                          //
     //                                NETWORKING                                  //
@@ -301,8 +308,74 @@ $(document).ready(function() {
                 this.adminButtonView.showEmbedModal();
             }, this));
         }
+
+        logger.log("Initialized app.");
+
+        $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
+
+        // This section sets up the blur/focus tracking. This serves two purposes. The first
+        // is to represent users differently in the presence gutter as well as in the
+        // session list, depending on whether or not they have the lobby window focused
+        //
+        // We also use this to decide whether or not to show new messages coming in
+        // by changing the tab title.
+        
+        if (!curEvent.get("blurDisabled")) {
+            var startingTitle = window.document.title;
+            var isAlreadyBlurred;
+            $(window).blur(function() {
+                if(isAlreadyBlurred)
+                    return;
+
+                isIntervalRunning = true ;
+                windowBlurred = true ;
+                messageShown = true ;
+
+                var message = {type:"blur", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
+                sock.send(JSON.stringify(message));  
+
+                isAlreadyBlurred = true;
+            })
+
+            $(window).focus(function() {
+                isIntervalRunning = false;
+                windowBlurred = false;
+                messageShown = false ;
+                clearInterval(interval);
+                window.document.title = startingTitle;
+
+                var message = {type:"focus", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
+                sock.send(JSON.stringify(message));  
+
+                isAlreadyBlurred = false;
+            })
+        }
+
     }, app);
 
+    // toggles the tab title to show new messages, but only if the window
+    // is blurred (as detected above)
+    app.showFlashTitle = function () {
+        if(isIntervalRunning && !messageShown) {
+            if(window.document.title == 'Unhangout')
+                window.document.title = 'New Message ...';
+            else
+                window.document.title = 'Unhangout';
+
+            interval = window.setTimeout(app.showFlashTitle , 1000);
+        }
+    };
+
+    // All these app.vent calls are setting up app-wide event handling. The app
+    // can trigger these events in any manner it desires. We use this to abstract
+    // the logic about where the events might come from, because in some situations
+    // they're triggered by users, sometimes by the arrival of remove messages,
+    // sometimes as side effects of other actions.
+    app.vent.on("new-chat-message", _.bind(function() {
+        if(isIntervalRunning && windowBlurred) {
+            interval = window.setTimeout(this.showFlashTitle, 1000);
+        }
+    }, app));
     
     app.vent.on("about-nav", _.bind(function() {
         console.log("handling about-nav event");
@@ -341,187 +414,12 @@ $(document).ready(function() {
         app.vent.trigger($(this).attr("id"));
     });
     
-    console.log("Setup regions.");
+    logger.log("Setup regions.");
 
     if(!_.isNull(curEvent.get("welcomeMessage"))) {
         // if there is a welcome message, put it in chat.
         messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
     }
-
-    //------------------------------------------------------------------------//
-    //                                                                          //
-    //                                NETWORKING                                  //
-    //                                                                          //
-    //------------------------------------------------------------------------//
-    // 
-    // From here down, we're mostly concerned with managing networking and 
-    // communication. 
-    //
-    // First up, create the SockJS object.
-    sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
-
-    // Register a bunch of listeners on the major events it will fire.
-    sock.onopen = function() {        
-        // on connect, send the auth message.
-        var AUTH = {type:"auth", args:{key:SOCK_KEY, id:USER_ID}};
-        
-        sock.send(JSON.stringify(AUTH));
-    };
-
-    // This is the big one - handles every incoming message. 
-    sock.onmessage = function(message) {
-
-        // console.log(message);
-
-        // messages come across the wire as raw strings in the data field.
-        // parse them into a proper object here.
-        var msg = JSON.parse(message.data);
-        
-        if(msg.type.indexOf("-err")!=-1) {
-            console.log("Got an error from the server!", message);
-        }
-        // All messages have a type field. 
-        switch(msg.type) {            
-            // join an EVENT
-            case "join":
-                users.add(new models.User(msg.args.user));
-                break;
-            
-            // leave an EVENT
-            case "leave":
-                users.remove(users.get(msg.args.user.id));
-                break;
-                
-            // chat message received
-            case "chat":
-                messages.add(new models.ChatMessage(msg.args));
-                app.vent.trigger("new-chat-message");
-
-                break;
-
-            // a user has blurred the lobby window
-            case "blur":
-                var blurredUser = users.get(msg.args.id);
-                blurredUser.setBlurred(true);
-                break;
-
-            // a user has focused the lobby window
-            case "focus":
-                var blurredUser = users.get(msg.args.id);
-                blurredUser.setBlurred(false);
-                break;
-            
-            // the embed for this event has been updated
-            case "embed":
-                var originalYoutubeId = curEvent.get("youtubeEmbed") || "";
-
-                curEvent.setEmbed(msg.args.ytId);
-                console.log("added yt embed id: " + JSON.stringify(msg.args));
-                break;
-            case "control-video":
-                app.youtubeEmbedView.control(msg.args);
-                break;
-            case "delete-session":
-                var session = curEvent.get("sessions").get(msg.args.id);
-                // app.paginatedSessions.remove(session);
-                curEvent.removeSession(session);
-
-                console.log("removing session: " + msg.args.id);
-                break;
-
-            // create a new session
-            case "create-session":
-                var session = new models.Session(msg.args);
-
-                // this is sort of ugly to have to edit both. 
-                // i'm not sure the former one is critical, but it is definitely
-                // important that we add it to the special paginated sessions list.
-                // after startup, we have to edit it directly.
-                curEvent.get("sessions").add(session);
-                // app.paginatedSessions.add(session);
-                break;
-
-            // update the list of a session's participants
-            case "session-participants":
-                console.log("participants in session "+msg.args.id, msg.args.participants);
-                var session = curEvent.get("sessions").get(msg.args.id);
-                session.setConnectedParticipants(msg.args.participants);
-                break;
-
-            case "open-sessions":
-                curEvent.openSessions();
-                app.sessionListView.render();        
-                break;
-
-            case "close-sessions":
-                curEvent.closeSessions();
-                app.sessionListView.render();        
-                break;
-
-            // sent in cases when the event's information has been updated.
-            // includes the entire event JSON object as the server sees it.
-            // copy it into curEvent.
-            case "event-update":
-                curEvent.set(msg.args);
-
-                console.log("updated current event: " + JSON.stringify(msg.args));
-                break;
-
-            // *-ack message types are just acknowledgmeents from the server
-            // of the receipt of a particular message type and that the
-            // message was properly formatted and accepted. 
-            //
-            // mostly we don't do anything with these messages, but
-            // in some situations we do react to them. They're used 
-            // more for testing.
-            case "auth-ack":
-                sock.send(JSON.stringify({type:"join", args:{id:curEvent.getRoomId()}}));
-                break;
-                
-            case "embed-ack":
-                $("#embed-modal").modal('hide');
-                break;                
-            case "join-ack":
-                console.log("joined!");
-                break;
-            case "attend-ack":
-                console.log("attend-ack");
-                break;
-        }
-    };
-
-    // handle losing the connection to the server. 
-    // we want to put up a notice so the user knows that they've been disconnected (in
-    // case they can do anything about it, like unpugged cable or wifi outage)
-    // at the same time, we also want to attempt to reconnect if it was a server
-    // outage and the server is restarting. So we occasionally ping the server
-    // with an http request and when it responds successfully, we reload the page
-    // which will trigger a full reconnection and state reset.
-    sock.onclose = function() {
-        $('#disconnected-modal').modal('show');
-        messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!"}));
-        
-        var checkIfServerUp = function () {
-             var ping = document.location;
-            
-             $.ajax({
-                  url: ping,
-                  cache: false,
-                  async : false,
-
-                  success: function(msg){
-                   // reload window when ajax call is successful
-                       window.location.reload();
-                   },
-
-                   error: function(msg) {
-                        timeout = setTimeout(checkIfServerUp, 250);
-                   }
-             });
-        };
-
-        checkIfServerUp();
-    };
 });
 
 });

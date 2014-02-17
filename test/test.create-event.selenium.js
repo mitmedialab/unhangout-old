@@ -51,7 +51,8 @@ describe("CREATE EVENT", function() {
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
                     expect(text).to.be("Test Title (test-title)");
-                });
+                }
+            );
             
             // Event hasn't started
             browser.get("http://localhost:7777/event/" + eventId)
