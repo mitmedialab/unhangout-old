@@ -61,6 +61,7 @@ describe("CHAT WINDOW", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + evt.id);
+        browser.waitForSelector("#chat-input");
         var msgCount = 100;
         for (var i = 0; i < msgCount; i++) {
             browser.byCss("#chat-input").sendKeys("msg " + i + "\n");

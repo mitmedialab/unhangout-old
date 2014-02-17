@@ -32,13 +32,14 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$");
         browser.byCsss("#presence-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
         });
         var session = event.get("sessions").at(0);
         expect(session).to.not.be(undefined);
         var sock;
-        var participantList = "#session-list-container .session[data-session-id='" + session.id + "'] li";
+        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         var ready = false;
         // We should have an empty session participant list.
         browser.byCsss(participantList).then(function(els) {
@@ -75,12 +76,13 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     it("Updates session participant list when present in the event", function(done) {
         var sock1, sock2;
         var session = event.get("sessions").at(0);
-        var participantList = "#session-list-container .session[data-session-id='" + session.id + "'] li";
+        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         // Connect the browser to the event page, then connect a socket
         // belonging to the same user to both event and session rooms.
-        browser.get("http://localhost:7777/event/" + event.id).then(function() {
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$").then(function() {
             common.authedSock("regular2", event.getRoomId(), function(sock) {
                 sock1 = sock;
                 common.authedSock("regular2", session.getRoomId(), function(sock) {
@@ -127,7 +129,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     function disconnectionModalShowing(isShowing) {
         return browser.wait(function() {
             return browser.executeScript(
-                "return $('#disconnected-modal').is(':visible')"
+                "return window.$ && $('#disconnected-modal').is(':visible')"
             ).then(function(result) {
                 return result == isShowing;
             });
@@ -140,7 +142,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock;
 
         // Connect the browser and a socket to the event page.
-        browser.get("http://localhost:7777/event/" + event.id).then(function() {
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$").then(function() {
             common.authedSock("regular2", event.getRoomId(), function(thesock) {
                 sock = thesock;
             });
@@ -201,7 +204,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 sock = thesock;
             });
         });
-        browser.waitTime(1000).then(function () {
+        browser.waitTime(2000).then(function () {
             expect(session.get("connectedParticipants").length).to.be(2);
             common.restartServer(function onStopped(restart) {
                 framedDisconnectionModalShowing(true).then(function() {

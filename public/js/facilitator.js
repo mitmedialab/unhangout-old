@@ -1,9 +1,11 @@
+require([
+    "jquery", "underscore-template-config", "backbone", "sockjs", "client-models",
+    "video", "logger",
+    "bootstrap"
+], function($, _, Backbone, SockJS, models, video, logging) {
 
-/****************************
-      Activities UI
-*****************************/
 
-var logger = new Logger("FACILITATOR", "error");
+var logger = new logging.Logger("FACILITATOR", "error");
 
 var FacilitatorView = Backbone.View.extend({
     template: _.template($('#facilitator').html()),
@@ -62,7 +64,9 @@ var FacilitatorView = Backbone.View.extend({
 		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
 			if (event.data.type == "url") {
 				if (event.data.args.url) {
-					logger.debug("CDM inner set", event.data.args.url, event.origin);
+					logger.debug("CDM inner set", event.data.args.url,
+                                 event.data.args.id, event.origin);
+                    session.set("hangout-id", event.data.args.id);
 					session.set("hangout-url", event.data.args.url);
 					HANGOUT_ORIGIN = event.origin;
 					postMessageToHangout({type: "url-ack"});
@@ -115,7 +119,7 @@ var FacilitatorView = Backbone.View.extend({
     render: function() {
         // This should only be called once -- all subsequent renders are
         // done in `renderActivities`.
-        this.$el.html(this.template()).addClass("main-window");
+        this.$el.html(this.template({session: this.session})).addClass("main-window");
         var activitiesData = this.session.get('activities');
         this.renderActivities();
         this.faces = new FacesView();
@@ -278,7 +282,7 @@ var VideoActivity = BaseActivityView.extend({
         _.bindAll(this, "onrender");
         // Get the title of the video from the data API -- it's not available
         // from the iframe API.
-        this.yt = new YoutubeVideo({
+        this.yt = new video.YoutubeVideo({
             ytID: this.activity.video.id,
             showGroupControls: true
         });
@@ -515,6 +519,7 @@ session.on("change:hangout-url", function() {
     logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
     sock.sendJSON("session/set-hangout-url", {
         url: session.get("hangout-url"),
+        id: session.get("hangout-id"),
         sessionId: session.id
     });
 });
@@ -525,3 +530,4 @@ session.on("change:connectedParticipants", function() {
     });
 });
 
+});

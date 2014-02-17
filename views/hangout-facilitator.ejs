@@ -161,7 +161,7 @@
     </div>
 </div>
 
-<% include _common-templates.ejs %>
+<% include _video-templates.ejs %>
 
 <script type='text/javascript'>
     // Set up global data
@@ -175,11 +175,7 @@
     // DEBUG
 </script>
 
-<script src='/public/js/models.js'></script>
-<script src='/public/js/client-models.js'></script>
-<% include _sockjs.ejs %>
-<script src='/public/js/common-views.js'></script>
-<script src='/public/js/facilitator.js'></script>
+<%- requireScripts("/public/js/facilitator.js") %>
 
 <% } %>
 <% include _analytics.ejs %>

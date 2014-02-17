@@ -4,37 +4,17 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title><%- typeof title != "undefined" ? title + " &mdash; powered by unhangout" : "Unhangout" %></title>
 	<!-- <link rel="stylesheet" href="/public/css/bootstrap.css" type="text/css" media="screen"> -->
-	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+	<link href="/public/vendor/bootstrap/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
+    <link href="/public/vendor/font-awesome-3.2.1/css/font-awesome.css" rel="stylesheet">
+    <link href="/public/vendor/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
 	<link href="/public/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
 	<link rel="shortcut icon" href="/public/img/unhangout-favicon.png">
 	<link href="/public/css/bootstrap-datetimepicker.css" type="text/css" rel="stylesheet">
 	<link href="/public/css/summernote.css" type="text/css" rel="stylesheet">
 
-	<script type="text/javascript" src="//code.jquery.com/jquery-2.0.0.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.0.3/moment-timezone.min.js"></script>
-    <script type="text/javascript" src="/public/js/timezone-data.js"></script>
-
-	<!-- Jquery validator plugin -->
-  	<script type="text/javascript" src="/public/js/jquery.validate.min.js"></script>
-    <script type="text/javascript" src="/public/js/jquery-ui-1.10.3.custom.min.js"></script>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.5.2/underscore-min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.0/backbone.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.marionette/1.5.1-bundled/backbone.marionette.min.js"></script>
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/backbone.paginator/0.8/backbone.paginator.min.js"></script>
-	<script type="text/javascript" src="/public/js/bootstrap.js"></script>
-    <script type="text/javascript" src="/public/js/logger.js"></script>
-
 	<script type="text/javascript" charset="utf-8">
-		// switch underscore templating to {{ }} so it doesn't conflict with ejs.
-		_.templateSettings = {
-		    interpolate : /\{\{=(.+?)\}\}/g,
-            escape: /\{\{-(.+?)\}\}/g,
-            evaluate: /\{\{(.+?)\}\}/g
-		};
-	
+        // Set global datastructures for use by js.
+        // TODO: only set these when used, rather than assuming they're there.
 		<% if(!_.isUndefined(user)) { %>
 		var SOCK_KEY = '<%= user.getSockKey() %>';
 		var USER_ID = '<%= user.id %>';
@@ -44,6 +24,7 @@
 		<% } %>
 
 		<% if(!_.isUndefined(event)) { %>
+        // TODO: This should only be on event.ejs.
 		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
 		<% } %>
 	</script>
