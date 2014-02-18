@@ -1,5 +1,6 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
+<% var sessions; %>
 
 <script>
   document.querySelector("#admin-nav").className = "active";
@@ -16,32 +17,52 @@
             <h3>Events <a href="/admin/event/new" class="btn btn-primary">new</a></h3>
             <% events.forEach(function(event) { %>
                 <div class='admin-event-row'>
+                    <div class='title'>
+                        <h4 style='display: inline;'>
+                            <a href="/event/<%= event.id %>">
+                                <%= event.get("title").trim() || "[untitled]" %>
+                            </a>
+                        </h4>
+                        <% var date = event.get("start") || event.get("dateAndTime"); %>
+                        <% if (date) { %>
+                            
+                            <span class='date'>
+                                <%= moment(date).format("D MMM YYYY") %>
+                            </span>
+                        <% } %>
+                    </diV>
+
+                                
                     <% if(event.isLive()) { %>
                     <form action="/admin/event/<%=event.id%>/stop" method="post">
-                        <button type="submit" class="btn btn-danger stop-event"
+                        <button type="submit" class="btn btn-warning btn-small stop-event"
                                 data-event='<%= event.id %>'>stop</button>
                     </form>
                     <% } else { %>
                     <form action="/admin/event/<%=event.id%>/start" method="post">
-                        <button type="submit" class="btn btn-success start-event"
+                        <button type="submit" class="btn btn btn-small start-event"
                                 data-event='<%= event.id %>'>start</button>
                     </form>
                     <% } %>
                     <a href="/admin/event/<%=event.id%>" class="btn btn-small">
-                        <i class='icon-pencil' title='Edit'></i>
+                        <i class='icon-pencil' title='Edit'></i> edit
                     </a>
-                    <a href="/event/<%= event.id %>">
-                        <%= event.get("title") + " (" + event.get("shortName") + ")" %>
-                    </a>
-                    <% var sessions = event.get("sessions").models; %>
-                    <% include _admin_session_table.ejs %>
+                    <span class='small-green'><%= baseUrl + event.getEventUrl() %></span>
+
+                    <% sessions = event.get("sessions").models; %>
+                    <div style='clear: both;'></div>
+                    <% if (sessions.length > 0) { %>
+                        <div>
+                            <% include _admin_session_table.ejs %>
+                        </div>
+                    <% } %>
                 </div>
             <% }); %>
           </div>
         <% if (permalinkSessions) { %>
           <div class='span6'>
             <h3>Permalink Sessions</h3>
-            <% var sessions = permalinkSessions; %>
+            <% sessions = permalinkSessions; %>
             <% include _admin_session_table.ejs %>
         </div>
       <% } %>

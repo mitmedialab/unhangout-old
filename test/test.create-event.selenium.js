@@ -50,7 +50,7 @@ describe("CREATE EVENT", function() {
             browser.get("http://localhost:7777/admin/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
-                    expect(text).to.be("Test Title (test-title)");
+                    expect(text).to.be("Test Title");
                 }
             );
             

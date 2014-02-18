@@ -1,11 +1,11 @@
 <% if (sessions && sessions.length > 0) { %>
     <table class='table table-bordered table-condensed'>
         <tr>
-            <th>Title</th>
-            <th><i class='fa fa-users' title='Number of currently connected participants'></i></th>
-            <th><i class='fa fa-clock-o' title='Total active time'></i></th>
-            <th><span title='Total number of hangouts created'>#</span></th>
-            <th><span title='Session status'>?</span></th>
+            <th>Session Title</th>
+            <th title='Number of currently connected participants'><i class='fa fa-users'></i></th>
+            <th title='Total active time'><i class='fa fa-clock-o'></i></th>
+            <th title='Total number of hangouts created'><span>#</span></th>
+            <th title='Session status'><span></span></th>
             <% if (user.isSuperuser()) { %> <th></th> <% } %>
         </tr>
         <% _.each(sessions || [], function(session) { %>
@@ -17,7 +17,7 @@
                         </a>
                     <% } else { %>
                         <a href="/event/<%= session.collection.event.id %>">
-                            <%= session.get("title") %>
+                            <%= session.get("title").trim() || "[untitled]" %>
                         </a>
                     <% } %>
                 </td>
