@@ -1,6 +1,17 @@
 <% include _header.ejs %>
 <% include _event-navbar.ejs %>
 
+<script>
+    <% if(!_.isUndefined(event)) { %>
+        var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+        <% if (event.get("hoa")) { %>
+            var HOA_ATTRS = <%- JSON.stringify(event.get("hoa").toClientJSONForUser(user)) %>;
+        <% } else { %>
+            var HOA_ATTRS = null;
+        <% } %>
+    <% } %>
+</script>
+
 <div class="container">
     <div id="app">
         <div class="row">
@@ -131,7 +142,14 @@
            href='/event/{{- id }}/create-hoa/'>
             <i class='fa fa-users'></i> Create Hangout-on-Air
         </a>
+        {{ if (hoa && hoa["hangout-broadcast-id"]) { }}
+            <a class='restore-hoa' href='#'>Restore existing Hangout-on-Air</a>
+        {{ } }}
     </div>
+    {{ if (hoa && hoa["hangout-url"]) { }}
+        <a href='{{= hoa["hangout-url"] }}' target="_blank"
+           class='join-hoa'>Join Hangout-on-Air</a>
+    {{ } }}
 </script>
 
 <script type="text/template" id="admin-button-template">

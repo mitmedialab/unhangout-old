@@ -96,9 +96,16 @@ $(document).ready(function() {
                 curEvent.setEmbed(msg.args.ytId);
                 logger.log("added yt embed id: " + JSON.stringify(msg.args));
                 break;
+
             case "control-video":
                 app.youtubeEmbedView.control(msg.args);
                 break;
+
+            case "set-hoa":
+                var hoa = new models.Session(msg.args);
+                curEvent.set("hoa", hoa);
+                break;
+
             case "delete-session":
                 var session = curEvent.get("sessions").get(msg.args.id);
                 // app.paginatedSessions.remove(session);
@@ -226,6 +233,10 @@ $(document).ready(function() {
     // state of the event to the client - in a big JSON blob. Subsequent updates all happen
     // over the sockJS channel, but the initial state is embedded in these constants.
     curEvent = new models.ClientEvent(EVENT_ATTRS);
+    if (HOA_ATTRS) {
+        curEvent.set("hoa", new models.Session(HOA_ATTRS));
+        curEvent.get("hoa").event = curEvent;
+    }
     curEvent.get("sessions").add(EVENT_ATTRS.sessions);
     users = new models.UserList(EVENT_ATTRS.connectedUsers);
     messages = new models.ChatMessageList();

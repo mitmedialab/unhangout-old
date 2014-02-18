@@ -152,6 +152,14 @@ gapi = {
             displayNotice: fauxNotice.displayNotice,
             dismissNotice: fauxNotice.dismissNotice,
             hasNotice:     fauxNotice.hasNotice
+        },
+        onair: {
+            getYouTubeLiveId: function() {
+                return MOCK_DATA.isHoA ? "sXzK0AFpmcI" : null;
+            },
+            isOnAirHangout: function() {
+                return MOCK_DATA.isHoA;
+            }
         }
     }
 };

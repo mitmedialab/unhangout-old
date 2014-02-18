@@ -49,6 +49,7 @@ models.Event = Backbone.Model.extend({
             end: null,
             connectedUsers: null,            // these two fields are setup in initialize
             sessions: null,
+            hoa: null,
             youtubeEmbed: null,
             sessionsOpen: false,
             blurDisabled: false,
@@ -92,6 +93,7 @@ models.Event = Backbone.Model.extend({
         // for now just delete sessions; they'll save separately and will know their
         // event by id + url.
         delete attrs["sessions"];
+        delete attrs["hoa"];
         
         return attrs;
     },
@@ -258,6 +260,9 @@ models.EventList = Backbone.Collection.extend({
         var session;
         var event = this.find(function(event) {
             session = event.get("sessions").get(sessionId);
+            if (!session && event.get("hoa") && event.get("hoa").id == sessionId) {
+                session = event.get("hoa");
+            }
             if (session) {
                 return true;
             }
@@ -287,7 +292,8 @@ models.Session = Backbone.Model.extend({
 			shortCode: null,
             // State
 			connectedParticipants: [],
-            activities: []
+            activities: [],
+            "hangout-broadcast-id": null // Youtube ID For Hangouts on air
 		};
 	},
     getRoomId: function() {

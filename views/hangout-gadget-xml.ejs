@@ -14,7 +14,8 @@
                     startTime: new Date().getTime(),
                     users: '<%- JSON.stringify(mockUsers) %>',
                     hangoutUrl: "<%= mockHangoutUrl %>",
-                    appData: "<%= mockAppData %>"
+                    appData: "<%= mockAppData %>",
+                    isHoA: "<%= isHoA %>"
                 }
                 console.debug("MOCK DATA", MOCK_DATA);
             </script>
@@ -97,7 +98,9 @@
 
                 var urlArgs = {
                     url: gapi.hangout.getHangoutUrl(),
-                    id: gapi.hangout.getHangoutId()
+                    id: gapi.hangout.getHangoutId(),
+                    isHoA: gapi.hangout.onair.isOnAirHangout(),
+                    youtubeId: gapi.hangout.onair.getYouTubeLiveId()
                 };
                 var pollCount = 0;
 

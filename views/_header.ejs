@@ -22,11 +22,6 @@
         var IS_ADMIN = <%= user.isAdminOf(event) %>;
         var IS_SUPERUSER = <%= user.isSuperuser() %>;
 		<% } %>
-
-		<% if(!_.isUndefined(event)) { %>
-        // TODO: This should only be on event.ejs.
-		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
-		<% } %>
 	</script>
 </head>
 <body>

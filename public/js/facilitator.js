@@ -63,11 +63,16 @@ var FacilitatorView = Backbone.View.extend({
     handleCrossDocumentMessages:  function(event) {
 		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
 			if (event.data.type == "url") {
-				if (event.data.args.url) {
-					logger.debug("CDM inner set", event.data.args.url,
-                                 event.data.args.id, event.origin);
-                    session.set("hangout-id", event.data.args.id);
-					session.set("hangout-url", event.data.args.url);
+                var args = event.data.args;
+				if (args.url) {
+					logger.debug("CDM inner set", args.url, args.id, event.origin);
+                    session.set("hangout-id", args.id);
+					session.set("hangout-url", args.url);
+                    if (args.youtubeId) {
+                        session.set("hangout-broadcast-id", args.youtubeId);
+                    } else {
+                        session.set("hangout-broadcast-id", null);
+                    }
 					HANGOUT_ORIGIN = event.origin;
 					postMessageToHangout({type: "url-ack"});
 				}
@@ -523,6 +528,12 @@ session.on("change:connectedParticipants", function() {
     sock.sendJSON("session/set-connected-participants", {
         sessionId: session.id,
         connectedParticipants: session.get("connectedParticipants")
+    });
+});
+session.on("change:hangout-broadcast-id", function() {
+    sock.sendJSON("session/set-hangout-broadcast-id", {
+        sessionId: session.id,
+        "hangout-broadcast-id": session.get("hangout-broadcast-id")
     });
 });
 

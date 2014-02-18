@@ -745,7 +745,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         placeholder: ".placeholder"
     },
     events: {
-        'click .set-youtube-embed': 'setYoutubeEmbed'
+        'click .set-youtube-embed': 'setYoutubeEmbed',
+        'click .restore-hoa': 'restoreHoa'
     },
 
     player: null,
@@ -759,9 +760,28 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
                 this.setPlayerVisibility(false);
             }
         }, this);
+        this.listenTo(this.model, "change:hoa", this.render);
+    },
+    serializeData: function() {
+        var context = this.model.toJSON();
+        context.hoa = null;
+        if (this.model.get("hoa")) {
+            context.hoa = this.model.get("hoa").toJSON();
+        }
+        return context;
     },
     setYoutubeEmbed: function() {
         this.trigger("show-embed-modal");
+    },
+    restoreHoa: function() {
+        var message = {
+            type:"embed",
+            args: {
+                ytId: this.model.get("hoa").get("hangout-broadcast-id"),
+                roomId: this.model.getRoomId()
+            }
+        };
+        this.options.sock.send(JSON.stringify(message));
     },
     setPlayerVisibility: function(visible) {
         if (visible) {

@@ -19,44 +19,6 @@ var CALENDAR_ERROR = null;
 var RETURN_CALENDAR_EVENT = true;
 var TOKEN_ERROR = null;
 
-googleapis.OAuth2Client = function() {
-    this.generateAuthUrl = function() {
-        return MOCK_AUTH_URL;
-    };
-    this.getToken = function(code, callback) {
-        return callback(TOKEN_ERROR, "mock-token");
-    };
-}
-
-googleapis.discover = function(thingy, version) {
-    return {
-        execute: function(callback) {
-            // Callback with a fake 'client'
-            return callback(null, {
-                calendar: {
-                    events: {
-                        insert: function(cal, opts) {
-                            return {
-                                withAuthClient: function(client) {
-                                    return {
-                                        execute: function(callback) {
-                                            var event = {};
-                                            if (RETURN_CALENDAR_EVENT && !CALENDAR_ERROR) {
-                                                event.hangoutLink = MOCK_HANGOUT_URL + (++LINK_COUNTER);
-                                            }
-                                            return callback(CALENDAR_ERROR, event);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-    }
-};
-
 function checkFarmingDb(list, callback) {
     common.server.db.redis.lrange("global:hangout_urls", 0, 100, function(err, urls) {
         expect(urls).to.eql(list);
@@ -65,6 +27,44 @@ function checkFarmingDb(list, callback) {
 };
 
 describe("FARMING", function() {
+    before(function() {
+        googleapis.OAuth2Client = function() {
+            this.generateAuthUrl = function() {
+                return MOCK_AUTH_URL;
+            };
+            this.getToken = function(code, callback) {
+                return callback(TOKEN_ERROR, "mock-token");
+            };
+        }
+        googleapis.discover = function(thingy, version) {
+            return {
+                execute: function(callback) {
+                    // Callback with a fake 'client'
+                    return callback(null, {
+                        calendar: {
+                            events: {
+                                insert: function(cal, opts) {
+                                    return {
+                                        withAuthClient: function(client) {
+                                            return {
+                                                execute: function(callback) {
+                                                    var event = {};
+                                                    if (RETURN_CALENDAR_EVENT && !CALENDAR_ERROR) {
+                                                        event.hangoutLink = MOCK_HANGOUT_URL + (++LINK_COUNTER);
+                                                    }
+                                                    return callback(CALENDAR_ERROR, event);
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+        };
+    });
     beforeEach(function(done) {
         common.standardSetup(function() {
             common.server.db.users.findWhere({
