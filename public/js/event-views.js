@@ -737,10 +737,9 @@ views.AboutEventView = Backbone.Marionette.ItemView.extend({
 });
 
 // Manages the display of embedded videos on the upper left corner.
-<<<<<<< HEAD
-var VideoEmbedView = Marionette.ItemView.extend({
-	template: '#video-embed-template',
-	id: 'video-embed',
+views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
+    template: '#video-embed-template',
+    id: 'video-embed',
     ui: {
         player: ".player",
         placeholder: ".placeholder"
@@ -748,34 +747,19 @@ var VideoEmbedView = Marionette.ItemView.extend({
     events: {
         'click .set-youtube-embed': 'setYoutubeEmbed'
     },
-=======
-views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
-    template: '#video-embed-template',
-    id: 'video-embed',
->>>>>>> simplify-session-state
 
     player: null,
 
-<<<<<<< HEAD
-	initialize: function() {
-		this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
-            if (youtubeEmbed) {
-                this.setPlayerVisibility(true);
-=======
     initialize: function() {
         this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
-            if (!youtubeEmbed) {
-                this.$el.hide();
-            } else {
-                this.$el.show();
->>>>>>> simplify-session-state
+            if (youtubeEmbed) {
+                this.setPlayerVisibility(true);
                 this.yt.setVideoId(this.model.get("youtubeEmbed"));
             } else {
                 this.setPlayerVisibility(false);
             }
-<<<<<<< HEAD
-		}, this);
-	},
+        }, this);
+    },
     setYoutubeEmbed: function() {
         this.trigger("show-embed-modal");
     },
@@ -788,14 +772,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             this.ui.placeholder.toggle(IS_ADMIN);
         }
     },
-	onRender: function() {
-        this.yt = new YoutubeVideo({
-=======
-        }, this);
-    },
     onRender: function() {
         this.yt = new video.YoutubeVideo({
->>>>>>> simplify-session-state
             ytID: this.model.get("youtubeEmbed"),
             showGroupControls: IS_ADMIN
         });
@@ -808,22 +786,11 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }, this));
 
         this.$(".player").html(this.yt.el);
-<<<<<<< HEAD
         this.setPlayerVisibility(!!this.model.get("youtubeEmbed"));
         if (this.model.get("youtubeEmbed")) {
             this.yt.render();
         }
-	},
-=======
-        if(!this.model.get("youtubeEmbed")) {
-            this.$el.hide();
-        } else {
-            this.$el.show();
-            this.yt.render();
-            //this.$el.draggable(); // wat
-        }
     },
->>>>>>> simplify-session-state
     control: function(args) {
         this.yt.receiveControl(args);
     }
