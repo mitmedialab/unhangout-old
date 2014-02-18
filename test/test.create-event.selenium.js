@@ -50,8 +50,9 @@ describe("CREATE EVENT", function() {
             browser.get("http://localhost:7777/admin/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
-                    expect(text).to.be("Test Title (test-title)");
-                });
+                    expect(text).to.be("Test Title");
+                }
+            );
             
             // Event hasn't started
             browser.get("http://localhost:7777/event/" + eventId)
@@ -71,11 +72,7 @@ describe("CREATE EVENT", function() {
 
             // Start the event.
             browser.get("http://localhost:7777/admin");
-            browser.byCsss(".admin-table-buttons .btn-success").then(function(els) {
-                // TODO This is a little hackish -- should have a cleaner way to
-                // select the event. Goes along with the un-hard-code event ID.
-                els[2].click();
-            });
+            browser.byCss(".start-event[data-event='" + eventId + "']").click();
 
             // View the started event
             browser.get("http://localhost:7777/event/" + eventId);
@@ -96,6 +93,7 @@ describe("CREATE EVENT", function() {
             browser.byCss(".admin-button").click();
             browser.waitForSelector("#admin-page-for-event");
             browser.byCss("#admin-page-for-event").click();
+            browser.waitForSelector("option[value='Europe/Zurich']");
             // Ensure event stuff is there
             browser.executeScript("return {" +
                                   " title: $('#inputTitle').val(), " +

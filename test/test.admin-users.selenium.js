@@ -155,7 +155,7 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/admin/users/");
-        browser.byCss("input.filter-input").sendKeys("Regular");
+        browser.byCss("input.filter-name").sendKeys("Regular");
         browser.byCsss("tr").then(function(els) {
             expect(els.length).to.be(3);
             done();

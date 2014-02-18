@@ -1,4 +1,13 @@
+require([
+   "jquery", "underscore", "backbone", "client-models",
+   // plugins
+   "backbone.marionette", "bootstrap", "underscore-template-config"
+], function($, _, Backbone, models) {
+
 $(document).ready(function() {
+
+var users = new models.UserList(USER_DATA);
+var events = new models.EventList(EVENT_DATA);
 
 var UserRowView = Backbone.Marionette.ItemView.extend({
     tagName: 'tr',
@@ -179,8 +188,8 @@ var UserTableView = Backbone.Marionette.CompositeView.extend({
             }
             if (this.filter.name) {
                 var tokens = this.filter.name.toLowerCase().split(" ");
-                var search = user.get("displayName") + " " +
-                    _.pluck(user.get("emails"), "value").join(" ");
+                var search = (user.get("displayName") + " " +
+                    _.pluck(user.get("emails"), "value").join(" ")).toLowerCase();
 
                 for (var i = 0; i < tokens.length; i++) {
                     if (search.indexOf(tokens[i]) == -1) {
@@ -275,4 +284,6 @@ app.addInitializer(function(options) {
 });
 app.start();
 
-});
+}); // document.ready
+
+}); // require

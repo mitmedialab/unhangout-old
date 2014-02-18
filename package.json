@@ -51,7 +51,8 @@
     "stylus" : "0.40.2",
     "nib" : "1.0.1",
     "nodemailer": "0.6.0",
-    "caja-sanitizer": "*"
+    "caja-sanitizer": "*",
+    "requirejs-middleware": "git://github.com/yourcelf/requirejs-middleware.git#master"
   },
   "analyze": false,
   "devDependencies": {

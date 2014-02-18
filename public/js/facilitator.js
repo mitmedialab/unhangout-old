@@ -1,9 +1,11 @@
+require([
+    "jquery", "underscore-template-config", "backbone", "sockjs", "client-models",
+    "video", "logger",
+    "bootstrap"
+], function($, _, Backbone, SockJS, models, video, logging) {
 
-/****************************
-      Activities UI
-*****************************/
 
-var logger = new Logger("FACILITATOR", "error");
+var logger = new logging.Logger("FACILITATOR", "error");
 
 var FacilitatorView = Backbone.View.extend({
     template: _.template($('#facilitator').html()),
@@ -62,7 +64,9 @@ var FacilitatorView = Backbone.View.extend({
 		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
 			if (event.data.type == "url") {
 				if (event.data.args.url) {
-					logger.debug("CDM inner set", event.data.args.url, event.origin);
+					logger.debug("CDM inner set", event.data.args.url,
+                                 event.data.args.id, event.origin);
+                    session.set("hangout-id", event.data.args.id);
 					session.set("hangout-url", event.data.args.url);
 					HANGOUT_ORIGIN = event.origin;
 					postMessageToHangout({type: "url-ack"});
@@ -115,7 +119,7 @@ var FacilitatorView = Backbone.View.extend({
     render: function() {
         // This should only be called once -- all subsequent renders are
         // done in `renderActivities`.
-        this.$el.html(this.template()).addClass("main-window");
+        this.$el.html(this.template({session: this.session})).addClass("main-window");
         var activitiesData = this.session.get('activities');
         this.renderActivities();
         this.faces = new FacesView();
@@ -278,7 +282,7 @@ var VideoActivity = BaseActivityView.extend({
         _.bindAll(this, "onrender");
         // Get the title of the video from the data API -- it's not available
         // from the iframe API.
-        this.yt = new YoutubeVideo({
+        this.yt = new video.YoutubeVideo({
             ytID: this.activity.video.id,
             showGroupControls: true
         });
@@ -343,6 +347,38 @@ var WebpageActivity = BaseActivityView.extend({
  * Modal dialogs
  */
 
+var BaseModalView = Backbone.View.extend({
+    events: {
+        'click input[type=submit]': 'validateAndGo'
+    },
+    initialize: function() {
+        _.bindAll(this, "render", "validateAndGo", "validate", "close");
+        $("body").append(this.el);
+        this.render();
+        this.$el.on("hidden", _.bind(function() {
+            this.trigger("close");
+        }, this));
+    },
+    render: function() {
+        this.$el.html(this.template()).addClass("modal hide fade");
+        this.$el.modal('show');
+    },
+    validateAndGo: function(event) {
+        event.preventDefault();
+        var data = this.validate();
+        if (data) {
+            this.trigger("submit", data);
+            this.close();
+        }
+    },
+    close: function() {
+        this.$el.on("hidden", _.bind(function() {
+            this.trigger("close");
+            this.remove();
+        }, this));
+        this.$el.modal("hide");
+    }
+});
 
 var AddActivityDialog = BaseModalView.extend({
     template: _.template($("#add-activity-dialog").html()),
@@ -479,6 +515,7 @@ session.on("change:hangout-url", function() {
     logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
     sock.sendJSON("session/set-hangout-url", {
         url: session.get("hangout-url"),
+        id: session.get("hangout-id"),
         sessionId: session.id
     });
 });
@@ -489,3 +526,4 @@ session.on("change:connectedParticipants", function() {
     });
 });
 
+});

@@ -1,0 +1,12 @@
+<!-- Optimization: pre-load the facilitator.js script for faster hangout startup. -->
+<script type='text/javascript'>
+    var request = new XMLHttpRequest();
+    request.open("GET", "/public/build/facilitator.js", true);
+    request.onload = function() {
+        window.console && console.log && console.log("facilitator.js pre-loaded..");
+    };
+    request.onerror = function() {
+        window.console && console.log && console.log("Problem caching facilitator.js.");
+    };
+    request.send();
+</script>

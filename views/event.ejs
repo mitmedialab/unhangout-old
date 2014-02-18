@@ -37,7 +37,7 @@
 <script type="text/template" id="session-template">
     <h3>{{- title }}</h3>
     <div class="attend btn btn-info" data-toggle="button">
-        <span class="outer"><i class="icon-lock"></i><span class="text">SIGN UP</span><span class="attend-count hide"></span></span>
+        <span class="outer"><i class="icon-lock"></i><span class="text">JOIN</span></span>
         <div class="attendance"></div>
     </div>
     <div class="admin-buttons">
@@ -51,7 +51,14 @@
             
 <script type="text/template" id="session-list-template">
     <div id="session-list-container" class="full-size-container">
-        <div class="empty-notice hide">Sessions will appear here when they are created by an admin.</div>
+        <div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
+    </div>
+    <div style='clear: both;'></div>
+</script>
+
+<script type="text/template" id="session-list-empty-template">
+    <div id="session-list-container" class="full-size-container">
+        <div class="empty-notice">Sessions will appear here when they are created by an admin.</div>
         <div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
     </div>
     <div style='clear: both;'></div>
@@ -92,7 +99,7 @@
 </script>
             
 <script type="text/template" id="chat-message-template">
-    <span class="from">{{- user.shortDisplayName}}</span>{{- text}}
+    <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
 </script>
             
 <script type="text/template" id="chat-layout">
@@ -265,7 +272,7 @@
     </div>
 </script>
 
-<% include _common-templates.ejs %>
+<% include _video-templates.ejs %>
 
 <script type='text/javascript'>
     <% if (user.isAdminOf(event)) { %>
@@ -273,12 +280,7 @@
     <% } %>
 </script>
     
-<% include _sockjs.ejs %>
-<script type="text/javascript" src="/public/js/models.js"></script>    
-<script type="text/javascript" src="/public/js/client-models.js"></script>    
-<script type="text/javascript" src="/public/js/event-app.js"></script>
-<script type="text/javascript" src="/public/js/common-views.js"></script>    
-<script type="text/javascript" src="/public/js/event-views.js"></script>    
-
+<%- requireScripts("/public/js/event-app.js") %>
 <% include _analytics.ejs %>
+<% include _preload-facilitator.ejs %>
 <% include _footer.ejs %>

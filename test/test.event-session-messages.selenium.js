@@ -36,7 +36,10 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("superuser1");
         // Admin goes to the event page.  Connect a socket to a session.
-        browser.get("http://localhost:7777/event/" + event.id).then(function() {
+        browser.get("http://localhost:7777/event/" + event.id)
+        browser.wait(function() {
+            return browser.executeScript("return window.$ !== null");
+        }).then(function() {
             common.authedSock("regular2", session.getRoomId(), function(theSock) {
                 sock = theSock;
                 function onData(data) {
@@ -54,7 +57,7 @@ describe("EVENT SESSION MESSAGES", function() {
             });
         });
         // Wait for the user to show up as a participant.
-        browser.waitForSelector("#session-list-container .session[data-session-id='"
+        browser.waitForSelector("#session-list .session[data-session-id='"
                                 + session.id + "'] li i.icon-user");
         // Send the message... sock's on("data, ...) handler will pick it up
         // and finish the test once we do.
