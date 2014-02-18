@@ -797,10 +797,10 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             ytID: this.model.get("youtubeEmbed"),
             showGroupControls: IS_ADMIN
         });
-        this.yt.on("control-video", function(args) {
+        this.yt.on("control-video", _.bind(function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
             this.options.sock.send(JSON.stringify({type: "control-video", args: args}));
-        });
+        }, this));
         this.yt.on("video-settings", _.bind(function(yt) {
             this.trigger("show-embed-modal");
         }, this));
