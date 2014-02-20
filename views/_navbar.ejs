@@ -13,9 +13,7 @@
 						<li class="active"><a href="/">Home</a></li>
 						<li><a href="/about/">About</a></li>
 						<li><a href="/how-to-unhangout/">How to Unhangout</a></li>
-						<% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent() || user.hasPerm("createEvents"))) { %>
-							<li id="admin-nav"><a href="/admin/">Admin</a></li>
-						<% } %>
+						
                         <% if(user && user.isSuperuser()) { %>
                             <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
                         <% } %>
@@ -31,7 +29,14 @@
 							<%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
 							
 							</a>
-							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+
+							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">	
+								<% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent() || user.hasPerm("createEvents"))) { %>
+									<li role="presentation">
+                                        <a role="menuitem" tabindex="-1" href="/admin">My Events</a>
+                                    </li>
+								<% } %>
+
 								<li role="presentation">
 									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
 								</li>
