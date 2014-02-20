@@ -22,6 +22,7 @@ body {
 	border-color: $navbar;
 }
 
+
 .brand, .navbar-inverse .brand {
 	color: #fff;
 }
@@ -272,8 +273,14 @@ body {
 	background: $navbar;
 }
 
-.dropdown-menu>li.active >a {
-	background-color: $navbar;
+.dropdown-menu > li.active > a {
+    background: white !important;
+    color: black !important;
+}
+
+.dropdown-menu > li.active > a:hover, .dropdown-menu > li.active > a:focus {
+    background: $navbar !important;
+    color: white !important;
 }
 
 .user {
