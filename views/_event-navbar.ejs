@@ -22,31 +22,8 @@
                         <div id="admin-region"></div>
                     </div>
 
-                    <div class="nav pull-right identity">
-                    <% if(!user) {%>
-                    <a class="btn btn-primary pull-left" href="/auth/google">Login</a>
-                    <% } else { %>
-                        <div class="dropdown">
-                            <a class="dropdown-toggle username" data-toggle="dropdown">
-                            <img class="profile-thumbnail" src="<%= user.get("picture")%>" width="30px" height="30px">
-                            <%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
-                            </a>
+                    <% include _identity.ejs %>
 
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <% if(user.isAdminOf(event)) {%>
-                                    <li role="presentation">
-                                        <a role="menuitem" tabindex="-1" href="/admin">My Events</a>
-                                    </li>
-                                <% } %>
-
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
-                                </li>
-                            </ul>
-                        </div>
-                    <% } %>
-                    
-                    </div>
                 </div><!--/.nav-collapse -->
             </div>
         </div>

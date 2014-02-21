@@ -41,7 +41,9 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("admin1");
         browser.get("http://localhost:7777/");
-        browser.byCss("#admin-nav a").click();
+        browser.byCss(".identity .dropdown > a").click();
+        browser.waitForSelector("[href='/logout']")
+        browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {
             expect(url).to.eql("http://localhost:7777/admin/");
             done();
@@ -51,7 +53,9 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/");
-        browser.byCss("#admin-nav a").click();
+        browser.byCss(".identity .dropdown > a").click();
+        browser.waitForSelector("[href='/logout']")
+        browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {
             expect(url).to.eql("http://localhost:7777/admin/");
             done();

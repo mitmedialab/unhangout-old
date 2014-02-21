@@ -18,32 +18,7 @@
                             <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
                         <% } %>
 					</ul>
-					<div class="nav pull-right identity">
-					<% if(!user) {%>
-					<li><a href="/auth/google">Login</a></li>
-					<% } else { %>
-						<div class="dropdown">
-						
-                            <a class="dropdown-toggle username" data-toggle="dropdown">
-							<img class="profile-thumbnail" src="<%= user.get("picture")%>" width="30px" height="30px">
-							<%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
-							
-							</a>
-
-							<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">	
-								<% if(user && (user.isSuperuser() || user.isAdminOfSomeEvent() || user.hasPerm("createEvents"))) { %>
-									<li role="presentation">
-                                        <a role="menuitem" tabindex="-1" href="/admin">My Events</a>
-                                    </li>
-								<% } %>
-
-								<li role="presentation">
-									<a role="menuitem" tabindex="-1" href="/logout">Logout</a>
-								</li>
-							</ul>
-						</div>
-					<% } %>
-					</div>
+                    <% include _identity.ejs %>
 				</div><!--/.nav-collapse -->
 			</div>
 		</div>
