@@ -1,10 +1,6 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-<script>
-  document.querySelector("#admin-nav").className = "active";
-</script>
-
 <div class='container-fluid'>
     <div class='row-fluid'>
         <div class='span12'>
@@ -25,11 +21,11 @@
                 <td class="admin-table-buttons">
                     <% if(event.isLive()) { %>
                     <form action="/admin/event/<%=event.id%>/stop" method="post">
-                        <button type="submit" class="btn btn-danger">stop</submit>
+                        <button type="submit" class="btn btn-danger">stop</button>
                     </form>
                     <% } else { %>
                     <form action="/admin/event/<%=event.id%>/start" method="post">
-                        <button type="submit" class="btn btn-success">start</submit>
+                        <button type="submit" class="btn btn-success">start</button>
                     </form>
                     <% } %>
                 </td>
@@ -58,7 +54,7 @@
                     </div>
                     <% if(session.get("hangoutConnected")) { %>
                     <form action="/h/<%= session.get("shortCode") %>/stop" method="post">
-                        <button type="submit" class="btn btn-danger btn-link">stop</submit>
+                        <button type="submit" class="btn btn-danger btn-link">stop</button>
                     </form>
                     <% } %>			
                     </td>
@@ -68,5 +64,5 @@
         </div>
     </div>
 </div>
-
+<%- requireScripts("/public/js/admin.js") %>
 <% include _footer.ejs %>

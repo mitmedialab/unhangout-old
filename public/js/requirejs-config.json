@@ -36,6 +36,7 @@
     "modules": {
         "index.js": { "include": "index" },
         "event-app.js": { "include": "event-app" },
+        "admin.js": { "include": "admin" },
         "admin-users.js": { "include": "admin-users" },
         "admin-event.js": { "include": "admin-event" },
         "permalink-intro.js": { "include": "permalink-intro" },

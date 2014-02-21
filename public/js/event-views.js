@@ -454,29 +454,55 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #show-embed-modal':'showEmbedModal',
         'click #open-sessions':'openSessions',
         'click #close-sessions':'closeSessions',
-        'click #message-sessions': 'messageSessions'
+        'click #message-sessions': 'messageSessions',
+        'click #admin-stop-event': 'stopEvent',
+        'click #admin-start-event': 'startEvent'
     },
 
-    openSessions: function() {
+    openSessions: function(jqevt) {
+        jqevt.preventDefault();
         this.options.sock.send(JSON.stringify({
             type: "open-sessions",
             args: {roomId: this.options.event.getRoomId()}
         }));
     },
 
-    closeSessions: function() {
+    closeSessions: function(jqevt) {
+        jqevt.preventDefault();
         this.options.sock.send(JSON.stringify({
             type: "close-sessions",
             args: {roomId: this.options.event.getRoomId()}
         }));
     },
 
-    messageSessions: function() {
+    startEvent: function(jqevt) {
+        jqevt.preventDefault();
+        this._startStopEvent("start");
+    },
+    stopEvent: function(jqevt) {
+        jqevt.preventDefault();
+        this._startStopEvent("stop");
+    },
+    _startStopEvent: function(action) {
+        $.ajax({
+            type: 'POST',
+            url: "/admin/event/" + this.options.event.id + "/" + action
+        }).fail(function(err) {
+            logger.error(err);
+            alert("Server error!");
+        }).done(_.bind(function() {
+            window.location.href = window.location.href;
+        }, this));
+    },
+
+    messageSessions: function(jqevt) {
+        jqevt.preventDefault();
         $("#message-sessions-modal").modal('show');
 
     },
 
-    showEmbedModal: function() {
+    showEmbedModal: function(jqevt) {
+        jqevt.preventDefault();
         var ytId = this.options.event.get("youtubeEmbed");
         if (ytId) {
             var url = "https://www.youtube.com/watch?v=" + ytId;
@@ -501,7 +527,10 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     // this little hack is to make sure the hangout count
     // is available in the template rendering.
     serializeData: function() {
-        return {numFarmedHangouts:NUM_HANGOUTS_FARMED};
+        return {
+            event: this.options.event,
+            numFarmedHangouts: NUM_HANGOUTS_FARMED
+        }
     }
 });
 
