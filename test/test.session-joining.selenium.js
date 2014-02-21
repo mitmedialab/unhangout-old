@@ -1,6 +1,7 @@
 var expect = require('expect.js'),
     _ = require("underscore"),
-    common = require('./common');
+    common = require('./common'),
+    models = require("../lib/server-models.js");
 
 var browser = null,
     event = null;
@@ -31,13 +32,14 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$");
         browser.byCsss("#presence-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
         });
         var session = event.get("sessions").at(0);
         expect(session).to.not.be(undefined);
         var sock;
-        var participantList = "#session-list-container .session[data-session-id='" + session.id + "'] li";
+        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         var ready = false;
         // We should have an empty session participant list.
         browser.byCsss(participantList).then(function(els) {
@@ -67,19 +69,20 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {
             expect(session.getNumConnectedParticipants()).to.be(0);
-            expect(session.get('hangoutConnected')).to.be(false);
+            //expect(session.get('hangoutConnected')).to.be(false); // after 5 mins..
             done();
         });
     });
     it("Updates session participant list when present in the event", function(done) {
         var sock1, sock2;
         var session = event.get("sessions").at(0);
-        var participantList = "#session-list-container .session[data-session-id='" + session.id + "'] li";
+        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         // Connect the browser to the event page, then connect a socket
         // belonging to the same user to both event and session rooms.
-        browser.get("http://localhost:7777/event/" + event.id).then(function() {
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$").then(function() {
             common.authedSock("regular2", event.getRoomId(), function(sock) {
                 sock1 = sock;
                 common.authedSock("regular2", session.getRoomId(), function(sock) {
@@ -118,7 +121,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {;
             expect(session.getNumConnectedParticipants()).to.be(0);
-            expect(session.get('hangoutConnected')).to.be(false);
+            //expect(session.get('hangoutConnected')).to.be(false); // timeout-bound..
             done();
         });
     });
@@ -126,7 +129,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     function disconnectionModalShowing(isShowing) {
         return browser.wait(function() {
             return browser.executeScript(
-                "return $('#disconnected-modal').is(':visible')"
+                "return window.$ && $('#disconnected-modal').is(':visible')"
             ).then(function(result) {
                 return result == isShowing;
             });
@@ -139,7 +142,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock;
 
         // Connect the browser and a socket to the event page.
-        browser.get("http://localhost:7777/event/" + event.id).then(function() {
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$").then(function() {
             common.authedSock("regular2", event.getRoomId(), function(thesock) {
                 sock = thesock;
             });
@@ -200,7 +204,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 sock = thesock;
             });
         });
-        browser.waitTime(500).then(function () {
+        browser.waitTime(2000).then(function () {
             expect(session.get("connectedParticipants").length).to.be(2);
             common.restartServer(function onStopped(restart) {
                 framedDisconnectionModalShowing(true).then(function() {
@@ -208,7 +212,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 });
             }, function onRestarted() {
                 framedDisconnectionModalShowing(false);
-                browser.waitTime(500).then(function() {
+                browser.waitTime(1000).then(function() {
                     // Refresh session from new DB.
                     event = common.server.db.events.get(event.id);
                     session = event.get("sessions").get(session.id);
@@ -235,5 +239,39 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             expect(href).to.be("http://example.com/");
             done();
         });
+    });
+    it("Doesn't clear hangout URL immediately, but rather after a delay.", function(done) {
+        var session = event.get("sessions").at(1);
+        session.set("hangoutConnected", false);
+        session.set("hangout-url", null);
+        common.authedSock("regular1", session.getRoomId(), function(sock) {
+            sock.on("data", function(message) {
+                var msg = JSON.parse(message);
+                if (msg.type == "session/set-hangout-url-ack") {
+                    expect(session.get("hangout-url")).to.not.be(null);
+                    sock.write(JSON.stringify({
+                        type: "leave",
+                        args: {id: session.getRoomId()}
+                    }));
+                } else if (msg.type == "leave-ack") {
+                    expect(session.getNumConnectedParticipants()).to.be(0);
+                    expect(session.get("hangout-url")).to.not.be(null);
+                    // We don't test that it actually gets invalidated here,
+                    // because the delay is LONG, and sinon doesn't play well
+                    // with asynchronous socket comms.
+                    done();
+                } else {
+                    done(new Error(message));
+                }
+            });
+            sock.write(JSON.stringify({
+                type: "session/set-hangout-url",
+                args: {
+                    url: "http://example.com",
+                    sessionId: session.id
+                },
+            }));
+        });
+
     });
 });

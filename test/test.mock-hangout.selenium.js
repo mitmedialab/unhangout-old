@@ -43,9 +43,7 @@ describe("MOCK HANGOUT", function() {
             return session.getNumConnectedParticipants() == 1;
         }).then(function() {;
             expect(session.get("hangout-url")).to.eql(url);
-        });
-        browser.get("http://localhost:7777/").then(function() {
-            expect(session.get("hangout-url")).to.be(null);
+            expect(session.get("hangout-id")).to.eql(url + "-id");
             done();
         });
     });

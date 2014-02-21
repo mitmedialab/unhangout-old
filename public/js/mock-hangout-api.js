@@ -125,6 +125,9 @@ gapi = {
         getHangoutUrl: function() {
             return MOCK_DATA.hangoutUrl;
         },
+        getHangoutId: function() {
+            return MOCK_DATA.hangoutUrl + "-id";
+        },
         getParticipants: function() {
             return MOCK_DATA.users;
         },

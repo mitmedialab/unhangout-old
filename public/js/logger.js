@@ -1,11 +1,14 @@
 /*
  Simple logger.  Usage:
 
-var logger = new Logger("prefix", "info");
+var logger = new logger.Logger("prefix", "info");
 
 Logging levels (most verbose -> least):
      "debug", "log", "info", "error"
 */
+
+define(function() {
+
 var Logger = function(prefix, level) {
     level = level || "debug";
 
@@ -46,4 +49,8 @@ var Logger = function(prefix, level) {
         this.error = prefixLogger(prefix, console.error, console);
     }
 };
+
+return {Logger: Logger};
+
+});
 

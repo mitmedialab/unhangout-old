@@ -35,6 +35,8 @@ var joinEventSetup = function(userKey) {
 };
 
 describe('unhangout server', function() {
+    this.timeout(5000); // Socket tests take a little extra time on slow systems.
+
 	describe('configuration', function() {
 		beforeEach(function() {
 			s = new server.UnhangoutServer();

@@ -63,7 +63,7 @@
             var logger = new Logger("GADGET", "error");
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
-            var version = 8;
+            var version = 9;
             logger.info("Unhangout Facilitator version " + version);
             var load = function(event) {
                 if (event && !event.isApiReady) { return; }
@@ -95,7 +95,10 @@
                 iframe.name = "facilitator_frame";
                 document.body.appendChild(iframe);
 
-                var urlArgs = { url: gapi.hangout.getHangoutUrl() };
+                var urlArgs = {
+                    url: gapi.hangout.getHangoutUrl(),
+                    id: gapi.hangout.getHangoutId()
+                };
                 var pollCount = 0;
 
                 // Poll the inner iframe with our data until it ack's.

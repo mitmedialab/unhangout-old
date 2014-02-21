@@ -1,33 +1,29 @@
 (function () {
-  var server = false,
-		models, Backbone;
-		
-  if (typeof exports !== 'undefined') {
-    models = exports;
-    server = true;
 
-	// This is include-able both in a browser environment and in a v8/node env,
-	// so it needs to figure out which situation it is in. If it's on the server,
-	// put everything in exports and behave like a module. If it's on the client,
-	// fake it and expect the client to understand how to deal with things.
-	var _ = require('underscore')._,
-	    Backbone = require('backbone');
+// This is include-able both in a browser environment and in a v8/node env, so
+// it needs to figure out which situation it is in. If it's on the server, put
+// everything in exports and behave like a module. If it's on the client, use
+// requirejs styling.  Either way, make sure a 'define' method is available to
+// wrap our call in.
+if (typeof define === "undefined") {
+    var root = this;
+    define = function(deps, callback) {
+        if (typeof exports !== "undefined") {
+            module.exports = callback();
+        } else {
+            root.models = callback();
+        }
+    };
+}
 
-  } else {
-    models = this.models = {};
+define(["underscore", "backbone", "moment"], function(_, Backbone, moment) {
 
-	// I'm a little unclear about why I need to do this, but if I don't,
-	// Backbone isn't available in scope here. 
-	Backbone = window.Backbone;
-	_ = window._;
-  }
-
-// this is a stupid little shim to deal with not having the pagination module working.
-// there should be some way to include it here, but I can't see to work it out.
-if(server) {
-    Backbone.Paginator = {};
-
-    Backbone.Paginator.clientPager = Backbone.Collection;
+var models = {};
+// Load dependencies if we're in server/node environment.
+if (typeof exports !== 'undefined') {
+    _ = require('underscore');
+    Backbone = require('backbone');
+    moment = require("moment");
 }
 
 
@@ -38,39 +34,39 @@ if(server) {
 
 // The event model. Events are the top level object, and have many sessions within them.
 models.Event = Backbone.Model.extend({
-	idRoot: "event",
-	urlRoot: "event",
+    idRoot: "event",
+    urlRoot: "event",
     DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
-	
-	defaults: function() {
-		return {
-			title: "",
-			organizer: "",
-			shortName: null,		// use this as a slug for nicer urls
-			description: "",
-			welcomeMessage: null,
-			start: null,
-			end: null,
-			connectedUsers: null,			// these two fields are setup in initialize
-			sessions: null,
-			youtubeEmbed: null,
-			sessionsOpen: false,
-			blurDisabled: false,
-			dateAndTime: null,
-			timeZoneValue: null,
+    
+    defaults: function() {
+        return {
+            title: "",
+            organizer: "",
+            shortName: null,        // use this as a slug for nicer urls
+            description: "",
+            welcomeMessage: null,
+            start: null,
+            end: null,
+            connectedUsers: null,            // these two fields are setup in initialize
+            sessions: null,
+            youtubeEmbed: null,
+            sessionsOpen: false,
+            blurDisabled: false,
+            dateAndTime: null,
+            timeZoneValue: null,
             admins: []
-		}
-	},
-	
-	initialize: function() {
-		// these are the main sub-collections of this model.
-		this.set("sessions", new models.SessionList(null, this));
-		this.set("connectedUsers", new models.UserList());
-	},
-			
-	numUsersConnected: function() {
-		return this.get("connectedUsers").length;
-	},
+        }
+    },
+    
+    initialize: function() {
+        // these are the main sub-collections of this model.
+        this.set("sessions", new models.SessionList(null, this));
+        this.set("connectedUsers", new models.UserList());
+    },
+            
+    numUsersConnected: function() {
+        return this.get("connectedUsers").length;
+    },
 
     formatDate: function() {
         if (this.get("dateAndTime") && this.get("timeZoneValue")) {
@@ -85,83 +81,83 @@ models.Event = Backbone.Model.extend({
     getEventUrl: function() {
         return "/event/" + (this.get("shortName") ? this.get("shortName") : this.id);
     },
-	
-	toJSON: function() {
-		var attrs = _.clone(this.attributes);
-		
-		// delete transient attributes that shouldn't
-		// be saved to redis.
-		delete attrs["connectedUsers"];
-		
-		// for now just delete sessions; they'll save separately and will know their
-		// event by id + url.
-		delete attrs["sessions"];
-		
-		return attrs;
-	},
-	
-	addSession: function(session) {
-		this.get("sessions").add(session);
-		session.trigger("change:collection");
-	},
+    
+    toJSON: function() {
+        var attrs = _.clone(this.attributes);
+        
+        // delete transient attributes that shouldn't
+        // be saved to redis.
+        delete attrs["connectedUsers"];
+        
+        // for now just delete sessions; they'll save separately and will know their
+        // event by id + url.
+        delete attrs["sessions"];
+        
+        return attrs;
+    },
+    
+    addSession: function(session) {
+        this.get("sessions").add(session);
+        session.trigger("change:collection");
+    },
 
-	removeSession: function(session) {
-		this.get("sessions").remove(session);
-		session.trigger("change:collection");
-	},
+    removeSession: function(session) {
+        this.get("sessions").remove(session);
+        session.trigger("change:collection");
+    },
 
-	openSessions: function() {
-		this.set("sessionsOpen", true);
-		this.trigger("open-sessions");
-	},
+    openSessions: function() {
+        this.set("sessionsOpen", true);
+        this.trigger("open-sessions");
+    },
 
-	closeSessions: function() {
-		this.set("sessionsOpen", false);
-		this.trigger("close-sessions");
-	},
+    closeSessions: function() {
+        this.set("sessionsOpen", false);
+        this.trigger("close-sessions");
+    },
 
-	sessionsOpen: function() {
-		return this.get("sessionsOpen");
-	},
-		
-	url: function() {
-		// okay this is sort of stupid, but we want to have a fixed width 
-		// url because that makes it easier to match events from redis with
-		// the loader. We want to use ??? selectors instead of *, which 
-		// matches /event/id/session/id as well as /event/id
-		return this.urlRoot + "/" + pad(this.id, 5);
-	},
-	
-	setEmbed: function(ytId) {
-		this.set("youtubeEmbed", ytId);
-	},
+    sessionsOpen: function() {
+        return this.get("sessionsOpen");
+    },
+        
+    url: function() {
+        // okay this is sort of stupid, but we want to have a fixed width 
+        // url because that makes it easier to match events from redis with
+        // the loader. We want to use ??? selectors instead of *, which 
+        // matches /event/id/session/id as well as /event/id
+        return this.urlRoot + "/" + pad(this.id, 5);
+    },
+    
+    setEmbed: function(ytId) {
+        this.set("youtubeEmbed", ytId);
+    },
 
-	hasEmbed: function() {
-		return this.has("youtubeEmbed") && this.get("youtubeEmbed").length>0;
-	},
+    hasEmbed: function() {
+        return this.has("youtubeEmbed") && this.get("youtubeEmbed").length>0;
+    },
 
-	isLive: function() {
+    isLive: function() {
         var curTime = new Date().getTime();
         var test = !_.isNull(this.get("start")) && curTime >= this.get("start") && _.isNull(this.get("end"));
         return test;
     },
 
-	start: function() {
-		if(this.isLive()) {
-			return new Error("Tried to start an event that was already live.");
-		} else {
-			this.set("start", new Date().getTime());
-			this.set("end", null);
-		}
-	},
+    start: function() {
+        if(this.isLive()) {
+            return new Error("Tried to start an event that was already live.");
+        } else {
+            this.set("start", new Date().getTime());
+            this.set("end", null);
+        }
+    },
 
-	stop: function() {
-		if(!this.isLive()) {
-			return new Error("Tried to stop an event that was already live.");
-		} else {
-			this.set("end", new Date().getTime());
-		}
-	},
+    stop: function() {
+        if(!this.isLive()) {
+            return new Error("Tried to stop an event that was already live.");
+        } else {
+            this.set("end", new Date().getTime());
+        }
+    },
 
     getRoomId: function() {
         return this.id ? "event/" + this.id : null
@@ -257,7 +253,7 @@ models.Event = Backbone.Model.extend({
 });
 
 models.EventList = Backbone.Collection.extend({
-	model: models.Event,
+    model: models.Event,
     getSessionById: function(sessionId) {
         var session;
         var event = this.find(function(event) {
@@ -280,23 +276,23 @@ models.EventList = Backbone.Collection.extend({
 // Sessions are the individual meetings that make up an event. Sessions
 // (potentially) have a hangout connected to them. 
 models.Session = Backbone.Model.extend({
-	idRoot: "session",
-	MAX_ATTENDEES: 10,
+    idRoot: "session",
+    MAX_ATTENDEES: 10,
 
-	defaults: function() {
-		return {
-			title: "",
-			description: "",
-			started: true,
-			connectedParticipants: [],
+    defaults: function() {
+        return {
+            title: "",
+            description: "",
+            started: true,
+            connectedParticipants: [],
             activities: [],
-			hangoutConnected: false,
-			shortCode: null
-		};
-	},
-	isLive: function() {
-		return true;
-	},
+            hangoutConnected: false,
+            shortCode: null
+        };
+    },
+    isLive: function() {
+        return true;
+    },
     getRoomId: function() {
         return this.id ? "session/" + this.id : null
     },
@@ -315,7 +311,7 @@ models.Session = Backbone.Model.extend({
         });
         return this.setConnectedParticipants(newParticipants);
     },
-	setConnectedParticipants: function(users) {
+    setConnectedParticipants: function(users) {
         if (users.length > 10) { return false; }
         // Clean incoming users..
         users = _.map(users, function(u) {
@@ -337,10 +333,10 @@ models.Session = Backbone.Model.extend({
             // No change.
             return false;
         }
-	},
-	getNumConnectedParticipants: function() {
-		return this.get("connectedParticipants").length;
-	},
+    },
+    getNumConnectedParticipants: function() {
+        return this.get("connectedParticipants").length;
+    },
     validate: function(attrs, options) {
         if (!_.isArray(attrs.activities)) {
             return "Missing activities.";
@@ -355,20 +351,20 @@ models.Session = Backbone.Model.extend({
 });
 
 models.SessionList = Backbone.Collection.extend({
-	model:models.Session,
-	
-	// sould not ever be called.	
-	url: function() {
-		console.log("GETTING LOCAL SESSION LIST");
-		return "WAT";
-	}
+    model:models.Session,
+    
+    // sould not ever be called.    
+    url: function() {
+        console.log("GETTING LOCAL SESSION LIST");
+        return "WAT";
+    }
 });
 
 models.User = Backbone.Model.extend({
     // list of available permission keys for enumerating permissions
-    PERMISSION_KEYS: ["createEvents"],
+    PERMISSION_KEYS: ["createEvents", "farmHangouts"],
 
-	defaults: function() {
+    defaults: function() {
         return {
             picture: "",
             perms: {},
@@ -378,33 +374,33 @@ models.User = Backbone.Model.extend({
             link: null,
             emails: []
         }
-	},
-	
-	initialize: function() {
-		this.checkJSON();
-		this.on("change:_json", this.checkJSON)
-	},
-	
-	checkJSON: function() {
-		// _json (which comes from g+) has some extra stuff in it
-		// that we might want to extract for our own purposes.
-		if(this.has("_json")) {
-			var json = this.get("_json");
+    },
+    
+    initialize: function() {
+        this.checkJSON();
+        this.on("change:_json", this.checkJSON)
+    },
+    
+    checkJSON: function() {
+        // _json (which comes from g+) has some extra stuff in it
+        // that we might want to extract for our own purposes.
+        if(this.has("_json")) {
+            var json = this.get("_json");
 
-			// some checking for situations where a user doesn't
-			// have a google+ profile picture.
-			if("picture" in json) { 
-				this.set("picture", json.picture);
-			}
-			else { this.set("picture", "")}
+            // some checking for situations where a user doesn't
+            // have a google+ profile picture.
+            if("picture" in json) { 
+                this.set("picture", json.picture);
+            }
+            else { this.set("picture", "")}
 
-			if("link" in json) this.set("link", this.get("_json").link);
-		}	
+            if("link" in json) this.set("link", this.get("_json").link);
+        }    
 
-		if(!this.has("admin"))	 {
-			this.set("admin", false);
-		}
-	},
+        if(!this.has("admin"))     {
+            this.set("admin", false);
+        }
+    },
 
     /*
      * Permissions
@@ -448,12 +444,12 @@ models.User = Backbone.Model.extend({
 
     // Returns true if the admin is allowed to administer a particular event.
     // For superusers, always returns true.
-	isAdminOf: function(event) {
+    isAdminOf: function(event) {
         if (this.isSuperuser()) { return true; }
         if (!event) { return false; }
 
         return event.userIsAdmin(this);
-	},
+    },
 
     /*
      * Data access
@@ -462,45 +458,45 @@ models.User = Backbone.Model.extend({
         return !_.isUndefined(email) && _.contains(_.pluck(this.get('emails', 'value')), email);
     },
 
-	isBlurred: function() {
-		return this.get("isBlurred");
-	},
+    isBlurred: function() {
+        return this.get("isBlurred");
+    },
 
-	setBlurred: function(blurred) {
-		this.set("isBlurred", blurred);
-		this.trigger("change");
-		this.trigger("change:isBlurred");
-	},
+    setBlurred: function(blurred) {
+        this.set("isBlurred", blurred);
+        this.trigger("change");
+        this.trigger("change:isBlurred");
+    },
 
-	getShortDisplayName: function() {
-		// the goal here is to return first name, last initial
-		// minor catch: we want to special handle last names that are hyphenated and turn
-		// Alice-Bob -> A-B
+    getShortDisplayName: function() {
+        // the goal here is to return first name, last initial
+        // minor catch: we want to special handle last names that are hyphenated and turn
+        // Alice-Bob -> A-B
 
-		var names = this.get("displayName").split(" ");
+        var names = this.get("displayName").split(" ");
 
-		var shortDisplayName = names[0];
+        var shortDisplayName = names[0];
 
-		_.each(names.slice(1, names.length), function(name) {
+        _.each(names.slice(1, names.length), function(name) {
 
-			if(name.indexOf("-")==-1) {
-				// if we don't find a dash, just take the first letter
-				shortDisplayName = shortDisplayName + " " + name.slice(0, 1);				
-			} else {
-				// if we do find a dash, then split on the dash and take the first letter of 
-				// each.
-				var hyphenatedNames = name.split("-");
+            if(name.indexOf("-")==-1) {
+                // if we don't find a dash, just take the first letter
+                shortDisplayName = shortDisplayName + " " + name.slice(0, 1);                
+            } else {
+                // if we do find a dash, then split on the dash and take the first letter of 
+                // each.
+                var hyphenatedNames = name.split("-");
 
-				shortDisplayName = shortDisplayName + " " + hyphenatedNames[0].slice(0, 1) + "-" + hyphenatedNames[1].slice(0, 1);
-			}
-		});
+                shortDisplayName = shortDisplayName + " " + hyphenatedNames[0].slice(0, 1) + "-" + hyphenatedNames[1].slice(0, 1);
+            }
+        });
 
-		return shortDisplayName;
-	}
+        return shortDisplayName;
+    }
 });
 
 models.UserList = Backbone.Collection.extend({
-	model:models.User,
+    model:models.User,
     findByEmail: function(email) {
         return this.find(function(u) {
             return _.contains(_.pluck(u.get("emails"), "value"), email);
@@ -517,26 +513,27 @@ function pad(n, width, z) {
 
 
 models.ChatMessage = Backbone.Model.extend({
-	defaults: function() {
-		return {
-			text: "This is my awesome chat message.",
-			time: new Date().getTime(),
-			user: null,
-			past: false
-		};
-	},
-	
-	initialize: function() {
-		if(_.isUndefined(this.get("time"))) {
-			this.set("time", new Date().getTime());
-		}
-	}
+    defaults: function() {
+        return {
+            text: "This is my awesome chat message.",
+            time: new Date().getTime(),
+            user: null,
+            past: false
+        };
+    },
+    
+    initialize: function() {
+        if(_.isUndefined(this.get("time"))) {
+            this.set("time", new Date().getTime());
+        }
+    }
 });
 
 models.ChatMessageList = Backbone.Collection.extend({
-	model:models.ChatMessage
+    model:models.ChatMessage
 });
 
-})()
+return models;
+}); // End of define
 
-
+})(); // End of module-level anonymous function

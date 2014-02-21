@@ -330,6 +330,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 		it('should accept well-formed creation request from admin', function(done) {
             var user = common.server.db.users.findWhere({"sock-key": "admin1"});
             var evt = common.server.db.events.findWhere({shortName: "writers-at-work"});
+            var sessions = evt.get("sessions"); 
             // the user should be an admin of this event..
             expect(evt.userIsAdmin(user)).to.be(true);
             // .. but they shouldn't need createEvents permission.
@@ -342,6 +343,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 				.end(function(res) {
                     expect(res.status).to.be(302);
                     var evt = common.server.db.events.get(1);
+                    expect(evt.get("sessions").length).to.eql(sessions.length);
                     expect(evt.get("title")).to.be("Test Event");
                     expect(evt.get("description")).to.be("Description of the test event.");
 					done();

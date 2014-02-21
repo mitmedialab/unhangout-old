@@ -1,0 +1,44 @@
+{
+    "baseUrl": "/public/js/",
+    "buildUrl": "/public/build/",
+    "preserveLicenseComments": false,
+    "generateSourceMaps": true,
+    "optimize": "uglify2",
+    "paths": {
+        "jquery": "../vendor/jquery-2.0.0",
+        "jquery.validate": "../vendor/jquery.validate.min",
+        "jquery-ui": "../vendor/jquery-ui-1.10.3.custom.min",
+        "underscore": "../vendor/underscore",
+        "backbone": "../vendor/backbone",
+        "backbone.marionette": "../vendor/backbone.marionette",
+        "bootstrap": "../vendor/bootstrap/js/bootstrap.min",
+        "bootstrap-datetimepicker": "../vendor/bootstrap-datetimepicker.min",
+        "summernote": "../vendor/summernote.min",
+        "moment": "../vendor/moment.min",
+        "moment-timezone": "../vendor/moment-timezone.min",
+        "moment-timezone-data": "../vendor/timezone-data",
+        "jstz": "../vendor/jstz",
+        "sockjs": "../vendor/sockjs-0.3.min"
+    },
+    "shim": {
+        "jquery": { "exports": "jQuery" },
+        "jquery-ui": { "deps": ["jquery"], "exports": "jQuery.fn.ui" },
+        "jquery.validate": { "deps": ["jquery"], "exports": "jQuery.fn.validate" },
+        "underscore": { "exports": "_" },
+        "backbone": { "deps": ["jquery", "underscore"], "exports": "Backbone" },
+        "backbone.marionette": { "deps": ["backbone"], "exports": "Backbone.Marionette" },
+        "bootstrap": { "deps": ["jquery"], "exports": "jQuery.fn.tooltip" },
+        "bootstrap-datetimepicker": { "deps": ["bootstrap"], "exports": "jQuery.fn.datetimepicker" },
+        "summernote": { "deps": ["bootstrap"], "exports": "jQuery.fn.summernote" },
+        "jstz": { "exports": "jstz" },
+        "sockjs": { "exports": "sockjs" }
+    },
+    "modules": {
+        "index.js": { "include": "index" },
+        "event-app.js": { "include": "event-app" },
+        "admin-users.js": { "include": "admin-users" },
+        "admin-event.js": { "include": "admin-event" },
+        "permalink-intro.js": { "include": "permalink-intro" },
+        "facilitator.js": { "include": "facilitator" }
+    }
+}
