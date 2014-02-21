@@ -303,6 +303,9 @@ $(document).ready(function() {
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, sock: sock
             });
+            curEvent.on("change:sessionsOpen change:start", _.bind(function() {
+                this.adminButtonView.render();
+            }, this));
             this.admin.show(this.adminButtonView);
             this.youtubeEmbedView.on("show-embed-modal", _.bind(function() {
                 this.adminButtonView.showEmbedModal();
@@ -410,8 +413,9 @@ $(document).ready(function() {
     }
 
     // Handles clicks on the nav bar links.
-    $("#about-nav").click(function() {
-        app.vent.trigger($(this).attr("id"));
+    $("#about-nav").click(function(jqevt) {
+        jqevt.preventDefault();
+        app.vent.trigger("about-nav");
     });
     
     logger.log("Setup regions.");

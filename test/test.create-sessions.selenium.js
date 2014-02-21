@@ -65,7 +65,7 @@ describe("CREATE SESSIONS", function() {
         browser.get("http://localhost:7777/event/" + event.id)
         browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
-        browser.byLinkText("create session").click();
+        browser.byCss("#show-create-session-modal").click();
         browser.waitForSelector("#session_name");
         browser.byCss("#session_name").sendKeys("My New Session");
         browser.waitForSelector("#create-session");
@@ -79,7 +79,7 @@ describe("CREATE SESSIONS", function() {
             expect(event.get("sessions").at(0).get("title")).to.eql("My New Session");
         });
         browser.byCss(".admin-button").click();
-        browser.byLinkText("open sessions").click();
+        browser.byCss("#open-sessions").click();
         browser.executeScript("return $('.icon-lock').is(':visible');").then(function(viz) {
             expect(viz).to.be(false);
             done();

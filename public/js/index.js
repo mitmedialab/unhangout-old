@@ -30,12 +30,9 @@ require(['jquery', 'jquery.validate', 'bootstrap'], function($) {
         $('#contact-form').validate({
             rules: {
                 title: {
-                    minlength: 5,
                     required: true
                 },
-
                 description: {
-                    minlength: 100,
                     required: true
                 }
             },

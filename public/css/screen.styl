@@ -22,8 +22,13 @@ body {
 	border-color: $navbar;
 }
 
+
 .brand, .navbar-inverse .brand {
 	color: #fff;
+}
+
+a.dropdown-toggle {
+  cursor: pointer;
 }
 
 .admin-header {
@@ -272,8 +277,14 @@ body {
 	background: $navbar;
 }
 
-.dropdown-menu>li.active >a {
-	background-color: $navbar;
+.dropdown-menu > li.active > a {
+    background: white !important;
+    color: black !important;
+}
+
+.dropdown-menu > li.active > a:hover, .dropdown-menu > li.active > a:focus {
+    background: $navbar !important;
+    color: white !important;
 }
 
 .user {
@@ -989,6 +1000,7 @@ body {
 .how-to-unhangout {
 	color: #444;
 	margin-left: 20px;
+	margin-top: 10px;
 	height: 450px;
 	font-family: "open sans",arial,sans-serif;
 
@@ -1019,7 +1031,8 @@ body {
 	}
 
 	.step-icon {
-		color: #63666a;
+		//color: #63666a;
+		color: $navbar;
 		margin-left: 20px;
 	}
 }
@@ -1033,7 +1046,15 @@ body {
     color:#fff;
     line-height:40px;
     text-align:center;
-    background: gray;
+    background: $navbar;
+    //background: gray;
+}
+
+.how-to-container {
+	.footer {
+		margin-left: 70px;	
+		margin-top: -10px;
+	}
 }
 
 /* ------------------------- ABOUT PAGE -------------------------------*/
