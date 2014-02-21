@@ -1,0 +1,42 @@
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+
+<div class="container blog-container">
+    
+    <div class="col-lg-12">
+        <h3> Announcements</h3>
+    </div>
+
+    <br/>
+
+    <% feeds.forEach(function(feed) { %>
+        <div class="col-lg-12">
+            <h4><a href="<%=feed.mediaUrl%>"><%=feed.title%></a></h4>
+            <p><%-feed.description%></p>
+
+            <script> 
+                var day = new Date('<%= feed.publicationDate %>'); 
+                var dateNumber = moment(day).date();
+                var time = moment(day).format("hh:mm A");
+                var year = moment(day).format('YYYY');
+                var month = moment(day).format('MMM');
+
+                var timestamp = month + ' ' + dateNumber + ',' + year + ' ' + time;
+
+                var categories = '<%=feed.categories%>';
+
+                document.write('<span id="pubdate" class="pubdate">' + timestamp + '</span>')
+
+                if(categories!= "undefined")
+                    document.write('<span id="category" class="category"><small> <i><font color="#2E7DAA"><%feed.categories%></font></i></small></span><hr noshade size="2">');
+
+            </script>
+        </div>
+
+        <% }) %>
+</div>
+
+<script type='text/javascript' src='/public/js/index.js'></script>
+<% include _sponsorship.ejs %>
+<% include _analytics.ejs %>
+<% include _footer.ejs %>
