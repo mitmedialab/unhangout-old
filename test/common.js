@@ -47,7 +47,12 @@ var buildBrowser = function(callback) {
                 if (els.length == 0) {
                     return false;
                 }
-                return els[0].isDisplayed();
+                try {
+                    return els[0].isDisplayed();
+                } catch (e) {
+                    // catch stale reference errors.
+                    return false;
+                }
             });
         });
     };

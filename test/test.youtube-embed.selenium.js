@@ -33,7 +33,8 @@ describe("YOUTUBE EMBEDS", function() {
             browser.get("http://localhost:7777/event/" + event.id);
             browser.waitForSelector(".admin-button");
             browser.byCss(".admin-button").click();
-            browser.byLinkText("video embed").click();
+            browser.waitForSelector("#show-embed-modal");
+            browser.byCss("#show-embed-modal").click();
             // Wait for the modal to show.
             browser.waitForSelector("#embed_youtube_id");
             browser.byCss("#embed_youtube_id").sendKeys(url);
