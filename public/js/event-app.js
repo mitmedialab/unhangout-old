@@ -22,6 +22,13 @@ var logger = new logging.Logger("event-app");
 
 $(document).ready(function() {
     logger.log("Starting app!");
+
+    var interval = 0;
+    var messageShown = false ;
+    var windowBlurred = false ;
+    var isIntervalRunning = false;
+    var aboutShown = false;
+
     //------------------------------------------------------------------------//
     //                                                                          //
     //                                NETWORKING                                  //
@@ -304,7 +311,7 @@ $(document).ready(function() {
                 this.adminButtonView.showEmbedModal();
             }, this));
         }
-                
+
         logger.log("Initialized app.");
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
@@ -315,22 +322,22 @@ $(document).ready(function() {
         //
         // We also use this to decide whether or not to show new messages coming in
         // by changing the tab title.
-
-        if(!curEvent.get("blurDisabled")) {
+        
+        if (!curEvent.get("blurDisabled")) {
             var startingTitle = window.document.title;
-            var isAlreadyBlurred; 
+            var isAlreadyBlurred;
             $(window).blur(function() {
                 if(isAlreadyBlurred)
-                    return ;
+                    return;
 
                 isIntervalRunning = true ;
                 windowBlurred = true ;
                 messageShown = true ;
 
                 var message = {type:"blur", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
-                sock.send(JSON.stringify(message));    
+                sock.send(JSON.stringify(message));  
 
-                isAlreadyBlurred = true; 
+                isAlreadyBlurred = true;
             })
 
             $(window).focus(function() {
@@ -341,14 +348,13 @@ $(document).ready(function() {
                 window.document.title = startingTitle;
 
                 var message = {type:"focus", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
-                sock.send(JSON.stringify(message));    
+                sock.send(JSON.stringify(message));  
 
                 isAlreadyBlurred = false;
             })
         }
 
-
-    });
+    }, app);
 
     // toggles the tab title to show new messages, but only if the window
     // is blurred (as detected above)
@@ -362,27 +368,20 @@ $(document).ready(function() {
             interval = window.setTimeout(app.showFlashTitle , 1000);
         }
     };
-    
-    var interval = 0;
-    var messageShown = false ;
-    var windowBlurred = false ;
-    var isIntervalRunning = false;
-    var aboutShown = false;
 
     // All these app.vent calls are setting up app-wide event handling. The app
     // can trigger these events in any manner it desires. We use this to abstract
     // the logic about where the events might come from, because in some situations
-    // they're triggered by users, sometimes by the arrival of remove messages, 
-    // sometimes as side effects of other actions. 
+    // they're triggered by users, sometimes by the arrival of remove messages,
+    // sometimes as side effects of other actions.
     app.vent.on("new-chat-message", _.bind(function() {
         if(isIntervalRunning && windowBlurred) {
             interval = window.setTimeout(this.showFlashTitle, 1000);
         }
     }, app));
-
     
     app.vent.on("about-nav", _.bind(function() {
-        logger.log("handling about-nav event");
+        console.log("handling about-nav event");
 
         $(".updated").addClass("hide");
         if(aboutShown) {

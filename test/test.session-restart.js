@@ -72,19 +72,111 @@ describe('SESSION RESTART', function() {
         clock.restore();
     });
 
-    it("Continues counting after restart", function() {
+    it("Continues counting session elapsed after restart", function() {
         var clock = sinon.useFakeTimers();
         var start = new Date().getTime();
         clock.tick(10000);
         var session = new models.ServerSession({
-            hangoutConnected: true,
-            "hangout-start-time": start,
+            "total-instances": 1,
+            "hangout-start-time": start
         });
         clock.tick(10000);
         session.onHangoutStopped();
 
         expect(session.get("total-seconds")).to.be(20);
-
+        // No new instance for a re-start.
+        expect(session.get("total-instances")).to.be(1);
         clock.restore();
+    });
+    it("Continues stopping timeout after restart", function() {
+        var clock  = sinon.useFakeTimers();
+        var reqtime =  new Date().getTime() - models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT / 2;
+        var session = new models.ServerSession({
+            "hangout-url": "http://example.com",
+            "hangout-start-time": reqtime - 1000,
+            "hangout-stop-request-time": reqtime
+        }, {
+            collection: new models.ServerSessionList()
+        });
+        session.onRestart();
+        expect(session.getState()).to.be("stopping");
+        clock.tick(models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT / 2 + 1);
+        expect(session.getState()).to.be("stopped");
+        clock.restore();
+    });
+
+    it("Continues pending timeout after restart", function() {
+        var clock  = sinon.useFakeTimers();
+        var time = new Date().getTime() - models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT / 2;
+        var session = new models.ServerSession({
+            "hangout-url": null,
+            "hangout-start-time": null,
+            "hangout-pending": {time: time}
+        }, {
+            collection: new models.ServerSessionList()
+        });
+        session.onRestart();
+        expect(session.getState()).to.be("pending");
+        clock.tick(models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT / 2 + 1);
+        expect(session.getState()).to.be("stopped");
+        clock.restore();
+    });
+
+    it("Interprets state as expected", function() {
+        function expectState(state, params) {
+            var session = new models.ServerSession(params);
+            expect(session.getState()).to.eql(state);
+        }
+        expectState("started", {
+            connectedParticipants: [{id: 1, displayName: "foo"}],
+            "hangout-start-time": 10,
+            "hangout-url": "http://example.com"
+        });
+        expectState("stopped", {
+            connectedParticipants: [],
+            "hangout-start-time": null,
+            "hangout-url": null
+        });
+        expectState("unstopped", {
+            connectedParticipants: [],
+            "hangout-start-time": 10,
+            "hangout-url": null
+        });
+        expectState("stale url", {
+            connectedParticipants: [],
+            "hangout-start-time": null,
+            "hangout-url": "http://example.com"
+        });
+        expectState("stale url; unstopped", {
+            connectedParticipants: [],
+            "hangout-start-time": 10,
+            "hangout-url": "http://example.com"
+        });
+        expectState("pending overdue; uncleared pending", {
+            connectedParticipants: [],
+            "hangout-start-time": null,
+            "hangout-url": null,
+            "hangout-pending": {
+                time: new Date().getTime() - models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT -1
+            }
+        });
+        expectState("stopping", {
+            connectedParticipants: [],
+            "hangout-start-time": new Date().getTime() - 1000,
+            "hangout-url": "http://example.com",
+            "hangout-stop-request-time": new Date().getTime() - 500
+        });
+        expectState("stopping overdue; uncleared stopping", {
+            connectedParticipants: [],
+            "hangout-start-time": null,
+            "hangout-url": null,
+            "hangout-stop-request-time": new Date().getTime() - models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT - 1
+        });
+        expectState("stopping overdue; uncleared stopping; stale url; unstopped", {
+            connectedParticipants: [],
+            "hangout-start-time": new Date().getTime() - 100000,
+            "hangout-url": "http://example.com",
+            "hangout-stop-request-time": new Date().getTime() - models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT - 1
+        });
     });
 });

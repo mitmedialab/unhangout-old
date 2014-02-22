@@ -35,7 +35,7 @@ var joinEventSetup = function(userKey) {
 };
 
 describe('unhangout server', function() {
-    this.timeout(5000); // Socket tests take a little extra time on slow systems.
+    this.timeout(10000); // Socket tests take a little extra time on slow systems.
 
 	describe('configuration', function() {
 		beforeEach(function() {
@@ -172,117 +172,6 @@ describe('unhangout server', function() {
 		});
 	});
 
-
-	describe('GET /h/:code', function(){
-		beforeEach(common.standardSetup);
-		afterEach(common.standardShutdown);
-
-        it("should require authentication for permalinks", function(done) {
-			request.get('http://localhost:7777/h/')
-                .redirects(0)
-                .end(function(res){
-                    res.status.should.equal(302);
-                    done();
-                });
-        });
-        it("should require authentication for permalink details", function(done) {
-			request.get('http://localhost:7777/h/test')
-                .redirects(0)
-                .end(function(res){
-                    res.status.should.equal(302);
-                    done();
-                });
-        });
-		it('should direct to the landing page when there is no code', function(done){
-			request.get('http://localhost:7777/h/')
-                .set("x-mock-user", "regular1")
-				.end(function(res){
-					res.status.should.equal(200);
-					done();
-				});
-		});
-
-		it('if :code is new, it should create a new session on the server', function(done){
-			request.get('http://localhost:7777/h/' + Math.floor(Math.random()*100000))
-                .set("x-mock-user", "regular1")
-				.redirects(0)
-				.end(function(res){
-					res.status.should.equal(302);
-					common.server.db.permalinkSessions.length.should.equal(1);
-					done();
-				});
-		});
-
-		it('if :code is active, multiple requests only create one session', function(done){
-			request.get('http://localhost:7777/h/test')
-                .set("x-mock-user", "regular1")
-				.redirects(0)
-				.end(function(res){
-					res.status.should.equal(302);
-					common.server.db.permalinkSessions.length.should.equal(1);
-					request.get('http://localhost:7777/h/test')
-                        .set("x-mock-user", "regular1")
-						.end(function(res){
-							res.status.should.equal(200);
-							common.server.db.permalinkSessions.length.should.equal(1);
-							done();
-						});
-				});
-		});
-
-		it('if :code is new, it should present the form only for first visitor', function(done){
-			request.get('http://localhost:7777/h/test')
-                .set("x-mock-user", "regular1")
-				.end(function(res){
-					res.text.indexOf('<input').should.not.equal(-1);
-					request.get('http://localhost:7777/h/test')
-                        .set("x-mock-user", "regular1")
-						.end(function(res){
-							res.text.indexOf('<input').should.equal(-1);
-							done();
-						});
-				});
-		});
-	});
-
-	describe('POST /h/admin/:code', function(){
-		beforeEach(function(done) {
-            common.standardSetup(function() {
-                request.get('http://localhost:7777/h/test')
-                    .set("x-mock-user", "regular1")
-                    .end(function(res) {
-                        res.status.should.equal(200);
-                        done();
-                    });
-            });
-		});
-
-		afterEach(common.standardShutdown);
-
-		it('should reject requests without a valid creation key in the request body', function(done){
-			var session = common.server.db.permalinkSessions[0];
-			request.post('http://localhost:7777/h/admin/test')
-                .set("x-mock-user", "regular1")
-				.send({creationKey: 'wrong1', title: 'migrate title', description: 'something cool'})
-				.end(function(res){
-					res.status.should.equal(403);
-					done();
-				});
-		});
-
-		it('should update session title and description when valid creation key is present', function(done){
-			var session = common.server.db.permalinkSessions.at(0);
-			request.post('http://localhost:7777/h/admin/test')
-                .set("x-mock-user", "regular1")
-				.send({creationKey: session.get('creationKey'), title: 'migrate title', description: 'something cool'})
-				.end(function(res){
-					res.status.should.equal(200);
-					session.get('title').should.equal('migrate title');
-					session.get('description').should.equal('something cool');
-					done();
-				});
-		});
-	});
 
 	describe('sock (mock)', function() {
 		beforeEach(common.standardSetup);

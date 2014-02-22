@@ -6,6 +6,11 @@ var expect = require('expect.js'),
 var browser = null,
     event = null;
 
+// Different leave-stop-timeout to monkey-patch in to test leave-stops.
+// Selenium is not compatible with sinon.useFakeTimers, so tests have to
+// wait this long in real-time.
+var TEST_LEAVE_STOP_TIMEOUT = 3000;
+
 describe("SESSION JOINING PARTICIPANT LISTS", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
@@ -13,6 +18,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     this.timeout(40000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = TEST_LEAVE_STOP_TIMEOUT;
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -59,17 +65,18 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Now we should have a user show up in the participant list.
         browser.waitForSelector(participantList + " i.icon-user").then(function() {
             expect(session.getNumConnectedParticipants()).to.be(1);
-            expect(session.get('hangoutConnected')).to.be(true);
+            expect(session.getState()).to.be("no url");
             sock.close();
         });
         // The participant list should clear when the socket closes.
         browser.wait(function() {
             return browser.byCsss(participantList + " i.icon-user").then(function(els) {
-                return els.length == 0;
+                return els.length === 0;
             });
         }).then(function() {
             expect(session.getNumConnectedParticipants()).to.be(0);
-            //expect(session.get('hangoutConnected')).to.be(false); // after 5 mins..
+            // Should stop immediately when there's no hangout URL to preserve.
+            expect(session.getState()).to.be("stopped");
             done();
         });
     });
@@ -109,7 +116,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.byCsss(participantList + " i.icon-user").then(function(els) {
             expect(els.length).to.be(1);
             expect(session.getNumConnectedParticipants()).to.be(1);
-            expect(session.get('hangoutConnected')).to.be(true);
+            expect(session.getState()).to.be("no url");
         }).then(function() {
             // Leave!
             sock2.close();
@@ -121,8 +128,63 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {;
             expect(session.getNumConnectedParticipants()).to.be(0);
-            //expect(session.get('hangoutConnected')).to.be(false); // timeout-bound..
+            expect(session.getState()).to.be("stopped");
             done();
+        });
+    });
+
+    it("Handles stop conditions when session has been deleted", function(done) {
+        var session = event.get("sessions").at(0);
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("admin1");
+        // Visit the session to "start" it.
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.wait(function() {
+            return session.getState() == "started";
+        });
+        // Then leave, by going to the event page, where we'll delete it.
+        browser.get("http://localhost:7777/event/" + event.id).then(function() {
+            expect(session.getState()).to.eql("stopping");
+        });
+        browser.waitForScript("$");
+        browser.byCss("[data-session-id='" + session.id + "'] .delete").click();
+        browser.then(function() {
+            setTimeout(function() {
+                // We're left untouched, as a 'save' would throw an error.
+                expect(session.getState()).to.eql("stopping overdue; uncleared stopping; stale url; unstopped");
+                done();
+            }, TEST_LEAVE_STOP_TIMEOUT + 1);
+        });
+    });
+
+    it("Correctly stops permalink sessions", function(done) {
+        // Ensure that permalink sessions aren't broken by the logic that
+        // prevents deleted sessions from being stopped.
+        var session = new models.ServerSession({
+            isPermalinkSession: true,
+            shortCode: "test"
+        }, {collection: common.server.db.permalinkSessions});
+        common.server.db.permalinkSessions.add(session);
+        session.save({}, {
+            success: function() {
+                browser.get("http://localhost:7777/");
+                browser.mockAuthenticate("regular1");
+                browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+                browser.wait(function() {
+                    return session.getState() == "started";
+                });
+                // leave..
+                browser.get("http://localhost:7777/").then(function() {
+                    expect(session.getState()).to.eql("stopping");
+                    setTimeout(function() {
+                        expect(session.getState()).to.eql("stopped");
+                        done();
+                    }, TEST_LEAVE_STOP_TIMEOUT + 1);
+                });
+            },
+            error: function(err) {
+                done(err);
+            }
         });
     });
 

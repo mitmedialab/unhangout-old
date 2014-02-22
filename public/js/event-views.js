@@ -48,75 +48,30 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     initialize: function() {
         // if we get a notice that someone has connected to the associated participant,
         // re-render to show them.
-
-        this.listenTo(this.model, 'change:connectedParticipants change:hangoutConnected', this.render, this);
+        this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
     },
 
     onRender: function() {
         var start = new Date().getTime();
         this.$el.attr("data-session-id", this.model.id);
-        logger.log("render SessionView", _.pluck(this.model.get("connectedParticipants"), 'id'));
+        console.log("render SessionView", _.pluck(this.model.get("connectedParticipants"), 'id'));
         // mostly just show/hide pieces of the view depending on 
         // model state.
+        this.$el.addClass("live");
 
-        if(IS_ADMIN) {
-            // show the admin UI. obviously, requests generated here are authenticated
-            // on the server, so doesn't matter if users mess around and show these
-            // buttons covertly.
-            this.$el.find(".admin-buttons").show();
-        } else {
-            this.$el.find(".admin-buttons").hide();            
-        }
+        // remove the toggle-ness of the button once the event starts.
+        this.ui.attend.attr("data-toggle", "");
+        this.ui.attend.removeClass("btn-info");            
+        this.ui.attend.removeClass("active");
+        this.ui.attend.addClass("btn-success");
 
-        if(this.model.isLive()) {
-            this.$el.addClass("live");
+        this.ui.attend.find(".text").text("JOIN");
 
-            // remove the toggle-ness of the button once the event starts.
-            this.ui.attend.attr("data-toggle", "");
-            this.ui.attend.removeClass("btn-info");            
-            this.ui.attend.removeClass("active");
-            this.ui.attend.addClass("btn-success");
+        // don't show the x of 10 when it's live (at least until we have live data for that)
+        this.$el.find(".start").show();
 
-            this.ui.attend.find(".text").text("JOIN");
+        var numAttendees = this.model.getNumConnectedParticipants();
 
-            // don't show the x of 10 when it's live (at least until we have live data for that)
-            this.ui.attend.find(".attend-count").hide();
-        } else {
-            this.$el.removeClass("live");
-
-            this.ui.attend.find(".text").text("SIGN UP");
-        }
-
-        if(this.model.get("stopped")) {
-            this.ui.attend.attr("disabled", true);
-            this.ui.attend.addClass("disabled");
-
-            this.$el.undelegate('.attend', 'click');
-
-            this.$el.find(".start").hide();
-
-            this.ui.attend.find(".text").text("SESSION FINISHED");
-            this.ui.attend.find(".attend-count").hide();
-
-        } else {
-            this.$el.find(".attend").attr("disabled", false);
-            this.$el.find(".attend").removeClass("disabled");
-
-            this.$el.delegate('.attend', 'click');
-
-            this.$el.find(".start").show();
-        }
-
-        var numAttendees;
-
-        // if we're live, make the bar fill up based on how many people are currently there
-        if(this.model.isLive()) {
-            numAttendees = this.model.getNumConnectedParticipants();
-        } else {
-            numAttendees = this.model.numAttendees();
-        }
-
-        this.$el.find(".attend-count").text("(" + numAttendees + " of " + this.model.MAX_ATTENDEES + ")");
         this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");
 
         // now check and see if the hangout is communicating properly with the server. if it is, show
@@ -186,13 +141,11 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             return;
         }
 
-        if(this.model.isLive()) {
-            // if the event has started, button presses should attempt to join
-            // the hangout.
-            var url = "/session/" + this.model.get("session-key") +
-                      "?nocache=" + new Date().getTime();
-            window.open(url);
-        }
+        // if the event has started, button presses should attempt to join
+        // the hangout.
+        var url = "/session/" + this.model.get("session-key") +
+                  "?nocache=" + new Date().getTime();
+        window.open(url);
     },
 
     "delete": function() {

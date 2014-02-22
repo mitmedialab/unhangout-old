@@ -1,7 +1,5 @@
-var common = require("./common");
-
 describe("PRODUCTION ASSET COMPILATION", function() {
-    this.timeout(40000);
+    this.timeout(40000); // Extra-long timeout for compilation. :(
     it("Compiles assets in production", function(done) {
         var requireAssets = require("../lib/require-assets.js");
         var conf = require("../public/js/requirejs-config.json");

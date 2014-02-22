@@ -788,18 +788,30 @@ a.dropdown-toggle {
 
 /*---------------------------- ADMIN STYLES ---------------------------*/
 
-table#permalinks, table#events {
-  width: 100%;
+.admin-event-row {
+  border-top: 1px solid #eee;
+  padding: 0.5em 0em;
+  padding-left: 2px;
+  form {
+    display: inline-block;
+    margin: 0;
+  }
+  &:hover {
+    box-shadow: 0px 0px 2px #09f;
+  }
+  margin-bottom: 3px;
+  .date {
+    color: #999;
+    font-size: smaller;
+  }
 }
-
-th {
-	padding-right: 20px;
+.admin-event-row:nth-child(odd) {
+  background-color: #fafafa;
 }
-
-tr:nth-child(even) {
-	background-color: #f1f1f1;
+.small-green {
+  font-size: smaller;
+  color: #090;
 }
-
 
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {
