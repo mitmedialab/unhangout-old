@@ -154,17 +154,52 @@
 
 <script type="text/template" id="admin-button-template">
     <div class="dropdown">
-        <a class="dropdown-toggle admin-button" data-toggle="dropdown" href="#">Admin</a>
+        <a class="dropdown-toggle admin-button" data-toggle="dropdown">Event Settings</a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
             <li role="presentation">
-                <a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">create session</a>
-                <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">edit event settings</a>
-                <a role="menuitem" href="#embed-modal" role="button" id="show-embed-modal">video embed</a>
-                <a role="menuitem" tabindex="-1" id="open-sessions">open sessions</a>
-                <a role="menuitem" tabindex="-1" id="close-sessions">close sessions</a>
-                <a role="menuitem" tabindex="-1" id="message-sessions">send message to sessions</a>
+                {{ if (event.isLive()) { }}
+                    <a role="menuitem" href="#" role="buton" id='admin-stop-event'>
+                        <i class='fa fa-power-off fa-lg fa-fw'></i>
+                        Stop event
+                    </a>
+                {{ } else { }}
+                    <a role="menuitem" href="#" role="buton" id='admin-start-event'>
+                        <i class='fa fa-power-off fa-lg fa-fw'></i>
+                        Start event
+                    </a>
+                {{ } }}
+                <a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">
+                    <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
+                </a>
+                <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
+                    <i class="fa fa-pencil-square-o fa-lg fa-fw"></i>
+                    Edit Event Info
+                </a>
+                <a role="menuitem" href="#embed-modal" role="button" id="show-embed-modal">
+                    <i class="fa fa-code fa-lg fa-fw"></i>
+                    Embed Video
+                </a>
+                {{ if (event.get("sessionsOpen")) { }}
+                    <a role="menuitem" tabindex="-1" id="close-sessions" href='#'>
+                        <i class="fa fa-lock fa-lg fa-fw"></i>
+                        Close Sessions
+                    </a>
+                {{ } else { }}
+                    <a role="menuitem" tabindex="-1" id="open-sessions" href='#'>
+                        <i class="fa fa-unlock fa-lg fa-fw"></i>
+                        Open Sessions
+                    </a>
+                {{ } }}
+                <a role="menuitem" tabindex="-1" id="message-sessions" href='#'>
+                    <i class="fa fa-share fa-lg fa-fw"></i>
+                    Send Message to Sessions
+                </a>
                 {{ if (IS_SUPERUSER) { }}
-                    <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_new">farm hangout urls <span id="farmed-hangouts">{{- numFarmedHangouts}}</span> available</a>
+                    <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_blank">
+                        <i class="fa fa-wrench fa-lg fa-fw"></i>
+                        Farm Hangout Urls
+                        <span id="farmed-hangouts">{{- numFarmedHangouts}}</span> Available
+                    </a>
                 {{ } }}
             </li>
         </ul>

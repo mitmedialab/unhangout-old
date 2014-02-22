@@ -17,21 +17,13 @@
                         <a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
                         </li> 
                     </ul>
-                    <div class="nav pull-right identity">
-                    <% if(!user) {%>
-                    <a class="btn btn-primary pull-left" href="/auth/google">Login</a>
-                    <% } else { %>
-                        <div class="dropdown">
-                            <a class="dropdown-toggle username" data-toggle="dropdown" href="#"><%= user.get("displayName")%></a>
-                            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                                <li role="presentation">
-                                    <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
-                                </li>
-                            </ul>
-                        </div>
-                    <% } %>
-                    <div id="admin-region"></div>
+
+                    <div class="nav pull-left">
+                        <div id="admin-region"></div>
                     </div>
+
+                    <% include _identity.ejs %>
+
                 </div><!--/.nav-collapse -->
             </div>
         </div>

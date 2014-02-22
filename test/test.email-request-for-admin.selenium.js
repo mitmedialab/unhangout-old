@@ -65,17 +65,17 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
         descriptionError = "#event-mini-form-modal .event-description label.error";
         submit = "#event-mini-form-modal [type='submit']";
         // Rejects too-short titles
-        browser.byCss(title).sendKeys("OK");
-        browser.byCss(description).click(); // blur
+        browser.byCss(submit).click();
+        browser.waitForSelector(titleError);
         browser.byCss(titleError).getText().then(function(text) {
-            expect(text).to.eql("Please enter at least 5 characters.");
+            expect(text).to.eql("This field is required.");
         });
         browser.byCss(title).clear()
         browser.byCss(title).sendKeys("OK 5 then");
-        browser.byCss(description).sendKeys("great");
         browser.byCss(submit).click();
+        browser.waitForSelector(descriptionError);
         browser.byCss(descriptionError).getText().then(function(text) {
-            expect(text).to.eql("Please enter at least 100 characters.");
+            expect(text).to.eql("This field is required.");
         });
         browser.byCss(description).clear()
         browser.byCss(description).sendKeys(longEnough);

@@ -37,6 +37,8 @@
                             &nbsp;
                         <% } else if (state === "pending") { %>
                             <i class='fa fa-spinner'></i>
+                        <% } else if (state === "stopping") { %>
+                            <i class='fa fa-sign-out'></i>
                         <% } else { %>
                             <i class='fa fa-exclamation-triangle'></i>
                         <% } %>

@@ -2,10 +2,6 @@
 <% include _navbar.ejs %>
 <% var sessions; %>
 
-<script>
-  document.querySelector("#admin-nav").className = "active";
-</script>
-
 <div class='container-fluid'>
     <div class='row-fluid'>
         <div class='span12'>
@@ -34,15 +30,15 @@
 
                                 
                     <% if(event.isLive()) { %>
-                    <form action="/admin/event/<%=event.id%>/stop" method="post">
-                        <button type="submit" class="btn btn-warning btn-small stop-event"
-                                data-event='<%= event.id %>'>stop</button>
-                    </form>
+                        <form action="/admin/event/<%=event.id%>/stop" method="post">
+                            <button type="submit" class="btn btn-warning btn-small stop-event"
+                                    data-event='<%= event.id %>'>stop</button>
+                        </form>
                     <% } else { %>
-                    <form action="/admin/event/<%=event.id%>/start" method="post">
-                        <button type="submit" class="btn btn btn-small start-event"
-                                data-event='<%= event.id %>'>start</button>
-                    </form>
+                        <form action="/admin/event/<%=event.id%>/start" method="post">
+                            <button type="submit" class="btn btn btn-small start-event"
+                                    data-event='<%= event.id %>'>start</button>
+                        </form>
                     <% } %>
                     <a href="/admin/event/<%=event.id%>" class="btn btn-small">
                         <i class='icon-pencil' title='Edit'></i> edit
@@ -64,8 +60,8 @@
             <h3>Permalink Sessions</h3>
             <% sessions = permalinkSessions; %>
             <% include _admin_session_table.ejs %>
-        </div>
-      <% } %>
+          </div>
+        <% } %>
     </div>
 </div>
 <%- requireScripts("/public/js/admin.js") %>
