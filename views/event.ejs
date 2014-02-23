@@ -2,6 +2,7 @@
 <% include _event-navbar.ejs %>
 
 <script>
+    var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
         <% if (event.get("hoa")) { %>
