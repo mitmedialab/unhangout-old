@@ -65,6 +65,7 @@ describe("CREATE HOA", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate(user.get("sock-key"));
         browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForSelector(".create-hoa");
         browser.byCss(".create-hoa").click();
         // Seems that browser.getWindowHandles is not implemented.  Doing it raw.
         browser.schedule(
@@ -98,9 +99,7 @@ describe("CREATE HOA", function() {
             ).to.be(0);
         });
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
-            expect(href).to.eql(
-                "http://localhost:7777/test/hangout/" + event.get("hoa").id + "/?isHoA=1"
-            );
+            expect(href).to.eql(event.get("hoa").getParticipationLink());
         });
 
         browser.mockAuthenticate("regular1");

@@ -51,6 +51,7 @@ models.Event = Backbone.Model.extend({
             sessions: null,
             hoa: null,
             youtubeEmbed: null,
+            previousVideoEmbeds: [],
             sessionsOpen: false,
             blurDisabled: false,
             dateAndTime: null,
@@ -131,11 +132,23 @@ models.Event = Backbone.Model.extend({
     },
     
     setEmbed: function(ytId) {
+        // Prepend the current embed (if any) to the list of previous embeds
+        // (if it's not already there), and set the current embed to the given
+        // ytId.
+        var prev = this.get("previousVideoEmbeds");
+        var cur = this.get("youtubeEmbed");
+        if (cur) {
+            if (!_.findWhere(prev, {youtubeId: cur})) {
+                prev.unshift({youtubeId: cur});
+                this.trigger("change:previousVideoEmbeds");
+            }
+        }
         this.set("youtubeEmbed", ytId);
     },
 
-    hasEmbed: function() {
-        return this.has("youtubeEmbed") && this.get("youtubeEmbed").length>0;
+    setHoA: function(hoa) {
+        this.set("hoa", hoa);
+        hoa.event = this;
     },
 
     isLive: function() {
@@ -350,6 +363,9 @@ models.Session = Backbone.Model.extend({
                 return "Invalid activity type: " + activity.type;
             }
         }
+    },
+    getParticipationLink: function() {
+        return "/session/" + this.get("session-key");
     }
 });
 

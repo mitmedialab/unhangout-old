@@ -3,7 +3,9 @@ define([
    "underscore-template-config"
 ], function(_, Backbone, logger) {
 
-var video = {};
+var DATA_API_URL = "https://gdata.youtube.com/feeds/api/videos/{id}?v=2&alt=json-in-script&callback=?",
+    IFRAME_API_URL = "https://www.youtube.com/iframe_api",
+    video = {};
 
 if (!window.YouTubeLoadQueue) {
     window.YouTubeLoadQueue = [];
@@ -16,12 +18,29 @@ if (!window.onYouTubeIframeAPIReady) {
         window.YouTubeLoadQueue = [];
     }
 }
+
+
+var VIDEO_DETAILS_CACHE = {};
+video.getVideoDetails = function(id, callback) {
+    if (VIDEO_DETAILS_CACHE[id]) {
+        return callback(VIDEO_DETAILS_CACHE[id]);
+    }
+    var url = DATA_API_URL.replace("{id}", id);
+    $.getJSON(url, _.bind(function(data) {
+        VIDEO_DETAILS_CACHE[id] = {
+            id: id,
+            title: data.entry.title.$t,
+            duration: parseInt(data.entry.media$group.yt$duration.seconds),
+            thumbnail: data.entry.media$group.media$thumbnail[0]
+        };
+        callback(VIDEO_DETAILS_CACHE[id]);
+    }, this));
+};
+
 video.YoutubeVideo = Backbone.View.extend({
     tagName: "table",
     template: _.template($("#youtube-video").html()),
     controlsTemplate: _.template($("#youtube-video-controls").html()),
-    DATA_API_URL: "https://gdata.youtube.com/feeds/api/videos/{id}?v=2&alt=json-in-script&callback=?",
-    IFRAME_API_URL: "https://www.youtube.com/iframe_api",
     events: {
         'click .play-for-everyone': 'playForEveryone',
         'click .sync-lock': 'toggleSync',
@@ -34,7 +53,7 @@ video.YoutubeVideo = Backbone.View.extend({
         _.bindAll(this, "playForEveryone", "toggleSync",
                         "onPlayerReady", "onPlayerStateChange",
                         "triggerVideoSettings");
-        this.logger = new logger.Logger("VIDEO", "error");
+        this.logger = new logger.Logger("VIDEO", "debug");
     },
     render: function() {
         this.$el.html(this.template({cid: this.cid}));
@@ -54,7 +73,7 @@ video.YoutubeVideo = Backbone.View.extend({
         // Check if the YouTube API has loaded yet.  Load it if not.
         if (!window.YT) {
             var tag = document.createElement('script');
-            tag.src = this.IFRAME_API_URL;
+            tag.src = IFRAME_API_URL;
             document.body.appendChild(tag);
         } else {
             // API is loaded already -- tell it to run the load queue.
@@ -71,6 +90,7 @@ video.YoutubeVideo = Backbone.View.extend({
             intendToSync: this.intendToSync,
             syncAvailable: this.syncAvailable()
         }));
+        this.trigger("renderControls");
     },
     setVideoId: function(id) {
         if (id != this.ytID) {
@@ -94,6 +114,16 @@ video.YoutubeVideo = Backbone.View.extend({
     },
     receiveControl: function(args) {
         this.logger.debug("Receive control", args.state);
+        //
+        // Mute control: out-of-band from regular video sync. Currently only
+        // triggered by joining a hangout-on-air for which this is the embed.
+        //
+        if (args.mute === true || args.mute === false) {
+            return this.handleMute(args.mute);
+        }
+        //
+        // Regular video sync.
+        //
         this.timeOfLastControl = new Date().getTime();
         this.ctrl = args;
         if (!this.player) { return; }
@@ -121,6 +151,21 @@ video.YoutubeVideo = Backbone.View.extend({
             }
         }
         this.renderControls();
+    },
+    handleMute: function(mute) {
+        if (!this.player) {
+            // This is a slightly ugly, slightly dangerous hack -- if we get a
+            // mute request, but the player isn't ready yet, delay 100ms and
+            // try again.
+            return setTimeout(_.bind(function() {
+                this.handleMute(mute);
+            }, this), 100);
+        }
+        if (mute) {
+            this.player.mute();
+        } else {
+            this.player.unMute();
+        }
     },
     onPlayerReady: function(event) {
         this.player = event.target;
@@ -169,12 +214,6 @@ video.YoutubeVideo = Backbone.View.extend({
                 this.toggleSync();
             }
         }
-    },
-    getTitle: function(callback) {
-        var url = this.DATA_API_URL.replace("{id}", this.ytID);
-        $.getJSON(url, _.bind(function(data) {
-            callback(data.entry.title.$t);
-        }, this));
     },
     playForEveryone: function(event) {
         if (event) { event.preventDefault(); }

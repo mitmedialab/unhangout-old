@@ -103,7 +103,7 @@ $(document).ready(function() {
 
             case "set-hoa":
                 var hoa = new models.Session(msg.args);
-                curEvent.set("hoa", hoa);
+                curEvent.setHoA(hoa);
                 break;
 
             case "delete-session":

@@ -54,7 +54,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         var start = new Date().getTime();
         this.$el.attr("data-session-id", this.model.id);
-        console.log("render SessionView", _.pluck(this.model.get("connectedParticipants"), 'id'));
         // mostly just show/hide pieces of the view depending on 
         // model state.
         this.$el.addClass("live");
@@ -455,7 +454,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     },
 
     showEmbedModal: function(jqevt) {
-        jqevt.preventDefault();
+        if (jqevt) { jqevt.preventDefault(); }
         var ytId = this.options.event.get("youtubeEmbed");
         if (ytId) {
             var url = "https://www.youtube.com/watch?v=" + ytId;
@@ -578,7 +577,6 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     },
 
     initialize: function(options) {
-        console.log(options);
         Backbone.Marionette.View.prototype.initialize.call(this, options);
         this.chatView = new views.ChatView({
             collection: this.options.messages,
@@ -767,15 +765,16 @@ views.AboutEventView = Backbone.Marionette.ItemView.extend({
 
 // Manages the display of embedded videos on the upper left corner.
 views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
-    template: '#video-embed-template',
     id: 'video-embed',
+    template: '#video-embed-template',
+    previousVideoDetailsTemplate: _.template($("#previous-video-details-template").html()),
     ui: {
         player: ".player",
         placeholder: ".placeholder"
     },
     events: {
         'click .set-youtube-embed': 'setYoutubeEmbed',
-        'click .restore-hoa': 'restoreHoa'
+        'click .restore-previous-video': 'restorePreviousVideo'
     },
 
     player: null,
@@ -802,11 +801,13 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     setYoutubeEmbed: function() {
         this.trigger("show-embed-modal");
     },
-    restoreHoa: function() {
+    restorePreviousVideo: function(jqevt) {
+        jqevt.preventDefault();
+        var ytId = $(jqevt.currentTarget).attr("data-youtube-id");
         var message = {
             type:"embed",
             args: {
-                ytId: this.model.get("hoa").get("hangout-broadcast-id"),
+                ytId: ytId,
                 roomId: this.model.getRoomId()
             }
         };
@@ -826,6 +827,16 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             ytID: this.model.get("youtubeEmbed"),
             showGroupControls: IS_ADMIN
         });
+        this.yt.on("renderControls", _.bind(function() {
+            var hoa = this.model.get("hoa");
+            if (hoa && hoa.get("hangout-url")) {
+                this.$("td.video-controls").append(
+                    "<a href='" + hoa.getParticipationLink() + "'" +
+                    "   class='join-hoa btn btn-warning btn-small'" +
+                    "   target='_blank'>Join Hangout-on-Air</a>"
+                );
+            }
+        }, this));
         this.yt.on("control-video", _.bind(function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
             this.options.sock.send(JSON.stringify({type: "control-video", args: args}));
@@ -838,6 +849,16 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.setPlayerVisibility(!!this.model.get("youtubeEmbed"));
         if (this.model.get("youtubeEmbed")) {
             this.yt.render();
+        }
+        if (IS_ADMIN) {
+            // Make the video details pretty.
+            _.each(this.model.get("previousVideoEmbeds"), _.bind(function(embed) {
+                video.getVideoDetails(embed.youtubeId, _.bind(function(data) {
+                    this.$("[data-youtube-id='" + data.id + "']").replaceWith(
+                        this.previousVideoDetailsTemplate(data)
+                    );
+                }, this));
+            }, this));
         }
     },
     control: function(args) {

@@ -142,14 +142,33 @@
            href='/event/{{- id }}/create-hoa/'>
             <i class='fa fa-users'></i> Create Hangout-on-Air
         </a>
-        {{ if (hoa && hoa["hangout-broadcast-id"]) { }}
-            <a class='restore-hoa' href='#'>Restore existing Hangout-on-Air</a>
+        {{ if (previousVideoEmbeds.length > 0) { }}
+            <div class='btn-group'>
+                <button class='btn btn-small dropdown-toggle' data-toggle='dropdown'>
+                    Restore previous video
+                    <i class='fa fa-caret-down'></i>
+                </button>
+                <ul class='dropdown-menu pull-right'>
+                    {{ _.each(previousVideoEmbeds, function(vid) { }}
+                        <li>
+                            <a tabindex='-1' href='#' class='restore-previous-video'
+                               data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
+                        </li>
+                    {{ }); }}
+                </ul>
+            </div>
         {{ } }}
     </div>
-    {{ if (hoa && hoa["hangout-url"]) { }}
-        <a href='{{= hoa["hangout-url"] }}' target="_blank"
-           class='join-hoa'>Join Hangout-on-Air</a>
-    {{ } }}
+</script>
+<script type='text/template' id="previous-video-details-template">
+    <a tabindex='-1' href='#' class='restore-previous-video' style='text-align: left; width: 250px;'
+       data-youtube-id='{{= id }}'>
+        <img src='{{= thumbnail.url }}' width=64 height=48 alt='thumbnail'>
+        {{= title.substring(0, 20) }}{{= title.length > 20 ? "..." : "" }}
+        <span style='font-size: smaller; color: #999;'>
+            {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
+        </span>
+    </a>
 </script>
 
 <script type="text/template" id="admin-button-template">
