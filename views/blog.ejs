@@ -1,0 +1,34 @@
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+
+<script type='text/javascript'>
+    document.querySelector("li > a[href='/blog/']").parentNode.className = "active";
+</script>
+
+<div class="container blog-container">
+    <div class="col-lg-12">
+        <h3> Announcements</h3>
+    </div>
+
+    <br/>
+
+    <% items.forEach(function(item) { %>
+        <div class="col-lg-12">
+            <h4><a href="<%= item.link %>"><%= item.title %></a></h4>
+            <p><%- item.description %></p>
+            <span class='pubdate'>
+                <%= moment(item.pubdate).format("MMM D, YYYY h:mm[]a") %>
+            </span>
+            <% if (item.categories) { %>
+                <span class='categories'>
+                    <%= item.categories.join(", ") %> 
+                </span>
+            <% } %>
+        </div>
+    <% }) %>
+</div>
+
+<% include _sponsorship.ejs %>
+<%- requireScripts("/public/js/index.js") %>
+<% include _analytics.ejs %>
+<% include _footer.ejs %>

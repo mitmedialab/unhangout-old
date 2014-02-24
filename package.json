@@ -52,7 +52,8 @@
     "nib" : "1.0.1",
     "nodemailer": "0.6.0",
     "caja-sanitizer": "*",
-    "requirejs-middleware": "git://github.com/yourcelf/requirejs-middleware.git#master"
+    "requirejs-middleware": "git://github.com/yourcelf/requirejs-middleware.git#master",
+    "feedparser": "0.16.3"
   },
   "analyze": false,
   "devDependencies": {
