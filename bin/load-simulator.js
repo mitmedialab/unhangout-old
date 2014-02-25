@@ -238,7 +238,7 @@ Rando.prototype = {
                             ]
                         });
                     }
-                } else if (Math.random() > 0.99) {
+                } else if (Math.random() > 0.999) {
                     if (!simConf.DISABLE_EVENT_LEAVING) {
                         this.eventSock.write("leave", { id: EVENT_ROOM_ID, });
                         this.eventSock.state = "authorized";
