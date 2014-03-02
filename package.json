@@ -52,6 +52,7 @@
     "nib" : "1.0.1",
     "nodemailer": "0.6.0",
     "caja-sanitizer": "*",
+    "mkdirp": "*",
     "requirejs-middleware": "git://github.com/yourcelf/requirejs-middleware.git#master"
   },
   "analyze": false,
@@ -65,7 +66,8 @@
     "libxmljs": "*",
     "simplesmtp": "~0",
     "mailparser": "~0",
-    "sinon": "1.8.1"
+    "sinon": "1.8.1",
+    "bluebird": "*"
   },
   "license": "BSD",
   "engines": {

@@ -571,13 +571,18 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     id: 'chat',
 
     regions: {
-        chat:'#chat-container-region',
+        welcome: '#welcome-message',
+        chat:'#chat-messages',
         presence: '#presence-gutter',
         chatInput: '#chat-input-region'
     },
 
     initialize: function(options) {
         Backbone.Marionette.View.prototype.initialize.call(this, options);
+        this.welcomeView = new views.WelcomeView({
+            messages: this.options.messages,
+            model: this.options.event
+        });
         this.chatView = new views.ChatView({
             collection: this.options.messages,
             event: this.options.event
@@ -596,11 +601,33 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     },
 
     onRender: function() {
+        this.welcome.show(this.welcomeView);
         this.chat.show(this.chatView);
         this.presence.show(this.userListView);
         this.chatInput.show(this.chatInputView);
     }
-})
+});
+
+views.WelcomeView = Backbone.Marionette.ItemView.extend({
+    template: '#welcome-message-template',
+    initialize: function(options) {
+        Backbone.Marionette.ItemView.prototype.initialize.call(this, options);
+        if (options.messages.length === 0) {
+            console.log("HEY!");
+            options.messages.once("add", this.render);
+        }
+    },
+    serializeData: function() {
+        var chatArchiveUrl = null;
+        if (this.options.messages.length > 0) {
+            chatArchiveUrl = this.model.getChatArchiveUrl();
+        }
+        return _.extend(this.model.toJSON(), {
+            chatArchiveUrl: this.model.getChatArchiveUrl()
+        });
+    }
+});
+
 
 // The input form for sending chat messages.
 views.ChatInputView = Backbone.Marionette.ItemView.extend({
@@ -718,8 +745,9 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
     id: "chat-container",
 
     onBeforeItemAdded: function() {
-        var limit = Math.max(this.el.scrollHeight - this.$el.height() - 10, 0);
-        this._isScrolled = this.$el.scrollTop() < limit;
+        this.scroller = $("#chat-container-region");
+        var limit = Math.max(this.scroller[0].scrollHeight - this.scroller.height() - 10, 0);
+        this._isScrolled = this.scroller.scrollTop() < limit;
         return null;
     },
     onAfterItemAdded: function() {
@@ -727,7 +755,7 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
         // Scroll down if we haven't moved our scroll bar, or the last message
         // was from ourselves.
         if (!this._isScrolled || latest.get("user").id == USER_ID) {
-            this.$el.scrollTop(this.el.scrollHeight);
+            this.scroller.scrollTop(this.el.scrollHeight);
         }
     }
 });

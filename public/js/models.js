@@ -83,6 +83,10 @@ models.Event = Backbone.Model.extend({
     getEventUrl: function() {
         return "/event/" + (this.get("shortName") ? this.get("shortName") : this.id);
     },
+
+    getChatArchiveUrl: function() {
+        return "/public/logs/chat/" + this.id + ".txt";
+    },
     
     toJSON: function() {
         var attrs = _.clone(this.attributes);
