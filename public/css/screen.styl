@@ -387,6 +387,10 @@ a.dropdown-toggle {
 	}
 }
 
+/*
+ * Session display on event page
+ */
+
 .session {
 	position: relative;
 
@@ -639,6 +643,10 @@ a.dropdown-toggle {
 	}
 }
 
+/*
+ * Chat
+ */
+
 #chat-input-region {
 		position: absolute;
 		bottom: 0px;
@@ -731,8 +739,12 @@ a.dropdown-toggle {
 	z-index: 1000;
 }
 
+/*
+ *  Video
+ */
+
 #video-embed {
-  .player {
+  .video-player {
     background-color: #eee;
     height: 360px;
     table {
@@ -740,19 +752,48 @@ a.dropdown-toggle {
       height: 100%;
     }
   }
-  .placeholder {
+  .video-placeholder, & > .video-controls {
     box-sizing: border-box;
     max-width: 420px;
-    margin-top: 10px;
     margin-left: 25px;
     margin-right: 5px;
     padding: 1.5em;
-    border: 3px dashed #ddd;
-    text-align: center;
-    border-radius: 10px;
-    background-color: #eee;
   }
-
+  .video-placeholder {
+    margin-top: 10px;
+    background-color: #eee;
+    border: 3px dashed #ddd;
+    border-bottom: none;
+    border-radius: 10px 10px 0px 0px;
+    color: #ccc;
+    font-size: 24px;
+    text-align: center;
+  }
+  & > .video-controls {
+    margin-top: 0px;
+    padding-top: 0.2em;
+    background-color: #fca;
+    border: 3px dashed #f90;
+    border-top: none;
+    border-radius: 0px 0px 5px 5px;
+  }
+  .restore-previous-video {
+    &.header {
+      text-align: center;
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
+    .title {
+      display: inline-block;
+      vertical-align: middle;
+      width: 150px;
+      whites-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
 }
 
 .sync-indicator {
@@ -773,6 +814,10 @@ a.dropdown-toggle {
     box-shadow: 0px 0px 5px rgba(200, 0, 0, 1);
   }
 }
+
+/*
+ * Utilities
+ */
 
 .fifty-fifty {
   width: 100%;

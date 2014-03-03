@@ -289,7 +289,8 @@ var VideoActivity = BaseActivityView.extend({
         // from the iframe API.
         this.yt = new video.YoutubeVideo({
             ytID: this.activity.video.id,
-            showGroupControls: true
+            showGroupControls: true,
+            groupScrubControl: true
         });
         this.yt.on("control-video", _.bind(function(args) {
             args.sessionId = this.session.id;

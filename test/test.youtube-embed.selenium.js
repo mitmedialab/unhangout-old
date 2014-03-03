@@ -31,14 +31,9 @@ describe("YOUTUBE EMBEDS", function() {
                 event.set("youtubeEmbed", "");
             });
             browser.get("http://localhost:7777/event/" + event.id);
-            browser.waitForSelector(".admin-button");
-            browser.byCss(".admin-button").click();
-            browser.waitForSelector("#show-embed-modal");
-            browser.byCss("#show-embed-modal").click();
-            // Wait for the modal to show.
-            browser.waitForSelector("#embed_youtube_id");
-            browser.byCss("#embed_youtube_id").sendKeys(url);
-            browser.byCss("#set-embed").click();
+            browser.waitForSelector(".inline-video-controls [name=youtube_id]");
+            browser.byCss(".inline-video-controls [name=youtube_id]").sendKeys(url);
+            browser.byCss(".set-video").click();
             if (success) {
                 // Wait for embed to finish..
                 browser.waitForSelector("iframe");

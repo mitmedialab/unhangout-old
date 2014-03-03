@@ -248,9 +248,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
     id: "dialogs",
 
     events: {
-        'click #set-embed':'setEmbed',
         'click #send-session-message': 'sendSessionMessage',
-        'click #remove-embed':'removeEmbed',
         'click #disconnected-modal a':'closeDisconnected',
         'click #create-session':'createSession',
         'change [name=session_type]': 'changeSessionType',
@@ -258,42 +256,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'change #session_message': 'updateSessionMessage',
         'keydown #session_message': 'updateSessionMessage',
         'keyup #session_message': 'updateSessionMessage'
-    },
-    extractYoutubeId: function(val) {
-        // From http://stackoverflow.com/a/6904504 , covering any of the 15
-        // or so different variations on youtube URLs.
-        // Allow blank values, so that we can clear the embed with them.
-        if (val == "") {
-            return "";
-        }
-        var ytid;
-        if (/^[-A-Za-z0-9_]{11}$/.test(val)) {
-            ytid = val;
-        } else {
-            var re = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
-            var match = re.exec(val);
-            if (match) {
-                ytid = match[1];
-            } else {
-                ytid = null;
-            }
-        }
-        return ytid;
-
-    },
-    setEmbed: function() {
-        var newId = this.extractYoutubeId($("#embed_youtube_id").val());
-        if(_.isNull(newId)) {
-            this.$("#embed-modal p.text-warning").show();
-            this.$("#embed-modal .control-group").addClass("error");
-        } else {
-            this.$("#embed-modal p.text-warning").hide();
-            this.$("#embed-modal .control-group").removeClass("error");
-            var message = {
-                type:"embed",
-                args: {ytId:newId, roomId: this.options.event.getRoomId()}};
-            this.options.sock.send(JSON.stringify(message));
-        }
     },
     addUrlToSessionMessage: function(event) {
         event.preventDefault();
@@ -320,11 +282,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             args: args
         }));
         $("#message-sessions-modal").modal('hide');
-    },
-    removeEmbed: function() {
-        // just send an empty message, and clear the field
-        $("#embed_youtube_id").val("");
-        this.setEmbed();
     },
     changeSessionType: function() {
         var val = this.$("[name='session_type']:checked").val();
@@ -403,7 +360,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     firstRun: true,
 
     events: {
-        'click #show-embed-modal':'showEmbedModal',
         'click #open-sessions':'openSessions',
         'click #close-sessions':'closeSessions',
         'click #message-sessions': 'messageSessions',
@@ -451,22 +407,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         jqevt.preventDefault();
         $("#message-sessions-modal").modal('show');
 
-    },
-
-    showEmbedModal: function(jqevt) {
-        if (jqevt) { jqevt.preventDefault(); }
-        var ytId = this.options.event.get("youtubeEmbed");
-        if (ytId) {
-            var url = "https://www.youtube.com/watch?v=" + ytId;
-            $("#embed_youtube_id").val(url);
-            $("#current-yt-url").html("Current: <a target='_blank' href='" + url + "'>" + url + "</a>");
-            $("#remove-embed").show();
-        } else {
-            $("#embed_youtube_id").val("");
-            $("#current-yt-url").html("");
-            $("#remove-embed").hide();
-        }
-        $("#embed-modal").modal('show');
     },
 
     onRender: function() {
@@ -767,14 +707,19 @@ views.AboutEventView = Backbone.Marionette.ItemView.extend({
 views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     id: 'video-embed',
     template: '#video-embed-template',
+    controlsTemplate: _.template($("#video-embed-controls-template").html()),
     previousVideoDetailsTemplate: _.template($("#previous-video-details-template").html()),
     ui: {
-        player: ".player",
-        placeholder: ".placeholder"
+        player: ".video-player",
+        placeholder: ".video-placeholder",
+        controls: ".video-controls",
     },
     events: {
-        'click .set-youtube-embed': 'setYoutubeEmbed',
-        'click .restore-previous-video': 'restorePreviousVideo'
+        'click .set-video': 'setVideo',
+        'click .remove-video': 'removeVideo',
+        'click .restore-previous-video': 'restorePreviousVideo',
+        'click .play-for-all': 'playForAll'
+
     },
 
     player: null,
@@ -787,6 +732,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             } else {
                 this.setPlayerVisibility(false);
             }
+            this.renderControls();
         }, this);
         this.listenTo(this.model, "change:hoa", this.render);
     },
@@ -798,8 +744,36 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }
         return context;
     },
-    setYoutubeEmbed: function() {
-        this.trigger("show-embed-modal");
+    setVideo: function(jqevt) {
+        jqevt.preventDefault();
+        var youtubeInput = this.$("input[name='youtube_id']");
+        var youtubeInputParent = youtubeInput.parent();
+        var youtubeInputError = this.$("p.text-warning");
+        var ytId = video.extractYoutubeId(youtubeInput.val());
+        if (ytId == null) {
+            // Invalid youtube URL/embed code specified.
+            youtubeInputError.show();
+            youtubeInputParent.addClass("error");
+        } else {
+            youtubeInputParent.removeClass("error");
+            youtubeInputError.hide();
+            var message = {
+                type: "embed",
+                args: {ytId: ytId, roomId: this.model.getRoomId()}
+            };
+            this.options.sock.send(JSON.stringify(message));
+        }
+    },
+    removeVideo: function(jqevt) {
+        jqevt.preventDefault();
+        this.model.setEmbed(null);
+        this.options.sock.send(JSON.stringify({
+            type: "embed",
+            args: {ytId: null, roomId: this.model.getRoomId()}
+        }));
+    },
+    playForAll: function(jqevt) {
+        this.yt.playForEveryone(jqevt);
     },
     restorePreviousVideo: function(jqevt) {
         jqevt.preventDefault();
@@ -814,51 +788,56 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.options.sock.send(JSON.stringify(message));
     },
     setPlayerVisibility: function(visible) {
-        if (visible) {
-            this.ui.player.show();
-            this.ui.placeholder.hide();
-        } else {
-            this.ui.player.hide();
-            this.ui.placeholder.toggle(IS_ADMIN);
-        }
+        // Display player if it's visible.
+        this.ui.player.toggle(visible);
+        // Show a placeholder ("video goes here") if video is not visible and
+        // the user is an admin.  Non-admins get nothing.
+        this.ui.placeholder.toggle(!visible && IS_ADMIN);
+        // Always show controls if the user is an admin.
+        this.ui.controls.toggle(IS_ADMIN);
+    },
+    renderControls: function() {
+        var hoa = this.model.get("hoa");
+        var context = _.extend(this.model.toJSON(), {
+            hoaParticipationLink: hoa ? hoa.getParticipationLink() : null,
+            isPlayingForEveryone: this.yt.isPlayingForEveryone(),
+        });
+
+        this.ui.controls.html(this.controlsTemplate(context));
+
+        // Make the video details pretty.
+        _.each(this.model.get("previousVideoEmbeds"), _.bind(function(embed) {
+            video.getVideoDetails(embed.youtubeId, _.bind(function(data) {
+                this.$("[data-youtube-id='" + data.id + "']").replaceWith(
+                    this.previousVideoDetailsTemplate(data)
+                );
+            }, this));
+        }, this));
     },
     onRender: function() {
         this.yt = new video.YoutubeVideo({
             ytID: this.model.get("youtubeEmbed"),
-            showGroupControls: IS_ADMIN
+            groupScrubControl: true,
+            showGroupControls: false // We're doing our own controls on event pages.
         });
-        this.yt.on("renderControls", _.bind(function() {
-            var hoa = this.model.get("hoa");
-            if (hoa && hoa.get("hangout-url")) {
-                this.$("td.video-controls").append(
-                    "<a href='" + hoa.getParticipationLink() + "'" +
-                    "   class='join-hoa btn btn-warning btn-small'" +
-                    "   target='_blank'>Join Hangout-on-Air</a>"
-                );
-            }
-        }, this));
+        if (IS_ADMIN) {
+            this.yt.on("renderControls", _.bind(function() {
+                this.renderControls();
+            }, this));
+        };
         this.yt.on("control-video", _.bind(function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
             this.options.sock.send(JSON.stringify({type: "control-video", args: args}));
         }, this));
-        this.yt.on("video-settings", _.bind(function(yt) {
-            this.trigger("show-embed-modal");
-        }, this));
 
-        this.$(".player").html(this.yt.el);
+        this.$(".video-player").html(this.yt.el);
+
         this.setPlayerVisibility(!!this.model.get("youtubeEmbed"));
+
         if (this.model.get("youtubeEmbed")) {
             this.yt.render();
-        }
-        if (IS_ADMIN) {
-            // Make the video details pretty.
-            _.each(this.model.get("previousVideoEmbeds"), _.bind(function(embed) {
-                video.getVideoDetails(embed.youtubeId, _.bind(function(data) {
-                    this.$("[data-youtube-id='" + data.id + "']").replaceWith(
-                        this.previousVideoDetailsTemplate(data)
-                    );
-                }, this));
-            }, this));
+        } else {
+            this.renderControls();
         }
     },
     control: function(args) {

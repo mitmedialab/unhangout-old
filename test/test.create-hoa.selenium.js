@@ -67,6 +67,7 @@ describe("CREATE HOA", function() {
         browser.get("http://localhost:7777/event/" + event.id);
         browser.waitForSelector(".create-hoa");
         browser.byCss(".create-hoa").click();
+        // Switch to the hangout creation window.
         // Seems that browser.getWindowHandles is not implemented.  Doing it raw.
         browser.schedule(
             new webdriver.Command(webdriver.CommandName.GET_WINDOW_HANDLES)
@@ -78,11 +79,15 @@ describe("CREATE HOA", function() {
         });
         browser.getCurrentUrl().then(function(url) {
             expect(event.get("hoa")).to.not.be(null);
+            // This is the test URL -- not the URL used in production.. not
+            // sure how valuable it is to test here, but at least we know that
+            // the session redirect is running.
             expect(url).to.eql(
                 "http://localhost:7777/test/hangout/" + event.get("hoa").id + "/?isHoA=1"
             );
         });
 
+        // Switch back to the event window.
         browser.schedule(
             new webdriver.Command(webdriver.CommandName.GET_WINDOW_HANDLES)
         ).then(function(handles) {
@@ -91,27 +96,29 @@ describe("CREATE HOA", function() {
 
         browser.waitForSelector(".join-hoa");
 
-        browser.executeScript("return $('.player iframe').attr('src');").then(function(src) {
+        // Wait for the hangout broadcast video to be embedded.
+        var embedSrcScript = "return $('.video-player iframe').attr('src');";
+        browser.executeScript(embedSrcScript).then(function(src) {
             expect(src).to.not.be(null);
-            expect(
-                src.indexOf("http://www.youtube.com/embed/" +
-                            event.get("hoa").get("hangout-broadcast-id"))
+            expect(src.indexOf("http://www.youtube.com/embed/" +
+                               event.get("hoa").get("hangout-broadcast-id"))
             ).to.be(0);
         });
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
             expect(href).to.eql(event.get("hoa").getParticipationLink());
         });
 
+        // Now make sure that a regular user sees the embedded video, but does
+        // not see the "join current hangout" link.
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + event.id);
         browser.byCsss(".join-hoa").then(function(els) {
             expect(els.length).to.be(0);
         });
-        browser.executeScript("return $('.player iframe').attr('src');").then(function(src) {
+        browser.executeScript(embedSrcScript).then(function(src) {
             expect(src).to.not.be(null);
-            expect(
-                src.indexOf("http://www.youtube.com/embed/" +
-                            event.get("hoa").get("hangout-broadcast-id"))
+            expect(src.indexOf("http://www.youtube.com/embed/" +
+                               event.get("hoa").get("hangout-broadcast-id"))
             ).to.be(0);
         });
 

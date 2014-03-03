@@ -11,6 +11,9 @@
             var HOA_ATTRS = null;
         <% } %>
     <% } %>
+    <% if (user.isAdminOf(event)) { %>
+        var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
+    <% } %>
 </script>
 
 <div class="container">
@@ -134,38 +137,75 @@
 </script>            
             
 <script type="text/template" id="video-embed-template">
-    <div class='player'></div>
-    <div class='placeholder'>
-        <button class='btn btn-warning set-youtube-embed'>
-            <i class='fa fa-youtube-play'></i> Add Youtube Video
-        </button>
-        <a class='btn btn-warning create-hoa' target='_blank'
+    <div class='video-player'></div>
+    <div class='video-placeholder'>Video</div>
+    <div class='video-controls'></div>
+</script>
+<script type='text/template' id="video-embed-controls-template">
+    {{ if (youtubeEmbed) { }}
+        <div class='current-video-controls'>
+            <button class='btn btn-warning play-for-all'>
+                {{ if (isPlayingForEveryone) { }}
+                    <i class='fa fa-pause'></i> Pause for all
+                {{ } else { }}
+                    <i class='fa fa-play'></i> Play for all
+                {{ } }}
+            </button>
+            <button class='btn btn-small pull-right remove-video'>
+                Remove <i class='fa fa-times'></i> 
+            </button>
+        </div>
+    {{ } }}
+    <div class='inline-video-controls'>
+        <label>Set youtube video:</label>
+        <div class='input-prepend input-append'>
+            <span class='add-on'><i class='fa fa-youtube-play'></i></span>
+            <input type="text" name="youtube_id" value=""
+                   placeholder="https://youtube.com..." />
+            <div class='btn-group'>
+                <button class='btn btn-default set-video'
+                        type="button">Set video</button>
+                {{ if (previousVideoEmbeds.length > 0) { }}
+                    <button class='btn btn-default dropdown-toggle'
+                            data-toggle='dropdown'>
+                        <i class='fa fa-list'></i>
+                        <i class='fa fa-caret-down'></i>
+                    </button>
+                    <ul class='dropdown-menu pull-right'>
+                        <li><a class='restore-previous-video header'>Previous videos</a></li>
+                        {{ _.each(previousVideoEmbeds, function(vid) { }}
+                            <li>
+                                <a tabindex='-1' href='#' class='restore-previous-video'
+                                   data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
+                            </li>
+                        {{ }); }}
+                    </ul>
+                {{ } }}
+            </div>
+        </div>
+        <p class="alert text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
+    </div>
+
+    <p>or</p>
+
+    <div class='button-group'>
+        <a class='btn btn-default create-hoa' target='_blank'
            href='/event/{{- id }}/create-hoa/'>
             <i class='fa fa-users'></i> Create Hangout-on-Air
         </a>
-        {{ if (previousVideoEmbeds.length > 0) { }}
-            <div class='btn-group'>
-                <button class='btn btn-small dropdown-toggle' data-toggle='dropdown'>
-                    Restore previous video
-                    <i class='fa fa-caret-down'></i>
-                </button>
-                <ul class='dropdown-menu pull-right'>
-                    {{ _.each(previousVideoEmbeds, function(vid) { }}
-                        <li>
-                            <a tabindex='-1' href='#' class='restore-previous-video'
-                               data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
-                        </li>
-                    {{ }); }}
-                </ul>
-            </div>
+        {{ if (hoaParticipationLink) { }}
+            <a class='btn btn-default join-hoa' target='_blank'
+               href='{{= hoaParticipationLink }}'>Join current <i class='fa fa-arrow-right'></i></a>
         {{ } }}
     </div>
 </script>
+
 <script type='text/template' id="previous-video-details-template">
-    <a tabindex='-1' href='#' class='restore-previous-video' style='text-align: left; width: 250px;'
+    <a tabindex='-1' href='#' class='restore-previous-video'
+       style='text-align: left; width: 250px;'
        data-youtube-id='{{= id }}'>
         <img src='{{= thumbnail.url }}' width=64 height=48 alt='thumbnail'>
-        {{= title.substring(0, 20) }}{{= title.length > 20 ? "..." : "" }}
+        <span class='title'>{{= title }}</span>
         <span style='font-size: smaller; color: #999;'>
             {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
         </span>
@@ -194,10 +234,6 @@
                 <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
                     <i class="fa fa-pencil-square-o fa-lg fa-fw"></i>
                     Edit Event Info
-                </a>
-                <a role="menuitem" href="#embed-modal" role="button" id="show-embed-modal">
-                    <i class="fa fa-code fa-lg fa-fw"></i>
-                    Embed Video
                 </a>
                 {{ if (event.get("sessionsOpen")) { }}
                     <a role="menuitem" tabindex="-1" id="close-sessions" href='#'>
@@ -302,23 +338,6 @@
             <a href='#' class='btn btn-primary' id='send-session-message'>Send Message</a>
         </div>
     </div>
-    <div id="embed-modal" class="modal hide fade">
-        <div class="modal-header"><h3>Set Video URL</h3></div>
-        <div class="modal-body">
-            <p class="text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
-            <div class="control-group">
-                <label for="embed_youtube_id">Youtube video URL</label>
-                <input type="text" name="youtube_id" value="" id="embed_youtube_id" placeholder="https://youtube.com...">
-                <span class='help-block'>Paste the URL or embed code for a youtube video.</span>
-                <div id='current-yt-url'></div>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href='#' class='btn pull-left' data-dismiss='modal'>Cancel</a>
-            <a href="#" class="btn btn-warning" id="remove-embed">Remove Video</a>
-            <a href="#" class="btn btn-primary" id="set-embed">Set Video</a>
-        </div>
-    </div>
     <div class="modal hide fade started-modal">
         <div class="modal-header"><h3></h3></div>
         <div class="modal-body">
@@ -346,12 +365,6 @@
 </script>
 
 <% include _video-templates.ejs %>
-
-<script type='text/javascript'>
-    <% if (user.isAdminOf(event)) { %>
-        var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
-    <% } %>
-</script>
     
 <%- requireScripts("/public/js/event-app.js") %>
 <% include _analytics.ejs %>

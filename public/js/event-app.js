@@ -176,12 +176,10 @@ $(document).ready(function() {
                 sock.send(JSON.stringify({type:"join", args:{id:curEvent.getRoomId()}}));
                 break;
                 
-            case "embed-ack":
-                $("#embed-modal").modal('hide');
-                break;                
             case "join-ack":
                 logger.log("joined!");
                 break;
+
             case "attend-ack":
                 logger.log("attend-ack");
                 break;
@@ -318,9 +316,6 @@ $(document).ready(function() {
                 this.adminButtonView.render();
             }, this));
             this.admin.show(this.adminButtonView);
-            this.youtubeEmbedView.on("show-embed-modal", _.bind(function() {
-                this.adminButtonView.showEmbedModal();
-            }, this));
         }
 
         logger.log("Initialized app.");

@@ -1,7 +1,7 @@
 define([
-   "underscore", "backbone", "logger",
+   "underscore", "jquery", "backbone", "logger",
    "underscore-template-config"
-], function(_, Backbone, logger) {
+], function(_, $, Backbone, logger) {
 
 var DATA_API_URL = "https://gdata.youtube.com/feeds/api/videos/{id}?v=2&alt=json-in-script&callback=?",
     IFRAME_API_URL = "https://www.youtube.com/iframe_api",
@@ -37,6 +37,30 @@ video.getVideoDetails = function(id, callback) {
     }, this));
 };
 
+// From http://stackoverflow.com/a/6904504 , covering any of the 15 or so
+// different variations on youtube URLs.  Also works permissively on full
+// iframe/object embed codes.  Returns empty string if empty string is given;
+// returns null if no valid ID is found; otherwise, returns the 11 character
+// YouTube ID.
+video.extractYoutubeId = function(val) {
+    if (val == "") {
+        return "";
+    }
+    var ytid;
+    if (/^[-A-Za-z0-9_]{11}$/.test(val)) {
+        ytid = val;
+    } else {
+        var re = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
+        var match = re.exec(val);
+        if (match) {
+            ytid = match[1];
+        } else {
+            ytid = null;
+        }
+    }
+    return ytid;
+}
+
 video.YoutubeVideo = Backbone.View.extend({
     tagName: "table",
     template: _.template($("#youtube-video").html()),
@@ -49,6 +73,7 @@ video.YoutubeVideo = Backbone.View.extend({
     initialize: function(options) {
         this.ytID = options.ytID;
         this.showGroupControls = options.showGroupControls;
+        this.groupScrubControl = options.groupScrubControl;
         this.intendToSync = true;
         _.bindAll(this, "playForEveryone", "toggleSync",
                         "onPlayerReady", "onPlayerStateChange",
@@ -187,7 +212,7 @@ video.YoutubeVideo = Backbone.View.extend({
                 this.syncAvailable()) {
             // ... interpret it as an intention to seek or pause.
             this.logger.debug("times", this.ctrl.time, this.player.getCurrentTime());
-            if (this.showGroupControls) {
+            if (this.groupScrubControl) {
                 // Admin: do it for everyone.
                 // If it's more than 10 seconds, assume seek; otherwise pause. 
                 if (Math.abs(this.ctrl.time  - this.player.getCurrentTime()) > 10) {
@@ -217,7 +242,7 @@ video.YoutubeVideo = Backbone.View.extend({
     },
     playForEveryone: function(event) {
         if (event) { event.preventDefault(); }
-        var playing = this.ctrl && this.ctrl.state == "playing";
+        var playing = this.isPlayingForEveryone();
         var args;
         if (playing) {
             args = {action: "pause"};
@@ -246,6 +271,9 @@ video.YoutubeVideo = Backbone.View.extend({
     },
     triggerVideoSettings: function(event) {
         this.trigger("video-settings", this);
+    },
+    isPlayingForEveryone: function() {
+        return this.ctrl && this.ctrl.state === "playing";
     }
 });
 

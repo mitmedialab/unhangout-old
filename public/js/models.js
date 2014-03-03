@@ -137,9 +137,9 @@ models.Event = Backbone.Model.extend({
         // ytId.
         var prev = this.get("previousVideoEmbeds");
         var cur = this.get("youtubeEmbed");
-        if (cur) {
-            if (!_.findWhere(prev, {youtubeId: cur})) {
-                prev.unshift({youtubeId: cur});
+        if (ytId) {
+            if (!_.findWhere(prev, {youtubeId: ytId})) {
+                prev.unshift({youtubeId: ytId});
                 this.trigger("change:previousVideoEmbeds");
             }
         }
