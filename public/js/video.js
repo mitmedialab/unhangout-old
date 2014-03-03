@@ -43,7 +43,7 @@ video.getVideoDetails = function(id, callback) {
 // returns null if no valid ID is found; otherwise, returns the 11 character
 // YouTube ID.
 video.extractYoutubeId = function(val) {
-    if (val == "") {
+    if (val === "") {
         return "";
     }
     var ytid;
