@@ -8,7 +8,8 @@ var conf            = require("../lib/options"),
     webdriver       = require('selenium-webdriver'),
     sock_client     = require("sockjs-client-ws"),
     SeleniumServer  = require('selenium-webdriver/remote').SeleniumServer,
-    emailServer     = require("../bin/email-server.js");
+    emailServer     = require("../bin/email-server.js"),
+    Promise         = require("bluebird");
 
 var TEST_CONF = _.extend({}, conf, {
     "UNHANGOUT_USE_SSL": false,
@@ -197,5 +198,35 @@ exports.authedSock = function(userKey, room, callback) {
             type:"auth",
             args:{ key: user.getSockKey(), id: user.id }
         }));
+    });
+};
+
+// Params:
+// @param {Function} fn A test function.
+// @param {Number} [timeout=100] milliseconds between repeated executions of fn
+//
+// Repeatedly call `fn` to test whether to proceed.  Returns a promise which is
+// fulfilled when executing `fn` returns a truthy value.  `fn` may also return
+// a promise which, when fulfilled, is checked for a truthy value.
+exports.await = function(fn, timeout) {
+    timeout = timeout || 100;
+    return new Promise(function(resolve, reject) {
+        function go() {
+            function loop(res) {
+                res ? resolve(res) : setTimeout(go, timeout);
+            }
+            try {
+                var result = fn();
+            } catch (err) {
+                return reject(err);
+            }
+            // Check if `result` is a promise.  (Is there a better way?)
+            if (typeof result === "object" && result.then && typeof result.then === "function") {
+                result.then(loop).catch(function(err) { reject(err); });
+            } else {
+                loop(result);
+            }
+        }
+        go();
     });
 };

@@ -118,13 +118,25 @@
 </script>
             
 <script type="text/template" id="chat-layout">
-    <div id="chat-container-region" class="span5"></div>
-    <div id="presence-gutter"></div>
+    <div id="chat-container-region" class="span5">
+        <div id='welcome-message'></div>
+        <div id='chat-messages'></div>
+    </div>
     <div id="chat-input-region"></div>
+    <div id="presence-gutter"></div>
+</script>
+
+<script type="text/template" id="welcome-message-template">
+    {{= welcomeMessage }}
+    {{ if (chatArchiveUrl) { }}
+        <div class='chat-archive-link'>
+            <a href='{{= chatArchiveUrl }}' target='_blank'>Chat Archive</a>
+        </div>
+    {{ } }}
 </script>
 
 <script type="text/template" id="chat-input-template">
-    <form><input type="text" id="chat-input" autocomplete="off"></input></form>
+    <form><input type="text" id="chat-input" autocomplete="off" placeholder='Chat'></input></form>
 </script>
 
 <script type="text/template" id="chat-template">

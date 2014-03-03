@@ -426,10 +426,6 @@ $(document).ready(function() {
     
     logger.log("Setup regions.");
 
-    if(!_.isNull(curEvent.get("welcomeMessage"))) {
-        // if there is a welcome message, put it in chat.
-        messages.add(new models.ChatMessage({text:curEvent.get("welcomeMessage")}));
-    }
 });
 
 });

@@ -39,4 +39,4 @@ bin/selenium-server-standalone.jar
 public/css/screen.css
 public/css/facilitator.css
 public/build
-
+public/logs
