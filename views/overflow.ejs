@@ -1,0 +1,34 @@
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+
+<div class='event-overflow'>
+    <h1><%= title %></h1>
+    <h3>Overflow Room</h3>
+    <p>
+    Apologies, but this event is currently over capacity!  You can try again later
+    to see if space has opened up.
+    </p>
+
+    <% if (event.get("youtubeEmbed")) { %>
+        <p>In the mean time, here's the event's current video:</p>
+        <div class='iframe-holder'>
+            <iframe src="https://www.youtube.com/embed/<%= event.get("youtubeEmbed") %>"
+                width=640 height=480
+                ></iframe>
+        </div>
+    <% } %>
+    <% if (event.get("description") || event.get("welcomeMessage")) { %>
+        <div class='overflow-about'>
+            <% if (event.get("description")) { %>
+                    <h2>About</h2>
+                    <%- event.get("description") %>
+            <% } %>
+            <% if (event.get("welcomeMessage")) { %>
+                <h3>Event welcome message</h3>
+                <div><%- event.get("welcomeMessage") %></div>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+<%- requireScripts("/public/js/index.js") %>
+<% include _footer.ejs %>
