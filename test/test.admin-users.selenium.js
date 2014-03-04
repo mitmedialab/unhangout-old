@@ -112,7 +112,9 @@ describe("BROWSER ADMIN USERS", function() {
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/admin/users/");
         browser.byCss(removeSelector).click().then(function() {
-            expect(user.isAdminOf(event)).to.be(false);
+            return common.await(function() {
+                expect(user.isAdminOf(event)).to.be(false);
+            });
         });
 
         // Ensure the new admin can no longer access the admin page.
