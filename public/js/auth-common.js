@@ -32,7 +32,11 @@ define(["logger"], function(logging) {
         exports.SOCK_KEY = window.UNHANGOUT_AUTH.SOCK_KEY;
         exports.USER_ID = window.UNHANGOUT_AUTH.USER_ID;
         exports.USER_NAME = window.UNHANGOUT_AUTH.USER_NAME;
-        localStorage.setItem("UNHANGOUT_AUTH", JSON.stringify(exports));
+        try {
+            localStorage.setItem("UNHANGOUT_AUTH", JSON.stringify(exports));
+        } catch (e) {
+            logger.error("Error setting auth data to local storage:", e);
+        }
     } else if (window.UNHANGOUT_USE_LOCALSTORAGE_AUTH) {
         // Explicitly marked cookie-less environment: read auth from localstorage.
         try {
@@ -44,7 +48,11 @@ define(["logger"], function(logging) {
     } else {
         // Not explicit cookie-less environment, without window.AUTH: clear
         // localStorage (e.g. we've been signed out).
-        localStorage.removeItem("UNHANGOUT_AUTH");
+        try {
+            localStorage.removeItem("UNHANGOUT_AUTH");
+        } catch (e) {
+            logger.error("Error removing item from local storage:", e);
+        }
     }
     return exports;
 });
