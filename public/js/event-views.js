@@ -17,9 +17,9 @@
 // state. 
 
 define([
-   "underscore", "backbone", "video", "logger", "models",
+   "underscore", "backbone", "video", "logger", "models", "auth",
    "backbone.marionette", "underscore-template-config"
-], function(_, Backbone, video, logging, models) {
+], function(_, Backbone, video, logging, models, auth) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -233,7 +233,7 @@ views.UserView = Backbone.Marionette.ItemView.extend({
 
 // Turn a string into a session message.
 function formatSessionMessage(val) {
-    return "##unhangouts## " + USER_NAME + ": " + $.trim(val);
+    return "##unhangouts## " + auth.USER_NAME + ": " + $.trim(val);
 }
 
 // The DialogView contains all our dialog boxes. This is a little awkward, but
@@ -694,7 +694,7 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
         var latest = this.collection.at(this.collection.length - 1);
         // Scroll down if we haven't moved our scroll bar, or the last message
         // was from ourselves.
-        if (!this._isScrolled || latest.get("user").id == USER_ID) {
+        if (!this._isScrolled || latest.get("user").id == auth.USER_ID) {
             this.scroller.scrollTop(this.el.scrollHeight);
         }
     }

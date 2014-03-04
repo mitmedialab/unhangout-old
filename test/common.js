@@ -42,6 +42,9 @@ var buildBrowser = function(callback) {
     browser.mockAuthenticate = function(user) {
         return browser.executeScript("document.cookie = 'mock_user=" + user + "; path=/';");
     };
+    browser.unMockAuthenticate = function(user) {
+        return browser.executeScript("document.cookie = 'mock_user=; path=/';");
+    };
     browser.waitForSelector = function(selector) {
         return browser.wait(function() {
             return browser.byCsss(selector).then(function(els) {

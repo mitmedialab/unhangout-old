@@ -11,8 +11,10 @@
             var HOA_ATTRS = null;
         <% } %>
     <% } %>
-    <% if (user.isAdminOf(event)) { %>
+    <% if (user.isSuperuser()) { %>
         var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
+    <% } else { %>
+        var NUM_HANGOUTS_FARMED = null;
     <% } %>
 </script>
 
@@ -268,7 +270,7 @@
                     <i class="fa fa-share fa-lg fa-fw"></i>
                     Send Message to Sessions
                 </a>
-                {{ if (IS_SUPERUSER) { }}
+                {{ if (NUM_HANGOUTS_FARMED != null) { }}
                     <a role="menuitem" tabindex="-1" id="farm" href="/hangout-farming" target="_blank">
                         <i class="fa fa-wrench fa-lg fa-fw"></i>
                         Farm Hangout Urls

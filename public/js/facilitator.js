@@ -1,11 +1,11 @@
 require([
     "jquery", "underscore-template-config", "backbone", "sockjs", "client-models",
-    "video", "logger",
+    "video", "logger", "auth-localstorage",
     "bootstrap"
-], function($, _, Backbone, SockJS, models, video, logging) {
+], function($, _, Backbone, SockJS, models, video, logging, auth) {
 
 
-var logger = new logging.Logger("FACILITATOR", "error");
+var logger = new logging.Logger("FACILITATOR");
 
 var FacilitatorView = Backbone.View.extend({
     template: _.template($('#facilitator').html()),
@@ -23,8 +23,29 @@ var FacilitatorView = Backbone.View.extend({
         if (this.session.get("activities").length == 0) {
             this.session.set("activities", [{type: "about", autoHide: true}]);
         }
+        this.session.on("change:activities", this.renderActivities);
+
+        // `auth` tries to read our identity first from values derived from our
+        // session cookie (via values set in `_header.ejs`), and second from
+        // localStorage (set by previously-read cookie values).  If both fail,
+        // display a message and do nothing else.  Don't bind socket messages
+        // because we won't have a valid socket.
+        if (!auth.SOCK_KEY) {
+            // Prevent hangout window from displaying an error.
+            window.addEventListener("message", function(event) {
+                if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
+					HANGOUT_ORIGIN = event.origin;
+                    if (event.data.type === "url") {
+                        logger.error("Ignoring hangout URL; not authenticated");
+                        postMessageToHangout({type: "url-ack"});
+                    }
+                }
+            }, false);
+            this.session.set("activities", [{type: "no-auth-warning"}]);
+            return;
+        }
         // Our socket is not just correct, not just articulate... it is *on message*.
-        sock.onmessage = _.bind(function(message) {
+        this.sock.onmessage = _.bind(function(message) {
             var msg = JSON.parse(message.data);
             logger.debug("SOCK", msg.type, msg.args);
             switch (msg.type) {
@@ -58,7 +79,6 @@ var FacilitatorView = Backbone.View.extend({
                     break;
             }
         }, this);
-        this.session.on("change:activities", this.renderActivities);
     },
     handleCrossDocumentMessages:  function(event) {
 		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
@@ -109,6 +129,10 @@ var FacilitatorView = Backbone.View.extend({
             case "about":
                 view = new AboutActivity({session: this.session, event: this.event,
                                           activity: activityData});
+                break;
+            case "no-auth-warning":
+                view = new NoAuthActivity({session: this.session, event: this.event,
+                                           activity: activityData});
                 break;
             default:
                 logger.error("Unknown activity", activityData);
@@ -241,6 +265,10 @@ var AboutActivity = BaseActivityView.extend({
         }
         $(".auto-hide").hide();
     }
+});
+
+var NoAuthActivity = AboutActivity.extend({
+    template: _.template($("#no-auth-activity").html())
 });
 
 var FacesView = Backbone.View.extend({
@@ -487,34 +515,36 @@ app.render();
 /****************************************************
       Socket initialization and hangout management
 *****************************************************/
-// Convenience wrapper for posting messages.
-sock.sendJSON = function(type, data) {
-    sock.send(JSON.stringify({type: type, args: data}));
-}
-sock.onopen = function() {
-    // Authorize ourselves, then join the room.
-    sock.sendJSON("auth", {key: SOCK_KEY, id: USER_ID});
-};
-
-sock.onclose = function() {
-    app.faces.hideVideoIfActive();
-    $('#disconnected-modal').modal('show');
-    var checkIfServerUp = function() {
-        var ping = document.location;
-        $.ajax({
-            url: ping,
-            cache: false,
-            async: false,
-            success: function(msg) {
-                postMessageToHangout({'type': 'reload'});
-            },
-            error: function(msg) {
-                timeout = setTimeout(checkIfServerUp, 250);
-            }
-        });
+if (auth.SOCK_KEY) {
+    // Convenience wrapper for posting messages.
+    sock.sendJSON = function(type, data) {
+        sock.send(JSON.stringify({type: type, args: data}));
+    }
+    sock.onopen = function() {
+        // Authorize ourselves, then join the room.
+        sock.sendJSON("auth", {key: auth.SOCK_KEY, id: auth.USER_ID});
     };
-    checkIfServerUp();
-};
+
+    sock.onclose = function() {
+        app.faces.hideVideoIfActive();
+        $('#disconnected-modal').modal('show');
+        var checkIfServerUp = function() {
+            var ping = document.location;
+            $.ajax({
+                url: ping,
+                cache: false,
+                async: false,
+                success: function(msg) {
+                    postMessageToHangout({'type': 'reload'});
+                },
+                error: function(msg) {
+                    timeout = setTimeout(checkIfServerUp, 250);
+                }
+            });
+        };
+        checkIfServerUp();
+    };
+}
 
 // Let the server know about changes to the hangout URL.
 session.on("change:hangout-url", function() {

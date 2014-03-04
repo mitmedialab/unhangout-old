@@ -82,6 +82,18 @@
     </a>
 </script>
 
+<script type='text/template' id='no-auth-activity'>
+    <div class='alert alert-error'>
+        We could not log you in to Unhangout. Either you haven't logged in, or
+        your browser is blocking us.
+    </div>
+    <div class='alert alert-warning'>
+        Please visit <a href='<%= baseUrl %>'>Unhangout</a> and log in.  Your
+        browser must either have local storage enabled or allow 3rd-party
+        cookies.
+    </p>
+</script>
+
 <script type='text/template' id='add-activity-dialog'>
     <form>
         <div class="modal-header"><h3>Add webpage or video</h3></div>
@@ -172,9 +184,7 @@
         var EVENT_ATTRS = {};
     <% } %>
     var SESSION_ATTRS = <%- JSON.stringify(session.toJSON()) %>;
-    // DEBUG
 </script>
-
 <%- requireScripts("/public/js/facilitator.js") %>
 
 <% } %>

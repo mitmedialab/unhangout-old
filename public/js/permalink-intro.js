@@ -1,4 +1,4 @@
-require(["jquery"], function($) {
+require(["jquery", "auth"], function($) {
     $(document).ready(function() {
         $("#permalink-create-submit").click(function(e) {
             e.stopPropagation();

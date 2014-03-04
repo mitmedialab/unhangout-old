@@ -9,10 +9,10 @@
 
 require([
     "jquery", "underscore", "backbone", "logger", "client-models",
-    "event-views", "sockjs",
+    "event-views", "sockjs", "auth",
     // plugins
     "bootstrap", "backbone.marionette", "underscore-template-config"
-], function($, _, Backbone, logging, models, eventViews, SockJS) {
+], function($, _, Backbone, logging, models, eventViews, SockJS, auth) {
 
 var sock;
 var curEvent, users, messages;
@@ -41,9 +41,10 @@ $(document).ready(function() {
     // Register a bunch of listeners on the major events it will fire.
     sock.onopen = function() {        
         // on connect, send the auth message.
-        var AUTH = {type:"auth", args:{key:SOCK_KEY, id:USER_ID}};
-        
-        sock.send(JSON.stringify(AUTH));
+        sock.send(JSON.stringify({
+            type: "auth",
+            args: {key: auth.SOCK_KEY, id: auth.USER_ID}
+        }));
     };
 
     // This is the big one - handles every incoming message. 
@@ -226,10 +227,10 @@ $(document).ready(function() {
     //                                                                          //
     //------------------------------------------------------------------------//
 
-    // The constants used heavily in this block (eg EVENT_ATTRS, SINGLE_SESSION_RSVP, USER_ID)
-    // come from the event.ejs file. They are the way that the server communicates the initial 
-    // state of the event to the client - in a big JSON blob. Subsequent updates all happen
-    // over the sockJS channel, but the initial state is embedded in these constants.
+    // The EVENT_ATTRS constant comes from the event.ejs file. They are the way
+    // that the server communicates the initial state of the event to the
+    // client - in a big JSON blob. Subsequent updates all happen over the
+    // sockJS channel, but the initial state is embedded there.
     curEvent = new models.ClientEvent(EVENT_ATTRS);
     if (HOA_ATTRS) {
         curEvent.set("hoa", new models.Session(HOA_ATTRS));
@@ -340,7 +341,10 @@ $(document).ready(function() {
                 windowBlurred = true ;
                 messageShown = true ;
 
-                var message = {type:"blur", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
+                var message = {
+                    type: "blur",
+                    args: {roomId: curEvent.getRoomId()}
+                };
                 sock.send(JSON.stringify(message));  
 
                 isAlreadyBlurred = true;
@@ -353,7 +357,10 @@ $(document).ready(function() {
                 clearInterval(interval);
                 window.document.title = startingTitle;
 
-                var message = {type:"focus", args:{id:USER_ID, roomId:curEvent.getRoomId()}};
+                var message = {
+                    type: "focus",
+                    args: {roomId: curEvent.getRoomId()}
+                };
                 sock.send(JSON.stringify(message));  
 
                 isAlreadyBlurred = false;
