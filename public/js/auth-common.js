@@ -38,8 +38,7 @@ define(["logger"], function(logging) {
         try {
             exports = JSON.parse(localStorage.getItem("UNHANGOUT_AUTH")) || {};
         } catch (e) {
-            logger.error("JSON error parsing local storage:",
-                         localStorage.getItem("UNHANGOUT_AUTH"))
+            logger.error("JSON error parsing or reading local storage:", e);
             exports = {};
         }
     } else {
