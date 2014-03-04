@@ -145,6 +145,10 @@ exports.startEmailServer = function(done) {
 exports.stopEmailServer = function(done) {
     emailServer.stop(done);
 };
+exports.recipientify = function(email) {
+    return {address: email, name: ''}
+}
+
 
 var shutDown = function(server, done) {
     server.on("stopped", function() {
