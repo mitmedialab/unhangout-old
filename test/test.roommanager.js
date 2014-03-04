@@ -13,7 +13,7 @@ var users = createUsers(new models.ServerUserList());
 var server = http.createServer();
 var socketServer = sockjs.createServer({log: function(severity, message){
     if (severity == "error") {
-        console.log(message);
+        console.log("error", message);
     }
 }});
 

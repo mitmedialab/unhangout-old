@@ -2,7 +2,7 @@ require([
    "jquery", "underscore", "backbone", "client-models", "auth",
    // plugins
    "backbone.marionette", "bootstrap", "underscore-template-config"
-], function($, _, Backbone, models) {
+], function($, _, Backbone, models, auth) {
 
 $(document).ready(function() {
 

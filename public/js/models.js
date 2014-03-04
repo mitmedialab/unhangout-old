@@ -217,6 +217,7 @@ models.Event = Backbone.Model.extend({
     // "email" key -- from the list of admins, if present.
     removeAdmin: function(user) {
         var admins = this.get("admins");
+        var changed;
         admins = _.reject(admins, _.bind(function(admin) {
             if (this.adminMatchesUser(admin, user)) {
                 changed = true;    

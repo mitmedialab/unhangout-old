@@ -24,7 +24,7 @@ describe("HANGOUT REDIRECTS", function() {
                 }
             });
             if (!session) {
-                console.log(common.server.db.events.toJSON());
+                console.log("error", common.server.db.events.toJSON());
                 throw new Error("No sessions loaded!");
             }
             done();

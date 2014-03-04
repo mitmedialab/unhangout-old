@@ -47,15 +47,14 @@ var buildBrowser = function(callback) {
     };
     browser.waitForSelector = function(selector) {
         return browser.wait(function() {
-            return browser.byCsss(selector).then(function(els) {
-                if (els.length == 0) {
+            var script = "try { return !!document.querySelector('"
+                           + selector.replace(/'/g, "\\'") + "'); " +
+                "} catch(e) { return false; }";
+            return browser.executeScript(script).then(function(exists) {
+                if (!exists) {
                     return false;
-                }
-                try {
-                    return els[0].isDisplayed();
-                } catch (e) {
-                    // catch stale reference errors.
-                    return false;
+                } else {
+                    return browser.byCss(selector).isDisplayed();
                 }
             });
         });

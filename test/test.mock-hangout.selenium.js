@@ -124,7 +124,6 @@ describe("MOCK HANGOUT", function() {
             });
         }).then(function() {
             return common.await(function() {
-                console.log(session.getNumConnectedParticipants());
                 return session.getNumConnectedParticipants() == 1;
             });
         }).then(function() {

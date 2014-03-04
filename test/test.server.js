@@ -188,7 +188,7 @@ describe('unhangout server', function() {
 					if(msg.type=="create-session-ack") {
 						done();
 					} else if(msg.type=="create-session-err") {
-                        console.log(msg);
+                        console.log("error", msg);
 						should.fail();
 					}
 				});
