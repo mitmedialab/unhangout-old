@@ -32,7 +32,7 @@ describe("EMAIL REQUEST FOR ADMIN", function() {
                 .redirects(0)
                 .end(function(res) {
                     if (res.status != 302) {
-                        return reject("Expected 302, got " + res.status);
+                        return reject(new Error("Expected 302, got " + res.status));
                     }
                     // next tick.
                     setTimeout(function() { resolve(res); }, 0);
@@ -84,6 +84,26 @@ describe("EMAIL REQUEST FOR ADMIN", function() {
             expect(msg.subject).to.eql("Unhangout: Event 1 edited");
             var expectedTitle = origTitle.substring(0, origTitle.length - 1) + 5;
             expect(msg.html.indexOf(_.escape(expectedTitle))).to.not.eql(-1);
+            done();
+        }).catch(function(err) {
+            done(err);
+        });
+    });
+
+    it("Notifies after event creation with new ID", function(done) {
+        postEventEdit("superuser1", {
+            title: "New Event",
+            description: "Description",
+            shortName: "shawty"
+        }).then(function() {
+            return common.await(function() { return common.outbox.length == 1; });
+        }).then(function() {
+            expect(common.outbox.length).to.be(1);
+            var msg = common.outbox.shift();
+            var match = /Unhangout: Event (\d+) edited/.exec(msg.subject);
+            expect(match).to.not.be(null);
+            var event = common.server.db.events.get(parseInt(match[1]));
+            expect(event.get("title")).to.be("New Event");
             done();
         }).catch(function(err) {
             done(err);
