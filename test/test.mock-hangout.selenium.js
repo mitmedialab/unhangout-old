@@ -79,6 +79,31 @@ describe("MOCK HANGOUT", function() {
         });
     });
 
+    function hangoutShowsNoAuthError() {
+        var frame = "document.querySelector('iframe').contentWindow.";
+        return browser.wait(function() {
+            return browser.executeScript("try { return " +
+                frame + frame + "document.querySelector('.alert-error').innerHTML;" +
+                "} catch (e) { return ''; }"
+            ).then(function(html) {;
+                return html.indexOf("We could not log you in to Unhangout.") != -1;
+            });
+        });
+    }
+
+    function hangoutShowsAboutActivity() {
+        var frame = "document.querySelector('iframe').contentWindow.";
+        return browser.wait(function() {
+            return browser.executeScript("try { " +
+                    "return " + frame + frame +
+                        "document.querySelector('.about-activity p').innerHTML;" +
+                "} catch (e) { return ''; }"
+            ).then(function(html) {
+                return html.indexOf("helps the Unhangout Permalink service") != -1;
+            });
+        });
+    }
+
     it("Shows an auth error when not authenticated.", function(done) {
         // Clear any latent auth
         session.set("connectedParticipants", []);
@@ -88,15 +113,7 @@ describe("MOCK HANGOUT", function() {
         browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
 
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
-        var frame = "document.querySelector('iframe').contentWindow.";
-        browser.wait(function() {
-            return browser.executeScript("try { return " +
-                frame + frame + "document.querySelector('.alert-error').innerHTML;" +
-                "} catch (e) { return ''; }"
-            ).then(function(html) {;
-                return html.indexOf("We could not log you in to Unhangout.") != -1;
-            });
-        }).then(function() {
+        hangoutShowsNoAuthError().then(function() {
             expect(session.getNumConnectedParticipants()).to.be(0);
             done();
         });
@@ -109,20 +126,34 @@ describe("MOCK HANGOUT", function() {
         browser.mockAuthenticate("regular1");
         // Now visit a page again, which should trigger setting local storage.
         browser.get("http://localhost:7777/");
-        // Remove auth cookie.
+        // Remove auth cookie (but not localStorage).
         browser.unMockAuthenticate();
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
         var frame = "document.querySelector('iframe').contentWindow.";
         // Now visit the hangout. We should be authed by local storage.
-        browser.wait(function() {
-            return browser.executeScript("try { " +
-                    "return " + frame + frame +
-                        "document.querySelector('.about-activity p').innerHTML;" +
-                "} catch (e) { return ''; }"
-            ).then(function(html) {
-                return html.indexOf("helps the Unhangout Permalink service") != -1;
+        hangoutShowsAboutActivity().then(function() {
+            return common.await(function() {
+                return session.getNumConnectedParticipants() == 1;
             });
         }).then(function() {
+            done();
+        });
+    });
+
+    it("Gets sock key from URL param if localStorage/cookie fail", function(done) {
+        var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+        session.set("connectedParticipants", []);
+        session.set("hangout-url", null);
+
+        // Make sure we're logged out.
+        browser.get("http://localhost:7777/");
+        browser.unMockAuthenticate();
+        browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
+
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/" +
+                    "?sockKey=" + user.get("sock-key") +
+                    "&userId=" + user.id);
+        hangoutShowsAboutActivity().then(function() {
             return common.await(function() {
                 return session.getNumConnectedParticipants() == 1;
             });

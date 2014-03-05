@@ -3,7 +3,7 @@ var expect = require('expect.js'),
 
 var browser = null;
 
-describe("BROWSER ADMIN USERS", function() {
+describe("ADMIN USERS SELENIUM", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
@@ -161,6 +161,7 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/admin/users/");
+        browser.waitForSelector("input.filter-name");
         browser.byCss("input.filter-name").sendKeys("Regular");
         browser.byCsss("tr").then(function(els) {
             expect(els.length).to.be(3);

@@ -64,7 +64,7 @@
             var logger = new Logger("GADGET", "error");
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
-            var version = 9;
+            var version = 10;
             logger.info("Unhangout Facilitator version " + version);
             var load = function(event) {
                 if (event && !event.isApiReady) { return; }
@@ -73,6 +73,8 @@
                 logger.info("appData:", appData);
                 var parts = appData.split(":");
                 var sessionId = parts[1];
+                var sockKey = parts[3];
+                var userId = parts[5];
                 // Fall back to gapi.hangout.data if we have no appData.
                 if (sessionId) {
                     gapi.hangout.data.setValue("sessionId", sessionId);
@@ -100,6 +102,8 @@
                     url: gapi.hangout.getHangoutUrl(),
                     id: gapi.hangout.getHangoutId(),
                     isHoA: gapi.hangout.onair.isOnAirHangout(),
+                    sockKey: sockKey,
+                    userId: userId,
                     youtubeId: gapi.hangout.onair.getYouTubeLiveId()
                 };
                 var pollCount = 0;

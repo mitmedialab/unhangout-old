@@ -80,13 +80,14 @@ describe("CHAT LOGGER", function() {
                 event.logChat(new models.ServerChatMessage({
                     user: user, text: "Second line"
                 }));
-                return getFileContents(expectedFile);
-            }).then(function(txt) {
                 var dateFmt = moment(new Date().getTime()).tz('America/Denver').format(
                     "YYYY MMM D h:mm:ss[]a");
-                expect(txt).to.be(
-                    "Starting data\n" +
-                    dateFmt + " Testy M: Second line\n")
+                return common.await(function() {
+                    return getFileContents(expectedFile).then(function(txt) {
+                        return txt === "Starting data\n" + dateFmt + " Testy M: Second line\n";
+                    });
+                });
+            }).then(function() {
                 done();
             }).catch(function(e) {
                 done(e);
