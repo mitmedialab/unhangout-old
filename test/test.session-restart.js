@@ -14,6 +14,7 @@ describe('SESSION RESTART', function() {
     beforeEach(function() {
         sync.setPersist(false);
     });
+
     it("Removes connected participants on restart", function() {
         var session = new models.ServerSession({connectedParticipants: participants});
         session.onRestart();
@@ -88,6 +89,54 @@ describe('SESSION RESTART', function() {
         expect(session.get("total-instances")).to.be(1);
         clock.restore();
     });
+
+    it("Stops with delay, event with stale connected participants", function() {
+        var clock = sinon.useFakeTimers();
+        var session = new models.ServerSession({
+            // Set isPermalinkSession so we don't look like a deleted event
+            // session without a collection
+            "isPermalinkSession": true,
+            "hangout-url": "http://example.com",
+            "hangout-start-time": new Date().getTime(),
+            "connectedParticipants": [{"id": "stuff", "displayName": "Socketless"}]
+        });
+        session.stopWithDelay();
+        expect(session.get("hangout-stop-request-time")).to.be(new Date().getTime());
+        clock.tick(session.HANGOUT_LEAVE_STOP_TIMEOUT/ 2);
+        expect(session.get("hangout-url")).to.be("http://example.com")
+        clock.tick(session.HANGOUT_LEAVE_STOP_TIMEOUT/ 2 + 1);
+        expect(session.get("hangout-url")).to.be(null);
+        expect(session.get("hangout-start-time")).to.be(null);
+        expect(session.get("hangout-stop-request-time")).to.be(null);
+        clock.restore();
+    });
+    it("Interrupts stops with delay if new participants join", function() {
+        var clock = sinon.useFakeTimers();
+        var session = new models.ServerSession({
+            // Set isPermalinkSession so we don't look like a deleted event
+            // session without a collection
+            "isPermalinkSession": true,
+            "hangout-url": "http://example.com",
+            "hangout-start-time": new Date().getTime(),
+            "connectedParticipants": [{"id": "stuff", "displayName": "Socketless"}]
+        });
+        session.stopWithDelay();
+        expect(session.get("hangout-stop-request-time")).to.be(new Date().getTime());
+        clock.tick(session.HANGOUT_LEAVE_STOP_TIMEOUT/ 2);
+
+        session.setConnectedParticipants([
+            {"id": "stuff", "displayName": "Socketless"},
+            {"id": "stuff2", "displayName": "Socketful"},
+        ]);
+
+        clock.tick(session.HANGOUT_LEAVE_STOP_TIMEOUT/ 2 + 1);
+        expect(session.get("hangout-url")).to.be("http://example.com");
+        expect(session.get("hangout-start-time")).to.not.be(null);
+        expect(session.get("hangout-stop-request-time")).to.be(null);
+        clock.restore();
+    });
+
+
     it("Continues stopping timeout after restart", function() {
         var clock  = sinon.useFakeTimers();
         var reqtime =  new Date().getTime() - models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT / 2;
