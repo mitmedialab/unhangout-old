@@ -40,9 +40,15 @@
         <span class="outer"><i class="icon-lock"></i><span class="text">JOIN</span></span>
         <div class="attendance"></div>
     </div>
+
+    {{ if (IS_SUPERUSER) { }}
+
     <div class="admin-buttons">
         <div class="delete btn btn-warning"><i class="icon-trash"></i></div>
     </div>
+
+    {{ } }}
+    
     <ul class="hangout-users"></ul>
     <div class="hangout-offline">
         No one has joined this session yet.
