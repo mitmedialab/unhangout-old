@@ -1,6 +1,7 @@
-<div class="nav pull-right identity">
+<ul class="nav pull-right identity">
+<li>
 <% if(!user) {%>
-    <li><a href="/auth/google">Login</a></li>   
+    <a href="/auth/google">Login</a>
 <% } else { %>
     <div class="dropdown">
         <a class="dropdown-toggle username" data-toggle="dropdown">
@@ -21,6 +22,6 @@
         </ul>
     </div>
 <% } %>
-
-</div>
+</li>
+</ul>
 
