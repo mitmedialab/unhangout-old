@@ -31,7 +31,7 @@
     <br/><br/>
     {{= description }}
 
-    <div class="footer">This event has not yet started, so the rest of the page is disabled. Come back at the posted start time to participate!</div>
+    <div class="footer">This event has not yet started, come back at the posted start time to participate!</div>
 </script>
 
 <script type="text/template" id="session-template">
@@ -132,12 +132,12 @@
             <li role="presentation">
                 {{ if (event.isLive()) { }}
                     <a role="menuitem" href="#" role="buton" id='admin-stop-event'>
-                        <i class='fa fa-power-off fa-lg fa-fw'></i>
+                        <i class='fa fa-stop fa-lg fa-fw'></i>
                         Stop event
                     </a>
                 {{ } else { }}
                     <a role="menuitem" href="#" role="buton" id='admin-start-event'>
-                        <i class='fa fa-power-off fa-lg fa-fw'></i>
+                        <i class='fa fa-play fa-lg fa-fw'></i>
                         Start event
                     </a>
                 {{ } }}
