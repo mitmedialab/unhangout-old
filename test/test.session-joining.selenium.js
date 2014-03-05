@@ -35,6 +35,10 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     it("Updates session participant list when not present in the event", function(done) {
+        var session = event.get("sessions").at(0);
+        var sock;
+        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
+        var ready = false;
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + event.id);
@@ -42,11 +46,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.byCsss("#presence-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
         });
-        var session = event.get("sessions").at(0);
-        expect(session).to.not.be(undefined);
-        var sock;
-        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
-        var ready = false;
         // We should have an empty session participant list.
         browser.byCsss(participantList).then(function(els) {
             expect(els.length).to.be(10);
@@ -140,11 +139,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Visit the session to "start" it.
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
         browser.wait(function() {
-            return session.getState() == "started";
+            return session.getState() === "started";
         });
         // Then leave, by going to the event page, where we'll delete it.
-        browser.get("http://localhost:7777/event/" + event.id).then(function() {
-            expect(session.getState()).to.eql("stopping");
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.wait(function() {
+            return session.getState() === "stopping";
         });
         browser.waitForScript("$");
         browser.byCss("[data-session-id='" + session.id + "'] .delete").click();
