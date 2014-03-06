@@ -20,13 +20,13 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    <h1>{{- title }}</h1>
+    <h3>{{- title }}</h3>
     {{ if (organizer) { }}
         <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
     {{ } }}
     <br/>
     {{ if (formattedDate) { }}
-        <b>{{- formattedDate }}</b>
+        {{- formattedDate }}
     {{ } }}
     <br/><br/>
     {{= description }}
