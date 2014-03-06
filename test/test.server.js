@@ -125,12 +125,11 @@ describe('unhangout server', function() {
 		});
 		
 		describe("GET /event/:id", function() {
-			it('should redirect to authentication, if unauthenticated', function(done) {
-				request('http://localhost:7777/event/0')
+			it('should show static event page if unauthenticated', function(done) {
+				request('http://localhost:7777/event/1')
 				.redirects(0)
 				.end(function(res) {
-					res.status.should.equal(302);
-					res.header['location'].should.equal("/auth/google");
+					res.status.should.equal(200);
 					done();
 				});
 			});
@@ -142,7 +141,7 @@ describe('unhangout server', function() {
 		afterEach(common.standardShutdown);
 		
 		describe("GET /event/:id", function() {
-			it('should allow connections without redirection', function(done) {
+			it('should show dynamic event page', function(done) {
 				request('http://localhost:7777/event/1')
                 .set("x-mock-user", "regular1")
 				.end(function(res) {
@@ -188,7 +187,7 @@ describe('unhangout server', function() {
 					if(msg.type=="create-session-ack") {
 						done();
 					} else if(msg.type=="create-session-err") {
-                        console.log(msg);
+                        console.log("error", msg);
 						should.fail();
 					}
 				});
