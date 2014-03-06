@@ -9,16 +9,18 @@
     }
 </script>
 
-<div class='event-static'>
-    <h1><%= title %></h1>
-    <h4 style="color: #2E&DAA">hosted by <%- event.get("organizer") %></h4>
-    <% if (event.get("dateAndTime")) { %>
-        <b><%= event.formatDate() %></b>
-    <% } %>
+    <div class='event-static'>
+        <h3><%= title %></h3>
+        <h4 style="color: #2E7DAA">hosted by <%- event.get("organizer") %></h4>
+        <br/>
+        <% if (event.get("dateAndTime")) { %>
+            <%= event.formatDate() %>
+        <% } %>
 
-    <%- event.get("description") %>
-    <div style='clear: both;'></div>
-</div>
+        <br/> <br/>
+        <%- event.get("description") %>
+        <div style='clear: both;'></div>
+    </div>
 
 <%- requireScripts("public/js/index.js") %>
 <% include _footer.ejs %>
