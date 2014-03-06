@@ -9,7 +9,7 @@ var server = require('../lib/unhangout-server'),
 
 var origDelay;
 
-describe("EMAIL REQUEST FOR ADMIN", function() {
+describe("EMAIL EVENT EDIT NOTIFICATION", function() {
     beforeEach(function(done) {
         common.standardSetup(function() {
             origDelay = common.server.options.EVENT_EDIT_NOTIFICATION_DELAY;

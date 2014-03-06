@@ -16,7 +16,7 @@
   "scripts": {
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
-    "test": "NODE_ENV=testing mocha",
+    "test": "NODE_ENV=testing mocha test/test.[a-r]* test/test.[t-z]* && sleep 1 && NODE_ENV=testing mocha test/test.s*",
     "forever-start": "sudo NODE_ENV=production forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o out.log -e err.log bin/unhangout-server",
     "forever-stop": "sudo NODE_ENV=production forever stop bin/unhangout-server",
     "forever-restart": "sudo NODE_ENV=production forever restart bin/unhangout-server",
