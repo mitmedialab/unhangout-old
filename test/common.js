@@ -28,7 +28,7 @@ var buildBrowser = function(callback) {
         seleniumServer.address()
     ).withCapabilities(
         webdriver.Capabilities.firefox()
-    ).build();
+    ).build()
     // Convenience methods for shorter typing for css selectors.
     browser.byCss = function(selector) {
         return browser.findElement(webdriver.By.css(selector));
@@ -45,16 +45,19 @@ var buildBrowser = function(callback) {
     browser.unMockAuthenticate = function(user) {
         return browser.executeScript("document.cookie = 'mock_user=; path=/';");
     };
-    browser.waitForSelector = function(selector) {
+    browser.waitForSelector = function(selector, debug) {
         return browser.wait(function() {
             var script = "try { return !!document.querySelector('"
                            + selector.replace(/'/g, "\\'") + "'); " +
                 "} catch(e) { return false; }";
             return browser.executeScript(script).then(function(exists) {
                 if (!exists) {
+                    if (debug) { console.log(selector, "exists", exists) };
                     return false;
                 } else {
-                    return browser.byCss(selector).isDisplayed();
+                    var displayed = browser.byCss(selector).isDisplayed();
+                    if (debug) { console.log(selector, "exists", exists, "awaiting displayed") };
+                    return displayed;
                 }
             });
         });
@@ -100,9 +103,22 @@ exports.getSeleniumBrowser = function(callback) {
             seleniumPath = __dirname + "/../" + conf.TESTING_SELENIUM_PATH;
         }
         seleniumServer = new SeleniumServer(seleniumPath, {port: 4444});
-        seleniumServer.start().then(function() { buildBrowser(callback) });
+        seleniumServer.start().then(function() {
+            buildBrowser(callback);
+        });
     }
-}
+};
+
+exports.stopSeleniumServer = function() {
+    if (!seleniumServer) {
+        return { then: function(cb) { cb(); }}
+    } else {
+        return seleniumServer.stop().then(function() {
+            seleniumServer = null;
+        });
+    }
+};
+
 exports.server = null;
 // A list of all open connections to the HTTP server, which we can nuke to
 // allow us to force-restart the server.
@@ -180,11 +196,24 @@ exports.restartServer = function(onStopped, onRestarted) {
     });
 };
 
+exports.sockWithPromiseClose = function() {
+    var sock = sock_client.create("http://localhost:7777/sock");
+    sock.promiseClose = function() {
+        var promise = new Promise(function(resolve, reject) {
+            sock.once("close", function() { resolve() });
+            sock.once("error", function(err) { reject(err) });
+        });
+        sock.close();
+        return promise;
+    };
+    return sock;
+};
+
 // Create a new socket, and authenticate it with the user specified in
 // 'userKey', and join it to the given room. Depends on `exports.server`
 // already being inited with users.
 exports.authedSock = function(userKey, room, callback) {
-    var newSock = sock_client.create("http://localhost:7777/sock");
+    var newSock = exports.sockWithPromiseClose();
     var user = exports.server.db.users.findWhere({"sock-key": userKey});
     var onData = function(message) {
         var msg = JSON.parse(message);
@@ -197,7 +226,7 @@ exports.authedSock = function(userKey, room, callback) {
     };
     newSock.on("data", onData);
     newSock.on("error", function(msg) {
-        console.log("error", msg);
+        console.log("socket error", msg);
     });
     newSock.once("connection", function() {
         newSock.write(JSON.stringify({

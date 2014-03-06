@@ -7,6 +7,8 @@ var RoomManager = require("../lib/room-manager").RoomManager,
     sockjs = require("sockjs"),
     sockjs_client = require('sockjs-client-ws'),
     async = require("async"),
+    Promise = require("bluebird"),
+    common = require("./common"),
     _ = require("underscore");
 
 var users = createUsers(new models.ServerUserList());
@@ -19,7 +21,7 @@ var socketServer = sockjs.createServer({log: function(severity, message){
 
 // Connect an unauthenticated socket.
 function connectSocket(connectCallback, dataCallback) {
-    var sock = sockjs_client.create("http://localhost:7777/sock");
+    var sock = common.sockWithPromiseClose();
     sock.on("connection", function() { connectCallback(sock); });
     sock.on("data", function(message) {
         dataCallback(sock, JSON.parse(message));
@@ -29,7 +31,7 @@ function connectSocket(connectCallback, dataCallback) {
 
 // Get a socket authenticated for the given user.
 function authedSocket(user, callback) {
-    var sock = sockjs_client.create("http://localhost:7777/sock");
+    var sock = common.sockWithPromiseClose();
     sock.once("connection", function() {
         sock.write(JSON.stringify({
             type: "auth", args: {id: user.id, key: user.getSockKey()}
@@ -89,12 +91,13 @@ describe("ROOM MANAGER", function() {
             },
             function onData(sock, data) {
                 mgr.destroy();
-                sock.close();
-                if (data.type == "auth-err") {
-                    done();
-                } else {
-                    done(new Error(data));
-                }
+                sock.promiseClose().then(function() {
+                    if (data.type == "auth-err") {
+                        done();
+                    } else {
+                        done(new Error(data));
+                    }
+                });
            }
         );
     }
@@ -299,39 +302,48 @@ describe("ROOM MANAGER", function() {
 
             function(done) {
                 // Second socket leaves by disconnect.
-                clientSock2.close();
-                mgr.once("leave", function(socket, args) {
-                    expectOne(socket1, args1);
-                    expect(args.roomId).to.be("someroom");
-                    expect(socket).to.eql(socket2);
-                    // Still have another socket in this room from this user..
-                    expect(args.roomLast).to.be(false);
-                    expect(args.userLast).to.be(false);
-                    done();
-                });
+                Promise.all([
+                    clientSock2.promiseClose(),
+                    new Promise(function(resolve, reject) {
+                        mgr.once("leave", function(socket, args) {
+                            expectOne(socket1, args1);
+                            expect(args.roomId).to.be("someroom");
+                            expect(socket).to.eql(socket2);
+                            // Still have another socket in this room from this user..
+                            expect(args.roomLast).to.be(false);
+                            expect(args.userLast).to.be(false);
+                            resolve();
+                        });
+                    })
+                ]).then(function() { done(); });
             },
             function(done) {
                 // First socket leaves by disconnect, leaving the room empty.
-                clientSock1.close();
-                mgr.once("leave", function(socket, args) {
-                    expect(args.roomId).to.eql("someroom");
-                    expect(socket).to.eql(socket);
-                    expect(args.roomLast).to.be(true);
-                    expect(args.userLast).to.be(true);
+                Promise.all([
+                    clientSock1.promiseClose(),
+                    new Promise(function(resolve, reject) {
+                        mgr.once("leave", function(socket, args) {
+                            expect(args.roomId).to.eql("someroom");
+                            expect(socket).to.eql(socket);
+                            expect(args.roomLast).to.be(true);
+                            expect(args.userLast).to.be(true);
 
-                    expect(_.size(mgr.roomToSockets)).to.be(0);
-                    expect(_.size(mgr.socketIdToRooms)).to.be(0);
-                    // Only one socket didn't disconnect -- it's still authed.
-                    expect(_.size(mgr.socketIdToUser)).to.be(1);
-                    expect(_.size(mgr.userIdToSockets)).to.be(1);
-                    expect(_.values(mgr.userIdToSockets).length).to.be(1);
-                    expect(_.size(mgr.roomToUsers)).to.be(0);
+                            expect(_.size(mgr.roomToSockets)).to.be(0);
+                            expect(_.size(mgr.socketIdToRooms)).to.be(0);
+                            // Only one socket didn't disconnect -- it's still authed.
+                            expect(_.size(mgr.socketIdToUser)).to.be(1);
+                            expect(_.size(mgr.userIdToSockets)).to.be(1);
+                            expect(_.values(mgr.userIdToSockets).length).to.be(1);
+                            expect(_.size(mgr.roomToUsers)).to.be(0);
 
-                    mgr.destroy();
-                    socket.close();
-                    clientSock3.close();
-                    done();
-                });
+                            mgr.destroy();
+                            socket.close();
+                            clientSock3.promiseClose().then(function() {
+                                resolve();
+                            });
+                        });
+                    })
+                ]).then(function() { done(); });
             }
         ], function() {
             done();
@@ -346,19 +358,23 @@ describe("ROOM MANAGER", function() {
         connectSocket(
             function onConnect(theSock) {
                 sock = theSock;
-                sock.close(); // Disconnect
+                Promise.all([
+                    sock.promiseClose(),
+                    new Promise(function(resolve, reject) {
+                        mgr.on("disconnect", function(socket, args) {
+                            expect(args.authenticated).to.be(false);
+                            expect(args.last).to.be(null);
+                            mgr.destroy();
+                            resolve();
+                        });
+                    })
+                ]).then(function() { done(); });
             },
             function onData(sock, data) {
                 // Don't expect any data...
                 throw new Error(data);
             }
         )
-        mgr.on("disconnect", function(socket, args) {
-            expect(args.authenticated).to.be(false);
-            expect(args.last).to.be(null);
-            mgr.destroy();
-            done();
-        });
     });
 
     it("Fires disconnect for authenticated users", function(done) {
@@ -366,18 +382,28 @@ describe("ROOM MANAGER", function() {
         var user = users.at(0);
         authedSocket(user, function(clientSock1) {
             authedSocket(user, function(clientSock2) {
-                clientSock1.close();
-                mgr.once("disconnect", function(socket, args) {
-                    expect(args.authenticated).to.be(true);
-                    expect(args.last).to.be(false);
-                    clientSock2.close();
-                    mgr.once("disconnect", function(socket, args) {
-                        expect(args.authenticated).to.be(true);
-                        expect(args.last).to.be(true);
-                        mgr.destroy();
-                        done();
-                    });
-                });
+                Promise.all([
+                    clientSock1.promiseClose(),
+                    new Promise(function(resolve, reject) {
+                        mgr.once("disconnect", function(socket, args) {
+                            expect(args.authenticated).to.be(true);
+                            expect(args.last).to.be(false);
+                            resolve();
+                        })
+                    }).then(function() {
+                        return Promise.all([
+                            clientSock2.promiseClose(),
+                            new Promise(function(resolve, reject) {
+                                mgr.once("disconnect", function(socket, args) {
+                                    expect(args.authenticated).to.be(true);
+                                    expect(args.last).to.be(true);
+                                    mgr.destroy();
+                                    resolve();
+                                });
+                            })
+                        ]);
+                    })
+                ]).then(function() { done(); });
             });
         });
     });
@@ -419,10 +445,13 @@ describe("ROOM MANAGER", function() {
                         }
                     ], function() {
                         mgr.destroy();
-                        clientSock1.close();
-                        clientSock2.close();
-                        clientSock3.close();
-                        done();
+                        Promise.all([
+                            clientSock1.promiseClose(),
+                            clientSock2.promiseClose(),
+                            clientSock3.promiseClose(),
+                        ]).then(function() {
+                            done();
+                        });
                     });
                     // broadcast to everyone but clientSock1.
                     mgr.broadcast('funroom', data.type, data.args,
@@ -453,8 +482,9 @@ describe("ROOM MANAGER", function() {
                         var data = JSON.parse(message);
                         expect(data.type).to.be("join-err");
                         expect(data.args).to.be("Permission to join superuser/1 denied.");
-                        sock.close();
-                        done();
+                        sock.promiseClose().then(function() {
+                            done();
+                        });
                     });
                 });
             },
@@ -465,8 +495,9 @@ describe("ROOM MANAGER", function() {
                     sock.once("data", function(message) {
                         var data = JSON.parse(message);
                         expect(data.type).to.be("join-ack");
-                        sock.close();
-                        done();
+                        sock.promiseClose().then(function() {
+                            done();
+                        });
                     });
                 });
             }
@@ -492,10 +523,13 @@ describe("ROOM MANAGER", function() {
                         mgr.roomContainsSocket("funroom", mgr.userIdToSockets[user2.id][1])
                     ).to.be(false);
                     mgr.destroy();
-                    clientSock1.close();
-                    clientSock2.close();
-                    clientSock3.close();
-                    done();
+                    Promise.all([
+                        clientSock1.promiseClose(),
+                        clientSock2.promiseClose(),
+                        clientSock3.promiseClose(),
+                    ]).then(function() {
+                        done();
+                    });
                 });
             });
         });

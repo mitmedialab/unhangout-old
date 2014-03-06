@@ -2,10 +2,10 @@ var expect = require('expect.js'),
     _ = require("underscore"),
     common = require('./common');
 
-var browser = null,
-    event = null;
-
 describe("FACILITATOR EMBEDS", function() {
+    var browser = null,
+        event = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }

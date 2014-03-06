@@ -1,9 +1,9 @@
 var expect = require('expect.js'),
     common = require('./common');
 
-var browser = null;
-
 describe("YOUTUBE EMBEDS", function() {
+    var browser = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }

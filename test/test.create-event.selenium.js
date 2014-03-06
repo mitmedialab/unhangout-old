@@ -2,9 +2,9 @@ var expect      = require('expect.js'),
     common      = require('./common'),
     moment      = require('moment');
 
-var browser = null;
-
 describe("CREATE EVENT", function() {
+    var browser = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) { return; }
     this.timeout(40000); // Extra long timeout for selenium :(
 

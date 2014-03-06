@@ -2,14 +2,13 @@ var server      = require('../lib/unhangout-server'),
     async       = require('async'),
     should      = require('should'),
     _           = require('underscore'),
-    sock_client = require("sockjs-client-ws"),
     common      = require('./common');
 
-var browser = null;
-var sock = null;
-var evt = null;
-
 describe("CHAT WINDOW", function() {
+    var browser = null;
+    var sock = null;
+    var evt = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) { return; }
     this.timeout(40000); // Extra long timeout for selenium :(
 
@@ -40,8 +39,9 @@ describe("CHAT WINDOW", function() {
     });
     after(function(done) {
         browser.quit().then(function() { 
-            sock.close();
-            common.standardShutdown(done);
+            sock.promiseClose().then(function() {
+                common.standardShutdown(done);
+            });
         });
     });
 

@@ -1,11 +1,11 @@
 var expect = require('expect.js'),
     common = require('./common');
 
-var browser = null;
-
-var longEnough = "This is a description that is long enough to meet the 100 char length validation for descriptions..."
-
 describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
+    var browser = null;
+
+    var longEnough = "This is a description that is long enough to meet the 100 char length validation for descriptions..."
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }

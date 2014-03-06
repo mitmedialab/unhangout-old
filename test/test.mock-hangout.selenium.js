@@ -2,24 +2,27 @@ var expect = require('expect.js'),
     _ = require("underscore"),
     common = require('./common');
 
-var browser = null,
-    event = null,
-    session = null;
-
 describe("MOCK HANGOUT", function() {
+    var browser = null,
+        event = null,
+        session = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
     this.timeout(40000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        common.getSeleniumBrowser(function (theBrowser) {
-            browser = theBrowser;
-            common.standardSetup(function() {
-                event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                event.start();
-                session = event.get("sessions").at(0);
-                done();
+        this.timeout(80000);
+        common.stopSeleniumServer().then(function() {
+            common.getSeleniumBrowser(function (theBrowser) {
+                browser = theBrowser;
+                common.standardSetup(function() {
+                    event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+                    event.start();
+                    session = event.get("sessions").at(0);
+                    done();
+                });
             });
         });
     });

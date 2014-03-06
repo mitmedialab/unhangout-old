@@ -3,9 +3,9 @@ var common = require("./common.js"),
     googleapis = require("googleapis"),
     webdriver = require("selenium-webdriver");
 
-var browser;
-
 describe("CREATE HOA", function() {
+    var browser;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }

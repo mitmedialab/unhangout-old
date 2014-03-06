@@ -2,10 +2,10 @@ var expect = require('expect.js'),
     _ = require("underscore"),
     common = require('./common');
 
-var browser = null,
-    event = null;
-
 describe("EVENT SESSION MESSAGES", function() {
+    var browser = null,
+        event = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
@@ -50,8 +50,9 @@ describe("EVENT SESSION MESSAGES", function() {
                         message: "##unhangouts## Superuser1 Mock: This is fun!",
                     });
                     sock.removeListener("data", onData);
-                    sock.close();
-                    done();
+                    sock.promiseClose().then(function() {
+                        done();
+                    });
                 }
                 sock.on("data", onData);
             });
@@ -98,8 +99,9 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.waitForSelector("#mock-hangout-notice p");
         browser.byCss("#mock-hangout-notice p").getText().then(function(text) {
             expect(text).to.eql("##unhangouts## Superuser1 Mock: Hey there session");
-            sock.close();
-            done();
+            sock.promiseClose().then(function() {
+                done();
+            });
         });
     });
 
