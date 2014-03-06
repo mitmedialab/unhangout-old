@@ -1,6 +1,14 @@
 <% include _header.ejs %>
 <% include _event-navbar.ejs %>
 
+<script type='text/javascript'>
+    // Rewrite login links to use event-specific login URL.
+    var loginLinks = document.querySelectorAll("[href='/auth/google']");
+    for (var i = 0; i < loginLinks.length; i++) {
+        loginLinks[i].href = "<%= event.getEventUrl() + "/auth/" %>";
+    }
+</script>
+
 <div class='event-static'>
     <h1><%= title %></h1>
     <h4 style="color: #2E&DAA">hosted by <%- event.get("organizer") %></h4>

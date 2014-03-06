@@ -39,5 +39,21 @@ describe("FRONT PAGE", function() {
             done();
         });
     });
+
+    it("shows a static event page to unauthenticated users", function(done) {
+        browser.get("http://localhost:7777/event/1");
+        browser.waitForSelector(".event-static");
+        browser.byLinkText("Login").click();
+        browser.getCurrentUrl().then(function(url) {
+            url.indexOf("https://accounts.google.com/").should.equal(0);
+        });
+        // Get the dynamic page after auth.
+        browser.get("http://localhost:7777/event/1");
+        browser.mockAuthenticate("regular1");
+        browser.get("http://localhost:7777/event/1");
+        browser.waitForSelector("#app").then(function() {
+            done();
+        });
+    });
 });
     
