@@ -1,4 +1,4 @@
-    <% if(user.isAdminOf(event)) {%>
+    <% if(user && user.isAdminOf(event)) {%>
         <div class="admin-header">
         </div>
     <% } %>
@@ -13,9 +13,11 @@
                 <a class="brand" href="/#"><%= event.get("title") %></a>
                 <div class="nav-collapse collapse">
                     <ul class="nav">
-                        <li class="" id="about-nav">
-                        <a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
-                        </li> 
+                        <% if (user) { %>
+                            <li class="" id="about-nav">
+                            <a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
+                            </li> 
+                        <% } %>
                     </ul>
 
                     <div class="nav pull-left">

@@ -1,0 +1,21 @@
+<% include _header.ejs %>
+<% include _event-navbar.ejs %>
+
+<div class='event-static'>
+    <h1><%= title %></h1>
+    <h4 style="color: #2E&DAA">hosted by <%- event.get("organizer") %></h4>
+    <% if (event.get("dateAndTime")) { %>
+        <b><%= event.formatDate() %></b>
+    <% } %>
+    <div style='text-align: center; padding: 1em;'>
+        <a class='btn btn-large btn-primary' href='<%= event.getEventUrl() + "/auth/" %>'>
+            Login to Participate
+        </a>
+    </div>
+
+    <%- event.get("description") %>
+    <div style='clear: both;'></div>
+</div>
+
+<%- requireScripts("public/js/index.js") %>
+<% include _footer.ejs %>
