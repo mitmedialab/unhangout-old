@@ -15,11 +15,6 @@
     <% if (event.get("dateAndTime")) { %>
         <b><%= event.formatDate() %></b>
     <% } %>
-    <div style='text-align: center; padding: 1em;'>
-        <a class='btn btn-large btn-primary' href='<%= event.getEventUrl() + "/auth/" %>'>
-            Login to Participate
-        </a>
-    </div>
 
     <%- event.get("description") %>
     <div style='clear: both;'></div>
