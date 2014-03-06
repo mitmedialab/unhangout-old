@@ -1,9 +1,9 @@
 var expect = require('expect.js'),
     common = require('./common');
 
-var browser = null;
+describe("ADMIN USERS SELENIUM", function() {
+    var browser = null;
 
-describe("BROWSER ADMIN USERS", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
@@ -112,7 +112,9 @@ describe("BROWSER ADMIN USERS", function() {
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/admin/users/");
         browser.byCss(removeSelector).click().then(function() {
-            expect(user.isAdminOf(event)).to.be(false);
+            return common.await(function() {
+                expect(user.isAdminOf(event)).to.be(false);
+            });
         });
 
         // Ensure the new admin can no longer access the admin page.
@@ -159,6 +161,7 @@ describe("BROWSER ADMIN USERS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/admin/users/");
+        browser.waitForSelector("input.filter-name");
         browser.byCss("input.filter-name").sendKeys("Regular");
         browser.byCsss("tr").then(function(els) {
             expect(els.length).to.be(3);

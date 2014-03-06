@@ -8,7 +8,8 @@ var conf            = require("../lib/options"),
     webdriver       = require('selenium-webdriver'),
     sock_client     = require("sockjs-client-ws"),
     SeleniumServer  = require('selenium-webdriver/remote').SeleniumServer,
-    emailServer     = require("../bin/email-server.js");
+    emailServer     = require("../bin/email-server.js"),
+    Promise         = require("bluebird");
 
 var TEST_CONF = _.extend({}, conf, {
     "UNHANGOUT_USE_SSL": false,
@@ -27,7 +28,7 @@ var buildBrowser = function(callback) {
         seleniumServer.address()
     ).withCapabilities(
         webdriver.Capabilities.firefox()
-    ).build();
+    ).build()
     // Convenience methods for shorter typing for css selectors.
     browser.byCss = function(selector) {
         return browser.findElement(webdriver.By.css(selector));
@@ -41,13 +42,23 @@ var buildBrowser = function(callback) {
     browser.mockAuthenticate = function(user) {
         return browser.executeScript("document.cookie = 'mock_user=" + user + "; path=/';");
     };
-    browser.waitForSelector = function(selector) {
+    browser.unMockAuthenticate = function(user) {
+        return browser.executeScript("document.cookie = 'mock_user=; path=/';");
+    };
+    browser.waitForSelector = function(selector, debug) {
         return browser.wait(function() {
-            return browser.byCsss(selector).then(function(els) {
-                if (els.length == 0) {
+            var script = "try { return !!document.querySelector('"
+                           + selector.replace(/'/g, "\\'") + "'); " +
+                "} catch(e) { return false; }";
+            return browser.executeScript(script).then(function(exists) {
+                if (!exists) {
+                    if (debug) { console.log(selector, "exists", exists) };
                     return false;
+                } else {
+                    var displayed = browser.byCss(selector).isDisplayed();
+                    if (debug) { console.log(selector, "exists", exists, "awaiting displayed") };
+                    return displayed;
                 }
-                return els[0].isDisplayed();
             });
         });
     };
@@ -92,9 +103,22 @@ exports.getSeleniumBrowser = function(callback) {
             seleniumPath = __dirname + "/../" + conf.TESTING_SELENIUM_PATH;
         }
         seleniumServer = new SeleniumServer(seleniumPath, {port: 4444});
-        seleniumServer.start().then(function() { buildBrowser(callback) });
+        seleniumServer.start().then(function() {
+            buildBrowser(callback);
+        });
     }
-}
+};
+
+exports.stopSeleniumServer = function() {
+    if (!seleniumServer) {
+        return { then: function(cb) { cb(); }}
+    } else {
+        return seleniumServer.stop().then(function() {
+            seleniumServer = null;
+        });
+    }
+};
+
 exports.server = null;
 // A list of all open connections to the HTTP server, which we can nuke to
 // allow us to force-restart the server.
@@ -139,6 +163,10 @@ exports.startEmailServer = function(done) {
 exports.stopEmailServer = function(done) {
     emailServer.stop(done);
 };
+exports.recipientify = function(email) {
+    return {address: email, name: ''}
+}
+
 
 var shutDown = function(server, done) {
     server.on("stopped", function() {
@@ -168,11 +196,24 @@ exports.restartServer = function(onStopped, onRestarted) {
     });
 };
 
+exports.sockWithPromiseClose = function() {
+    var sock = sock_client.create("http://localhost:7777/sock");
+    sock.promiseClose = function() {
+        var promise = new Promise(function(resolve, reject) {
+            sock.once("close", function() { resolve() });
+            sock.once("error", function(err) { reject(err) });
+        });
+        sock.close();
+        return promise;
+    };
+    return sock;
+};
+
 // Create a new socket, and authenticate it with the user specified in
 // 'userKey', and join it to the given room. Depends on `exports.server`
 // already being inited with users.
 exports.authedSock = function(userKey, room, callback) {
-    var newSock = sock_client.create("http://localhost:7777/sock");
+    var newSock = exports.sockWithPromiseClose();
     var user = exports.server.db.users.findWhere({"sock-key": userKey});
     var onData = function(message) {
         var msg = JSON.parse(message);
@@ -185,12 +226,42 @@ exports.authedSock = function(userKey, room, callback) {
     };
     newSock.on("data", onData);
     newSock.on("error", function(msg) {
-        console.log("error", msg);
+        console.log("socket error", msg);
     });
     newSock.once("connection", function() {
         newSock.write(JSON.stringify({
             type:"auth",
             args:{ key: user.getSockKey(), id: user.id }
         }));
+    });
+};
+
+// Params:
+// @param {Function} fn A test function.
+// @param {Number} [timeout=100] milliseconds between repeated executions of fn
+//
+// Repeatedly call `fn` to test whether to proceed.  Returns a promise which is
+// fulfilled when executing `fn` returns a truthy value.  `fn` may also return
+// a promise which, when fulfilled, is checked for a truthy value.
+exports.await = function(fn, timeout) {
+    timeout = timeout || 100;
+    return new Promise(function(resolve, reject) {
+        function go() {
+            function loop(res) {
+                res ? resolve(res) : setTimeout(go, timeout);
+            }
+            try {
+                var result = fn();
+            } catch (err) {
+                return reject(err);
+            }
+            // Check if `result` is a promise.  (Is there a better way?)
+            if (typeof result === "object" && result.then && typeof result.then === "function") {
+                result.then(loop).catch(function(err) { reject(err); });
+            } else {
+                loop(result);
+            }
+        }
+        go();
     });
 };

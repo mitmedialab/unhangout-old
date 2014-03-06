@@ -2,10 +2,10 @@ var expect = require('expect.js'),
     _ = require("underscore"),
     common = require('./common');
 
-var browser = null,
-    event = null;
-
 describe("FACILITATOR EMBEDS", function() {
+    var browser = null,
+        event = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
@@ -85,6 +85,9 @@ describe("FACILITATOR EMBEDS", function() {
         });
         // Embeds youtube videos.
         browser.byCss(".activity-settings").click();
+        // Can't seem to get around this hard-coded delay; get occasional
+        // "Element is no longer attached to the DOM" errors without it.
+        browser.waitTime(1000);
         browser.waitForSelector(".modal-body input[type='text']");
         browser.byCss(".modal-body input[type='text']").sendKeys(
             "https://youtu.be/NIylUcGDi-Y")

@@ -1,11 +1,11 @@
 require([
     "jquery", "underscore-template-config", "backbone", "sockjs", "client-models",
-    "video", "logger",
+    "video", "logger", "auth-localstorage",
     "bootstrap"
-], function($, _, Backbone, SockJS, models, video, logging) {
+], function($, _, Backbone, SockJS, models, video, logging, auth) {
 
 
-var logger = new logging.Logger("FACILITATOR", "error");
+var logger = new logging.Logger("FACILITATOR");
 
 var FacilitatorView = Backbone.View.extend({
     template: _.template($('#facilitator').html()),
@@ -16,13 +16,89 @@ var FacilitatorView = Backbone.View.extend({
     },
     initialize: function(options) {
         _.bindAll(this, "render", "renderActivities", "hide",
-                  "addActivityDialog", "toggleSidebar");
+                  "addActivityDialog", "toggleSidebar", "handleCrossDocumentMessages");
         this.session = options.session;
         this.event = options.event;
-        this.sock = options.sock;
+        this.sock = new SockJS(
+            document.location.protocol + "//" +
+            document.location.hostname + ":" + document.location.port + "/sock"
+        );
         if (this.session.get("activities").length == 0) {
             this.session.set("activities", [{type: "about", autoHide: true}]);
         }
+        this.session.on("change:activities", this.renderActivities);
+
+        // `auth` tries to read our identity first from values derived from our
+        // session cookie (via values set in `_header.ejs`), and second from
+        // localStorage (set by previously-read cookie values).  If both of
+        // those fail, try getting sockKey from the parent frame's
+        // cross-document message.  If all fail, display an error message.
+        if (auth.SOCK_KEY) {
+            // Yay, we got it from cookies or local storage.
+            this.bindSocket();
+        } else {
+            // Set up a function to listen for a cross-document message with
+            // our sockKey in it.
+            var tempListener = _.bind(function(evt) {
+                if (HANGOUT_ORIGIN_REGEX.test(evt.origin)) {
+                    HANGOUT_ORIGIN = evt.origin;
+                    if (evt.data.type === "url") {
+                        // Unbind ourselves.
+                        window.removeEventListener("message", tempListener, false);
+                        // Discard the message, except for the sock key -- the
+                        // outer frame will rebroadcast it, at which point
+                        // we'll handle hangout URL's etc.
+                        if (evt.data.args.sockKey) {
+                            auth.SOCK_KEY = evt.data.args.sockKey;
+                            auth.USER_ID = evt.data.args.userId;
+                            this.bindSocket();
+                        } else {
+                            // No sock-key at all -- error out.
+                            logger.error("Ignoring hangout URL; not authenticated");
+                            this.session.set("activities", [{type: "no-auth-warning"}]);
+                            // Tell the parent frame that we heard it, to
+                            // prevent it from raising an alert-box error.
+                            postMessageToHangout({type: "url-ack"});
+                        }
+                    }
+                }
+            }, this);
+            window.addEventListener("message", tempListener, false);
+        }
+    },
+    bindSocket: function() {
+        var sock = this.sock;
+        var session = this.session;
+        // Convenience wrapper for posting messages.
+        sock.sendJSON = function(type, data) {
+            sock.send(JSON.stringify({type: type, args: data}));
+        }
+        // onopen, authorize ourselves, then join the room.
+        sock.onopen = function() {
+            sock.sendJSON("auth", {key: auth.SOCK_KEY, id: auth.USER_ID});
+        };
+
+        // onclose, handle disconnections to reload the page.
+        sock.onclose = function() {
+            app.faces.hideVideoIfActive();
+            $('#disconnected-modal').modal('show');
+            var checkIfServerUp = function() {
+                var ping = document.location;
+                $.ajax({
+                    url: ping,
+                    cache: false,
+                    async: false,
+                    success: function(msg) {
+                        postMessageToHangout({'type': 'reload'});
+                    },
+                    error: function(msg) {
+                        timeout = setTimeout(checkIfServerUp, 250);
+                    }
+                });
+            };
+            checkIfServerUp();
+        };
+
         // Our socket is not just correct, not just articulate... it is *on message*.
         sock.onmessage = _.bind(function(message) {
             var msg = JSON.parse(message.data);
@@ -58,29 +134,54 @@ var FacilitatorView = Backbone.View.extend({
                     break;
             }
         }, this);
-        this.session.on("change:activities", this.renderActivities);
+        // Let the server know about changes to the hangout URL.
+        session.on("change:hangout-url", function() {
+            logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
+            sock.sendJSON("session/set-hangout-url", {
+                url: session.get("hangout-url"),
+                id: session.get("hangout-id"),
+                sessionId: session.id
+            });
+        });
+        session.on("change:connectedParticipants", function() {
+            sock.sendJSON("session/set-connected-participants", {
+                sessionId: session.id,
+                connectedParticipants: session.get("connectedParticipants")
+            });
+        });
+        session.on("change:hangout-broadcast-id", function() {
+            sock.sendJSON("session/set-hangout-broadcast-id", {
+                sessionId: session.id,
+                "hangout-broadcast-id": session.get("hangout-broadcast-id")
+            });
+        });
     },
-    handleCrossDocumentMessages:  function(event) {
-		if (HANGOUT_ORIGIN_REGEX.test(event.origin)) {
-			if (event.data.type == "url") {
-				if (event.data.args.url) {
-					logger.debug("CDM inner set", event.data.args.url,
-                                 event.data.args.id, event.origin);
-                    session.set("hangout-id", event.data.args.id);
-					session.set("hangout-url", event.data.args.url);
-					HANGOUT_ORIGIN = event.origin;
+    handleCrossDocumentMessages:  function(evt) {
+		if (HANGOUT_ORIGIN_REGEX.test(evt.origin)) {
+			if (evt.data.type == "url") {
+                var args = evt.data.args;
+				if (args.url) {
+					logger.debug("CDM inner set", args.url, args.id, evt.origin);
+                    this.session.set("hangout-id", args.id);
+					this.session.set("hangout-url", args.url);
+                    if (args.youtubeId) {
+                        this.session.set("hangout-broadcast-id", args.youtubeId);
+                    } else {
+                        this.session.set("hangout-broadcast-id", null);
+                    }
+					HANGOUT_ORIGIN = evt.origin;
 					postMessageToHangout({type: "url-ack"});
 				}
-			} else if (event.data.type == "participants") {
-				logger.debug("CDM inner participants:", event.data.args);
-				var data = event.data.args.participants;
+			} else if (evt.data.type == "participants") {
+				logger.debug("CDM inner participants:", evt.data.args);
+				var data = evt.data.args.participants;
 				if (_.isString(data)) {
 					data = JSON.parse(data);
 				}
 				var participants = _.map(data, function(u) {
 					return u.person;
 				});
-				session.setConnectedParticipants(participants);
+				this.session.setConnectedParticipants(participants);
 			}
 		}
 	},
@@ -105,6 +206,9 @@ var FacilitatorView = Backbone.View.extend({
                 view = new AboutActivity({session: this.session, event: this.event,
                                           activity: activityData});
                 break;
+            case "no-auth-warning":
+                view = new NoAuthActivity({session: this.session, activity: activityData});
+                break;
             default:
                 logger.error("Unknown activity", activityData);
                 return;
@@ -126,16 +230,15 @@ var FacilitatorView = Backbone.View.extend({
         this.$('.left-column').append(this.faces.el);
         this.toggleSidebar();
     },
-    hide: function(event) {
+    hide: function(jqevt) {
         // Hide the unhangout facilitator app.
-        if (event) { event.preventDefault(); }
-        console.log("EVENT HIDE???");
+        if (jqevt) { jqevt.preventDefault(); }
         postMessageToHangout({type: "hide"});
     },
     // Add a youtube video activity, complete with controls for simultaneous
     // playback.
-    addActivityDialog: function(event) {
-        if (event) { event.preventDefault(); };
+    addActivityDialog: function(jqevt) {
+        if (jqevt) { jqevt.preventDefault(); };
         var view = new AddActivityDialog({
             hasCurrentEmbed: this.session.get("activities")[0].type != "about"
         });
@@ -153,12 +256,12 @@ var FacilitatorView = Backbone.View.extend({
         }, this));
         view.on("close", this.faces.showVideoIfActive);
     },
-    toggleSidebar: function(event) {
+    toggleSidebar: function(jqevt) {
         // This is rather ugly -- it special-cases the heck out of the 'faces'
         // activity in a rather brittle way, moving it to a different div when
         // we go to sidebar mode.  It has lots of edge cases -- which activity
         // is active when 'sidebar' mode is toggled? Etc.
-        if (event) { event.preventDefault(); }
+        if (jqevt) { jqevt.preventDefault(); }
         this.$el.toggleClass("sidebar");
         var isSidebar = this.$el.hasClass("sidebar");
         
@@ -209,7 +312,7 @@ var AboutActivity = BaseActivityView.extend({
     template: _.template($("#about-activity").html()),
     activity: {type: "about"},
     events: {
-        'click #share-link': function(event) { $(event.currentTarget).select(); },
+        'click #share-link': function(jqevt) { $(jqevt.currentTarget).select(); },
         'click .cancel-autohide': 'cancelAutohide'
     },
     initialize: function(options) {
@@ -236,6 +339,10 @@ var AboutActivity = BaseActivityView.extend({
         }
         $(".auto-hide").hide();
     }
+});
+
+var NoAuthActivity = AboutActivity.extend({
+    template: _.template($("#no-auth-activity").html())
 });
 
 var FacesView = Backbone.View.extend({
@@ -284,7 +391,8 @@ var VideoActivity = BaseActivityView.extend({
         // from the iframe API.
         this.yt = new video.YoutubeVideo({
             ytID: this.activity.video.id,
-            showGroupControls: true
+            showGroupControls: true,
+            groupScrubControl: true
         });
         this.yt.on("control-video", _.bind(function(args) {
             args.sessionId = this.session.id;
@@ -347,7 +455,6 @@ var WebpageActivity = BaseActivityView.extend({
  * Modal dialogs
  */
 
-
 var BaseModalView = Backbone.View.extend({
     events: {
         'click input[type=submit]': 'validateAndGo'
@@ -364,8 +471,8 @@ var BaseModalView = Backbone.View.extend({
         this.$el.html(this.template()).addClass("modal hide fade");
         this.$el.modal('show');
     },
-    validateAndGo: function(event) {
-        event.preventDefault();
+    validateAndGo: function(jqevt) {
+        jqevt.preventDefault();
         var data = this.validate();
         if (data) {
             this.trigger("submit", data);
@@ -380,9 +487,6 @@ var BaseModalView = Backbone.View.extend({
         this.$el.modal("hide");
     }
 });
-
-
-
 
 var AddActivityDialog = BaseModalView.extend({
     template: _.template($("#add-activity-dialog").html()),
@@ -475,59 +579,12 @@ var postMessageToHangout = function(message) {
         setTimeout(postMessageToHangout, 10);
     }
 };
-var event = new models.Event(EVENT_ATTRS);
-var session = new models.Session(SESSION_ATTRS);
-var sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
-var app = new FacilitatorView({session: session, event: event, sock: sock});
+
+var app = new FacilitatorView({
+    session: new models.Session(SESSION_ATTRS),
+    event: new models.Event(EVENT_ATTRS)
+});
 $("#app").html(app.el);
 app.render();
-
-/****************************************************
-      Socket initialization and hangout management
-*****************************************************/
-// Convenience wrapper for posting messages.
-sock.sendJSON = function(type, data) {
-    sock.send(JSON.stringify({type: type, args: data}));
-}
-sock.onopen = function() {
-    // Authorize ourselves, then join the room.
-    sock.sendJSON("auth", {key: SOCK_KEY, id: USER_ID});
-};
-
-sock.onclose = function() {
-    app.faces.hideVideoIfActive();
-    $('#disconnected-modal').modal('show');
-    var checkIfServerUp = function() {
-        var ping = document.location;
-        $.ajax({
-            url: ping,
-            cache: false,
-            async: false,
-            success: function(msg) {
-                postMessageToHangout({'type': 'reload'});
-            },
-            error: function(msg) {
-                timeout = setTimeout(checkIfServerUp, 250);
-            }
-        });
-    };
-    checkIfServerUp();
-};
-
-// Let the server know about changes to the hangout URL.
-session.on("change:hangout-url", function() {
-    logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
-    sock.sendJSON("session/set-hangout-url", {
-        url: session.get("hangout-url"),
-        id: session.get("hangout-id"),
-        sessionId: session.id
-    });
-});
-session.on("change:connectedParticipants", function() {
-    sock.sendJSON("session/set-connected-participants", {
-        sessionId: session.id,
-        connectedParticipants: session.get("connectedParticipants")
-    });
-});
 
 });

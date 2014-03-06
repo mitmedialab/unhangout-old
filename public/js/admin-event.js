@@ -1,5 +1,5 @@
 require([
-    "jquery", "underscore", "moment-timezone", "jstz", "models",
+    "jquery", "underscore", "moment-timezone", "jstz", "models", "auth",
     "bootstrap", "bootstrap-datetimepicker", "moment-timezone-data"
 ], function($, _, moment, jstz, models) {
 

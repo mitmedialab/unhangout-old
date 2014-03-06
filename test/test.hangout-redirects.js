@@ -19,12 +19,16 @@ describe("HANGOUT REDIRECTS", function() {
                 if (e.get("sessions").length > 0) {
                     e.start();
                     session = e.get("sessions").at(0);
-                    suffix = "?gid=rofl&gd=sessionId:" + session.id;
+                    suffix = function(sockKey) {
+                        var user = common.server.db.users.findWhere({"sock-key": sockKey});
+                        return "?gid=rofl&gd=sessionId:" + session.id +
+                            ":sockKey:" + sockKey + ":userId:" + user.id;
+                    }
                     return true;
                 }
             });
             if (!session) {
-                console.log(common.server.db.events.toJSON());
+                console.log("error", common.server.db.events.toJSON());
                 throw new Error("No sessions loaded!");
             }
             done();
@@ -46,7 +50,7 @@ describe("HANGOUT REDIRECTS", function() {
     it("Uses existing hangout link when present", function(done) {
         var success = session.setHangoutUrl("http://example.com/hangy");
         expect(success).to.be(true);
-        checkRedirect("http://example.com/hangy" + suffix, "regular1", done);
+        checkRedirect("http://example.com/hangy" + suffix("regular1"), "regular1", done);
     });
     it("Waits for a link when pending, and uses it when available", function(done) {
         var user = common.server.db.users.findWhere({"sock-key": "regular1"});
@@ -57,7 +61,7 @@ describe("HANGOUT REDIRECTS", function() {
         var clock = sinon.useFakeTimers();
         async.parallel([
             function(done) {
-                checkRedirect("http://example.com/hangy" + suffix, "regular1", done);
+                checkRedirect("http://example.com/hangy" + suffix("regular1"), "regular1", done);
             },
             function(done) {
                 // Make sure this timeout is greater than the express default
@@ -81,7 +85,7 @@ describe("HANGOUT REDIRECTS", function() {
         farming.reuseUrl("http://example.com/farmed", function(err) {
             expect(err).to.be(null);
         
-            var url = "http://example.com/farmed" + suffix;
+            var url = "http://example.com/farmed" + suffix("regular1");
             checkRedirect(url, "regular1", function() {
                 farming.getNextHangoutUrl(function(err, url) {
                     expect(err).to.be(null);
@@ -96,7 +100,7 @@ describe("HANGOUT REDIRECTS", function() {
         farming.getNextHangoutUrl(function(err, url) {
             expect(err).to.be(null);
             expect(url).to.be(null);
-            var url = "https://plus.google.com/hangouts/_?gid=rofl&gd=sessionId:" + session.id;
+            var url = "https://plus.google.com/hangouts/_" + suffix("regular1");
             checkRedirect(url, "regular1", function() {
                 expect(session.isHangoutPending()).to.be(true);
                 done();
@@ -106,7 +110,7 @@ describe("HANGOUT REDIRECTS", function() {
     it("Lets a 2nd user be the pending creator if the 1st times out", function(done) {
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
-        var url = "https://plus.google.com/hangouts/_?gid=rofl&gd=sessionId:" + session.id;
+        var url = "https://plus.google.com/hangouts/_" + suffix("regular2");
 
         var clock = sinon.useFakeTimers();
 
@@ -130,7 +134,7 @@ describe("HANGOUT REDIRECTS", function() {
 
         farming.reuseUrl(url, function(err) {
             expect(err).to.be(null);
-            checkRedirect(url + suffix, "regular1", function() {
+            checkRedirect(url + suffix("regular1"), "regular1", function() {
                 session.setConnectedParticipants([{id: user.id}]);
                 clock.tick(models.ServerSession.prototype.HANGOUT_CONNECTION_TIMEOUT - 1);
                 expect(session.getHangoutUrl()).to.be(url);
@@ -147,7 +151,7 @@ describe("HANGOUT REDIRECTS", function() {
         farming.reuseUrl(url, function(err) {
             expect(err).to.be(null);
             // We should get the farmed (poison) url...
-            checkRedirect(url + suffix, "regular1", function() {
+            checkRedirect(url + suffix("regular1"), "regular1", function() {
                 // ... but we don't enter the session, and never start it.
                 clock.tick(models.ServerSession.prototype.HANGOUT_CONNECTION_TIMEOUT + 1);
                 expect(session.getHangoutUrl()).to.be(null);

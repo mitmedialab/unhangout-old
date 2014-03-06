@@ -1,11 +1,11 @@
 var expect = require('expect.js'),
     common = require('./common');
 
-var browser = null;
-
-var longEnough = "This is a description that is long enough to meet the 100 char length validation for descriptions..."
-
 describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
+    var browser = null;
+
+    var longEnough = "This is a description that is long enough to meet the 100 char length validation for descriptions..."
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
@@ -59,11 +59,11 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
             expect(text).to.eql("Tell us about your event!");
         });
 
-        title = "#event-mini-form-modal [name='title']";
-        description = "#event-mini-form-modal [name='description']";
-        titleError = "#event-mini-form-modal .event-title label.error";
-        descriptionError = "#event-mini-form-modal .event-description label.error";
-        submit = "#event-mini-form-modal [type='submit']";
+        var title = "#event-mini-form-modal [name='title']";
+        var description = "#event-mini-form-modal [name='description']";
+        var titleError = "#event-mini-form-modal .event-title label.error";
+        var descriptionError = "#event-mini-form-modal .event-description label.error";
+        var submit = "#event-mini-form-modal [type='submit']";
         // Rejects too-short titles
         browser.byCss(submit).click();
         browser.waitForSelector(titleError);

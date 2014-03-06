@@ -2,14 +2,13 @@ var server      = require('../lib/unhangout-server'),
     async       = require('async'),
     should      = require('should'),
     _           = require('underscore'),
-    sock_client = require("sockjs-client-ws"),
     common      = require('./common');
 
-var browser = null;
-var sock = null;
-var evt = null;
-
 describe("CHAT WINDOW", function() {
+    var browser = null;
+    var sock = null;
+    var evt = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) { return; }
     this.timeout(40000); // Extra long timeout for selenium :(
 
@@ -40,13 +39,14 @@ describe("CHAT WINDOW", function() {
     });
     after(function(done) {
         browser.quit().then(function() { 
-            sock.close();
-            common.standardShutdown(done);
+            sock.promiseClose().then(function() {
+                common.standardShutdown(done);
+            });
         });
     });
 
     function checkScroll(browser, isScrolledDown) {
-        return browser.executeScript("return [$('#chat-container').scrollTop(), $('#chat-container')[0].scrollHeight - $('#chat-container').height()];").then(function(scrolls) {
+        return browser.executeScript("return [$('#chat-container-region').scrollTop(), $('#chat-container-region')[0].scrollHeight - $('#chat-container-region').height()];").then(function(scrolls) {
             var scrollTop = scrolls[0],
                 maxScroll = scrolls[1];
             if (isScrolledDown) {
@@ -62,21 +62,21 @@ describe("CHAT WINDOW", function() {
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + evt.id);
         browser.waitForSelector("#chat-input");
-        var msgCount = 100;
+        var msgCount = 50;
         for (var i = 0; i < msgCount; i++) {
             browser.byCss("#chat-input").sendKeys("msg " + i + "\n");
         }
         browser.wait(function() {
             return browser.byCsss("li.chat-message").then(function(els) {
-                return els.length == msgCount + 1;
+                return els.length == msgCount;
             });
         });
         checkScroll(browser, true);
-        browser.executeScript('$("#chat-container").scrollTop(100)');
+        browser.executeScript('$("#chat-container-region").scrollTop(100)');
         checkScroll(browser, false)
         browser.byCss("#chat-input").sendKeys("msg " + i + "\n");
         checkScroll(browser, true).then(function() { done(); });
-        browser.executeScript('$("#chat-container").scrollTop(100)').then(function() {;
+        browser.executeScript('$("#chat-container-region").scrollTop(100)').then(function() {;
             // Send a message from another user.
             sock.write(JSON.stringify({
                 type: "chat", args: {text: "Other user message"}
@@ -96,7 +96,7 @@ describe("CHAT WINDOW", function() {
 
 
         // Try a micro-scroll to ensure slop works.
-        var scrollFunc = 'var el = $("#chat-container"); ' +
+        var scrollFunc = 'var el = $("#chat-container-region"); ' +
                          'el.scrollTop(el[0].scrollHeight - el.height() - 5); ' +
                          'return el.scrollTop();';
         browser.executeScript(scrollFunc).then(function() {

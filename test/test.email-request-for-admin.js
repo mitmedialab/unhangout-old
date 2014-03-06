@@ -34,10 +34,6 @@ describe("EMAIL REQUEST FOR ADMIN", function() {
                 setTimeout(function() { callback(res) }, 1);
             });
     };
-    function recipientify(email) {
-        return {address: email, name: ''}
-    }
-
     it("Rejects unauthenticated requests", function(done) {
         request.post("http://localhost:7777/admin-request/")
             .send(validBody)
@@ -54,8 +50,8 @@ describe("EMAIL REQUEST FOR ADMIN", function() {
             setTimeout(function() {
                 expect(common.outbox.length).to.be(1);
                 var msg = common.outbox[0];
-                expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, recipientify));
-                expect(msg.from).to.eql([recipientify(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS)]);
+                expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, common.recipientify));
+                expect(msg.from).to.eql([common.recipientify(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS)]);
                 expect(msg.subject).to.eql("Unhangout: Request for Admin Account");
                 expect(msg.html.indexOf(validBody.eventTitle)).to.not.eql(-1); 
                 expect(msg.html.indexOf(validBody.eventDescription)).to.not.eql(-1);

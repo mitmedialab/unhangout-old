@@ -1,14 +1,14 @@
 <script type='text/template' id='youtube-video'>
     <!-- Tables are the cleanest way I know of for a sticky-footer effect. -->
-        <tr>
-            <td style='height: 100%;'>
-                <div id='player-{{- cid}}' style='display: block; width: 100%; height: 100%;'></div>
-            </td>
-        </tr>
-        <tr>
-            <td class='video-controls'>
-            </td>
-        </tr>
+    <tr>
+        <td style='height: 100%;'>
+            <div id='player-{{- cid}}' style='display: block; width: 100%; height: 100%;'></div>
+        </td>
+    </tr>
+    <tr>
+        <td class='video-controls'>
+        </td>
+    </tr>
 </script>
 <script type='text/template' id='youtube-video-controls'>
     {{ if (showGroupControls) { }}

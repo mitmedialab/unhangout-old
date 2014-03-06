@@ -44,6 +44,32 @@
                         <i class='icon-pencil' title='Edit'></i> edit
                     </a>
                     <span class='small-green'><%= baseUrl + event.getEventUrl() %></span>
+                    
+                    <% if (event.get("hoa")) { %>
+                        <% var hoa = event.get("hoa"); %>
+                        <table class='table table-bordered table-condensed'>
+                            <tr>
+                                <th>Hangout-on-air:</th>
+                                <td><%- hoa.getNumConnectedParticipants() %> connected</td>
+                                <td>
+                                    <% if (hoa.get("hangout-url")) { %>
+                                        <a href='<%- hoa.getParticipationLink() %>'
+                                           target='_blank'>Join broadcast</a>
+                                        <% if (hoa.getNumConnectedParticipants() === 0) { %>
+                                            (may have ended)
+                                        <% } %>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (hoa.get("hangout-broadcast-id")) { %>
+                                        <a href='https://www.youtube.com/watch?v=<%- hoa.get("hangout-broadcast-id") %>' target='_blank'>
+                                            Youtube Link
+                                        </a>
+                                    <% } %>
+                                </td>
+                            </tr>
+                        </table>
+                    <% } %>
 
                     <% sessions = event.get("sessions").models; %>
                     <div style='clear: both;'></div>

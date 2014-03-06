@@ -1,8 +1,8 @@
 require([
-   "jquery", "underscore", "backbone", "client-models",
+   "jquery", "underscore", "backbone", "client-models", "auth",
    // plugins
    "backbone.marionette", "bootstrap", "underscore-template-config"
-], function($, _, Backbone, models) {
+], function($, _, Backbone, models, auth) {
 
 $(document).ready(function() {
 
@@ -101,7 +101,7 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         var el = $(jqevt.currentTarget);
         var isSuperuser = el.is(":checked");
         // Safety: can't make yourself not a superuser.
-        if (isSuperuser == false && model.id == USER_ID) {
+        if (isSuperuser == false && model.id == auth.USER_ID) {
             alert("Can't remove your own superuser status. Ask another superuser to do it.");
             jqevt.preventDefault();
             jqevt.stopPropagation();

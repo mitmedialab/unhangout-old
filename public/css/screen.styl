@@ -7,6 +7,8 @@ $navbar-li = #DBF2FD;
 $navbar-li-bgcolor = #205877;
 $event-links = $navbar;
 
+/* ----------------MAIN PAGE AND BOOTSTRAP OVERRIDES -------*/
+
 body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
   }
@@ -51,6 +53,82 @@ a.dropdown-toggle {
 	height: auto;
 }
 
+.navbar .nav > li > a {
+  	color: $navbar-li;
+ }
+
+.nav {
+	li.active > a{
+		background-color: $navbar-li-bgcolor !important;
+	}
+
+	.circle {
+		background-color: #da4f49;
+		width: 6px;
+		height: 12px;
+		border-radius: 5px;
+
+		margin-right: 5px;
+
+		display: block;
+		position: absolute;
+		right: 5px;
+		top: 14px;
+
+		&.hide {
+			display: none;
+		}
+	}
+}
+
+.dropdown-menu>li>a {
+	color: #333;
+}
+
+.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus{
+	text-decoration:none;
+	color:#fff;
+	background: $navbar;
+}
+
+.dropdown-menu > li.active > a {
+    background: white !important;
+    color: black !important;
+}
+
+.dropdown-menu > li.active > a:hover, .dropdown-menu > li.active > a:focus {
+    background: $navbar !important;
+    color: white !important;
+}
+
+
+/* ----------------COMMON ELEMENTS AND UTILITIES------------*/
+	
+.identity {
+	height: 40px;
+
+	& > div {
+		float: right;
+	}
+
+	.admin-button:hover, .admin-button:visited, .admin-button:active {
+		color: orange;
+	}
+}
+
+.fifty-fifty {
+  width: 100%;
+  box-sizing: border-box;
+  .fifty {
+    box-sizing: border-box;
+    width: 50%;
+    float: left;
+  }
+}
+
+
+
+/* ----------------EVENT PAGE STYLES -----------------------*/
 
 #app {
 	position: absolute;
@@ -184,45 +262,6 @@ a.dropdown-toggle {
 	}
 }
 
-.navbar .nav > li > a {
-  	color: $navbar-li;
- }
-
-.nav {
-	li.active > a{
-		background-color: $navbar-li-bgcolor !important;
-	}
-
-	.circle {
-		background-color: #da4f49;
-		width: 6px;
-		height: 12px;
-		border-radius: 5px;
-
-		margin-right: 5px;
-
-		display: block;
-		position: absolute;
-		right: 5px;
-		top: 14px;
-
-		&.hide {
-			display: none;
-		}
-	}
-}
-	
-.identity {
-	height: 40px;
-
-	& > div {
-		float: right;
-	}
-
-	.admin-button:hover, .admin-button:visited, .admin-button:active {
-		color: orange;
-	}
-}
 
 .event-mini-form {
 	width: 500px;
@@ -254,6 +293,23 @@ a.dropdown-toggle {
 	}
 }
 
+.faux-hangout-notice {
+  position: relative;
+  background-color: #69f;
+  color: white;
+  font-size: 13px;
+  line-height: 1.2em;
+  font-family: "Arial",sans-serif;
+  padding: 1em;
+  border-radius: 5px;
+  .close {
+    color: white;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+  }
+}
+
 .username, .admin-button {
 	display: block;
 	font-size: 14px;
@@ -266,27 +322,6 @@ a.dropdown-toggle {
 		text-decoration: none;
 	}
 }
-
-.dropdown-menu>li>a {
-	color: #333;
-}
-
-.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus{
-	text-decoration:none;
-	color:#fff;
-	background: $navbar;
-}
-
-.dropdown-menu > li.active > a {
-    background: white !important;
-    color: black !important;
-}
-
-.dropdown-menu > li.active > a:hover, .dropdown-menu > li.active > a:focus {
-    background: $navbar !important;
-    color: white !important;
-}
-
 .user {
 	width: 40px;
 	height: 40px;
@@ -386,6 +421,10 @@ a.dropdown-toggle {
 		}
 	}
 }
+
+/*
+ * Session display on event page
+ */
 
 .session {
 	position: relative;
@@ -639,6 +678,10 @@ a.dropdown-toggle {
 	}
 }
 
+/*
+ * Chat
+ */
+
 #chat-input-region {
 		position: absolute;
 		bottom: 0px;
@@ -661,8 +704,18 @@ a.dropdown-toggle {
 	overflow-y: hidden;
 	overflow-x: visible;
 
+  #welcome-message {
+    padding: 10px;
+    border-bottom: 1px solid #aaa;
+    margin-bottom: 20px;
+  }
+
+  .chat-archive-link {
+    text-align: right;
+    font-style: italic;
+  }
 	
-	#chat-container {
+	#chat-container-region {
 		padding-left: 5px;
 
 		bottom: 40px;
@@ -731,11 +784,60 @@ a.dropdown-toggle {
 	z-index: 1000;
 }
 
-#video-embed .player {
-  height: 360px;
-  table {
-    width: 100%;
-    height: 100%;
+/*
+ *  Video
+ */
+
+#video-embed {
+  .video-player {
+    background-color: #eee;
+    height: 360px;
+    table {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .video-placeholder, & > .video-controls {
+    box-sizing: border-box;
+    max-width: 420px;
+    margin-left: 25px;
+    margin-right: 5px;
+    padding: 1.5em;
+  }
+  .video-placeholder {
+    margin-top: 10px;
+    background-color: #eee;
+    border: 3px dashed #ddd;
+    border-bottom: none;
+    border-radius: 10px 10px 0px 0px;
+    color: #ccc;
+    font-size: 24px;
+    text-align: center;
+  }
+  & > .video-controls {
+    margin-top: 0px;
+    padding-top: 0.2em;
+    background-color: #fca;
+    border: 3px dashed #f90;
+    border-top: none;
+    border-radius: 0px 0px 5px 5px;
+  }
+  .restore-previous-video {
+    &.header {
+      text-align: center;
+      &:hover {
+        background-color: white;
+        color: black;
+      }
+    }
+    .title {
+      display: inline-block;
+      vertical-align: middle;
+      width: 150px;
+      whites-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 }
 
@@ -757,31 +859,21 @@ a.dropdown-toggle {
     box-shadow: 0px 0px 5px rgba(200, 0, 0, 1);
   }
 }
+/*---------------------------- EVENT OVERFLOW -------------------------*/
 
-.fifty-fifty {
-  width: 100%;
-  box-sizing: border-box;
-  .fifty {
-    box-sizing: border-box;
-    width: 50%;
-    float: left;
-  }
-}
-
-.faux-hangout-notice {
-  position: relative;
-  background-color: #69f;
-  color: white;
-  font-size: 13px;
-  line-height: 1.2em;
-  font-family: "Arial",sans-serif;
+.event-overflow {
+  max-width: 800px;
+  margin: auto;
   padding: 1em;
-  border-radius: 5px;
-  .close {
-    color: white;
-    position: absolute;
-    top: 5px;
-    right: 5px;
+  .iframe-holder {
+    text-align: center;
+  }
+  .overflow-about {
+    max-width: 800px;
+    margin: auto;
+    margin-top: 2em;
+    padding: 1em;
+    box-shadow: 0px 0px 8px #ddd;
   }
 }
 
@@ -1089,6 +1181,18 @@ a.dropdown-toggle {
 }
 
 /* ------------------------- ABOUT PAGE -------------------------------*/
+
+#about-event {
+	.footer {
+		color: #ccc;
+		width: 400px;
+		margin-left: auto;
+		margin-right: auto;
+
+		font-style: italic;
+	}
+}
+
 .about-container {
 	h1, h3 {
 		color: #444;

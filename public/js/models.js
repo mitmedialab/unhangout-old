@@ -49,7 +49,9 @@ models.Event = Backbone.Model.extend({
             end: null,
             connectedUsers: null,            // these two fields are setup in initialize
             sessions: null,
+            hoa: null,
             youtubeEmbed: null,
+            previousVideoEmbeds: [],
             sessionsOpen: false,
             blurDisabled: false,
             dateAndTime: null,
@@ -81,6 +83,10 @@ models.Event = Backbone.Model.extend({
     getEventUrl: function() {
         return "/event/" + (this.get("shortName") ? this.get("shortName") : this.id);
     },
+
+    getChatArchiveUrl: function() {
+        return "/public/logs/chat/" + this.id + ".txt";
+    },
     
     toJSON: function() {
         var attrs = _.clone(this.attributes);
@@ -92,6 +98,7 @@ models.Event = Backbone.Model.extend({
         // for now just delete sessions; they'll save separately and will know their
         // event by id + url.
         delete attrs["sessions"];
+        delete attrs["hoa"];
         
         return attrs;
     },
@@ -129,11 +136,23 @@ models.Event = Backbone.Model.extend({
     },
     
     setEmbed: function(ytId) {
+        // Prepend the current embed (if any) to the list of previous embeds
+        // (if it's not already there), and set the current embed to the given
+        // ytId.
+        var prev = this.get("previousVideoEmbeds");
+        var cur = this.get("youtubeEmbed");
+        if (ytId) {
+            if (!_.findWhere(prev, {youtubeId: ytId})) {
+                prev.unshift({youtubeId: ytId});
+                this.trigger("change:previousVideoEmbeds");
+            }
+        }
         this.set("youtubeEmbed", ytId);
     },
 
-    hasEmbed: function() {
-        return this.has("youtubeEmbed") && this.get("youtubeEmbed").length>0;
+    setHoA: function(hoa) {
+        this.set("hoa", hoa);
+        hoa.event = this;
     },
 
     isLive: function() {
@@ -198,6 +217,7 @@ models.Event = Backbone.Model.extend({
     // "email" key -- from the list of admins, if present.
     removeAdmin: function(user) {
         var admins = this.get("admins");
+        var changed;
         admins = _.reject(admins, _.bind(function(admin) {
             if (this.adminMatchesUser(admin, user)) {
                 changed = true;    
@@ -258,6 +278,9 @@ models.EventList = Backbone.Collection.extend({
         var session;
         var event = this.find(function(event) {
             session = event.get("sessions").get(sessionId);
+            if (!session && event.get("hoa") && event.get("hoa").id == sessionId) {
+                session = event.get("hoa");
+            }
             if (session) {
                 return true;
             }
@@ -287,7 +310,8 @@ models.Session = Backbone.Model.extend({
 			shortCode: null,
             // State
 			connectedParticipants: [],
-            activities: []
+            activities: [],
+            "hangout-broadcast-id": null // Youtube ID For Hangouts on air
 		};
 	},
     getRoomId: function() {
@@ -344,6 +368,9 @@ models.Session = Backbone.Model.extend({
                 return "Invalid activity type: " + activity.type;
             }
         }
+    },
+    getParticipationLink: function() {
+        return "/session/" + this.get("session-key");
     }
 });
 

@@ -1,0 +1,23 @@
+<p><a href='/admin/event/<%= event.id %>'>Event <%= event.id %></a> was edited by someone claiming to be <%= user.get("displayName") %> (<%= user.get('emails')[0].value %>). Please check to make sure nothing phishy is going on.</p>
+
+<p>Fields:</p>
+<dl>
+<dt>Title</dt><dd><pre><%= event.get("title") %></pre></dd>
+<dt>Organizer</dt>
+<dd><pre><%= event.get("organizer") %></pre></dd>
+
+<dt>Description</dt>
+<dd><pre><%= event.get("description") %></pre></dd>
+
+<dt>Welcome Message</dt>
+<dd><pre><%= event.get("welcomeMessage") %></pre></dd>
+
+<dt>Short name</dt>
+<dd><pre><%= event.get("shortName") %></pre></dd>
+
+<dt>Date and time</dt>
+<dd><pre><%= event.get("dateAndTime") %></pre></dd>
+
+<dt>Time Zone</dt>
+<dd><pre><%= event.get("timeZoneValue") %></pre></dd>
+

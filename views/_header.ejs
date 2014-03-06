@@ -4,29 +4,33 @@
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title><%- typeof title != "undefined" ? title + " &mdash; powered by unhangout" : "Unhangout" %></title>
 	<!-- <link rel="stylesheet" href="/public/css/bootstrap.css" type="text/css" media="screen"> -->
+	<link rel="shortcut icon" href="/public/img/unhangout-favicon.png">
 	<link href="/public/vendor/bootstrap/css/bootstrap.no-responsive.no-icons.min.css" rel="stylesheet">
     <link href="/public/vendor/font-awesome-3.2.1/css/font-awesome.css" rel="stylesheet">
     <link href="/public/vendor/font-awesome-4.0.3/css/font-awesome.css" rel="stylesheet">
 	<link href="/public/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-	<link rel="shortcut icon" href="/public/img/unhangout-favicon.png">
 	<link href="/public/css/bootstrap-datetimepicker.css" type="text/css" rel="stylesheet">
 	<link href="/public/css/summernote.css" type="text/css" rel="stylesheet">
 
 	<script type="text/javascript" charset="utf-8">
-        // Set global datastructures for use by js.
-        // TODO: only set these when used, rather than assuming they're there.
-		<% if(!_.isUndefined(user)) { %>
-		var SOCK_KEY = '<%= user.getSockKey() %>';
-		var USER_ID = '<%= user.id %>';
-        var USER_NAME = '<%= user.get("displayName").replace("'", "\\'") %>';
-        var IS_ADMIN = <%= user.isAdminOf(event) %>;
-        var IS_SUPERUSER = <%= user.isSuperuser() %>;
-		<% } %>
+        /*
+        Define the authentication state used by socket identification and other
+        stuff.  We define them here so that the javascript that uses them can
+        be static, rather than dynamically loading these properties.
 
-		<% if(!_.isUndefined(event)) { %>
-        // TODO: This should only be on event.ejs.
-		var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
-		<% } %>
+        Rather than accessing directly, these should be accessed by requiring
+        `public/js/auth.js`, which handles localStorage assignment to help with
+        loading frames in browsers that block 3rd-party cookies.
+        */
+		<% if (user) { %>
+            window.UNHANGOUT_AUTH = <%- JSON.stringify({
+                SOCK_KEY: user.getSockKey(),
+                USER_ID: user.id,
+                USER_NAME: user.get("displayName")
+            }) %>;
+        <% } else { %>
+            window.UNHANGOUT_AUTH = null;
+        <% } %>
 	</script>
 </head>
 <body>

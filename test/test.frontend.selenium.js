@@ -1,8 +1,9 @@
 var should      = require('should'),
     common      = require('./common');
 
-var browser = null;
 describe("FRONT PAGE", function() {
+    var browser = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) { return; }
     this.timeout(40000); // Extra long timeout for selenium :(
 

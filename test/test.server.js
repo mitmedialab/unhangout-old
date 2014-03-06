@@ -1,7 +1,6 @@
 var server = require('../lib/unhangout-server'),
 	should = require('should'),
 	_ = require('underscore')._,
-	sock_client = require('sockjs-client-ws'),
 	request = require('superagent'),
 	seed = require('../bin/seed.js'),
     common = require("./common");

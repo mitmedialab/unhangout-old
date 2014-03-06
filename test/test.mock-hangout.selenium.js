@@ -2,24 +2,27 @@ var expect = require('expect.js'),
     _ = require("underscore"),
     common = require('./common');
 
-var browser = null,
-    event = null,
-    session = null;
-
 describe("MOCK HANGOUT", function() {
+    var browser = null,
+        event = null,
+        session = null;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
     this.timeout(40000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        common.getSeleniumBrowser(function (theBrowser) {
-            browser = theBrowser;
-            common.standardSetup(function() {
-                event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                event.start();
-                session = event.get("sessions").at(0);
-                done();
+        this.timeout(80000);
+        common.stopSeleniumServer().then(function() {
+            common.getSeleniumBrowser(function (theBrowser) {
+                browser = theBrowser;
+                common.standardSetup(function() {
+                    event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+                    event.start();
+                    session = event.get("sessions").at(0);
+                    done();
+                });
             });
         });
     });
@@ -75,6 +78,89 @@ describe("MOCK HANGOUT", function() {
             expect(_.pluck(session.get("connectedParticipants"), "id")).to.eql([
                 u1.id, u2.id, u3.id
             ]);
+            done();
+        });
+    });
+
+    function hangoutShowsNoAuthError() {
+        var frame = "document.querySelector('iframe').contentWindow.";
+        return browser.wait(function() {
+            return browser.executeScript("try { return " +
+                frame + frame + "document.querySelector('.alert-error').innerHTML;" +
+                "} catch (e) { return ''; }"
+            ).then(function(html) {;
+                return html.indexOf("We could not log you in to Unhangout.") != -1;
+            });
+        });
+    }
+
+    function hangoutShowsAboutActivity() {
+        var frame = "document.querySelector('iframe').contentWindow.";
+        return browser.wait(function() {
+            return browser.executeScript("try { " +
+                    "return " + frame + frame +
+                        "document.querySelector('.about-activity p').innerHTML;" +
+                "} catch (e) { return ''; }"
+            ).then(function(html) {
+                return html.indexOf("helps the Unhangout Permalink service") != -1;
+            });
+        });
+    }
+
+    it("Shows an auth error when not authenticated.", function(done) {
+        // Clear any latent auth
+        session.set("connectedParticipants", []);
+        browser.get("http://localhost:7777/");
+        browser.unMockAuthenticate();
+        browser.get("http://localhost:7777/");
+        browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
+
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        hangoutShowsNoAuthError().then(function() {
+            expect(session.getNumConnectedParticipants()).to.be(0);
+            done();
+        });
+    });
+
+    it("Authenticates with local storage.", function(done) {
+        // Set the mock cookie.
+        session.set("connectedParticipants", []);
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("regular1");
+        // Now visit a page again, which should trigger setting local storage.
+        browser.get("http://localhost:7777/");
+        // Remove auth cookie (but not localStorage).
+        browser.unMockAuthenticate();
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        var frame = "document.querySelector('iframe').contentWindow.";
+        // Now visit the hangout. We should be authed by local storage.
+        hangoutShowsAboutActivity().then(function() {
+            return common.await(function() {
+                return session.getNumConnectedParticipants() == 1;
+            });
+        }).then(function() {
+            done();
+        });
+    });
+
+    it("Gets sock key from URL param if localStorage/cookie fail", function(done) {
+        var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+        session.set("connectedParticipants", []);
+        session.set("hangout-url", null);
+
+        // Make sure we're logged out.
+        browser.get("http://localhost:7777/");
+        browser.unMockAuthenticate();
+        browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
+
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/" +
+                    "?sockKey=" + user.get("sock-key") +
+                    "&userId=" + user.id);
+        hangoutShowsAboutActivity().then(function() {
+            return common.await(function() {
+                return session.getNumConnectedParticipants() == 1;
+            });
+        }).then(function() {
             done();
         });
     });

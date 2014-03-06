@@ -3,28 +3,31 @@ var expect = require('expect.js'),
     common = require('./common'),
     models = require("../lib/server-models.js");
 
-var browser = null,
-    event = null;
-
-// Different leave-stop-timeout to monkey-patch in to test leave-stops.
-// Selenium is not compatible with sinon.useFakeTimers, so tests have to
-// wait this long in real-time.
-var TEST_LEAVE_STOP_TIMEOUT = 3000;
-
 describe("SESSION JOINING PARTICIPANT LISTS", function() {
+    var browser = null,
+        event = null;
+
+    // Different leave-stop-timeout to monkey-patch in to test leave-stops.
+    // Selenium is not compatible with sinon.useFakeTimers, so tests have to
+    // wait this long in real-time.
+    var TEST_LEAVE_STOP_TIMEOUT = 3000;
+
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
     this.timeout(40000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(80000);
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = TEST_LEAVE_STOP_TIMEOUT;
-        common.getSeleniumBrowser(function (theBrowser) {
-            browser = theBrowser;
-            common.standardSetup(function() {
-                event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                event.start();
-                done();
+        common.stopSeleniumServer().then(function() {
+            common.getSeleniumBrowser(function (theBrowser) {
+                browser = theBrowser;
+                common.standardSetup(function() {
+                    event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+                    event.start();
+                    done();
+                });
             });
         });
     });
@@ -35,6 +38,10 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     it("Updates session participant list when not present in the event", function(done) {
+        var session = event.get("sessions").at(0);
+        var sock;
+        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
+        var ready = false;
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + event.id);
@@ -42,11 +49,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.byCsss("#presence-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
         });
-        var session = event.get("sessions").at(0);
-        expect(session).to.not.be(undefined);
-        var sock;
-        var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
-        var ready = false;
         // We should have an empty session participant list.
         browser.byCsss(participantList).then(function(els) {
             expect(els.length).to.be(10);
@@ -59,14 +61,14 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             // But then we connect a socket directly to the session.
             common.authedSock("regular2", session.getRoomId(), function(theSock) {
                 sock = theSock;
-                sock.on("data", function(message) { console.log(message); });
+                sock.on("data", function(message) {});
             });
         });
         // Now we should have a user show up in the participant list.
         browser.waitForSelector(participantList + " i.icon-user").then(function() {
             expect(session.getNumConnectedParticipants()).to.be(1);
             expect(session.getState()).to.be("no url");
-            sock.close();
+            return sock.promiseClose();
         });
         // The participant list should clear when the socket closes.
         browser.wait(function() {
@@ -104,7 +106,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         // One socket should show up in the participant list.
         browser.waitForSelector(participantList + " i.icon-user").then(function() {
-            sock1.close();
+            return sock1.promiseClose();
         });
         // Have the socket leave the event page, but not the participant list.
         browser.wait(function() {
@@ -119,7 +121,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             expect(session.getState()).to.be("no url");
         }).then(function() {
             // Leave!
-            sock2.close();
+            return sock2.promiseClose();
         });
         // Now noone should be left
         browser.wait(function() {
@@ -140,11 +142,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Visit the session to "start" it.
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
         browser.wait(function() {
-            return session.getState() == "started";
+            return session.getState() === "started";
         });
         // Then leave, by going to the event page, where we'll delete it.
-        browser.get("http://localhost:7777/event/" + event.id).then(function() {
-            expect(session.getState()).to.eql("stopping");
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.wait(function() {
+            return session.getState() === "stopping";
         });
         browser.waitForScript("$");
         browser.byCss("[data-session-id='" + session.id + "'] .delete").click();
