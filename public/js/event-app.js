@@ -103,8 +103,12 @@ $(document).ready(function() {
                 break;
 
             case "set-hoa":
-                var hoa = new models.Session(msg.args);
-                curEvent.setHoA(hoa);
+                logger.log("set hoa", msg.args);
+                if (msg.args == null) {
+                    curEvent.setHoA(null);
+                } else {
+                    curEvent.setHoA(new models.Session(msg.args));
+                }
                 break;
 
             case "delete-session":

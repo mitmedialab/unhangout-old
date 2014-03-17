@@ -746,7 +746,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         'click .set-video': 'setVideo',
         'click .remove-video': 'removeVideo',
         'click .restore-previous-video': 'restorePreviousVideo',
-        'click .play-for-all': 'playForAll'
+        'click .play-for-all': 'playForAll',
+        'click .remove-hoa': 'removeHoA'
 
     },
 
@@ -798,6 +799,16 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.options.sock.send(JSON.stringify({
             type: "embed",
             args: {ytId: null, roomId: this.model.getRoomId()}
+        }));
+    },
+    removeHoA: function(jqevt) {
+        jqevt.preventDefault();
+        // ensure hangout-broadcast-id is null, even if other things are
+        // incongruent.
+        this.model.setHoA(null);
+        this.options.sock.send(JSON.stringify({
+            type: "remove-hoa",
+            args: {roomId: this.model.getRoomId()}
         }));
     },
     playForAll: function(jqevt) {

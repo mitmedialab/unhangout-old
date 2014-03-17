@@ -151,8 +151,13 @@ models.Event = Backbone.Model.extend({
     },
 
     setHoA: function(hoa) {
-        this.set("hoa", hoa);
-        hoa.event = this;
+        if (hoa == null) {
+            this.set("hoa", null);
+            this.set("hangout-broadcast-id", null);
+        } else {
+            this.set("hoa", hoa);
+            hoa.event = this;
+        }
     },
 
     isLive: function() {
