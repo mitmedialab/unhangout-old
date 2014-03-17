@@ -230,7 +230,7 @@
     <a tabindex='-1' href='#' class='restore-previous-video'
        style='text-align: left; width: 250px;'
        data-youtube-id='{{= id }}'>
-        <img src='{{= thumbnail.url }}' width=64 height=48 alt='thumbnail'>
+        <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
         <span class='title'>{{= title }}</span>
         <span style='font-size: smaller; color: #999;'>
             {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}

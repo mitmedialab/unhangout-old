@@ -7,6 +7,7 @@ $navbar-li = #DBF2FD;
 $navbar-li-bgcolor = #205877;
 $event-links = $navbar;
 
+
 /* ----------------MAIN PAGE AND BOOTSTRAP OVERRIDES -------*/
 
 body {
@@ -1382,4 +1383,35 @@ td form {
     	width: 573px;
     	margin-left: -0px; 
     }
+}
+
+/* --------------------- IE OVERRIDES -----------------------*/
+
+/* IE overrides */
+
+.bad-browser-warning {
+  display: none;
+}
+html.oldie {
+  .bad-browser-warning {
+    display: block;
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+    z-index: 100000000000;
+    .alert {
+      position: relative;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 3em;
+      max-width: 66em;
+      .close {
+        position: absolute;
+        top: 1em;
+        right: 1em;
+      }
+    }
+  }
 }

@@ -30,7 +30,9 @@ var Logger = function(prefix, level) {
             } else {
                 args = [prefix].concat(arguments);
             }
-            logFunc.apply(logFuncThis, args);
+            if (logFunc.apply && typeof logFunc.apply === "function") {
+                logFunc.apply(logFuncThis, args);
+            }
         };
     };
     // Default: no-op.
