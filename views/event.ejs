@@ -106,9 +106,9 @@
     {{ if(!picture) { }}
         <i class="icon-user icon-3x"></i>
     {{ } else if (link) { }}
-        <a href="{{- link }}" target="_new"><img src="{{- picture}}"></a>
+        <a href="{{- link }}" target="_new"><img src="{{- picture}}" alt='profile'></a>
     {{ } else { }}
-        <img src="{{- picture}}">
+        <img src="{{- picture}}" alt='profile'>
     {{ } }}
 </script>
             
@@ -240,8 +240,9 @@
 
 <script type="text/template" id="admin-button-template">
     <div class="dropdown">
-        <a class="dropdown-toggle admin-button" data-toggle="dropdown">Event Settings</a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        <a class="dropdown-toggle admin-button" data-toggle="dropdown"
+           id='event-settings-label'>Event Settings</a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="event-settings-label">
             <li role="presentation">
                 {{ if (event.isLive()) { }}
                     <a role="menuitem" href="#" role="buton" id='admin-stop-event'>

@@ -4,7 +4,7 @@
 <div class="container">
 
     <div class="jumbotron">
-        <h1><img class="" src="/public/img/unhangout-logo.png" width="77px" height="68px"> Unhangouts </h1>
+        <h1><img class="" src="/public/img/unhangout-logo.png" width="77" height="68" alt='Logo'> Unhangouts </h1>
 
         <h3>A platform for unconferences. On the web.</h3>
 
@@ -34,11 +34,9 @@
     </div>
 
     <div class="section" id="home">
-        <hr noshade size="2">
+        <hr class='noshade' size="2">
 
-        <div class="row event-container">
-            <h3>Upcoming Events</h3>
-        </div>
+        <div class="row event-container"><h3>Upcoming Events</h3></div>
 
         <div class="row">
             <div class="event">
@@ -55,7 +53,7 @@
                      Join ten Media Lab students to learn more about their work and the different research groups they are affiliated with. What happens on March 28th? After a short welcome, we will break out into small group conversations - where participants can ask questions and share ideas. Each conversation is hosted by a current MIT Media Lab student, who will talk about their research, the philosophy of the groups they are affiliated with, and what goes on at the Lab in general. 
                 </div>
             </div>
-        </div> 
+        </div>
         
         <div class="row event-container">
             <h3>Past Events</h3>
@@ -95,12 +93,14 @@
                     social media to improve learning for kids. To
                     help educators debrief and reflect on that
                     learning, we are organizing the first virtual
-                    Edcamp, hosted by <a href="http://edcamp.org/"
-                    style="font-style: italic" target=
-                    "_blank">Edcamp Foundation</a> and <a href=
-                    "http://www.nwp.org/" style=
-                    "font-style: italic" target="_blank">National
-                    Writing Project.</a> <br/> <br/>
+                    Edcamp, hosted by
+                    <a href="http://edcamp.org/"
+                        style="font-style: italic"
+                        target="_blank">Edcamp Foundation</a> and
+                    <a href="http://www.nwp.org/"
+                        style="font-style: italic"
+                        target="_blank">National Writing Project.</a>
+                    <br/> <br/>
                 </div>
             </div>
         </div>
@@ -218,7 +218,7 @@
             </div>
         </div>
         
-        <hr noshade size="2">
+        <hr class='noshade' size="2">
 
         <div class="signup">
             <h3>Reminders</h3>
@@ -234,92 +234,88 @@
                 "button">Subscribe</button>
             </div>
 
-            <div class="modal hide fade subscription-modal" id=
-            "subscription-modal">
-                    <div class="modal-header">
-                        <h3>Subscribed!</h3>
-                    </div>
-
-                    <div class="modal-body">
-                        <p>You have been subscribed to this event.
-                        We will send you an email reminder 24 hours
-                        before the event and 5 minutes before it
-                        starts.</p>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button class="btn btn-primary" data-dismiss=
-                        "modal">Close</button>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="modal hide fade event-mini-form" id="session-submission-modal">
-                    <div class="modal-header">
-                        <h3>Thank you!!!</h3>
-                    </div>
-
-                    <div class="modal-body">
-                        <p>That’s all we need right now. We’ll be in touch very soon. </p>
-
-                        <div class="modal-footer">
-                            <button class="btn btn-primary" data-dismiss=
-                            "modal">Close</button>
-                        </div>
-
-                    </div>  
-                </div>
-            </div>
-
         </div>
+    </div> <!-- / #home -->
+</div> <!-- / .container -->
+
+<!-- MODAL DIALOGS -->
+
+<!-- subscribing to an event (not currently used) -->
+<div class="modal hide fade subscription-modal" id="subscription-modal">
+    <div class="modal-header"><h3>Subscribed!</h3></div>
+
+    <div class="modal-body">
+        <p>You have been subscribed to this event.
+        We will send you an email reminder 24 hours
+        before the event and 5 minutes before it
+        starts.</p>
     </div>
 
-    <div id="login-first-modal" class="modal hide fade event-mini-form">
-      <div class="modal-header">
-          <h3>Please log in!</h3>
+    <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss=
+        "modal">Close</button>
+    </div>
+</div>
+
+<!-- prompt to log in first before creating event -->
+<div id="login-first-modal" class="modal hide fade event-mini-form">
+  <div class="modal-header">
+      <h3>Please log in!</h3>
+  </div>
+  <div class="modal-body">
+    <p>You need to be logged in to create an event or join one. It’s easy. You can use your Google account and it only takes 0.83 seconds.</p>
+
+    <div class="modal-footer">
+      <img src="/public/img/unhangout-logo.png" width="55" height="35" alt='Logo'>
+      <span class>Unhangouts</span>
+      <a href="/auth/google/" class="btn btn-primary pull-right">Login to create an Unhangout</a>
+    </div>
+  </div>
+</div>
+
+<!-- form for non-admins wishing to create an event -->
+<div id="event-mini-form-modal" class="modal hide fade event-mini-form">
+  <div class="modal-header">
+      <h3>Tell us about your event!</h3>
+  </div>
+  <form method="POST" id="contact-form" class="form-horizontal">
+    <div class="modal-body">
+
+      <p>Currently only admin users can create new Unhangouts. We are a teeny tiny team, but if you let us know what you have in mind, we’ll see if we can help you make it happen.<br/><br/></p>
+
+      <div class="control-group event-title">
+        <label class="control-label pull-right" for="title">Event Title</label>
+        <div class="controls">
+          <input type="text" class="input-xlarge" name="title" id="title">
+        </div>
       </div>
-      <div class="modal-body">
-        <p>You need to be logged in to create an event or join one. It’s easy. You can use your Google account and it only takes 0.83 seconds.</p>
+      <div class="control-group event-description">
+        <label class="control-label" for="description">Event Description</label>
+        <div class="controls">
+          <textarea class="input-xlarge" name="description" id="description" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <img src="/public/img/unhangout-logo.png" width="55" height="35" alt='logo'>
+          <span class>Unhangouts</span>
+          <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- thank you for submitted non-admin form -->
+<div class="modal hide fade event-mini-form" id="session-submission-modal">
+    <div class="modal-header">
+        <h3>Thank you!!!</h3>
+    </div>
+
+    <div class="modal-body">
+        <p>That’s all we need right now. We’ll be in touch very soon. </p>
 
         <div class="modal-footer">
-          <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
-          <span class>Unhangouts</span>
-           <a href="/auth/google/"><button class="btn btn-primary pull-right" >Login to create an Unhangout</button></a>
-      </div>
-
-      </div>
-      
-    </div>
-
-    <div id="event-mini-form-modal" class="modal hide fade event-mini-form">
-      <div class="modal-header">
-          <h3>Tell us about your event!</h3>
-      </div>
-      <form method="POST" id="contact-form" class="form-horizontal">
-        <div class="modal-body">
-
-          <p>Currently only admin users can create new Unhangouts. We are a teeny tiny team, but if you let us know what you have in mind, we’ll see if we can help you make it happen.<br/><br/></p>
-
-          <div class="control-group event-title">
-            <label class="control-label pull-right" for="title">Event Title</label>
-            <div class="controls">
-              <input type="text" class="input-xlarge" name="title" id="title">
-            </div>
-          </div>
-          <div class="control-group event-description">
-            <label class="control-label" for="description">Event Description</label>
-            <div class="controls">
-              <textarea class="input-xlarge" name="description" id="description" rows="4"></textarea>
-            </div>
-          </div>
-          <div class="modal-footer">
-              <img src="/public/img/unhangout-logo.png" width="55px" height="35px">
-              <span class>Unhangouts</span>
-              <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
-          </div>
+            <button class="btn btn-primary" data-dismiss="modal">Close</button>
         </div>
-      </form>
     </div>
 </div>
 
