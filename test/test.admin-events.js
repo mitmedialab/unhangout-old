@@ -145,6 +145,17 @@ describe('HTTP ADMIN EVENTS API', function() {
                     done();
                 });
         });
+        it('should reject tricky number-only shortnames', function(done) {
+            request.post("http://localhost:7777/admin/event/new")
+                .set("x-mock-user", "superuser1")
+                .send({description: "Fun times", title: "Great",
+                      shortName: "12345"})
+                .redirects(0)
+                .end(function(res) {
+                    expectError(res, "At least one letter is required.");
+                    done();
+                });
+        });
 
         it('should reject invalid dates', function(done) {
             var params = {
