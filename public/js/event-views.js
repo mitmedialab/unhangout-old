@@ -553,7 +553,6 @@ views.WelcomeView = Backbone.Marionette.ItemView.extend({
     initialize: function(options) {
         Backbone.Marionette.ItemView.prototype.initialize.call(this, options);
         if (options.messages.length === 0) {
-            console.log("HEY!");
             options.messages.once("add", this.render);
         }
     },
@@ -590,7 +589,8 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
 
         if(msg.length>0) {
             this.options.sock.send(JSON.stringify({
-                type:"chat", args: {text: msg, roomId: this.options.event.getRoomId()}
+                type: "chat",
+                args: {text: msg, roomId: this.options.event.getRoomId()}
             }));
             this.ui.chatInput.val("");
         }
@@ -683,6 +683,20 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
     itemView: views.ChatMessageView,
     itemViewContainer: "#chat-list-container",
     id: "chat-container",
+
+    initialize: function() {
+        Backbone.Marionette.CompositeView.prototype.initialize.apply(this, arguments);
+        this.collection.on("over-capacity", _.bind(function() {
+            if (this._overCapacityTimeout) {
+                clearTimeout(this._overCapacityTimeout);
+            }
+            this.$(".over-capacity-warning").show();
+            this._overCapacityTimeout = setTimeout(_.bind(function() {
+                this.$(".over-capacity-warning").fadeOut();
+            }, this), 3000);
+
+        }, this));
+    },
 
     onBeforeItemAdded: function() {
         this.scroller = $("#chat-container-region");

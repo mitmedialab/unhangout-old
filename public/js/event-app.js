@@ -57,7 +57,10 @@ $(document).ready(function() {
         var msg = JSON.parse(message.data);
         
         if(msg.type.indexOf("-err")!=-1) {
-            logger.log("Got an error from the server!", message);
+            logger.error("Got an error from the server!", message);
+            if (msg.type === "chat-err" && msg.args === "Over capacity") {
+                messages.trigger("over-capacity");
+            }
         }
         // All messages have a type field. 
         switch(msg.type) {            
@@ -207,21 +210,18 @@ $(document).ready(function() {
             
              $.ajax({
                   url: ping,
-                  cache: false,
-                  async : false,
-
-                  success: function(msg){
-                   // reload window when ajax call is successful
-                       window.location.reload();
-                   },
-
-                   error: function(msg) {
-                        timeout = setTimeout(checkIfServerUp, 250);
-                   }
-             });
+                  type: "HEAD",
+                  cache: false
+              }).done(function() {
+                  // reload window when ajax call is successful
+                  window.location.reload();
+              }).fail(function() {
+                  timeout = setTimeout(checkIfServerUp, 1000);
+              });
         };
-
-        checkIfServerUp();
+        // Run the first check at a random interval to hopefully spread out
+        // requests to a seiged server trying to restart.
+        setTimeout(checkIfServerUp, 1000 * Math.random());
     };
 
 
