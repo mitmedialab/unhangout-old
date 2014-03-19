@@ -14,6 +14,7 @@
   ],
   "license":"MIT",
   "scripts": {
+    "postinstall": "node ./bin/compile-assets.js",
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
     "test": "NODE_ENV=testing mocha test/test.[a-r]* test/test.[t-z]* && sleep 1 && NODE_ENV=testing mocha test/test.s*",
@@ -53,6 +54,8 @@
     "nodemailer": "0.6.0",
     "caja-sanitizer": "*",
     "mkdirp": "*",
+    "memwatch": "~0",
+    "toobusy": "~0",
     "requirejs-middleware": "git://github.com/yourcelf/requirejs-middleware.git#master"
   },
   "analyze": false,
