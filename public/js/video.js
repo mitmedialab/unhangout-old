@@ -238,8 +238,12 @@ video.YoutubeVideo = Backbone.View.extend({
                 // As a result, we're essentially disabling pause and seek for
                 // admins.  For non-admins, we just un-sync.
             } else {
-                // Non-admin: just toggle intendToSync.
-                this.toggleSync();
+                // Non-admin: just toggle intendToSync, but only if we're not
+                // at the end of the video.
+                if (this.ctrl.state === "playing" && Math.abs(
+                        this.player.getDuration() - this.ctrl.time) > 10) {
+                    this.toggleSync();
+                }
             }
         }
     },
