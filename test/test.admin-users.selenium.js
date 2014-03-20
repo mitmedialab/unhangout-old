@@ -70,6 +70,7 @@ describe("ADMIN USERS SELENIUM", function() {
             expect(url).to.eql("http://localhost:7777/admin/users/");
         });
         var selector = "tr[data-user-id='" + user.id + "'] input[type='checkbox']";
+        browser.waitForSelector(selector);
         browser.byCss(selector).click().then(function() {
             expect(user.isSuperuser()).to.be(true);    
         });
@@ -154,6 +155,7 @@ describe("ADMIN USERS SELENIUM", function() {
             }
         });
         browser.get("http://localhost:7777/admin/users/");
+        browser.waitForScript("$");
         browser.executeScript('return $("'+permSelector+'").is(":checked");').then(function(checked) {
             expect(checked).to.be(false);
             done();

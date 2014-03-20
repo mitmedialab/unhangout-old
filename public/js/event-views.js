@@ -858,7 +858,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         this.yt = new video.YoutubeVideo({
             ytID: this.model.get("youtubeEmbed"),
-            groupScrubControl: true,
+            permitGroupControl: IS_ADMIN,
             showGroupControls: false // We're doing our own controls on event pages.
         });
         if (IS_ADMIN) {
