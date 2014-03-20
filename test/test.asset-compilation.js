@@ -10,14 +10,10 @@ describe("ASSET COMPILATION", function() {
         var conf = require("../public/js/requirejs-config.json");
         var count = Object.keys(conf.modules).length - 1;
         var errors = [];
-        compiler.compile(function(err) {
-            if (err) {
-                errors.push(err);
-            }
-            count--;
-            if (count === 0) {
-                return done(errors.length > 0 ? new Error(errors) : null);
-            }
+        compiler.compile().then(function() {
+            done()
+        }).catch(function(err) {
+            done(err);
         });
     });
 });
