@@ -65,6 +65,7 @@ function compileStylusFile(filename) {
                 stylus(data)
                     .set("filename", filename)
                     .set("paths", [nib.path, path.dirname(filename)])
+                    .import('nib')
                     .render(function(err, css) {
                         if (err) {
                             reject(err);
