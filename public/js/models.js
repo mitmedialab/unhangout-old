@@ -53,7 +53,6 @@ models.Event = Backbone.Model.extend({
             youtubeEmbed: null,
             previousVideoEmbeds: [],
             sessionsOpen: false,
-            blurDisabled: false,
             dateAndTime: null,
             timeZoneValue: null,
             admins: []
@@ -398,7 +397,6 @@ models.User = Backbone.Model.extend({
             picture: "",
             perms: {},
             superuser: false,
-            isBlurred: false,
             displayName: "[unknown]",
             link: null,
             emails: []
@@ -485,16 +483,6 @@ models.User = Backbone.Model.extend({
      */
     hasEmail: function(email) {
         return !_.isUndefined(email) && _.contains(_.pluck(this.get('emails', 'value')), email);
-    },
-
-    isBlurred: function() {
-        return this.get("isBlurred");
-    },
-
-    setBlurred: function(blurred) {
-        this.set("isBlurred", blurred);
-        this.trigger("change");
-        this.trigger("change:isBlurred");
     },
 
     getShortDisplayName: function() {

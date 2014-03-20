@@ -187,11 +187,6 @@ views.UserView = Backbone.Marionette.ItemView.extend({
         'click' : 'click'
     },
 
-    initialize: function(args) {
-        Backbone.Marionette.ItemView.prototype.initialize.call(this, args);
-
-        this.listenTo(this.model, 'change:isBlurred', this.render, this);
-    },    
 
     click: function() {
         logger.log("user clicked: " + this.model.get("displayName"));
@@ -201,14 +196,6 @@ views.UserView = Backbone.Marionette.ItemView.extend({
         // add in the tooltip attributes    
         if(this.model.isAdminOf(this.options.event)) {
              this.$el.addClass("admin");
-        }
-
-        if(this.model.isBlurred()) {
-            this.$el.addClass("blur");
-            this.$el.removeClass("focus");
-        } else {
-            this.$el.removeClass("blur");
-            this.$el.addClass("focus");
         }
 
         // look for either an img or an i child, since people who don't have

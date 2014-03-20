@@ -25,8 +25,6 @@ $(document).ready(function() {
 
     var interval = 0;
     var messageShown = false ;
-    var windowBlurred = false ;
-    var isIntervalRunning = false;
     var aboutShown = false;
 
     //------------------------------------------------------------------------//
@@ -81,18 +79,6 @@ $(document).ready(function() {
 
                 break;
 
-            // a user has blurred the lobby window
-            case "blur":
-                var blurredUser = users.get(msg.args.id);
-                blurredUser.setBlurred(true);
-                break;
-
-            // a user has focused the lobby window
-            case "focus":
-                var blurredUser = users.get(msg.args.id);
-                blurredUser.setBlurred(false);
-                break;
-            
             // the embed for this event has been updated
             case "embed":
                 var originalYoutubeId = curEvent.get("youtubeEmbed") || "";
@@ -327,76 +313,8 @@ $(document).ready(function() {
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
 
-        // This section sets up the blur/focus tracking. This serves two purposes. The first
-        // is to represent users differently in the presence gutter as well as in the
-        // session list, depending on whether or not they have the lobby window focused
-        //
-        // We also use this to decide whether or not to show new messages coming in
-        // by changing the tab title.
-        
-        if (!curEvent.get("blurDisabled")) {
-            var startingTitle = window.document.title;
-            var isAlreadyBlurred;
-            $(window).blur(function() {
-                if(isAlreadyBlurred)
-                    return;
-
-                isIntervalRunning = true ;
-                windowBlurred = true ;
-                messageShown = true ;
-
-                var message = {
-                    type: "blur",
-                    args: {roomId: curEvent.getRoomId()}
-                };
-                sock.send(JSON.stringify(message));  
-
-                isAlreadyBlurred = true;
-            })
-
-            $(window).focus(function() {
-                isIntervalRunning = false;
-                windowBlurred = false;
-                messageShown = false ;
-                clearInterval(interval);
-                window.document.title = startingTitle;
-
-                var message = {
-                    type: "focus",
-                    args: {roomId: curEvent.getRoomId()}
-                };
-                sock.send(JSON.stringify(message));  
-
-                isAlreadyBlurred = false;
-            })
-        }
-
     }, app);
 
-    // toggles the tab title to show new messages, but only if the window
-    // is blurred (as detected above)
-    app.showFlashTitle = function () {
-        if(isIntervalRunning && !messageShown) {
-            if(window.document.title == 'Unhangout')
-                window.document.title = 'New Message ...';
-            else
-                window.document.title = 'Unhangout';
-
-            interval = window.setTimeout(app.showFlashTitle , 1000);
-        }
-    };
-
-    // All these app.vent calls are setting up app-wide event handling. The app
-    // can trigger these events in any manner it desires. We use this to abstract
-    // the logic about where the events might come from, because in some situations
-    // they're triggered by users, sometimes by the arrival of remove messages,
-    // sometimes as side effects of other actions.
-    app.vent.on("new-chat-message", _.bind(function() {
-        if(isIntervalRunning && windowBlurred) {
-            interval = window.setTimeout(this.showFlashTitle, 1000);
-        }
-    }, app));
-    
     app.vent.on("about-nav", _.bind(function() {
         console.log("handling about-nav event");
 
