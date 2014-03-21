@@ -8,6 +8,7 @@ var fs = require("fs"),
     Promise = require("bluebird");
 
 describe("CHAT LOGGER", function() {
+    this.timeout(4000); // Give a little extra time in case travis is bogged down.
     var event, user;
     // Resolve expectedFile to look like we're coming from inside ../lib/
     // instead of inside ../test/, so we can compare it to the version that
