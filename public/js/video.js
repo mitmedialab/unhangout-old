@@ -73,7 +73,7 @@ video.YoutubeVideo = Backbone.View.extend({
     initialize: function(options) {
         this.ytID = options.ytID;
         this.showGroupControls = options.showGroupControls;
-        this.groupScrubControl = options.groupScrubControl;
+        this.permitGroupControl = options.permitGroupControl;
         this.intendToSync = true;
         _.bindAll(this, "playForEveryone", "toggleSync",
                         "onPlayerReady", "onPlayerStateChange",
@@ -159,8 +159,16 @@ video.YoutubeVideo = Backbone.View.extend({
         }
         // Has the video finished? Tell the server to pause.
         var dur = this.player.getDuration();
-        if (args.state == "playing" && dur > 0 && args.time > dur) {
-            this.trigger("control-video", {action: "pause"});
+        if (args.state === "playing" && dur > 0 && args.time > dur) {
+            this.logger.info("Pausing, video is over");
+            if (this.permitGroupControl) {
+                this.logger.info("Telling server to pause.");
+                this.trigger("control-video", {action: "pause"});
+            } else {
+                this.logger.debug("Not telling server to pause - not permitted.");
+            }
+            this.player.pauseVideo();
+            return;
         }
         // Sync us up!
         if (!this.timeSynced()) {
@@ -212,31 +220,30 @@ video.YoutubeVideo = Backbone.View.extend({
                 this.syncAvailable()) {
             // ... interpret it as an intention to seek or pause.
             this.logger.debug("times", this.ctrl.time, this.player.getCurrentTime());
-            if (this.groupScrubControl) {
-                // Admin: do it for everyone.
-                // If it's more than 10 seconds, assume seek; otherwise pause. 
-                if (Math.abs(this.ctrl.time  - this.player.getCurrentTime()) > 10) {
-                    this.logger.debug("send control-video play");
-                    if (this._seekPauseTimeout) {
-                        this.logger.debug("clear seekPauseTimeout: seeking");
-                        clearTimeout(this._seekPauseTimeout);
-                    }
-                    this.trigger("control-video", {
-                        action: "play",
-                        time: this.player.getCurrentTime()
-                    });
-                } else {
-                    // Can't find any reasonable way to distinguish intentional
-                    // pauses from unintentional pauses.  YouTube throws pause
-                    // signals (sometimes more than one) whenever play is
-                    // interrupted, either from a seek, a reversion to
-                    // buffering, or whatever.  Essentially disabling the
-                    // native pause control for admins/breakout participants as
-                    // a result.
-                }
+            if (this.permitGroupControl) {
+                // We'd like to offer admin's means to control video through
+                // the native controls -- but it seems to be fraught, in at
+                // least two ways: first, admins might inadvertently control
+                // the video for others by clicking, not thinking that it will
+                // change the video for everyone. Second, unintentional events
+                // (e.g. network lags) might look like intentional control
+                // events -- we can't distinguish those.
+                //
+                // As an example, we can't find any reasonable way to
+                // distinguish intentional pauses from unintentional pauses.
+                // YouTube throws pause signals (sometimes more than one)
+                // whenever play is interrupted, either from a seek, a
+                // reversion to buffering, or whatever.
+                //
+                // As a result, we're essentially disabling pause and seek for
+                // admins.  For non-admins, we just un-sync.
             } else {
-                // Non-admin: just toggle intendToSync.
-                this.toggleSync();
+                // Non-admin: just toggle intendToSync, but only if we're not
+                // at the end of the video.
+                if (this.ctrl.state === "playing" && Math.abs(
+                        this.player.getDuration() - this.ctrl.time) > 10) {
+                    this.toggleSync();
+                }
             }
         }
     },
