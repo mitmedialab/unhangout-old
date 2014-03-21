@@ -1,5 +1,6 @@
 var server = require('../lib/unhangout-server'),
 	expect = require('expect.js'),
+    async = require("async"),
 	_ = require('underscore')._,
 	request = require('superagent'),
     common = require('./common');
@@ -189,6 +190,74 @@ describe('HTTP ADMIN EVENTS API', function() {
                 .redirects(0)
                 .end(function(res) {
                     expectError(res, "Invalid date or timezone.");
+                    done();
+                });
+        });
+
+        it('should reject invalid overflowUserCap values', function(done) {
+            async.map(["-1", "asdf"], function(overflowUserCap, done) {
+                var params = {
+                    title: "Excellent",
+                    description: "Party time",
+                    shortName: "unique-city",
+                    dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
+                    timeZoneValue: "America/New_York",
+                    overflowUserCap: overflowUserCap
+                };
+                request.post("http://localhost:7777/admin/event/new")
+                    .set("x-mock-user", "superuser1")
+                    .send(params)
+                    .redirects(0)
+                    .end(function(res) {
+                        expectError(res, "Must be a number greater than or equal to zero.");
+                        done();
+                    });
+            }, function() { done(); });
+        });
+
+        it('should ignore overflowUserCap values from non-superusers', function(done) {
+            var user = common.server.db.users.findWhere({"sock-key": "admin1"});
+            user.setPerm("createEvents", true);
+            var params = {
+                title: "Excellent",
+                description: "Party time",
+                shortName: "unique-city",
+                dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
+                timeZoneValue: "America/New_York",
+                overflowUserCap: "10"
+            };
+            request.post("http://localhost:7777/admin/event/new")
+                .set("x-mock-user", "admin1")
+                .send(params)
+                .redirects(0)
+                .end(function(res) {
+                    expect(res.status).to.be(302);
+                    var evt = common.server.db.events.findWhere({"title": "Excellent"});
+                    expect(evt.get("overflowUserCap")).to.be(200);
+                    done();
+                });
+        });
+
+        it("shouldn't show overflowUserCap to non-superusers", function(done) {
+            var user = common.server.db.users.findWhere({"sock-key": "admin1"});
+            user.setPerm("createEvents", true);
+            expect(user.isSuperuser()).to.be(false);
+            request.get("http://localhost:7777/admin/event/new")
+                .set("x-mock-user", "admin1")
+                .redirects(0)
+                .end(function(res) {
+                    expect(res.status).to.be(200);
+                    expect(/name=.overflowUserCap./.test(res.text)).to.be(false);
+                    done();
+                });
+        });
+        it("should show overflowUserCap to superusers", function(done) {
+            request.get("http://localhost:7777/admin/event/new")
+                .set("x-mock-user", "superuser1")
+                .redirects(0)
+                .end(function(res) {
+                    expect(res.status).to.be(200);
+                    expect(/name=.overflowUserCap./.test(res.text)).to.be(true);
                     done();
                 });
         });
