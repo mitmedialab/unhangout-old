@@ -392,7 +392,7 @@ var VideoActivity = BaseActivityView.extend({
         this.yt = new video.YoutubeVideo({
             ytID: this.activity.video.id,
             showGroupControls: true,
-            groupScrubControl: true
+            permitGroupControl: true
         });
         this.yt.on("control-video", _.bind(function(args) {
             args.sessionId = this.session.id;

@@ -2,7 +2,7 @@
 <% include _navbar.ejs %>
 
 <div class="jumbotron">
-    <h1><img class="" src="/public/img/unhangout-logo.png" width="77" height="68" alt='Logo'> Unhangouts </h1>
+    <h1><img class="" src="/public/img/unhangout-logo.png" style='width: 77px; height: 68px' alt='Logo'> Unhangouts </h1>
 
     <h3>Create an Unhangout <small>It's free and always will be.</small></h3>
 </div>
@@ -113,6 +113,20 @@
             <% } %>
         </div>
     </div>
+
+    <% if (user.isSuperuser()) { %>
+        <div class="control-group<%= errors.overflowUserCap ? " error" : "" %>">
+            <label class="control-label" for="overflowUsersCap">Overflow user cap</label>
+            <div class='controls'>
+                <% if (errors.overflowUserCap) { %>
+                    <span class='help-inline'><%= errors.overflowUserCap %></span><br />
+                <% } %>
+                <input type='number' min="0" step="5"
+                       value='<%= event.get("overflowUserCap") %>'
+                       name="overflowUserCap" id="overflowUserCap" />
+            </div>
+        </div>
+    <% } %>
 
     <div class="control-group">
         <div class="controls">

@@ -187,11 +187,6 @@ views.UserView = Backbone.Marionette.ItemView.extend({
         'click' : 'click'
     },
 
-    initialize: function(args) {
-        Backbone.Marionette.ItemView.prototype.initialize.call(this, args);
-
-        this.listenTo(this.model, 'change:isBlurred', this.render, this);
-    },    
 
     click: function() {
         logger.log("user clicked: " + this.model.get("displayName"));
@@ -201,14 +196,6 @@ views.UserView = Backbone.Marionette.ItemView.extend({
         // add in the tooltip attributes    
         if(this.model.isAdminOf(this.options.event)) {
              this.$el.addClass("admin");
-        }
-
-        if(this.model.isBlurred()) {
-            this.$el.addClass("blur");
-            this.$el.removeClass("focus");
-        } else {
-            this.$el.removeClass("blur");
-            this.$el.addClass("focus");
         }
 
         // look for either an img or an i child, since people who don't have
@@ -553,7 +540,6 @@ views.WelcomeView = Backbone.Marionette.ItemView.extend({
     initialize: function(options) {
         Backbone.Marionette.ItemView.prototype.initialize.call(this, options);
         if (options.messages.length === 0) {
-            console.log("HEY!");
             options.messages.once("add", this.render);
         }
     },
@@ -590,7 +576,8 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
 
         if(msg.length>0) {
             this.options.sock.send(JSON.stringify({
-                type:"chat", args: {text: msg, roomId: this.options.event.getRoomId()}
+                type: "chat",
+                args: {text: msg, roomId: this.options.event.getRoomId()}
             }));
             this.ui.chatInput.val("");
         }
@@ -684,6 +671,20 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
     itemViewContainer: "#chat-list-container",
     id: "chat-container",
 
+    initialize: function() {
+        Backbone.Marionette.CompositeView.prototype.initialize.apply(this, arguments);
+        this.collection.on("over-capacity", _.bind(function() {
+            if (this._overCapacityTimeout) {
+                clearTimeout(this._overCapacityTimeout);
+            }
+            this.$(".over-capacity-warning").show();
+            this._overCapacityTimeout = setTimeout(_.bind(function() {
+                this.$(".over-capacity-warning").fadeOut();
+            }, this), 3000);
+
+        }, this));
+    },
+
     onBeforeItemAdded: function() {
         this.scroller = $("#chat-container-region");
         var limit = Math.max(this.scroller[0].scrollHeight - this.scroller.height() - 10, 0);
@@ -746,7 +747,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         'click .set-video': 'setVideo',
         'click .remove-video': 'removeVideo',
         'click .restore-previous-video': 'restorePreviousVideo',
-        'click .play-for-all': 'playForAll'
+        'click .play-for-all': 'playForAll',
+        'click .remove-hoa': 'removeHoA'
 
     },
 
@@ -800,6 +802,16 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             args: {ytId: null, roomId: this.model.getRoomId()}
         }));
     },
+    removeHoA: function(jqevt) {
+        jqevt.preventDefault();
+        // ensure hangout-broadcast-id is null, even if other things are
+        // incongruent.
+        this.model.setHoA(null);
+        this.options.sock.send(JSON.stringify({
+            type: "remove-hoa",
+            args: {roomId: this.model.getRoomId()}
+        }));
+    },
     playForAll: function(jqevt) {
         this.yt.playForEveryone(jqevt);
     },
@@ -846,7 +858,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         this.yt = new video.YoutubeVideo({
             ytID: this.model.get("youtubeEmbed"),
-            groupScrubControl: true,
+            permitGroupControl: IS_ADMIN,
             showGroupControls: false // We're doing our own controls on event pages.
         });
         if (IS_ADMIN) {

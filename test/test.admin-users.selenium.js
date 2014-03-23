@@ -70,6 +70,7 @@ describe("ADMIN USERS SELENIUM", function() {
             expect(url).to.eql("http://localhost:7777/admin/users/");
         });
         var selector = "tr[data-user-id='" + user.id + "'] input[type='checkbox']";
+        browser.waitForSelector(selector);
         browser.byCss(selector).click().then(function() {
             expect(user.isSuperuser()).to.be(true);    
         });
@@ -111,6 +112,7 @@ describe("ADMIN USERS SELENIUM", function() {
         // Remove admin-ship for this event.
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/admin/users/");
+        browser.waitForSelector(removeSelector);
         browser.byCss(removeSelector).click().then(function() {
             return common.await(function() {
                 expect(user.isAdminOf(event)).to.be(false);
@@ -134,6 +136,7 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/admin/users/");
+        browser.waitForSelector(permSelector);
         browser.byCss(permSelector).click();
         browser.wait(function() {
             if (user.hasPerm("createEvents") === true) {
@@ -141,6 +144,7 @@ describe("ADMIN USERS SELENIUM", function() {
             }
         });
         browser.get("http://localhost:7777/admin/users/");
+        browser.waitForScript("$");
         browser.executeScript('return $("'+permSelector+'").is(":checked");').then(function(checked) {
             expect(checked).to.be(true);
         });
@@ -151,6 +155,7 @@ describe("ADMIN USERS SELENIUM", function() {
             }
         });
         browser.get("http://localhost:7777/admin/users/");
+        browser.waitForScript("$");
         browser.executeScript('return $("'+permSelector+'").is(":checked");').then(function(checked) {
             expect(checked).to.be(false);
             done();

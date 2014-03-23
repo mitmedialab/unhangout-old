@@ -1,12 +1,19 @@
 var fs = require("fs"),
+    path = require("path"),
+    sinon = require("sinon"),
     expect = require("expect.js"),
     models = require("../lib/server-models"),
+    chatLogger = require("../lib/chat-logger"),
     common = require("./common"),
     Promise = require("bluebird");
 
 describe("CHAT LOGGER", function() {
+    this.timeout(4000); // Give a little extra time in case travis is bogged down.
     var event, user;
-    var expectedFile = __dirname + "/../public/logs/chat/test.txt"; 
+    // Resolve expectedFile to look like we're coming from inside ../lib/
+    // instead of inside ../test/, so we can compare it to the version that
+    // ../lib/chat-logger.
+    var expectedFile = path.join(__dirname, "/../lib") + "/../public/logs/chat/test.txt";
 
     function removeChatLog() {
         return new Promise(function(resolve, reject) {
@@ -65,6 +72,24 @@ describe("CHAT LOGGER", function() {
                 );
             });
         }).then(function() {
+            // We have a reference to an open stream..
+            expect(Object.keys(chatLogger._queues.openStreams)).to.eql(
+                [expectedFile]);
+            // ... and a reference to its timeout for closing.
+            expect(Object.keys(chatLogger._queues.closingStreams)).to.eql(
+                [expectedFile]);
+
+            // Close the stream "eventually".
+            var clock = sinon.useFakeTimers();
+            chatLogger._queues.openStreams[expectedFile].closeEventually();
+            clock.tick(10000 + 1);
+            clock.restore();
+
+            expect(chatLogger._queues.openStreams[expectedFile]).to.be(undefined);
+            expect(chatLogger._queues.closingStreams[expectedFile]).to.be(undefined);
+            expect(chatLogger._queues.pendingStreams[expectedFile]).to.be(undefined);
+            expect(chatLogger._queues.streamResolutionQueue[expectedFile]).to.be(undefined);
+
             done();
         }).catch(function(err) {
             done(err);

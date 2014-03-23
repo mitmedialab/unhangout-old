@@ -72,7 +72,7 @@
     {{ if (IS_ADMIN) { }}
 
     <div class="admin-buttons">
-        <div class="delete btn btn-warning"><i class="icon-trash"></i></div>
+        <div class="delete btn btn-warning"><i class="fa fa-trash-o"></i></div>
     </div>
 
     {{ } }}
@@ -160,6 +160,11 @@
 
 <script type="text/template" id="chat-template">
     <ul id="chat-list-container"></ul>
+    <div class='over-capacity-warning'>
+        <i class='fa fa-fire-extinguisher'></i>
+        Oh no! The server is overloaded and couldn't send your message. Please
+        try again soon.
+    </div>
 </script>
             
 <script type="text/template" id="user-column-layout-template">
@@ -217,21 +222,18 @@
         <p class="alert text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
     </div>
 
-    <p>or</p>
-
     <div class='button-group'>
-        <a class='btn {{= numHoaParticipants > 0 ? "btn-link" : "btn-default" }} create-hoa' target='_blank'
-           href='/event/{{- id }}/create-hoa/'>
-            <i class='fa fa-users'></i> Create Hangout-on-Air
-        </a>
         {{ if (hoaParticipationLink) { }}
-            <a class='btn {{= numHoaParticipants > 0 ? "btn-default" : "btn-link" }} join-hoa' target='_blank'
-               href='{{= hoaParticipationLink }}'>
-                {{ if (numHoaParticipants === 0) { }}
-                    Join (may have ended)
-                {{ } else { }}
-                    Join current <i class='fa fa-arrow-right'></i>
-                {{ } }}
+            <div class='btn-group'>
+                <a class='btn btn-default join-hoa' target='_blank'
+                   href='{{= hoaParticipationLink }}'>
+                    <i class='fa fa-users'></i> Join Hangout-on-Air
+                </a>
+                <button class='btn btn-warning remove-hoa' style='width: 15px; padding-left: 0px; padding-right: 0px;'><i class='fa fa-trash-o'></i></button>
+        {{ } else { }}
+            <a class='btn btn-default create-hoa' target='_blank'
+               href='/event/{{- id }}/create-hoa/'>
+                <i class='fa fa-users'></i> Create Hangout-on-Air
             </a>
         {{ } }}
     </div>
@@ -241,7 +243,7 @@
     <a tabindex='-1' href='#' class='restore-previous-video'
        style='text-align: left; width: 250px;'
        data-youtube-id='{{= id }}'>
-        <img src='{{= thumbnail.url }}' width=64 height=48 alt='thumbnail'>
+        <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
         <span class='title'>{{= title }}</span>
         <span style='font-size: smaller; color: #999;'>
             {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
