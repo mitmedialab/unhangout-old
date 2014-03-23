@@ -315,22 +315,33 @@ $(document).ready(function() {
 
     }, app);
 
-    app.vent.on("about-nav", _.bind(function() {
-        console.log("handling about-nav event");
+    app.vent.on("about-nav", _.bind(function(hide) {
+
+        if (hide == undefined) {
+            hide = aboutShown;
+        }
+
+        var el = this.top.$el;
 
         $(".updated").addClass("hide");
-        if(aboutShown) {
+        if (hide) {
             if(!curEvent.isLive()) {
                 // don't let people dismiss the about screen if the event isn't live.
                 return;
             }
 
-            this.top.$el.animate({"top":(-1*this.top.$el.outerHeight()-15)});
+            el.animate({
+                "top": -1 * el.outerHeight() - 15
+            }, {
+                done: function() {
+                    el.hide();
+                }
+            });
 
             aboutShown = false;
             $("#about-nav").removeClass("active");
         } else {
-            this.top.$el.animate({"top":0});
+            el.show().animate({"top":0});
             aboutShown = true;
 
             $("#about-nav").addClass("active");
@@ -342,9 +353,11 @@ $(document).ready(function() {
 
     // if the event isn't live yet, force the about page to show.
     if(!curEvent.isLive()) {
-        app.vent.trigger("about-nav");
+        // Force about pane to show itself.
+        app.vent.trigger("about-nav", false);
     } else {
-        app.top.$el.animate({"top":(-1*app.top.$el.outerHeight() - 200)});
+        // Make about pane hide itself.
+        app.vent.trigger("about-nav", true);
     }
 
     // Handles clicks on the nav bar links.
