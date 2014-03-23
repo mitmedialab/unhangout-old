@@ -66,7 +66,8 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-event h4").getText().then(function(text) {
                 expect(text).to.be("hosted by unhangoutdev@gmail.com");
             });
-            browser.byCss("#about-event .footer").getText().then(function(text) {
+            browser.waitForSelector("#about-event .about-footer");
+            browser.byCss("#about-event .about-footer").getText().then(function(text) {
                 expect(text.indexOf("has not yet started")).to.not.eql(-1);
             });
 
@@ -78,16 +79,34 @@ describe("CREATE EVENT", function() {
             browser.get("http://localhost:7777/event/" + eventId);
             // Expose the 'about' div
             browser.byCss("#about-nav a").click();
-            browser.executeScript("return $('#about-event .footer').is(':visible');").then(function(res) {
+            browser.waitForSelector("#about-event .scroll-up"); // Should have scroll-up
+            browser.executeScript("return $('#about-event .about-footer').is(':visible');").then(function(res) {
                 // No longer have footer message.
                 expect(res).to.be(false);
             });
+
+            function aboutIsVisible(isVisible) {
+                return browser.wait(function() {
+                    return browser.executeScript(
+                        'return $("#about-event").is(":visible");'
+                    ).then(function(visible) {
+                        return visible === isVisible;
+                    });
+                });
+            }
+
             // Hide the 'about' div
             browser.byCss("#about-nav a").click();
+            aboutIsVisible(false);
             browser.byCss("#session-list").getText().then(function(text) {
                 expect(text.indexOf("Sessions will appear here")).to.not.eql(-1);
             });
-
+            // Show about again, then hide via scroll-up button.
+            browser.byCss("#about-nav a").click();
+            aboutIsVisible(true);
+            browser.waitForSelector("#about-event .scroll-up");
+            browser.byCss("#about-event .scroll-up").click();
+            aboutIsVisible(false);
 
             // Edit the event
             browser.byCss(".admin-button").click();

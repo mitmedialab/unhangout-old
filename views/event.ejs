@@ -50,15 +50,16 @@
 
     {{ if (event.isLive()) { }}
 
-        <div class="event-footer pull-left"><i>This event has not yet started, come back at the posted start time to participate!</i>
-
-        <a class="scrollUp pull-right" href="#about-nav">
+        <a class="scroll-up pull-right" href="#about-nav">
             <i class="icon-chevron-up chevron"></i>
         </a>
 
         </div>
 
+     {{ } else { }}
+        <div class="about-footer pull-left"><i>This event has not yet started, come back at the posted start time to participate!</i>
      {{ } }}
+
      
 </script>
 
