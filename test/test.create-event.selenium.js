@@ -78,6 +78,7 @@ describe("CREATE EVENT", function() {
             // View the started event
             browser.get("http://localhost:7777/event/" + eventId);
             // Expose the 'about' div
+            browser.waitForScript("$");
             browser.byCss("#about-nav a").click();
             browser.waitForSelector("#about-event .scroll-up"); // Should have scroll-up
             browser.executeScript("return $('#about-event .about-footer').is(':visible');").then(function(res) {
