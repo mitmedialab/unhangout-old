@@ -18,7 +18,7 @@
     <% } %>
 </script>
 
-<div class="container">
+<div class="container event-page-container">
     <div id="app">
         <div class="row">
             <div id="global"></div>
@@ -48,7 +48,18 @@
     <br/><br/>
     {{= description }}
 
-    <div class="footer">This event has not yet started, come back at the posted start time to participate!</div>
+    {{ if (event.isLive()) { }}
+
+        <div class="event-footer pull-left"><i>This event has not yet started, come back at the posted start time to participate!</i>
+
+        <a class="scrollUp pull-right" href="#about-nav">
+            <i class="icon-chevron-up chevron"></i>
+        </a>
+
+        </div>
+
+     {{ } }}
+     
 </script>
 
 <script type="text/template" id="session-template">
