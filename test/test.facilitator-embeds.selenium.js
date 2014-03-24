@@ -34,6 +34,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/facilitator/" + session.id + "/");
         browser.waitForSelector(".cancel-autohide");
+        browser.waitForScript("$");
         browser.executeScript(
             "return $('.main-window').hasClass('sidebar');"
         ).then(function(val) {
@@ -77,6 +78,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.byCss(".modal input[type='submit']").click();
         browser.waitForSelector("iframe");
         browser.byCss(".webpage-activity"); // throws error if it's not there
+        browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
             expect(src).to.eql("http://localhost:7777/public/html/test.html");
             expect(session.get("activities")).to.eql([{
@@ -93,6 +95,7 @@ describe("FACILITATOR EMBEDS", function() {
             "https://youtu.be/NIylUcGDi-Y")
         browser.byCss(".modal input[type='submit']").click();
         browser.waitForSelector("iframe");
+        browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
             expect(src).to.eql("https://www.youtube.com/embed/NIylUcGDi-Y?wmode=transparent&enablejsapi=1&origin=http%3A%2F%2Flocalhost%3A7777")
             expect(session.get("activities")).to.eql([{

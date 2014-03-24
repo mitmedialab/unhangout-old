@@ -33,6 +33,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     it("Shows event page when there aren't too many people.", function(done) {
         checkEventTitle("", "regular1", done);
     });
+
     it("Shows overflow page when there are too many people.", function(done) {
         event.set("overflowUserCap", 0);
         checkEventTitle(" - Overflow", "regular1", function() {
@@ -40,6 +41,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             done();
         });
     });
+
     it("Does not send admin to overflow page.", function(done) {
         event.set("overflowUserCap", 0);
         // ensure admin1 is an admin.
@@ -51,4 +53,17 @@ describe('HTTP ADMIN EVENTS API', function() {
             done();
         });
     });
+
+    it("Shows custom overflowMessage.", function(done) {
+        event.set("overflowMessage", "Hot diggity");
+        request.get("http://localhost:7777/event/" + event.id)
+            .set("x-mock-user", "regular1")
+            .redirects(0)
+            .end(function(res) {
+                expect(res.status).to.be(200);
+                expect(res.text.indexOf("Hot diggity")).to.not.eql(-1);
+                done();
+            });
+    })
+
 });

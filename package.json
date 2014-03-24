@@ -17,7 +17,7 @@
     "postinstall": "node ./bin/compile-assets.js",
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
-    "test": "NODE_ENV=testing mocha test/test.[a-r]* test/test.[t-z]* && sleep 1 && NODE_ENV=testing mocha test/test.s*",
+    "test": "NODE_ENV=testing mocha --timeout 10000 test/test.[a-r]* test/test.[t-z]* && sleep 1 && NODE_ENV=testing mocha --timeout 10000 test/test.s*",
     "forever-start": "NODE_ENV=production forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o logs/out.log -e logs/err.log bin/unhangout-server",
     "forever-stop": "forever stop bin/unhangout-server",
     "forever-restart": "NODE_ENV=production forever restart bin/unhangout-server",

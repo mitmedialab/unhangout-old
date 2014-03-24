@@ -17,26 +17,30 @@
     <div class="control-group<%= errors.title ? " error" : "" %>">
         <label class="control-label" for="inputTitle">Event Title</label>
         <div class="controls">
-            <input style="width: 560px;" type="text" id="inputTitle" name="title"
-                   placeholder="Give your event a catchy title"
-                   value="<%= event.get("title") || "" %>"
-                   required>
-            <% if (errors.title) { %>
-                <span class='help-inline'><%= errors.title %></span>
-            <% } %>
+            <div class='container'>
+                <input style="width: 100%" type="text" id="inputTitle" name="title"
+                       placeholder="Give your event a catchy title"
+                       value="<%= event.get("title") || "" %>"
+                       required>
+                <% if (errors.title) { %>
+                    <span class='help-inline'><%= errors.title %></span>
+                <% } %>
+            </div>
         </div>
     </div>
 
     <div class="control-group<%= errors.organizer ? " error" : "" %>">
         <label class="control-label" for="inputOrganizer">Event Organizer</label>
         <div class="controls">
-            <input style="width: 560px;" type="text" id="inputOrganizer"
-                   placeholder="Tell your attendees who is organizing this event"
-                   name="organizer"
-                   value="<%= event.get("organizer") || "" %>">
-            <% if (errors.organizer) { %>
-                <span class='help-inline'><%= errors.organizer %></span>
-            <% } %>
+            <div class='container'>
+                <input style="width: 100%" type="text" id="inputOrganizer"
+                       placeholder="Tell your attendees who is organizing this event"
+                       name="organizer"
+                       value="<%= event.get("organizer") || "" %>">
+                <% if (errors.organizer) { %>
+                    <span class='help-inline'><%= errors.organizer %></span>
+                <% } %>
+            </div>
         </div>
     </div>
 
@@ -45,7 +49,7 @@
         <div class="controls">
             <input style="width: 300px; text-align: right;" type="text" id="eventURL"
                    placeholder="<%= baseUrl %>/event/" disabled>
-            <input style="width: 242px;" type="text" id="inputShortName" name="shortName"
+            <input style="width: 255px;" type="text" id="inputShortName" name="shortName"
                    placeholder="event-url"
                    value="<%= event.get("shortName") || "" %>">
             <% if (errors.shortName) { %>
@@ -57,8 +61,8 @@
     <div class="control-group<%= errors.dateAndTime ? " error" : "" %>">
         <label class="control-label" for="inputDate">Event Date/Time</label>
         <div class="controls">
-            <div class="input-append date form_datetime">
-                <input size="16" type="text" style="cursor: pointer; width: 504px;"
+            <div class="input-append date form_datetime container">
+                <input size="16" type="text" style="cursor: pointer; width: 518px;"
                        <% if (!event.get("dateAndTime")) { %>
                            value=""
                        <% } else { %>
@@ -77,27 +81,31 @@
     <div class="control-group<%= errors.timeZoneValue ? " error" : "" %>">
         <label id="tzLabel" class="control-label" for="timeZone">Time Zone</label>
         <div class="controls">
-            <select id="timeZoneValue" style="width: 570px;" name="timeZoneValue"
-                    class="form-control">
-                <option value=""></option>
-                <!-- options created in script below -->
-            </select> 
-            <% if (errors.timeZoneValue) { %>
-                <span class='help-inline'><%= errors.timeZoneValue %></span>
-            <% } %>
+            <div class='container'>
+                <select id="timeZoneValue" style="width: 100%" name="timeZoneValue"
+                        class="form-control">
+                    <option value=""></option>
+                    <!-- options created in script below -->
+                </select> 
+                <% if (errors.timeZoneValue) { %>
+                    <span class='help-inline'><%= errors.timeZoneValue %></span>
+                <% } %>
+            </div>
         </div>
     </div>
 
     <div class="control-group<%= errors.welcomeMessage ? " error" : "" %>">
         <label class="control-label" for="inputWelcomeMessage">Welcome Message</label>
         <div class="controls">
-            <textarea rows=1 cols=40 type="text" id="inputWelcomeMessage"
-                      name="welcomeMessage" placeholder="Welcome Message for Participants"
-                      style='width: 560px;'
-                ><%= event.get("welcomeMessage") || "" %></textarea>
-            <% if (errors.welcomeMessage) { %>
-                <span class='help-inline'><%= errors.welcomeMessage %></span>
-            <% } %>
+            <div class='container'>
+                <textarea rows=1 cols=40 type="text" id="inputWelcomeMessage"
+                          name="welcomeMessage" placeholder="Welcome Message for Participants"
+                          style='width: 100%;'
+                    ><%= event.get("welcomeMessage") || "" %></textarea>
+                <% if (errors.welcomeMessage) { %>
+                    <span class='help-inline'><%= errors.welcomeMessage %></span>
+                <% } %>
+            </div>
         </div>
     </div>
     
@@ -105,8 +113,9 @@
         <label class="control-label" for="inputDescription">Event Description </label>
         <div class="controls">
             <div class="container">
-                <textarea class="summernote" name="description" rows=5 style='width: 100%;'
-                          required><%= event.get("description") || "" %></textarea>
+                <textarea class="summernote" name="description"
+                    rows=5 cols=40 style='width: 100%;'
+                    required><%= event.get("description") || "" %></textarea>
             </div>
             <% if (errors.description) { %>
                 <span class='help-inline'><%= errors.description %></span>
@@ -124,9 +133,29 @@
                 <input type='number' min="0" step="5"
                        value='<%= event.get("overflowUserCap") %>'
                        name="overflowUserCap" id="overflowUserCap" />
+                <span class='help-inline'>
+                    Send users to the 'overflow' page if more than this number
+                    connect.
+                </span>
             </div>
         </div>
     <% } %>
+
+    <div class="control-group<%= errors.overflowMessage ? " error" : "" %>">
+        <label class='control-label' for='overflowMessage'>Overflow Message</label>
+        <div class='controls'>
+            </span>
+            <% if (errors.overflowMessage) { %>
+                <span class='help-inline'><%= errors.overflowMessage %></span>
+            <% } %>
+            <div class='container'>
+                <span class='help-inline'>Message shown to users if the event is over capacity. Could include links to a backup forum or youtube video, for example.
+                <textarea rows=3 cols=40 type="text" id="overflowMessage"
+                          name="overflowMessage" style='width: 100%'
+                    ><%= event.get("overflowMessage") || "" %></textarea>
+            </div>
+        </div>
+    </div>
 
     <div class="control-group">
         <div class="controls">
