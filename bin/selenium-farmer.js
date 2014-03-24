@@ -70,7 +70,7 @@ function run(callback) {
 }
 if (require.main === module) {
     run(function() {
-        console.log("Successfully farmed up to ", farmConf.count, "urls.");
-        process.exit();
+        //console.log("Successfully farmed up to ", farmConf.count, "urls.");
+        process.exit(0);
     });
 }
