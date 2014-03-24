@@ -109,6 +109,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("superuser1");
         browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
         browser.waitForSelector("#message-sessions");
         browser.byCss("#message-sessions").click();
