@@ -1,1 +1,3 @@
-Email dharry@media.mit.edu for support!
+The best way to get support is to create an issue in our github repository (https://github.com/drewww/unhangout/issues).
+
+If that's not what you are looking for, you can send an email to srishti@media.mit.edu.
