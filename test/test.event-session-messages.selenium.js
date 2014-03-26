@@ -44,7 +44,7 @@ describe("EVENT SESSION MESSAGES", function() {
                 sock = theSock;
                 function onData(data) {
                     var message = JSON.parse(data);
-                    expect(message.type).to.be("session/event-message"); 
+                    expect(message.type).to.be("session/event-message");
                     expect(message.args).to.eql({
                         sender: "Superuser1 Mock",
                         message: "##unhangouts## Superuser1 Mock: This is fun!",
@@ -71,7 +71,7 @@ describe("EVENT SESSION MESSAGES", function() {
     });
 
     it("Sessions display message sent by admin", function(done) {
-        
+
         var sock;
         var session = event.get("sessions").at(0);
 

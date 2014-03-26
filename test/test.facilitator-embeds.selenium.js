@@ -46,7 +46,7 @@ describe("FACILITATOR EMBEDS", function() {
         var session = event.get("sessions").at(0);
         browser.get("http://localhost:7777/")
         browser.mockAuthenticate("regular1");
-        
+
         // Load a session page with a webpage activity.
         session.set("activities", [{type: "webpage", url: "http://localhost:7777/public/html/test.html"}]);
         browser.get("http://localhost:7777/facilitator/" + session.id + "/");
@@ -72,7 +72,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.byCss(".modal-body input[type='text']").sendKeys("   ");
         browser.byCss(".modal input[type='submit']").click();
         // Nothing should happen... the next call should fail if the modal is closed.
-        
+
         // Allows non-blank URLs.
         browser.byCss(".modal-body input[type='text']").sendKeys("http://localhost:7777/public/html/test.html");
         browser.byCss(".modal input[type='submit']").click();

@@ -14,7 +14,7 @@ describe("SERVEREVENT", function() {
             should.exist(event);
         });
     });
-    
+
     describe("#isLive", function() {
         it('should return false before start is called on an event', function() {
             var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
@@ -63,7 +63,7 @@ describe("SERVEREVENT", function() {
             err.should.be.instanceOf(Error);
         });
     });
-    
+
     describe("#stop", function() {
         it('should stop if started already', function() {
             var event = new models.ServerEvent({title:"My great event", description:"This will be a great event."});
@@ -89,19 +89,19 @@ describe("SERVEREVENT", function() {
         it("should add a connected user to its internal list", function() {
             var user = new models.ServerUser();
             var event = new models.ServerEvent();
-            
+
             event.userConnected(user);
             event.get("connectedUsers").at(0).should.equal(user);
         });
         it("should return one user connected after one user connects", function() {
             var user = new models.ServerUser();
             var event = new models.ServerEvent();
-            
+
             event.userConnected(user);
             event.numUsersConnected().should.equal(1);
         });
     });
-    
+
     describe("#numUsersConnected", function() {
         it('should return 0 for a new event', function() {
             var event = new models.ServerEvent();

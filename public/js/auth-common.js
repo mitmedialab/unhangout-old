@@ -13,7 +13,7 @@
 //          USER_NAME: '<%= user.get("displayName").replace("'", "\\'") %>',
 //      <% } %>
 // Currently, 'views/_header.ejs' does this.
-// 
+//
 // Requiring this module reads that AUTH state and persists it to localStorage.
 // If the AUTH state doesn't exist, localStorage is cleared (assumed to have
 // logged out).  However, if AUTH doesn't exist and

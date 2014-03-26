@@ -14,7 +14,7 @@ describe("FRONT PAGE", function() {
         });
     });
     after(function(done) {
-        browser.quit().then(function() { 
+        browser.quit().then(function() {
             common.standardShutdown(done);
         });
     });
@@ -57,4 +57,4 @@ describe("FRONT PAGE", function() {
         });
     });
 });
-    
+

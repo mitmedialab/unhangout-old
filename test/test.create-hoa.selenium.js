@@ -63,7 +63,7 @@ describe("CREATE HOA", function() {
         expect(user.isAdminOf(event)).to.be(true);
 
         var windowHandle;
-        
+
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate(user.get("sock-key"));
         browser.get("http://localhost:7777/event/" + event.id);

@@ -72,10 +72,10 @@ describe("ADMIN USERS SELENIUM", function() {
         var selector = "tr[data-user-id='" + user.id + "'] input[type='checkbox']";
         browser.waitForSelector(selector);
         browser.byCss(selector).click().then(function() {
-            expect(user.isSuperuser()).to.be(true);    
+            expect(user.isSuperuser()).to.be(true);
         });
         browser.byCss(selector).click().then(function() {
-            expect(user.isSuperuser()).to.be(false);    
+            expect(user.isSuperuser()).to.be(false);
             done();
         });
     });

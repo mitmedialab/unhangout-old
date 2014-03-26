@@ -1,6 +1,6 @@
 // The views in this file define all the major pieces of the client-side event
 // UI.  We are using Backbone.Marionette for our views, which provides some
-// extra layers on top of the basic Backbone view objects. 
+// extra layers on top of the basic Backbone view objects.
 //
 // You can read more about Backbone.Marionette's objects here:
 // https://github.com/marionettejs/backbone.marionette/tree/master/docs
@@ -10,11 +10,11 @@
 // interface is for the entire event. The event app itself is basically the
 // event view.
 //
-// Each view has a matching template (defined in event.ejs) that contains its 
+// Each view has a matching template (defined in event.ejs) that contains its
 // markup. On top of that, it defines various events (to respond to, eg, clicks
 // on its own elements) as well as other on-render behavior to change how
 // the view looks in response to changes in its model or other application
-// state. 
+// state.
 
 define([
    "underscore", "backbone", "video", "logger", "models", "auth",
@@ -54,13 +54,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         var start = new Date().getTime();
         this.$el.attr("data-session-id", this.model.id);
-        // mostly just show/hide pieces of the view depending on 
+        // mostly just show/hide pieces of the view depending on
         // model state.
         this.$el.addClass("live");
 
         // remove the toggle-ness of the button once the event starts.
         this.ui.attend.attr("data-toggle", "");
-        this.ui.attend.removeClass("btn-info");            
+        this.ui.attend.removeClass("btn-info");
         this.ui.attend.removeClass("active");
         this.ui.attend.addClass("btn-success");
 
@@ -158,7 +158,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 });
 
 // The list view contains all the individual session views. We don't
-// manually make the session views - all that is handled by the 
+// manually make the session views - all that is handled by the
 // marionette CollectionView logic.
 views.SessionListView = Backbone.Marionette.CollectionView.extend({
     template: "#session-list-template",
@@ -193,7 +193,7 @@ views.UserView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
-        // add in the tooltip attributes    
+        // add in the tooltip attributes
         if(this.model.isAdminOf(this.options.event)) {
              this.$el.addClass("admin");
         }
@@ -450,7 +450,7 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
     initialize: function() {
         this.listenTo(this.collection, 'add remove', function() {
             // going to manually update the current user counter because
-            // doing it during render doesn't seem to work. There's some 
+            // doing it during render doesn't seem to work. There's some
             // voodoo in how marionette decides how much of the view to
             // re-render on events, and it seems to exclude the piece out-
             // side the item-view-container, assuming it doesn't have
@@ -462,9 +462,9 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
 
             // Other side note: be aware that there is some magic in
             // marionette around adding to collections. It apparently
-            // tries to just auto-add the new record to the 
+            // tries to just auto-add the new record to the
             // itemViewContainer. This is a little weird when
-            // combined with the pagination system, which doesn't 
+            // combined with the pagination system, which doesn't
             // necessarily show all incoming models. Just something
             // to keep an eye on. More info here:
             // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.compositeview.md#model-and-collection-rendering
@@ -492,7 +492,7 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
 
 // Manages chat message display. The layout piece sets up the differnt chat zones:
 // the area where we show messages, the space where we put users, and the space
-// where chat messages are entered. 
+// where chat messages are entered.
 views.ChatLayout = Backbone.Marionette.Layout.extend({
     template: '#chat-layout',
     id: 'chat',
@@ -589,10 +589,10 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         if(!this.options.event.isLive()) {
             this.$el.find("#chat-input").attr("disabled", true);
-            this.$el.find("#chat-input").addClass("disabled");            
+            this.$el.find("#chat-input").addClass("disabled");
         } else {
             this.$el.find("#chat-input").removeAttr("disabled");
-            this.$el.find("#chat-input").removeClass("disabled");            
+            this.$el.find("#chat-input").removeClass("disabled");
         }
     }
 });

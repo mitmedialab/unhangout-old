@@ -2,8 +2,8 @@ var _ = require('underscore')._,
     async = require('async'),
     redis = require('redis');
 
-if(require.main === module) 
-{    
+if(require.main === module)
+{
     var r = redis.createClient();
     r.on("connect", function() {
 

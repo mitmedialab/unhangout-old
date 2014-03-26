@@ -29,7 +29,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 done();
             });
     }
-    
+
     it("Shows event page when there aren't too many people.", function(done) {
         checkEventTitle("", "regular1", done);
     });

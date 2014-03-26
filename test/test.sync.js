@@ -8,13 +8,13 @@ var event;
 
 
 describe('sync', function() {
-    
+
     describe("#init", function() {
         it('should initialize properly', function() {
             sync.init(logger, redis);
         });
     })
-    
+
     describe('#sync', function() {
         beforeEach(function(done) {
             redis.select(1, function(err, res) {
@@ -34,7 +34,7 @@ describe('sync', function() {
                 done();
             }});
         });
-        
+
         it('should write to a hash key specified by the object\'s url.', function(done) {
             event = new models.Event();
             event.save(null, {success: function() {

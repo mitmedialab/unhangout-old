@@ -22,7 +22,7 @@
             <i class="icon-facetime-video"></i>
         <% } else { %>
             <i class="icon-remove-sign"></i>
-        <% } %> 
+        <% } %>
 
         <span>
         <%= session.getState() == "started" ? "LIVE" : "OFFLINE" %>
@@ -32,7 +32,7 @@
     <br/><br/>
 
     <p class="permalink-description"><%= session.get("description") %></p>
-    
+
     <% } %>
 </form>
 

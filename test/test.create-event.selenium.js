@@ -15,7 +15,7 @@ describe("CREATE EVENT", function() {
         });
     });
     after(function(done) {
-        browser.quit().then(function() { 
+        browser.quit().then(function() {
             common.standardShutdown(done);
         });
     });
@@ -34,7 +34,7 @@ describe("CREATE EVENT", function() {
         browser.byCss("[name='organizer']").sendKeys("unhangoutdev@gmail.com");
         browser.byCss("[name='welcomeMessage']").sendKeys("Welcome!");
         browser.byCss("[name='description']").sendKeys("<b>Fun event!</b>");
-        
+
         /* Disabled until we can figure out sanitization issues.
         // richtext editor control.
         browser.waitForSelector(".note-editable");
@@ -53,7 +53,7 @@ describe("CREATE EVENT", function() {
                     expect(text).to.be("Test Title");
                 }
             );
-            
+
             // Event hasn't started
             browser.get("http://localhost:7777/event/" + eventId)
             browser.getTitle().then(function(title) {
@@ -129,7 +129,7 @@ describe("CREATE EVENT", function() {
                 expect(attrs).to.eql({
                     title: att.title,
                     organizer: att.organizer,
-                    shortName: att.shortName, 
+                    shortName: att.shortName,
                     dateAndTime: moment(att.dateAndTime).format(event.DATE_DISPLAY_FORMAT),
                     timeZoneValue: att.timeZoneValue,
                     welcomeMessage: att.welcomeMessage,

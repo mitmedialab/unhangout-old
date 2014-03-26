@@ -84,7 +84,7 @@ describe("HANGOUT REDIRECTS", function() {
     it("Uses a farmed hangout link when available", function(done) {
         farming.reuseUrl("http://example.com/farmed", function(err) {
             expect(err).to.be(null);
-        
+
             var url = "http://example.com/farmed" + suffix("regular1");
             checkRedirect(url, "regular1", function() {
                 farming.getNextHangoutUrl(function(err, url) {

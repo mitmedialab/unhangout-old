@@ -47,7 +47,7 @@ exports.run = function(dbId, redis, callback) {
                 // start: new Date().getTime()+60*60*24*4*1000, end: new Date().getTime()+60*60*24*4*1000 + 60*60*2*1000}));
 
                 var sessions = [];
-                
+
                 sessions.push(new models.ServerSession({
                     title:"Writing as Making/Making as Writing",
                     description: "This webinar featured both inside and outside of school educators and media makers to discuss the impact of thinking about what happens when you put the learner front and enter in the role of producer. Facilitated by Elyse Eidman-Aadahl, NWP."
@@ -125,6 +125,6 @@ if(require.main === module) {
     r.on("connect", function() {
         exports.run(0, r, function() {
             process.exit();
-        });        
+        });
     })
 }

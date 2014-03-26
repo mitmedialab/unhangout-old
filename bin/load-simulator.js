@@ -19,7 +19,7 @@
 //       with test sessions.
 //
 // 2. On the server, run ``bin/prepare-load-simulator-data.js``.  This will
-//    create a large number of sessions in the specified EVENT_ID event, 
+//    create a large number of sessions in the specified EVENT_ID event,
 //    as well as a large number of test users.
 //
 // 3. Finally, on the client, run ``bin/load-simulator.js``, which will
@@ -28,14 +28,14 @@
 //    for each client so that you get unique users from the different machines.
 //
 // 4. When finished, on the server, run:
-//      
+//
 //      bin/prepare-load-simulator-data.js --delete
 //
 //    which will delete all of the test users, sessions, and event indicated by
 //    simulatorConf.js's SERVER section.
-//    
+//
 // If you get the error EMFILE (too many open files), try fixing it with:
-// 
+//
 //      ulimit -n 2048
 //
 
@@ -244,7 +244,7 @@ Rando.prototype = {
                         this.eventSock.state = "authorized";
                     }
                 } else if (Math.random() > 0.9) {
-                    if (!simConf.DISABLE_BLUR) { 
+                    if (!simConf.DISABLE_BLUR) {
                         if (this.eventSock.focused) {
                             this.eventSock.write("blur", {roomId: EVENT_ROOM_ID});
                             this.eventSock.focused = false;

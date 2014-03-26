@@ -264,10 +264,10 @@ var FacilitatorView = Backbone.View.extend({
         if (jqevt) { jqevt.preventDefault(); }
         this.$el.toggleClass("sidebar");
         var isSidebar = this.$el.hasClass("sidebar");
-        
+
         // Move the faces app from the default activity list to its own space.
         if (isSidebar) {
-            // Shrink to sidebar! 
+            // Shrink to sidebar!
             this.faces.setActive(true);
             this.faces.resize();
         } else {
@@ -438,7 +438,7 @@ var WebpageActivity = BaseActivityView.extend({
         }
         // Discussion of this approach to detecting when an iframe has loaded:
         // http://www.nczonline.net/blog/2009/09/15/iframes-onload-and-documentdomain/
-        // This doesn't catch 
+        // This doesn't catch
         if (iframe.attachEvent) {
             iframe.attachEvent("onload", isLoaded);
         } else {
@@ -505,7 +505,7 @@ var AddActivityDialog = BaseModalView.extend({
         $(".remove-embed").toggle(!!this.options.hasCurrentEmbed);
     },
     removeEmbed: function() {
-        this.trigger("submit", null); 
+        this.trigger("submit", null);
         this.close();
     },
     validate: function() {
