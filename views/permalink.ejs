@@ -4,36 +4,36 @@
 <div class="container">
 
 <form action="/h/admin/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
-	<% if(showAdmin) { %>
+    <% if(showAdmin) { %>
 
-	<input name="creationKey" type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
+    <input name="creationKey" type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
 
-	<input id="title" name="title" type="text" class="large" placeholder="Title">
-	<textarea name="description" id="description" placeholder="Description"></textarea>
-	<input type='submit' class="btn btn-primary" id="session-update" value='SET TITLE AND DESCRIPTION'>
-	<% } else { %>
+    <input id="title" name="title" type="text" class="large" placeholder="Title">
+    <textarea name="description" id="description" placeholder="Description"></textarea>
+    <input type='submit' class="btn btn-primary" id="session-update" value='SET TITLE AND DESCRIPTION'>
+    <% } else { %>
 
-	<br/>
+    <br/>
 
-	<span class="permalink-title"><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></span>
+    <span class="permalink-title"><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></span>
 
-	<div class="hangout-status">
-		<% if(session.getState() != "stopped") { %>
-			<i class="icon-facetime-video"></i>
-		<% } else { %>
-			<i class="icon-remove-sign"></i>
-		<% } %> 
+    <div class="hangout-status">
+        <% if(session.getState() != "stopped") { %>
+            <i class="icon-facetime-video"></i>
+        <% } else { %>
+            <i class="icon-remove-sign"></i>
+        <% } %> 
 
-		<span>
-		<%= session.getState() == "started" ? "LIVE" : "OFFLINE" %>
-		</span>
-	</div>
+        <span>
+        <%= session.getState() == "started" ? "LIVE" : "OFFLINE" %>
+        </span>
+    </div>
 
-	<br/><br/>
+    <br/><br/>
 
-	<p class="permalink-description"><%= session.get("description") %></p>
-	
-	<% } %>
+    <p class="permalink-description"><%= session.get("description") %></p>
+    
+    <% } %>
 </form>
 
 <br><br>
@@ -46,16 +46,16 @@
 <br>
 
 <div class="participant-info">
-	<% _.each(session.get("connectedParticipants"), function(udata) { %>
+    <% _.each(session.get("connectedParticipants"), function(udata) { %>
         <div class='participant'>
             <% if (udata.link) { %><a href="<%= udata.link %>" target="blank"><% } %>
             <img style='width: 100px; height: 100px' src="<%= udata.picture %>" alt='profile image' />
             <% if (udata.link) { %></a><% } %>
             <span class="overlay"><%= udata.displayName %></span>
         </div>
-	<% }); %>
+    <% }); %>
 
-	<br/><br/><br/><br/>
+    <br/><br/><br/><br/>
 </div>
 
 <% } %>

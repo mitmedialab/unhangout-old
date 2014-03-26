@@ -1,14 +1,14 @@
 var server = require('../lib/unhangout-server'),
-	expect = require('expect.js'),
-	_ = require('underscore')._,
-	request = require('superagent'),
+    expect = require('expect.js'),
+    _ = require('underscore')._,
+    request = require('superagent'),
     options = require("../lib/options"),
     common = require('./common');
 
 var event;
 
 describe('HTTP ADMIN EVENTS API', function() {
-	afterEach(common.standardShutdown);
+    afterEach(common.standardShutdown);
     beforeEach(function(done) {
         common.standardSetup(function() {
             event = common.server.db.events.get(1);

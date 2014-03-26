@@ -303,21 +303,21 @@ models.EventList = Backbone.Collection.extend({
 // Sessions are the individual meetings that make up an event. Sessions
 // (potentially) have a hangout connected to them. 
 models.Session = Backbone.Model.extend({
-	idRoot: "session",
-	MAX_ATTENDEES: 10,
+    idRoot: "session",
+    MAX_ATTENDEES: 10,
 
-	defaults: function() {
-		return {
+    defaults: function() {
+        return {
             // Description
-			title: "",
-			description: "",
-			shortCode: null,
+            title: "",
+            description: "",
+            shortCode: null,
             // State
-			connectedParticipants: [],
+            connectedParticipants: [],
             activities: [],
             "hangout-broadcast-id": null // Youtube ID For Hangouts on air
-		};
-	},
+        };
+    },
     getRoomId: function() {
         return this.id ? "session/" + this.id : null
     },

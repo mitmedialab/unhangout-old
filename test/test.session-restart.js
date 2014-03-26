@@ -1,7 +1,7 @@
 var server = require('../lib/unhangout-server'),
     models = require("../lib/server-models"),
-	expect = require('expect.js'),
-	_ = require('underscore'),
+    expect = require('expect.js'),
+    _ = require('underscore'),
     sinon = require('sinon'),
     sync = require("../lib/redis-sync"),
     common = require('./common');

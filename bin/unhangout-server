@@ -6,7 +6,7 @@
 var _ = require('underscore'),
     logger = require('../lib/logging.js').getLogger(),
     options = require('../lib/options.js'),
-	server = require('../lib/unhangout-server.js');
+    server = require('../lib/unhangout-server.js');
 
 // TODO switch this to a file. Had trouble with getting that working, though.
 
@@ -15,11 +15,11 @@ logger.info("config: " + JSON.stringify(options));
 
 var s = new server.UnhangoutServer();
 s.on("inited", function() {
-	s.start();
+    s.start();
 });
 s.init(options);
 
 // catch all to make sure uncaught exceptions don't bring down the whole server.
 process.on('uncaughtException', function(err) {
-  logger.error(err.stack);
+    logger.error(err.stack);
 });
