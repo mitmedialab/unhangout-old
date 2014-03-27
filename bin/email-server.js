@@ -12,7 +12,7 @@
 //      emailServer.start(handler,
 //                        <port (default to conf.UNHANGOUT_SMTP_PORT or 2525)>,
 //                        <started calback>);
-//       
+//
 //      `handler(parsedMessage)`: called with a parsedMail object (see
 //          https://github.com/andris9/mailparser#parsed-mail-object)
 

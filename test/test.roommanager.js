@@ -44,7 +44,7 @@ function authedSocket(user, callback) {
             throw new Error(message);
         }
     });
-    sock.on("error", function(data) { 
+    sock.on("error", function(data) {
         throw new Error(data);
     });
 }
@@ -134,7 +134,7 @@ describe("ROOM MANAGER", function() {
         var socket1, socket2, socket3;
         // Params from join/leave triggers.
         var args1, args2, args3;
-        
+
         // Expectations with one socket from `user` in the room.
         function expectOne(socket, args) {
             expect(mgr.roomToSockets).to.eql({"someroom": [socket]});
@@ -147,7 +147,7 @@ describe("ROOM MANAGER", function() {
             expect(mgr.socketBindings[socket.id]).to.not.be(undefined);
         }
 
-        // Expectations with two sockets from `user` in the room. 
+        // Expectations with two sockets from `user` in the room.
         function expectTwo(socket, args) {
             expect(mgr.roomToSockets.someroom.length).to.be(2);
             expect(_.contains(mgr.roomToSockets.someroom, socket)).to.be(true);
@@ -459,7 +459,7 @@ describe("ROOM MANAGER", function() {
                 });
             });
         });
-      
+
     });
 
     it("Restricts joining with channel auth", function(done) {

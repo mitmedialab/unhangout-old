@@ -164,7 +164,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             title: "Excellent",
             description: "Party time",
             shortName: "unique-city",
-            dateAndTime: "wat",
+            dateAndTime: "wat lol no",
             timeZoneValue: "America/New_York"
         }
         request.post("http://localhost:7777/admin/event/new")
@@ -413,7 +413,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     it('/admin/event/:id accepts POST from admin', function(done) {
         var user = common.server.db.users.findWhere({"sock-key": "admin1"});
         var evt = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        var sessions = evt.get("sessions"); 
+        var sessions = evt.get("sessions");
         // the user should be an admin of this event..
         expect(evt.userIsAdmin(user)).to.be(true);
         // .. but they shouldn't need createEvents permission.

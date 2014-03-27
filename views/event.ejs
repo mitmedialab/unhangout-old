@@ -60,7 +60,7 @@
         <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
      {{ } }}
 
-     
+
 </script>
 
 <script type="text/template" id="session-template">
@@ -83,7 +83,7 @@
         No one has joined this session yet.
     </div>
 </script>
-            
+
 <script type="text/template" id="session-list-template">
     <div id="session-list-container" class="full-size-container">
         <div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
@@ -113,7 +113,7 @@
         </div>
     </div>
 </script>
-            
+
 <script type="text/template" id="user-template">
     {{ if(!picture) { }}
         <i class="icon-user icon-3x"></i>
@@ -123,7 +123,7 @@
         <img src="{{- picture}}" alt='profile'>
     {{ } }}
 </script>
-            
+
 <script type="text/template" id="user-list-template">
     <div class="header">
         <span class="contents">{{- numUsers}}</span><i class="icon-user"></i>
@@ -132,11 +132,11 @@
         <ul id="user-list-container"></ul>
     </div>
 </script>
-            
+
 <script type="text/template" id="chat-message-template">
     <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
 </script>
-            
+
 <script type="text/template" id="chat-layout">
     <div id="chat-container-region" class="span5">
         <div id='welcome-message'></div>
@@ -167,12 +167,12 @@
         try again soon.
     </div>
 </script>
-            
+
 <script type="text/template" id="user-column-layout-template">
     <div id="user-list"></div>
     <div id="footer"></div>
-</script>            
-            
+</script>
+
 <script type="text/template" id="video-embed-template">
     <div class='video-player'></div>
     <div class='video-placeholder'>Video</div>
@@ -189,7 +189,7 @@
                 {{ } }}
             </button>
             <button class='btn btn-small pull-right remove-video'>
-                Remove <i class='fa fa-times'></i> 
+                Remove <i class='fa fa-times'></i>
             </button>
         </div>
     {{ } }}
@@ -385,7 +385,7 @@
             <p>It is time to join your session!</p>
             <a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
         </div>
-    </div>    
+    </div>
     <div class="modal hide fade disconnected-modal" id="disconnected-modal">
         <div class="modal-header"><h3>Warning!</h3></div>
         <div class="modal-body">
@@ -406,7 +406,7 @@
 </script>
 
 <% include _video-templates.ejs %>
-    
+
 <%- requireScripts("/public/js/event-app.js") %>
 <% include _analytics.ejs %>
 <% include _preload-facilitator.ejs %>

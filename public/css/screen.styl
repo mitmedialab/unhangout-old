@@ -15,19 +15,19 @@ body {
   }
 
 .btn-primary {
-	background: $navbar;	
+  background: $navbar;
 }
 
 .navbar-inverse .navbar-inner
 {
   // Use nib's linear-gradient expander to target all browsers.
   background-image: linear-gradient(top, $navbar, $navbar);
-	border-color: $navbar;
+  border-color: $navbar;
 }
 
 
 .brand, .navbar-inverse .brand {
-	color: #fff;
+  color: #fff;
 }
 
 a.dropdown-toggle {
@@ -35,61 +35,61 @@ a.dropdown-toggle {
 }
 
 .admin-header {
-	width: 100%;
-	height: 5px;
-	background-color: orange;
-	
-	position: absolute;
-	top: 0px;
-	z-index: 2000;
+  width: 100%;
+  height: 5px;
+  background-color: orange;
+
+  position: absolute;
+  top: 0px;
+  z-index: 2000;
 }
 
 .fill {
-	position: absolute;
-	
-	top: 40px;
-	bottom: 0px;
-	
-	width: auto;
-	height: auto;
+  position: absolute;
+
+  top: 40px;
+  bottom: 0px;
+
+  width: auto;
+  height: auto;
 }
 
 .navbar .nav > li > a {
-  	color: $navbar-li;
+    color: $navbar-li;
  }
 
 .nav {
-	li.active > a{
-		background-color: $navbar-li-bgcolor !important;
-	}
+  li.active > a{
+    background-color: $navbar-li-bgcolor !important;
+  }
 
-	.circle {
-		background-color: #da4f49;
-		width: 6px;
-		height: 12px;
-		border-radius: 5px;
+  .circle {
+    background-color: #da4f49;
+    width: 6px;
+    height: 12px;
+    border-radius: 5px;
 
-		margin-right: 5px;
+    margin-right: 5px;
 
-		display: block;
-		position: absolute;
-		right: 5px;
-		top: 14px;
+    display: block;
+    position: absolute;
+    right: 5px;
+    top: 14px;
 
-		&.hide {
-			display: none;
-		}
-	}
+    &.hide {
+      display: none;
+    }
+  }
 }
 
 .dropdown-menu>li>a {
-	color: #333;
+  color: #333;
 }
 
 .dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus{
-	text-decoration:none;
-	color:#fff;
-	background: $navbar;
+  text-decoration:none;
+  color:#fff;
+  background: $navbar;
 }
 
 .dropdown-menu > li.active > a {
@@ -110,15 +110,15 @@ hr.noshade {
 }
 
 .identity {
-	height: 40px;
+  height: 40px;
 
-	& > div {
-		float: right;
-	}
+  & > div {
+    float: right;
+  }
 
-	.admin-button:hover, .admin-button:visited, .admin-button:active {
-		color: orange;
-	}
+  .admin-button:hover, .admin-button:visited, .admin-button:active {
+    color: orange;
+  }
 }
 
 .fifty-fifty {
@@ -144,15 +144,15 @@ hr.noshade {
     box-shadow: 0px 5px 0px rgba(50, 50, 50, 0.5);
 
     .chevron  {
-	  color: white;
-	  text-decoration: none;
-	}
+    color: white;
+    text-decoration: none;
+  }
 }
 
 .event-navbar {
-	.container {
-  		width: 1000px;
-  	}
+  .container {
+      width: 1000px;
+    }
 }
 
 .event-page-container {
@@ -162,166 +162,166 @@ hr.noshade {
 }
 
 #app {
-	position: absolute;
-	
-	top: 40px;
-	bottom: 0px;
-	width: 1000px;
+  position: absolute;
+
+  top: 40px;
+  bottom: 0px;
+  width: 1000px;
 }
 
 #top {
-	position: absolute;
-	background-color: white;
+  position: absolute;
+  background-color: white;
 
-	box-shadow: 3px 3px 3px #aaa;
-	border: 1px solid #aaa;
+  box-shadow: 3px 3px 3px #aaa;
+  border: 1px solid #aaa;
 
-	box-sizing: border-box;
+  box-sizing: border-box;
 
-	z-index: 60;
-	left: 0px;
-	right: 0px;
-	top: -400px;
+  z-index: 60;
+  left: 0px;
+  right: 0px;
+  top: -400px;
 
-	padding: 10px;
+  padding: 10px;
 }
 
 
 #main-right {
-	position: absolute;
-	height: 100%;
+  position: absolute;
+  height: 100%;
 
-	box-sizing: border-box;
-	background-color: $background-light;
-	padding-left: 10px;
+  box-sizing: border-box;
+  background-color: $background-light;
+  padding-left: 10px;
 
-	z-index: 10;
+  z-index: 10;
 
-	right: 20px;
-	left: 440px;
+  right: 20px;
+  left: 440px;
 
-	// &.bar {
-	// 	top: 40px;
-	// }
+  // &.bar {
+  //   top: 40px;
+  // }
 
-	width: 550px;
+  width: 550px;
 
-	overflow: hidden;
+  overflow: hidden;
 }
 
 #left {
-	position: absolute;
+  position: absolute;
 
-	box-sizing: border-box;
+  box-sizing: border-box;
 
-	border-right: 1px solid #aaa;
-	box-shadow: 3px 3px 3px #aaa;
+  border-right: 1px solid #aaa;
+  box-shadow: 3px 3px 3px #aaa;
 
-	z-index: 20;
+  z-index: 20;
 
-	bottom: 0px;
-	top: 0px;
+  bottom: 0px;
+  top: 0px;
 
-	overflow-y: auto;
+  overflow-y: auto;
   padding-bottom: 40px;
 }
 
 #main {
-/*	border: 1px solid purple;*/
-	height: 100%;
-/*	background-color: #eee;*/
+/*  border: 1px solid purple;*/
+  height: 100%;
+/*  background-color: #eee;*/
 }
 
 #presence-gutter {
-	width: 150px;
+  width: 150px;
 
-	position: absolute;
-	top: 0px;
-	right: 0px;
-	bottom: 0px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
 
-	// overflow-y: scroll;
-	// overflow-x: visible;
+  // overflow-y: scroll;
+  // overflow-x: visible;
 
-	ul {
-		margin: 0px;
-	}
+  ul {
+    margin: 0px;
+  }
 
-	border-left: 1px solid #aaa;
-	box-shadow: -3px 0px 3px #aaa;
-	background-color: white;
+  border-left: 1px solid #aaa;
+  box-shadow: -3px 0px 3px #aaa;
+  background-color: white;
 
-	// .tooltip-inner {
-	// 	white-space: nowrap;
-	// }
+  // .tooltip-inner {
+  //   white-space: nowrap;
+  // }
 
-	// .tooltip {
-	// 	left: -70px !important;
-	// }
+  // .tooltip {
+  //   left: -70px !important;
+  // }
 
-	#user-list {
-		padding-left: 5px;
-	}
+  #user-list {
+    padding-left: 5px;
+  }
 
-	.header {
-		width: 140px;
-		background-color: $primary;
-		text-align: center;
-		margin-left: -5px;
-		// margin-right: -5px;
-		// margin-top: -5px;
+  .header {
+    width: 140px;
+    background-color: $primary;
+    text-align: center;
+    margin-left: -5px;
+    // margin-right: -5px;
+    // margin-top: -5px;
 
-		color: white;
-		font-weight: bold;
+    color: white;
+    font-weight: bold;
 
-		.icon-user {
-			margin-left: 3px;
-		}
+    .icon-user {
+      margin-left: 3px;
+    }
 
-		margin-bottom: 5px;
-	}
+    margin-bottom: 5px;
+  }
 
 
-	#user-list-scroll-container {
-		overflow-y: auto;
+  #user-list-scroll-container {
+    overflow-y: auto;
 
-		position: absolute;
-		bottom: 0px;
-		right: 0px;
-		left: 0px;
-		top: 20px;
-	}
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    left: 0px;
+    top: 20px;
+  }
 }
 
 
 .event-mini-form {
-	width: 500px;
-	overflow: hidden;
+  width: 500px;
+  overflow: hidden;
 
-	.btn-primary {
-		background: $navbar;
-	}
+  .btn-primary {
+    background: $navbar;
+  }
 
-	img, span {
-		float: left;
-	}
+  img, span {
+    float: left;
+  }
 
-	span {
-		margin-top: 10px;
-		margin-left: 10px;
-		font-size: 16px;
-	}
+  span {
+    margin-top: 10px;
+    margin-left: 10px;
+    font-size: 16px;
+  }
 
-	.modal-body {
-		overflow: hidden;
-	}
+  .modal-body {
+    overflow: hidden;
+  }
 
-	.modal-footer {
-		margin-bottom: -35px;
-		margin-left: -15px;
-		margin-right: -15px;
-		height: 55px;
-	}
+  .modal-footer {
+    margin-bottom: -35px;
+    margin-left: -15px;
+    margin-right: -15px;
+    height: 55px;
+  }
 }
 
 .faux-hangout-notice {
@@ -342,108 +342,108 @@ hr.noshade {
 }
 
 .username, .admin-button {
-	display: block;
-	font-size: 14px;
-	color: $navbar-li;
-	padding: 10px 15px 10px 15px;
-	line-height: 20px;
-	
-	&:hover, &:active, &:visited {
-		color: white;
-		text-decoration: none;
-	}
+  display: block;
+  font-size: 14px;
+  color: $navbar-li;
+  padding: 10px 15px 10px 15px;
+  line-height: 20px;
+
+  &:hover, &:active, &:visited {
+    color: white;
+    text-decoration: none;
+  }
 }
 .user {
-	width: 40px;
-	height: 40px;
+  width: 40px;
+  height: 40px;
 
-	margin-top: 5px;
-	margin-left: 5px;
-	
-	border: 1px solid $background;
-	box-sizing: border-box;
-	
-	background-color: white;
-	
-	float: left;
-	
-	overflow: hidden;
+  margin-top: 5px;
+  margin-left: 5px;
 
-	&.admin {
-		border: 3px solid $background;
-		border-color: orange;
+  border: 1px solid $background;
+  box-sizing: border-box;
 
-		img {
-			position: relative;
-			// top: -3px;
-		}
+  background-color: white;
 
-		i {
-			padding-left: 2px;
-		}
-	}
+  float: left;
 
-	img {
-		width: 40px;
-		// height: 40px;
-	}
-	
-	i {
-		font-size: 40px;
-		width: 40px;
-		height: 40px;
-		line-height: 40px;
-		padding-left: 5px;
+  overflow: hidden;
 
-		display: block;
-	}
+  &.admin {
+    border: 3px solid $background;
+    border-color: orange;
+
+    img {
+      position: relative;
+      // top: -3px;
+    }
+
+    i {
+      padding-left: 2px;
+    }
+  }
+
+  img {
+    width: 40px;
+    // height: 40px;
+  }
+
+  i {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    line-height: 40px;
+    padding-left: 5px;
+
+    display: block;
+  }
 
 }
 
-#session-list {	
-	padding-top: 5px;
+#session-list {
+  padding-top: 5px;
 
-	ul {
-		margin: 0px;
-	}
+  ul {
+    margin: 0px;
+  }
 
-	p {
-		margin-left: 20px;
-	}
+  p {
+    margin-left: 20px;
+  }
 
-	.full-size-container {
-		top: 10px;
-	}
+  .full-size-container {
+    top: 10px;
+  }
 
-	.footer {
-		margin-top: 0px;
-		margin-left: auto;
-		margin-right: auto;
-		padding-left: 15px;
-		width: 200px;
+  .footer {
+    margin-top: 0px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 15px;
+    width: 200px;
 
-		clear: left;
+    clear: left;
 
-		div {
-			float: left;
-			color: black;
-				padding: 5px;
+    div {
+      float: left;
+      color: black;
+        padding: 5px;
 
-			&:hover {
-				cursor: pointer;
-				background-color: #ddd;
-			}
+      &:hover {
+        cursor: pointer;
+        background-color: #ddd;
+      }
 
-			&.active {
-				border: 1px solid #aaa;
-			}
+      &.active {
+        border: 1px solid #aaa;
+      }
 
-			&.page {
-				margin-left: 5px;
-				margin-right: 5px;
-			}
-		}
-	}
+      &.page {
+        margin-left: 5px;
+        margin-right: 5px;
+      }
+    }
+  }
 }
 
 /*
@@ -451,253 +451,253 @@ hr.noshade {
  */
 
 .session {
-	position: relative;
+  position: relative;
 
-	box-sizing: border-box;
-	
-
-	width: 450px;
-	height: 75px;
-
-	overflow: hidden;
-
-	&:hover {
-		height: 75px;
-	}
-
-	.hangout-users, .hangout-offline {
-		position: absolute;
-		top: 40px;
-		left: 0px;
-		right: 0px;
-		height: 40px;
-
-		padding-left: 5px;
-
-		.user, .empty {
-			float: left;
-			margin-right: 5px;
-			width: 30px;
-			height: 30px;
-
-			list-style: none;
-		}
-
-		.empty {
-			background-color: $background-light;
-			padding-top: 0px;
-
-			box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.25);
-		}
-
-		.user {
-			margin-top: 0px;
-			margin-left: 0px;
-			&.admin {
-				border: 2px solid orange;
-				margin-right: 5px;
-			}
-
-			i {
-				font-size: 26px;
-				line-height: 30px;
-			}
-		}
-	}
-
-	.hangout-offline {
-		text-align: center;
-		color: $background;
-		font-style: italic;
-	}
+  box-sizing: border-box;
 
 
-	float: left;
+  width: 450px;
+  height: 75px;
 
-	padding: 5px;
+  overflow: hidden;
 
-	.label {
-		margin-left: 5px;
-	}
+  &:hover {
+    height: 75px;
+  }
 
-	h3 {
-		// background-color: $primary;
-		// color: white;
-		color: $primary;
-		margin: 0px;
-		
-		font-weight: normal;
-		font-size: 1.0em;
+  .hangout-users, .hangout-offline {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    right: 0px;
+    height: 40px;
 
-		line-height: 15px;
+    padding-left: 5px;
 
-		// padding: 10px 10px 5px 10px;
-		
-		i {
-			margin-right: 5px;
-		}
-		
-		left: 0px;
-		
-		height: 40px;
+    .user, .empty {
+      float: left;
+      margin-right: 5px;
+      width: 30px;
+      height: 30px;
 
-		width: 260px;
-	}
-	
-	.description {
-		padding: 5px;
-	}
-	
-	.attend.btn {
-		color: white;
-		border-radius: 0px;
-		
-		position: absolute;
-		top: 4px;
-		right: 0px;
+      list-style: none;
+    }
 
-		height: 23px;
+    .empty {
+      background-color: $background-light;
+      padding-top: 0px;
 
-		width: 130px;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.25), 0 1px 0 rgba(255, 255, 255, 0.25);
+    }
 
-		.icon-lock {
-			margin-right: 5px;
-		}
-	}
-	.empty {
-		height: 40px;
-		text-align: center;
-		color: #aaa;
-		font-style: italic;
-		padding-top: 20px;
-	}
+    .user {
+      margin-top: 0px;
+      margin-left: 0px;
+      &.admin {
+        border: 2px solid orange;
+        margin-right: 5px;
+      }
 
-	.started.label {
-		margin-left: 5px;
-	}
+      i {
+        font-size: 26px;
+        line-height: 30px;
+      }
+    }
+  }
 
-	&.live {
-		&:nth-child(odd) {
-			background-color: #ECFFF0;
-
-		}
-
-		&:nth-child(even) {
-			background-color: #D5EBD9;
-		}
-	}
-	
-	&:nth-child(odd) {
-		background-color: #efefef;
-
-	}
-
-	&:nth-child(even) {
-		background-color: white;
-	}
-
-	.attending {
-		height: 50px;
-		padding: 5px;
-		padding-top: 15px;
-		
-		.first {
-			width: 50px;
-			height: 50px;
-			background-color: $background;
-			
-			float: left;
-			
-			.user {
-				margin: 0px;
-				width: 50px;
-				height: 50px;
-				
-				border: 0px;
-				
-				img, i {
-					width: 50px;
-					height: 50px;
-					line-height: 50px;
-				}
-				
-				i {
-					margin-left: 5px;
-				}
-				
-			}
-		}
-		
-		.counter {
-			background-color: $background;
-			
-			width: 12px;
-			height: 50px;
-			
-			margin-left: 5px;
-			float: left;
-			
-			&.selected {
-				background-color: $primary;
-			}
-		}
-		
-		.full {
-			background-color: #F85863;
-			color: white;
-			float: left;
-			width: 42px;
-			height: 35px;
-			
-			padding-left: 8px;
-			padding-top: 15px;
-			
-			margin-left: 5px;
-		}
-	}
-	
-	.admin-buttons {
-		position: absolute;
+  .hangout-offline {
+    text-align: center;
+    color: $background;
+    font-style: italic;
+  }
 
 
-		right: 0px;
-		top: 4px;
+  float: left;
 
-		height: 33px;
-		
-		.btn {
-			border-radius: 0px;
-			top: 0px;
-			bottom: 0px;
-			position: absolute;
+  padding: 5px;
 
-			padding-left: 0px;
-			padding-right: 0px;
-			width: 15px;
+  .label {
+    margin-left: 5px;
+  }
 
-			&.delete {
-				right: 0px;
-			}
-		}
-	}
+  h3 {
+    // background-color: $primary;
+    // color: white;
+    color: $primary;
+    margin: 0px;
 
-	.outer {
-		position: relative;
-		z-index: 10000;
+    font-weight: normal;
+    font-size: 1.0em;
 
-		.attend-count {
-			margin-left: 5px;
-		}
-	}
+    line-height: 15px;
 
-	.attendance {
-		position: absolute;
-		top: -1px;
-		left: 0px;
-		height: 32px;
-		width: 50%;
-		background-color: rgba(66, 94, 97, 0.5);
-	}
+    // padding: 10px 10px 5px 10px;
+
+    i {
+      margin-right: 5px;
+    }
+
+    left: 0px;
+
+    height: 40px;
+
+    width: 260px;
+  }
+
+  .description {
+    padding: 5px;
+  }
+
+  .attend.btn {
+    color: white;
+    border-radius: 0px;
+
+    position: absolute;
+    top: 4px;
+    right: 0px;
+
+    height: 23px;
+
+    width: 130px;
+
+    .icon-lock {
+      margin-right: 5px;
+    }
+  }
+  .empty {
+    height: 40px;
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+    padding-top: 20px;
+  }
+
+  .started.label {
+    margin-left: 5px;
+  }
+
+  &.live {
+    &:nth-child(odd) {
+      background-color: #ECFFF0;
+
+    }
+
+    &:nth-child(even) {
+      background-color: #D5EBD9;
+    }
+  }
+
+  &:nth-child(odd) {
+    background-color: #efefef;
+
+  }
+
+  &:nth-child(even) {
+    background-color: white;
+  }
+
+  .attending {
+    height: 50px;
+    padding: 5px;
+    padding-top: 15px;
+
+    .first {
+      width: 50px;
+      height: 50px;
+      background-color: $background;
+
+      float: left;
+
+      .user {
+        margin: 0px;
+        width: 50px;
+        height: 50px;
+
+        border: 0px;
+
+        img, i {
+          width: 50px;
+          height: 50px;
+          line-height: 50px;
+        }
+
+        i {
+          margin-left: 5px;
+        }
+
+      }
+    }
+
+    .counter {
+      background-color: $background;
+
+      width: 12px;
+      height: 50px;
+
+      margin-left: 5px;
+      float: left;
+
+      &.selected {
+        background-color: $primary;
+      }
+    }
+
+    .full {
+      background-color: #F85863;
+      color: white;
+      float: left;
+      width: 42px;
+      height: 35px;
+
+      padding-left: 8px;
+      padding-top: 15px;
+
+      margin-left: 5px;
+    }
+  }
+
+  .admin-buttons {
+    position: absolute;
+
+
+    right: 0px;
+    top: 4px;
+
+    height: 33px;
+
+    .btn {
+      border-radius: 0px;
+      top: 0px;
+      bottom: 0px;
+      position: absolute;
+
+      padding-left: 0px;
+      padding-right: 0px;
+      width: 15px;
+
+      &.delete {
+        right: 0px;
+      }
+    }
+  }
+
+  .outer {
+    position: relative;
+    z-index: 10000;
+
+    .attend-count {
+      margin-left: 5px;
+    }
+  }
+
+  .attendance {
+    position: absolute;
+    top: -1px;
+    left: 0px;
+    height: 32px;
+    width: 50%;
+    background-color: rgba(66, 94, 97, 0.5);
+  }
 }
 
 /*
@@ -705,26 +705,26 @@ hr.noshade {
  */
 
 #chat-input-region {
-		position: absolute;
-		bottom: 0px;
-		left: 0px;
-		right: 55px;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    right: 55px;
 
-		width: 370px;
-		height: 35px;
+    width: 370px;
+    height: 35px;
 
-		padding-left: 10px;
+    padding-left: 10px;
 
-		background-color: $background-light;
+    background-color: $background-light;
 
-		input {
-			width: 360px;
-		}
+    input {
+      width: 360px;
+    }
 }
 
 #chat {
-	overflow-y: hidden;
-	overflow-x: visible;
+  overflow-y: hidden;
+  overflow-x: visible;
 
   #welcome-message {
     padding: 10px;
@@ -749,73 +749,73 @@ hr.noshade {
     background-color: #fee;
     border: 1px solid red;
   }
-	
-	#chat-container-region {
-		width: 398px;
-		bottom: 40px;
-		margin-left: 0px;
 
-		position: absolute;
-		top: 0px;
-		bottom: 0px;
-		left: 0px;
-		right: 150px;
-		overflow-y: auto;
+  #chat-container-region {
+    width: 398px;
+    bottom: 40px;
+    margin-left: 0px;
 
-		#chat-list-container {
-			height: auto;
-			width: auto;
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 150px;
+    overflow-y: auto;
 
-			margin: 0px 0px 45px 0px;
+    #chat-list-container {
+      height: auto;
+      width: auto;
 
-			.chat-message {
+      margin: 0px 0px 45px 0px;
+
+      .chat-message {
         word-wrap: break-word;
 
-				&.past {
-					opacity: 0.3;
-				}
+        &.past {
+          opacity: 0.3;
+        }
 
-				padding-left: 100px;
+        padding-left: 100px;
 
-				&.system {
-					text-align: center;
-					font-style: italic;
+        &.system {
+          text-align: center;
+          font-style: italic;
 
-					padding-left: 0px;
-					padding-bottom: 10px;
-					padding-top: 10px;
+          padding-left: 0px;
+          padding-bottom: 10px;
+          padding-top: 10px;
 
-					margin-left: 20px;
-					margin-right: 20px;
-					margin-bottom: 20px;
+          margin-left: 20px;
+          margin-right: 20px;
+          margin-bottom: 20px;
 
-					border-bottom: 1px solid #aaa;
-					.from {
-						display: none;
-					}
-				}
+          border-bottom: 1px solid #aaa;
+          .from {
+            display: none;
+          }
+        }
 
-				span.from {
-					margin-left: -120px;
-					float: left;
-					display: block;
-					font-weight: bold;
+        span.from {
+          margin-left: -120px;
+          float: left;
+          display: block;
+          font-weight: bold;
 
-					width: 115px;
-					text-align: right;
+          width: 115px;
+          text-align: right;
 
-					&.admin {
-						color: orange;
-					}
-				}
-			}
-		}
-	}
+          &.admin {
+            color: orange;
+          }
+        }
+      }
+    }
+  }
 }
 
 #global {
-	position: absolute;
-	z-index: 1000;
+  position: absolute;
+  z-index: 1000;
 }
 
 /*
@@ -940,196 +940,196 @@ hr.noshade {
 
 /*---------------------------- INDEX STYLES ---------------------------*/
 .jumbotron {
-	color: $navbar;
-	height: 120px;
-	background-size: 1400px;
-	margin-top: -20px;
-	font-family: "open sans",arial,sans-serif;
+  color: $navbar;
+  height: 120px;
+  background-size: 1400px;
+  margin-top: -20px;
+  font-family: "open sans",arial,sans-serif;
 
-	h1 {
-		padding-top: 20px;
-		margin-top: 0px;
-		font-weight: 200;
-		font-size: 32px;
-	}
+  h1 {
+    padding-top: 20px;
+    margin-top: 0px;
+    font-weight: 200;
+    font-size: 32px;
+  }
 
-	h1,  h3{
-		width: 940px;
-		margin-left: auto;
-		margin-right: auto;
-	}
+  h1,  h3{
+    width: 940px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 
-	h3 {
-		font-weight: 200;
-		font-size: 20px;
-	}
+  h3 {
+    font-weight: 200;
+    font-size: 20px;
+  }
 
-	.create-event-button {
-		margin-top: -100px;
-		float: right;
-	}
+  .create-event-button {
+    margin-top: -100px;
+    float: right;
+  }
 
-	.btn-primary {
-		background: $navbar;
-		padding: 17px 20px;
-		font-size: 18px;
-	}
+  .btn-primary {
+    background: $navbar;
+    padding: 17px 20px;
+    font-size: 18px;
+  }
 }
 
 .profile-thumbnail {
-	margin-top: -5px;
-	border-radius: 5px;
+  margin-top: -5px;
+  border-radius: 5px;
 }
 
 .event {
-		margin-left: 20px;
-		margin-top: 20px;
+    margin-left: 20px;
+    margin-top: 20px;
 
-	.title, .description {
-		float: left;
-		color: #333;
-		font-family: "open sans",arial,sans-serif;
+  .title, .description {
+    float: left;
+    color: #333;
+    font-family: "open sans",arial,sans-serif;
 
-		a {
-			color: $event-links;
-			text-decoration:none;
-		}
+    a {
+      color: $event-links;
+      text-decoration:none;
+    }
 
-		a:hover,a:focus {
-			text-decoration:underline;
-		}
-	}
+    a:hover,a:focus {
+      text-decoration:underline;
+    }
+  }
 
-	.title {
-		font-weight: 200;
-		font-size: 20px;
-	}
+  .title {
+    font-weight: 200;
+    font-size: 20px;
+  }
 
-	.description {
-		margin-top: 20px;
-		font-size: 16px;
-		width: 800px;
-	}
+  .description {
+    margin-top: 20px;
+    font-size: 16px;
+    width: 800px;
+  }
 
-	.date {
-		float: left;
-		width: 100px;
-		margin-right: 20px;
+  .date {
+    float: left;
+    width: 100px;
+    margin-right: 20px;
 
-		.day, .time {
-			text-align: center;
-			background-color: $primary;
-			color: white;
-			padding: 3px;
-		}
+    .day, .time {
+      text-align: center;
+      background-color: $primary;
+      color: white;
+      padding: 3px;
+    }
 
-		.number {
-			box-sizing: border-box;
+    .number {
+      box-sizing: border-box;
 
-			color: $primary;
-			font-size: 3em;
-			font-weight: bold;
-			text-align: center;
-			height: 50px;
-			padding-top: 15px;
-			border-right: 1px solid $primary;
-			border-left: 1px solid $primary;
-		}
+      color: $primary;
+      font-size: 3em;
+      font-weight: bold;
+      text-align: center;
+      height: 50px;
+      padding-top: 15px;
+      border-right: 1px solid $primary;
+      border-left: 1px solid $primary;
+    }
 
-		.time {
-			background-color: $primary;
-			color: white;
-		}
-	}
+    .time {
+      background-color: $primary;
+      color: white;
+    }
+  }
 }
 
 #about-event {
-	.about-footer {
+  .about-footer {
     padding-top: 1em;
     clear: both;
     font-weight: bold;
-		color: #444;
-		margin-left: auto;
-		margin-right: auto;
-		font-style: italic;
-	}
+    color: #444;
+    margin-left: auto;
+    margin-right: auto;
+    font-style: italic;
+  }
 
-	h3 {
-	  	color: #444;
-	  	font-weight: 400;
-	  	font-size: 30px;
-	}  
+  h3 {
+      color: #444;
+      font-weight: 400;
+      font-size: 30px;
+  }
 
-	h4 {
-	  	font-weight: 400;
-	  	font-size: 14px;
-	}
+  h4 {
+      font-weight: 400;
+      font-size: 14px;
+  }
 }
 
 .admin-table-buttons {
-	.btn {
-		float: left;
-		margin-top: 5px;
-	}
+  .btn {
+    float: left;
+    margin-top: 5px;
+  }
 }
 
 .event-container {
-	margin-left: 0px;
+  margin-left: 0px;
 
-	h3 {
-		margin-top: 20px;
-		font-weight: 400;
-		font-size: 26px;
-		color: #444;
-	}
+  h3 {
+    margin-top: 20px;
+    font-weight: 400;
+    font-size: 26px;
+    color: #444;
+  }
 }
 
 .signup {
-	h3 {
-		margin-top: 20px;
-		font-weight: 400;
-		font-size: 26px;
-		color: #444;
-	}
+  h3 {
+    margin-top: 20px;
+    font-weight: 400;
+    font-size: 26px;
+    color: #444;
+  }
 
-	p {
-		color: #3c3c3c;
-		font-size: 16px;
-		font-family: "open sans",arial,sans-serif;
-	}
+  p {
+    color: #3c3c3c;
+    font-size: 16px;
+    font-family: "open sans",arial,sans-serif;
+  }
 
-	.btn-primary {
-		background: $navbar;
-	}
+  .btn-primary {
+    background: $navbar;
+  }
 }
 
 .footer {
-	margin-top: 50px;
-	color: #aaa;
+  margin-top: 50px;
+  color: #aaa;
 }
 
 #permalink-create {
-	label {
-		width: 250px;
-	}
+  label {
+    width: 250px;
+  }
 }
 
 .credits {
-	position: fixed;
-	bottom: 0px;
-	z-index: 100000;
-	background-color: white;
-	width: 459px;
-	text-align: center;
-	font-size: 12px;
+  position: fixed;
+  bottom: 0px;
+  z-index: 100000;
+  background-color: white;
+  width: 459px;
+  text-align: center;
+  font-size: 12px;
 }
 
 .empty-notice {
-	width: 50%;
-	font-style: italic;
-	margin-left: auto;
-	margin-right: auto;
-	margin-top: 50px;
+  width: 50%;
+  font-style: italic;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 50px;
 }
 /*-------------------------- STATIC EVENT PAGE ------------------------*/
 
@@ -1142,61 +1142,61 @@ hr.noshade {
   box-shadow: 0px 0px 5px #333;
 
   h3 {
-  	color: #444;
-  	font-weight: 400;
-  	font-size: 30px;
-  }  
+    color: #444;
+    font-weight: 400;
+    font-size: 30px;
+  }
 
   h4 {
-  	font-weight: 400;
-  	font-size: 14px;
-  }  
+    font-weight: 400;
+    font-size: 14px;
+  }
 }
 
 /*-------------------------- HOW TO UNHANGOUT -------------------------*/
 
 .how-to-unhangout {
-	color: #444;
-	margin-left: 20px;
-	margin-top: 10px;
-	height: 450px;
-	font-family: "open sans",arial,sans-serif;
+  color: #444;
+  margin-left: 20px;
+  margin-top: 10px;
+  height: 450px;
+  font-family: "open sans",arial,sans-serif;
 
-	h4 {
-		margin-top: 45px;
-		margin-left: 600px;
-		font-weight: 200;
-		font-size: 22px;
-	}
-	
-	img {
-		margin-left: 70px;
-		float: left;
-		width: 500px;
-		height: 433px;
-	}
+  h4 {
+    margin-top: 45px;
+    margin-left: 600px;
+    font-weight: 200;
+    font-size: 22px;
+  }
 
-	p {
-		font-size: 14px;
-		float: right;
-		width: 240px;
-	}
+  img {
+    margin-left: 70px;
+    float: left;
+    width: 500px;
+    height: 433px;
+  }
 
-	.step-description {
-		float: right;
-		width: 340px;
-		margin-top: 30px;
-	}
+  p {
+    font-size: 14px;
+    float: right;
+    width: 240px;
+  }
 
-	.step-icon {
-		//color: #63666a;
-		color: $navbar;
-		margin-left: 20px;
-	}
+  .step-description {
+    float: right;
+    width: 340px;
+    margin-top: 30px;
+  }
+
+  .step-icon {
+    //color: #63666a;
+    color: $navbar;
+    margin-left: 20px;
+  }
 }
 
 .circle {
-	margin-bottom: -52px;
+  margin-bottom: -52px;
     width: 40px;
     height: 40px;
     border-radius:40px;
@@ -1209,131 +1209,131 @@ hr.noshade {
 }
 
 .how-to-container {
-	.footer {
-		margin-left: 70px;	
-		margin-top: -10px;
-	}
+  .footer {
+    margin-left: 70px;
+    margin-top: -10px;
+  }
 }
 
 /* ------------------------- ABOUT PAGE -------------------------------*/
 
 #about-event {
-	.footer {
+  .footer {
     margin-top: 20px;
     color: #aaa;
-		width: 400px;
-		margin-left: auto;
-		margin-right: auto;
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 
-		font-style: italic;
-	}
+    font-style: italic;
+  }
 }
 
 .about-container {
-	h1, h3 {
-		color: #444;
-	}
+  h1, h3 {
+    color: #444;
+  }
 
-	h1 {
-		font-weight: 400;
-		font-size: 26px;
-	}
+  h1 {
+    font-weight: 400;
+    font-size: 26px;
+  }
 
-	h3 {
-		font-weight: 400;
-		font-size: 20px;
-	}
+  h3 {
+    font-weight: 400;
+    font-size: 20px;
+  }
 
-	p, li {
-		color: #333;
-		font-family: "open sans",arial,sans-serif;
+  p, li {
+    color: #333;
+    font-family: "open sans",arial,sans-serif;
 
-		a {
-			color: $event-links;
-			text-decoration:none;
-		}
+    a {
+      color: $event-links;
+      text-decoration:none;
+    }
 
-		a:hover,a:focus {
-			text-decoration:underline;
-		}
-	}
+    a:hover,a:focus {
+      text-decoration:underline;
+    }
+  }
 
 }
 
 /*-------------------------- PERMALINKS -------------------------------*/
 
 .permalink-container {
-	p {
-		color: #333;
-		font-family: "open sans",arial,sans-serif;
+  p {
+    color: #333;
+    font-family: "open sans",arial,sans-serif;
 
-		a {
-			color: $event-links;
-			text-decoration:none;
-		}
+    a {
+      color: $event-links;
+      text-decoration:none;
+    }
 
-		a:hover,a:focus {
-			text-decoration:underline;
-		}
-	}	
+    a:hover,a:focus {
+      text-decoration:underline;
+    }
+  }
 
-	.footer {
-		a {
-			color: $event-links;
-			text-decoration:none;
-		}
+  .footer {
+    a {
+      color: $event-links;
+      text-decoration:none;
+    }
 
-		a:hover,a:focus {
-			text-decoration:underline;
-		}
-	}
+    a:hover,a:focus {
+      text-decoration:underline;
+    }
+  }
 
-	.btn-primary {
-		background: $navbar;
-	}
+  .btn-primary {
+    background: $navbar;
+  }
 }
 
 .permalink-title {
-	font-size: 34px;
-	color: #3c3c3c;
+  font-size: 34px;
+  color: #3c3c3c;
 }
 
 .permalink-description {
-	font-size: 18px;
-	color: #3c3c3c;
+  font-size: 18px;
+  color: #3c3c3c;
 }
 
 .participants-header {
-	font-size: 18px;
-	color: #63666a;
+  font-size: 18px;
+  color: #63666a;
 }
 
 .hangout-status {
-	float: right;
+  float: right;
 
-	.icon-facetime-video {
-		color: #57AF57;
-		font-size: 24px;
-	}
+  .icon-facetime-video {
+    color: #57AF57;
+    font-size: 24px;
+  }
 
-	.icon-remove-sign {
-		color: #D34F3E;
-		font-size: 24px;
-	}
+  .icon-remove-sign {
+    color: #D34F3E;
+    font-size: 24px;
+  }
 
-	span {
-		margin-left: 10px;
-		font-size: 20px;
-		color: #63666a;
-	}
+  span {
+    margin-left: 10px;
+    font-size: 20px;
+    color: #63666a;
+  }
 }
 
 .line {
-	margin-left: 280px;
-	margin-right: 20px;
-	margin-top: -10px;
-	size: 2;
-	border-top: 1px #DfDfDf solid;
+  margin-left: 280px;
+  margin-right: 20px;
+  margin-top: -10px;
+  size: 2;
+  border-top: 1px #DfDfDf solid;
 }
 
 .participant-info {
@@ -1368,11 +1368,11 @@ hr.noshade {
 }
 
 #permalinks {
-	max-width: 685px;
+  max-width: 685px;
 }
 
 td form {
-	margin: 0px;
+  margin: 0px;
 }
 
 
@@ -1395,24 +1395,24 @@ td form {
 /* ---------------------EVENT FORM -------------------------*/
 
 .event-form-container {
-	margin-top: 30px;
-	background: #FAFAFA;
+  margin-top: 30px;
+  background: #FAFAFA;
     border-radius: 10px;
     border: solid #DfDFDf;
     border-width: 1px;
-    
+
     .btn-primary {
-    	background: $navbar;
-    	width: 572px;
+      background: $navbar;
+      width: 572px;
     }
 
     .control-label, span {
-    	color: #999;
+      color: #999;
     }
 
     .container {
-    	width: 573px;
-    	margin-left: -0px; 
+      width: 573px;
+      margin-left: -0px;
     }
 }
 

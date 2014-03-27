@@ -1,9 +1,9 @@
 var server = require('../lib/unhangout-server'),
     models = require("../lib/server-models"),
-	expect = require('expect.js'),
-	_ = require('underscore')._,
-	request = require('superagent'),
-	seed = require('../bin/seed.js'),
+    expect = require('expect.js'),
+    _ = require('underscore')._,
+    request = require('superagent'),
+    seed = require('../bin/seed.js'),
     common = require("./common");
 
 describe('PERMALINKS', function(){

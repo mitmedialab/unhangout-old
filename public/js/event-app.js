@@ -1,11 +1,11 @@
 // app.js
 //
 // This is the main hub of the client-side application. This never runs server-side.
-//    
+//
 // It has two primary jobs:
 //    1. configure the main application object for the client (this is a Marionette-style Application)
 //    2. connect to the sever and manage the flow of messages
-// 
+//
 
 require([
     "jquery", "underscore", "backbone", "logger", "client-models",
@@ -32,12 +32,12 @@ $(document).ready(function() {
     //                                NETWORKING                                  //
     //                                                                          //
     //------------------------------------------------------------------------//
-    // 
-    // From here down, we're mostly concerned with managing networking and 
-    // communication. 
+    //
+    // From here down, we're mostly concerned with managing networking and
+    // communication.
     sock = new SockJS(document.location.protocol + "//" + document.location.hostname + ":" + document.location.port + "/sock");
     // Register a bunch of listeners on the major events it will fire.
-    sock.onopen = function() {        
+    sock.onopen = function() {
         // on connect, send the auth message.
         sock.send(JSON.stringify({
             type: "auth",
@@ -45,7 +45,7 @@ $(document).ready(function() {
         }));
     };
 
-    // This is the big one - handles every incoming message. 
+    // This is the big one - handles every incoming message.
     sock.onmessage = function(message) {
 
         // logger.log(message);
@@ -53,25 +53,25 @@ $(document).ready(function() {
         // messages come across the wire as raw strings in the data field.
         // parse them into a proper object here.
         var msg = JSON.parse(message.data);
-        
+
         if(msg.type.indexOf("-err")!=-1) {
             logger.error("Got an error from the server!", message);
             if (msg.type === "chat-err" && msg.args === "Over capacity") {
                 messages.trigger("over-capacity");
             }
         }
-        // All messages have a type field. 
-        switch(msg.type) {            
+        // All messages have a type field.
+        switch(msg.type) {
             // join an EVENT
             case "join":
                 users.add(new models.User(msg.args.user));
                 break;
-            
+
             // leave an EVENT
             case "leave":
                 users.remove(users.get(msg.args.user.id));
                 break;
-                
+
             // chat message received
             case "chat":
                 messages.add(new models.ChatMessage(msg.args));
@@ -112,7 +112,7 @@ $(document).ready(function() {
             case "create-session":
                 var session = new models.Session(msg.args);
 
-                // this is sort of ugly to have to edit both. 
+                // this is sort of ugly to have to edit both.
                 // i'm not sure the former one is critical, but it is definitely
                 // important that we add it to the special paginated sessions list.
                 // after startup, we have to edit it directly.
@@ -142,12 +142,12 @@ $(document).ready(function() {
 
             case "open-sessions":
                 curEvent.openSessions();
-                app.sessionListView.render();        
+                app.sessionListView.render();
                 break;
 
             case "close-sessions":
                 curEvent.closeSessions();
-                app.sessionListView.render();        
+                app.sessionListView.render();
                 break;
 
             // sent in cases when the event's information has been updated.
@@ -161,15 +161,15 @@ $(document).ready(function() {
 
             // *-ack message types are just acknowledgmeents from the server
             // of the receipt of a particular message type and that the
-            // message was properly formatted and accepted. 
+            // message was properly formatted and accepted.
             //
             // mostly we don't do anything with these messages, but
-            // in some situations we do react to them. They're used 
+            // in some situations we do react to them. They're used
             // more for testing.
             case "auth-ack":
                 sock.send(JSON.stringify({type:"join", args:{id:curEvent.getRoomId()}}));
                 break;
-                
+
             case "join-ack":
                 logger.log("joined!");
                 break;
@@ -180,7 +180,7 @@ $(document).ready(function() {
         }
     };
 
-    // handle losing the connection to the server. 
+    // handle losing the connection to the server.
     // we want to put up a notice so the user knows that they've been disconnected (in
     // case they can do anything about it, like unpugged cable or wifi outage)
     // at the same time, we also want to attempt to reconnect if it was a server
@@ -190,10 +190,10 @@ $(document).ready(function() {
     sock.onclose = function() {
         $('#disconnected-modal').modal('show');
         messages.add(new models.ChatMessage({text:"You have been disconnected from the server. Please reload the page to reconnect!"}));
-        
+
         var checkIfServerUp = function () {
              var ping = document.location;
-            
+
              $.ajax({
                   url: ping,
                   type: "HEAD",
@@ -229,20 +229,20 @@ $(document).ready(function() {
     curEvent.get("sessions").add(EVENT_ATTRS.sessions);
     users = new models.UserList(EVENT_ATTRS.connectedUsers);
     messages = new models.ChatMessageList();
-    
+
     logger.log("Inflated models.");
 
     // documentation for Marionette applications can be found here:
     // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.application.md
     app = new Backbone.Marionette.Application();
-    
 
-    // the notion of regions comes from Marionette. 
+
+    // the notion of regions comes from Marionette.
     // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.region.md
-    // 
+    //
     // Basically, they give us a way to create containers in the application, that different
     // views are added and removed from. It handles various event cleanup work on add/remove.
-    // In this app, we don't often swap stuff in and out. It's primarily just a useful 
+    // In this app, we don't often swap stuff in and out. It's primarily just a useful
     // organizational abstraction.
     app.addRegions({
         right: '#main-right',
@@ -254,10 +254,10 @@ $(document).ready(function() {
         bar:'#bar',
         top:'#top'
     });
-    
-    // This is code that runs when the application initializes. 
+
+    // This is code that runs when the application initializes.
     app.addInitializer(function(options) {
-        
+
         // include the youtube JS api per docs:
         // https://developers.google.com/youtube/iframe_api_reference
         var tag = document.createElement('script');
@@ -296,7 +296,7 @@ $(document).ready(function() {
         // this is a little unorthodox, but not sure how else
         // to do it.
         $(this.bar.el).hide();
-        
+
         // obviously this is not secure, but any admin requests are re-authenticated on
         // the server. Showing the admin UI is harmless if a non-admin messes with it.
         if(IS_ADMIN) {
@@ -365,7 +365,7 @@ $(document).ready(function() {
         jqevt.preventDefault();
         app.vent.trigger("about-nav");
     });
-    
+
     logger.log("Setup regions.");
 
 });

@@ -6,7 +6,7 @@ define([
    "models"
 ], function(models) {
 
-models.ClientSessionList = models.SessionList.extend({    
+models.ClientSessionList = models.SessionList.extend({
 
     initialize: function(options) {
         models.SessionList.prototype.initialize.call(this, options);

@@ -53,7 +53,7 @@ describe("EMAIL REQUEST FOR ADMIN", function() {
                 expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, common.recipientify));
                 expect(msg.from).to.eql([common.recipientify(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS)]);
                 expect(msg.subject).to.eql("Unhangout: Request for Admin Account");
-                expect(msg.html.indexOf(validBody.eventTitle)).to.not.eql(-1); 
+                expect(msg.html.indexOf(validBody.eventTitle)).to.not.eql(-1);
                 expect(msg.html.indexOf(validBody.eventDescription)).to.not.eql(-1);
                 // Clear the outbox.
                 common.outbox.length = 0;

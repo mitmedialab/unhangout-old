@@ -13,42 +13,42 @@ var models = require('../lib/server-models.js'),
 // WARNING: THIS WILL FLUSH ALL CONTENTS OF THE DATABASE
 
 exports.run = function(dbId, redis, callback) {
-		redis.select(dbId, function(err) {
-			if(err) {
-				logger.error(err);
-				return;
-			}
-			redis.flushdb(function(err) {
-				if(err) {
-					logger.error(err);
-					return;
-				}
+        redis.select(dbId, function(err) {
+            if(err) {
+                logger.error(err);
+                return;
+            }
+            redis.flushdb(function(err) {
+                if(err) {
+                    logger.error(err);
+                    return;
+                }
 
-				sync.init(logger, redis);
-				sync.setPersist(true);
+                sync.init(logger, redis);
+                sync.setPersist(true);
 
-				logger.info("Starting seed.");
+                logger.info("Starting seed.");
 
-				var events = [];
+                var events = [];
 
-				events.push(new models.ServerEvent({
+                events.push(new models.ServerEvent({
                     title:"Writers at Work",
                     shortName:"writers-at-work",
                     organizer: "National Writing Program & ConnectedLearning.tv",
-				    description: "Throughout July, NWP partnered with Connected Learning TV to host a webinar series called Writers at Work: Making and Connected Learning. As a wrap-up to our series we invite you to regroup here to debrief with us, test and tinker with this new unHangout tool, and continue the great conversations that have been started! We will start with a whole group kick-off and then split up into smaller group discussions, based on themes and topics raised by the seminar series. Please be aware that this is a “beta-test webinar” so your adventurous spirit is welcome!",
-				    start: new Date().getTime(),
+                    description: "Throughout July, NWP partnered with Connected Learning TV to host a webinar series called Writers at Work: Making and Connected Learning. As a wrap-up to our series we invite you to regroup here to debrief with us, test and tinker with this new unHangout tool, and continue the great conversations that have been started! We will start with a whole group kick-off and then split up into smaller group discussions, based on themes and topics raised by the seminar series. Please be aware that this is a “beta-test webinar” so your adventurous spirit is welcome!",
+                    start: new Date().getTime(),
                     end: new Date().getTime()+60*60*2*1000,
                     welcomeMessage: "Welcome to the Writers at Work session, hosted by the National Writing Project!",
                     admins: [{email: "admin1@example.com"}]
                 }));
 
-				// events.push(new models.ServerEvent({title:"Open Source Learning Unhangout", organizer: "MIT Media Lab & ConnectedLearning.tv",
-				// description: "There are more online resources for education than ever, but how to make sense of them all? Do they have a role in a traditional classroom? For life long learners? Come share your favorite resources, discover new ones, and get inspired about how to bring open educational resources into your classroom.",
-				// start: new Date().getTime()+60*60*24*4*1000, end: new Date().getTime()+60*60*24*4*1000 + 60*60*2*1000}));
+                // events.push(new models.ServerEvent({title:"Open Source Learning Unhangout", organizer: "MIT Media Lab & ConnectedLearning.tv",
+                // description: "There are more online resources for education than ever, but how to make sense of them all? Do they have a role in a traditional classroom? For life long learners? Come share your favorite resources, discover new ones, and get inspired about how to bring open educational resources into your classroom.",
+                // start: new Date().getTime()+60*60*24*4*1000, end: new Date().getTime()+60*60*24*4*1000 + 60*60*2*1000}));
 
-				var sessions = [];
-				
-				sessions.push(new models.ServerSession({
+                var sessions = [];
+
+                sessions.push(new models.ServerSession({
                     title:"Writing as Making/Making as Writing",
                     description: "This webinar featured both inside and outside of school educators and media makers to discuss the impact of thinking about what happens when you put the learner front and enter in the role of producer. Facilitated by Elyse Eidman-Aadahl, NWP."
                 }));
@@ -69,11 +69,11 @@ exports.run = function(dbId, redis, callback) {
                     description:"Connected Learning TV is in the middle of a 12-month experiment where we take 1 month at a time to focus on key connected learning communities and topics/themes. What have you found most useful about this format? What do you wish was different? What would make it easier for you (and your peers) to get involved in the series and the Connected Learning community? Facilitated by Jon Barilone, CLTV"
                 }));
 
-				events[0].addSession(sessions[0], true);
-				events[0].addSession(sessions[1], true);
-				events[0].addSession(sessions[2], true);
-				events[0].addSession(sessions[3], true);
-				events[0].addSession(sessions[4], true);
+                events[0].addSession(sessions[0], true);
+                events[0].addSession(sessions[1], true);
+                events[0].addSession(sessions[2], true);
+                events[0].addSession(sessions[3], true);
+                events[0].addSession(sessions[4], true);
 
                 events.push(new models.ServerEvent({
                     title: "Test Event 2",
@@ -86,45 +86,45 @@ exports.run = function(dbId, redis, callback) {
                     admins: [{email: "admin2@example.com"}]
                 }))
 
-				// events[0].addSession(sessions[5]);
-				// events[0].addSession(sessions[6]);
-				// events[0].addSession(sessions[7]);
-				// events[0].addSession(sessions[8]);
-				// events[0].addSession(sessions[9]);
+                // events[0].addSession(sessions[5]);
+                // events[0].addSession(sessions[6]);
+                // events[0].addSession(sessions[7]);
+                // events[0].addSession(sessions[8]);
+                // events[0].addSession(sessions[9]);
 
-				// events[1].addSession(sessions[10]);
-				// events[1].addSession(sessions[11]);
-				// events[1].addSession(sessions[12]);
+                // events[1].addSession(sessions[10]);
+                // events[1].addSession(sessions[11]);
+                // events[1].addSession(sessions[12]);
 
-				_.each(sessions, function(session) {
-					if(_.isUndefined(session.collection)) {
-						logger.info("found undefined collection for name: " + session.get("name"));
-					}
-				});
+                _.each(sessions, function(session) {
+                    if(_.isUndefined(session.collection)) {
+                        logger.info("found undefined collection for name: " + session.get("name"));
+                    }
+                });
 
-				logger.info("sessions: " + sessions.length);
+                logger.info("sessions: " + sessions.length);
 
-				async.series(_.map(_.union(events, sessions), function(model) {
+                async.series(_.map(_.union(events, sessions), function(model) {
 
-					return function(callback) {
-						// logger.info("saving " + JSON.stringify(model.collection));
-						model.save(null, {success:function() {
-							callback();
-						}});
-					};
-				}), function(err, res) {
-					callback && callback();
-				});
-			});
-		});
+                    return function(callback) {
+                        // logger.info("saving " + JSON.stringify(model.collection));
+                        model.save(null, {success:function() {
+                            callback();
+                        }});
+                    };
+                }), function(err, res) {
+                    callback && callback();
+                });
+            });
+        });
 }
 
 
 if(require.main === module) {
-	var r = redis.createClient();
-	r.on("connect", function() {
-		exports.run(0, r, function() {
-			process.exit();
-		});		
-	})
+    var r = redis.createClient();
+    r.on("connect", function() {
+        exports.run(0, r, function() {
+            process.exit();
+        });
+    })
 }

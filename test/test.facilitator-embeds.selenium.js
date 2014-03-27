@@ -46,11 +46,12 @@ describe("FACILITATOR EMBEDS", function() {
         var session = event.get("sessions").at(0);
         browser.get("http://localhost:7777/")
         browser.mockAuthenticate("regular1");
-        
+
         // Load a session page with a webpage activity.
         session.set("activities", [{type: "webpage", url: "http://localhost:7777/public/html/test.html"}]);
         browser.get("http://localhost:7777/facilitator/" + session.id + "/");
         // Ensure the webpage is displayed.
+        browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
             expect(src).to.eql("http://localhost:7777/public/html/test.html");
 
@@ -61,6 +62,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.byCss(".remove-embed").click();
         // Ensure 'about' is displayed.
         browser.waitForSelector(".about-activity");
+        browser.waitForScript("$");
         browser.executeScript("return $('.about-activity').text();").then(function(text) {
             expect(text.indexOf("helps the Unhangout Permalink service")).to.not.eql(-1);
             expect(session.get("activities")).to.eql([{'type': 'about'}]);
@@ -72,7 +74,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.byCss(".modal-body input[type='text']").sendKeys("   ");
         browser.byCss(".modal input[type='submit']").click();
         // Nothing should happen... the next call should fail if the modal is closed.
-        
+
         // Allows non-blank URLs.
         browser.byCss(".modal-body input[type='text']").sendKeys("http://localhost:7777/public/html/test.html");
         browser.byCss(".modal input[type='submit']").click();

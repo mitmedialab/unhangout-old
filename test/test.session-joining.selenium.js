@@ -241,7 +241,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 });
             });
         });
-      
+
     });
     function framedDisconnectionModalShowing(isShowing) {
         return browser.wait(function() {

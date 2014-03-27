@@ -38,7 +38,7 @@ describe("CHAT WINDOW", function() {
         });
     });
     after(function(done) {
-        browser.quit().then(function() { 
+        browser.quit().then(function() {
             sock.promiseClose().then(function() {
                 common.standardShutdown(done);
             });
@@ -116,4 +116,4 @@ describe("CHAT WINDOW", function() {
 
     });
 });
-    
+

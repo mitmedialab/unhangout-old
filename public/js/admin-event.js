@@ -11,7 +11,7 @@ $(document).ready(function(){
             .add('days', 7)
             .second(0)
             .minute(0)
-            .format(event.DATE_DISPLAY_FORMAT); 
+            .format(event.DATE_DISPLAY_FORMAT);
         $("#dateAndTime").val(oneWeekAfter);
     }
     // Using http://www.malot.fr/bootstrap-datetimepicker/
@@ -36,7 +36,7 @@ $(document).ready(function(){
             ['color', ['color']],
             ['para', ['ul', 'ol', 'paragraph']],
             ['height', ['height']],
-            ['insert', ['picture', 'link']], 
+            ['insert', ['picture', 'link']],
             ['codeview', ['codeview']],
         ],
         height: 150
@@ -70,7 +70,7 @@ $(document).ready(function(){
     $("#timeZoneValue").append(frag);
 
     if($("#timeZoneValue").val() == "") {
-        // Automatic TimeZone Detection of the browser client 
+        // Automatic TimeZone Detection of the browser client
         $("#timeZoneValue").val(jstz.determine().name());
     }
 });

@@ -23,7 +23,7 @@ function destroy(callback) {
     // If this gets borked, you might find this command useful to delete all
     // loadSessions without going through the event:
     //   redis-cli keys "event/*/sessions/loadSession*" | xargs redis-cli del
- 
+
     logger.info("Starting to delete load users, sessions, and event.");
     var models = [];
     var event = db.events.get(simConf.EVENT_ID);

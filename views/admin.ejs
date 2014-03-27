@@ -21,14 +21,14 @@
                         </h4>
                         <% var date = event.get("start") || event.get("dateAndTime"); %>
                         <% if (date) { %>
-                            
+
                             <span class='date'>
                                 <%= moment(date).format("D MMM YYYY") %>
                             </span>
                         <% } %>
                     </diV>
 
-                                
+
                     <% if(event.isLive()) { %>
                         <form action="/admin/event/<%=event.id%>/stop" method="post">
                             <button type="submit" class="btn btn-warning btn-small stop-event"
@@ -44,7 +44,7 @@
                         <i class='icon-pencil' title='Edit'></i> edit
                     </a>
                     <span class='small-green'><%= baseUrl + event.getEventUrl() %></span>
-                    
+
                     <% if (event.get("hoa")) { %>
                         <% var hoa = event.get("hoa"); %>
                         <table class='table table-bordered table-condensed'>

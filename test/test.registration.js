@@ -57,7 +57,7 @@ describe("REGISTRATION", function() {
         var orig = buildProfile();
         // Copy those properties for an update
         var update = _.extend({}, orig, {displayName: "John Doe"});
- 
+
         // Ensure that we're actually changing stuff.
         expect(orig.displayName).to.not.eql(update.displayName);
 

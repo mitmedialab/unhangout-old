@@ -20,7 +20,7 @@ var Logger = function(prefix, level) {
     if (!console.info) { console.info = console.log; }
     if (!console.debug) { console.debug = console.log; }
     if (!console.error) { console.error = console.log; }
-    
+
     var prefixLogger = function(prefix, logFunc, logFuncThis) {
         return function() {
             var args;

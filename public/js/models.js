@@ -27,7 +27,7 @@ if (typeof exports !== 'undefined') {
 }
 
 
-// The base model objects in unhangout are quite straightforward. They are mostly just 
+// The base model objects in unhangout are quite straightforward. They are mostly just
 // collections of attributes with some helper methods for editing and reading
 // those attributes in appropriate ways. Most of the complex behavior happens
 // in the server-models.js extensions of these objects.
@@ -37,17 +37,17 @@ models.Event = Backbone.Model.extend({
     idRoot: "event",
     urlRoot: "event",
     DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
-    
+
     defaults: function() {
         return {
             title: "",
             organizer: "",
-            shortName: null,        // use this as a slug for nicer urls
+            shortName: null, // use this as a slug for nicer urls
             description: "",
             welcomeMessage: null,
             start: null,
             end: null,
-            connectedUsers: null,            // these two fields are setup in initialize
+            connectedUsers: null,
             sessions: null,
             hoa: null,
             youtubeEmbed: null,
@@ -58,13 +58,13 @@ models.Event = Backbone.Model.extend({
             admins: []
         }
     },
-    
+
     initialize: function() {
         // these are the main sub-collections of this model.
         this.set("sessions", new models.SessionList(null, this));
         this.set("connectedUsers", new models.UserList());
     },
-            
+
     numUsersConnected: function() {
         return this.get("connectedUsers").length;
     },
@@ -86,22 +86,22 @@ models.Event = Backbone.Model.extend({
     getChatArchiveUrl: function() {
         return "/public/logs/chat/" + this.id + ".txt";
     },
-    
+
     toJSON: function() {
         var attrs = _.clone(this.attributes);
-        
+
         // delete transient attributes that shouldn't
         // be saved to redis.
         delete attrs["connectedUsers"];
-        
+
         // for now just delete sessions; they'll save separately and will know their
         // event by id + url.
         delete attrs["sessions"];
         delete attrs["hoa"];
-        
+
         return attrs;
     },
-    
+
     addSession: function(session) {
         this.get("sessions").add(session);
         session.trigger("change:collection");
@@ -125,15 +125,15 @@ models.Event = Backbone.Model.extend({
     sessionsOpen: function() {
         return this.get("sessionsOpen");
     },
-        
+
     url: function() {
-        // okay this is sort of stupid, but we want to have a fixed width 
+        // okay this is sort of stupid, but we want to have a fixed width
         // url because that makes it easier to match events from redis with
-        // the loader. We want to use ??? selectors instead of *, which 
+        // the loader. We want to use ??? selectors instead of *, which
         // matches /event/id/session/id as well as /event/id
         return this.urlRoot + "/" + pad(this.id, 5);
     },
-    
+
     setEmbed: function(ytId) {
         // Prepend the current embed (if any) to the list of previous embeds
         // (if it's not already there), and set the current embed to the given
@@ -224,7 +224,7 @@ models.Event = Backbone.Model.extend({
         var changed;
         admins = _.reject(admins, _.bind(function(admin) {
             if (this.adminMatchesUser(admin, user)) {
-                changed = true;    
+                changed = true;
                 return true;
             }
             return false;
@@ -301,23 +301,23 @@ models.EventList = Backbone.Collection.extend({
 });
 
 // Sessions are the individual meetings that make up an event. Sessions
-// (potentially) have a hangout connected to them. 
+// (potentially) have a hangout connected to them.
 models.Session = Backbone.Model.extend({
-	idRoot: "session",
-	MAX_ATTENDEES: 10,
+    idRoot: "session",
+    MAX_ATTENDEES: 10,
 
-	defaults: function() {
-		return {
+    defaults: function() {
+        return {
             // Description
-			title: "",
-			description: "",
-			shortCode: null,
+            title: "",
+            description: "",
+            shortCode: null,
             // State
-			connectedParticipants: [],
+            connectedParticipants: [],
             activities: [],
             "hangout-broadcast-id": null // Youtube ID For Hangouts on air
-		};
-	},
+        };
+    },
     getRoomId: function() {
         return this.id ? "session/" + this.id : null
     },
@@ -380,8 +380,8 @@ models.Session = Backbone.Model.extend({
 
 models.SessionList = Backbone.Collection.extend({
     model:models.Session,
-    
-    // sould not ever be called.    
+
+    // sould not ever be called.
     url: function() {
         console.log("GETTING LOCAL SESSION LIST");
         return "WAT";
@@ -402,12 +402,12 @@ models.User = Backbone.Model.extend({
             emails: []
         }
     },
-    
+
     initialize: function() {
         this.checkJSON();
         this.on("change:_json", this.checkJSON)
     },
-    
+
     checkJSON: function() {
         // _json (which comes from g+) has some extra stuff in it
         // that we might want to extract for our own purposes.
@@ -416,13 +416,13 @@ models.User = Backbone.Model.extend({
 
             // some checking for situations where a user doesn't
             // have a google+ profile picture.
-            if("picture" in json) { 
+            if("picture" in json) {
                 this.set("picture", json.picture);
             }
             else { this.set("picture", "")}
 
             if("link" in json) this.set("link", this.get("_json").link);
-        }    
+        }
 
         if(!this.has("admin"))     {
             this.set("admin", false);
@@ -498,9 +498,9 @@ models.User = Backbone.Model.extend({
 
             if(name.indexOf("-")==-1) {
                 // if we don't find a dash, just take the first letter
-                shortDisplayName = shortDisplayName + " " + name.slice(0, 1);                
+                shortDisplayName = shortDisplayName + " " + name.slice(0, 1);
             } else {
-                // if we do find a dash, then split on the dash and take the first letter of 
+                // if we do find a dash, then split on the dash and take the first letter of
                 // each.
                 var hyphenatedNames = name.split("-");
 
@@ -538,7 +538,7 @@ models.ChatMessage = Backbone.Model.extend({
             past: false
         };
     },
-    
+
     initialize: function() {
         if(_.isUndefined(this.get("time"))) {
             this.set("time", new Date().getTime());

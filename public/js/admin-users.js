@@ -44,7 +44,7 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
     addEvent: function(jqevt) {
         jqevt.preventDefault();
         var user = this.model;
-        var modal = new EventAdminAdder({user: user}); 
+        var modal = new EventAdminAdder({user: user});
         modal.render();
         modal.on("add", _.bind(function(event) {
             this.postUserData({
@@ -124,7 +124,7 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         });
     },
     postUserData: function(data, success, error) {
-        var post = _.extend({userId: this.model.id}, data); 
+        var post = _.extend({userId: this.model.id}, data);
         $.ajax({
             type: 'POST',
             url: '/admin/users/',

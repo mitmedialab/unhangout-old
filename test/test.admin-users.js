@@ -200,7 +200,7 @@ describe("HTTP ADMIN USERS API", function() {
             expect(res.status).to.be(200);
             var user = new models.ServerUser({emails: [{value: "nonexistent@example.com"}]});
             expect(user.isAdminOf(event)).to.be(true)
-            
+
             // No admin cache unless the user is added to our list of users.
             expect(user.adminCache[event.id]).to.be(undefined);
             common.server.db.users.add(user);
@@ -242,7 +242,7 @@ describe("HTTP ADMIN USERS API", function() {
         expect(user.isAdminOf(event)).to.be(true);
         // Make sure it has an email set...
         expect(!!user.get('emails')[0].value).to.be(true);
-        
+
         postUsers("superuser1", {
             action: "remove-event-admin",
             email: user.get('emails')[0].value,

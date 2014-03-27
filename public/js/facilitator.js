@@ -109,9 +109,9 @@ var FacilitatorView = Backbone.View.extend({
                     sock.sendJSON("join", {id: "session/" + session.id});
                     break;
                 case "join-ack":
-					// Once we have a socket open, acknowledge the hangout
-					// gadget informing us of the hangout URL.
-					window.addEventListener("message",
+                    // Once we have a socket open, acknowledge the hangout
+                    // gadget informing us of the hangout URL.
+                    window.addEventListener("message",
                                             this.handleCrossDocumentMessages,
                                             false);
                     break;
@@ -157,34 +157,34 @@ var FacilitatorView = Backbone.View.extend({
         });
     },
     handleCrossDocumentMessages:  function(evt) {
-		if (HANGOUT_ORIGIN_REGEX.test(evt.origin)) {
-			if (evt.data.type == "url") {
+        if (HANGOUT_ORIGIN_REGEX.test(evt.origin)) {
+            if (evt.data.type == "url") {
                 var args = evt.data.args;
-				if (args.url) {
-					logger.debug("CDM inner set", args.url, args.id, evt.origin);
+                if (args.url) {
+                    logger.debug("CDM inner set", args.url, args.id, evt.origin);
                     this.session.set("hangout-id", args.id);
-					this.session.set("hangout-url", args.url);
+                    this.session.set("hangout-url", args.url);
                     if (args.youtubeId) {
                         this.session.set("hangout-broadcast-id", args.youtubeId);
                     } else {
                         this.session.set("hangout-broadcast-id", null);
                     }
-					HANGOUT_ORIGIN = evt.origin;
-					postMessageToHangout({type: "url-ack"});
-				}
-			} else if (evt.data.type == "participants") {
-				logger.debug("CDM inner participants:", evt.data.args);
-				var data = evt.data.args.participants;
-				if (_.isString(data)) {
-					data = JSON.parse(data);
-				}
-				var participants = _.map(data, function(u) {
-					return u.person;
-				});
-				this.session.setConnectedParticipants(participants);
-			}
-		}
-	},
+                    HANGOUT_ORIGIN = evt.origin;
+                    postMessageToHangout({type: "url-ack"});
+                }
+            } else if (evt.data.type == "participants") {
+                logger.debug("CDM inner participants:", evt.data.args);
+                var data = evt.data.args.participants;
+                if (_.isString(data)) {
+                    data = JSON.parse(data);
+                }
+                var participants = _.map(data, function(u) {
+                    return u.person;
+                });
+                this.session.setConnectedParticipants(participants);
+            }
+        }
+    },
     renderActivities: function() {
         // We only support 1 activity for now.
         var activityData = this.session.get("activities")[0];
@@ -264,10 +264,10 @@ var FacilitatorView = Backbone.View.extend({
         if (jqevt) { jqevt.preventDefault(); }
         this.$el.toggleClass("sidebar");
         var isSidebar = this.$el.hasClass("sidebar");
-        
+
         // Move the faces app from the default activity list to its own space.
         if (isSidebar) {
-            // Shrink to sidebar! 
+            // Shrink to sidebar!
             this.faces.setActive(true);
             this.faces.resize();
         } else {
@@ -438,7 +438,7 @@ var WebpageActivity = BaseActivityView.extend({
         }
         // Discussion of this approach to detecting when an iframe has loaded:
         // http://www.nczonline.net/blog/2009/09/15/iframes-onload-and-documentdomain/
-        // This doesn't catch 
+        // This doesn't catch
         if (iframe.attachEvent) {
             iframe.attachEvent("onload", isLoaded);
         } else {
@@ -505,7 +505,7 @@ var AddActivityDialog = BaseModalView.extend({
         $(".remove-embed").toggle(!!this.options.hasCurrentEmbed);
     },
     removeEmbed: function() {
-        this.trigger("submit", null); 
+        this.trigger("submit", null);
         this.close();
     },
     validate: function() {
