@@ -58,6 +58,7 @@
     "memwatch"  :  "~0",
     "toobusy"   :  "~0",
     "bluebird"  :  "1.1.1",
+    "cheerio"   :  "0.13.1",
     "requirejs-middleware": "git://github.com/yourcelf/requirejs-middleware.git#master"
   },
   "analyze": false,
