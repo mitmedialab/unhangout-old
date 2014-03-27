@@ -99,6 +99,7 @@ describe("CREATE HOA", function() {
         browser.waitForSelector(".join-hoa");
 
         // Wait for the hangout broadcast video to be embedded.
+        browser.waitForScript("$");
         var embedSrcScript = "return $('.video-player iframe').attr('src');";
         browser.executeScript(embedSrcScript).then(function(src) {
             expect(src).to.not.be(null);
