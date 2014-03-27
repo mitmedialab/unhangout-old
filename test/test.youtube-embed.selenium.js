@@ -7,7 +7,7 @@ describe("YOUTUBE EMBEDS", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
-    this.timeout(40000); // Extra long timeout for selenium :(
+    this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
         common.getSeleniumBrowser(function (theBrowser) {
