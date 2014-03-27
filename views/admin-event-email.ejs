@@ -1,23 +1,108 @@
-<p><a href='/admin/event/<%= event.id %>'>Event <%= event.id %></a> was edited by someone claiming to be <%= user.get("displayName") %> (<%= user.get('emails')[0].value %>). Please check to make sure nothing phishy is going on.</p>
+<html>
+<head></head>
+<body>
+<p><a href='<%= event.getEventUrl() %>'>Event <%= event.id %> (<%= event.get("title") || "untitled" %>)</a> was edited by someone claiming to be <%= user.get("displayName") %> (<a href='mailto:<%= user.get('emails')[0].value %>'><%= user.get('emails')[0].value %></a>).</p>
 
-<p>Fields:</p>
-<dl>
-<dt>Title</dt><dd><pre><%= event.get("title") %></pre></dd>
-<dt>Organizer</dt>
-<dd><pre><%= event.get("organizer") %></pre></dd>
+<p>HTML for this event triggered these warnings.</p>
 
-<dt>Description</dt>
-<dd><pre><%= event.get("description") %></pre></dd>
+<h2><a href='/admin/event/<%= event.id %>'>EDIT THE EVENT</a></h2>
 
-<dt>Welcome Message</dt>
-<dd><pre><%= event.get("welcomeMessage") %></pre></dd>
+<h2>Warnings</h2>
 
-<dt>Short name</dt>
-<dd><pre><%= event.get("shortName") %></pre></dd>
-
-<dt>Date and time</dt>
-<dd><pre><%= event.get("dateAndTime") %></pre></dd>
-
-<dt>Time Zone</dt>
-<dd><pre><%= event.get("timeZoneValue") %></pre></dd>
-
+<% if (warnings["risky tag"]) { %>
+    <h3>Risky Tags</h3>
+    These tags are potentially risky. To remove this warning, remove the tags.
+    <ul>
+        <% _.each(warnings["risky tag"], function(detailList, field) { %>
+            <tt><%= field %></tt> field:
+            <ul>
+                <% _.each(detailList, function(detail) { %>
+                    <li><b><tt>&lt;<%= detail.tagName %>&gt;</tt></b>
+                        <pre><%= detail.innerHTML %></pre>
+                    </li>
+                <% }); %>
+            </ul>
+        <% }); %>
+    </ul>
+<% } %>
+<% if (warnings["risky attribute"]) { %>
+    <h3>Risky Attributes</h3>
+    These attributes are potentially risky. Remove the attributes to remove this warning.
+    <ul>
+        <% _.each(warnings["risky attribute"], function(detailList, field) { %>
+            <li>
+                <tt><%= field %></tt> field:
+                <ul>
+                    <% _.each(detailList, function(detail) { %>
+                        <li>
+                            <tt><%= detail.attribName %></tt> &ndash;
+                            used in
+                            <tt>&lt;<%= detail.tagName %> <span style='color: red;'><%= detail.attribName %>="<%= detail.oldValue %>"</span> &gt;</tt>
+                        </li>
+                    <% }); %>
+                </ul>
+            </li>
+        <% }); %>
+    </ul>
+<% } %>
+<% if (warnings["shadowable attribute"]) { %>
+    <h3>Possible name collisions</h3>
+    Arbitrary class names and IDs can break the app if they share the same
+    names as application elements.  These names would be forcibly prefixed
+    by a sanitizer &ndash; add the prefix "<tt>userhtml-</tt>" to remove this warning:
+    <ul>
+        <% _.each(warnings["shadowable attribute"], function(detailList, field) { %>
+            <li>
+                <tt><%= field %></tt> field:
+                <ul>
+                    <% _.each(detailList, function(detail) { %>
+                        <li>
+                            <tt>&lt;<%= detail.tagName %> <%= detail.attribName %>="<span style='color: red;'><%= detail.oldValue %></span>"&gt;</tt>
+                            &rarr;
+                            <tt>&lt;<%= detail.tagName %> <%= detail.attribName %>="<%= detail.newValue %>"&gt;</tt>
+                        </li>
+                    <% }); %>
+                </ul>
+            </li>
+        <% }); %>
+    </ul>
+<% } %>
+<% if (warnings["mixed content"]) { %>
+    <h3>Mixed content (breaking SSL)</h3>
+    Images and sources included from non-HTTPS websites break the SSL security
+    of the page, resulting in mixed content warnings.  To remove this warning,
+    use only HTTPS inclusions for the following:
+    <ul>
+        <% _.each(warnings["mixed content"], function(detailList, field) { %>
+            <li>
+                <tt><%= field %></tt> field:
+                <ul>
+                    <% _.each(detailList, function(detail) { %>
+                        <li>
+                            <tt>&lt;<%= detail.tagName %> <%= detail.attribName %>="<span style='color: red;'><%= detail.oldValue %></span>"&gt;</tt>
+                        </li>
+                    <% }); %>
+                </ul>
+            </li>
+        <% }); %>
+    </ul>
+<% } %>
+<% if (warnings["other"]) { %>
+    <h3>Other</h3>
+    <ul>
+        <% _.each(warnings["other"], function(detailList, field) { %>
+            <li>
+                <tt><%= field %></tt> field:
+                <ul>
+                    <% _.each(detailList, function(detail) { %>
+                        <li>
+                            <pre><%= JSON.stringify(detail) %></pre>
+                        </li>
+                    <% }); %>
+                </ul>
+            </li>
+        <% }); %>
+    </ul>
+<% } %>
+</body>
+</html>

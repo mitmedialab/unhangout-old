@@ -5,6 +5,7 @@ var server = require('../lib/unhangout-server'),
     _ = require('underscore')._,
     request = require('superagent'),
     conf = require('../lib/options'),
+    utils = require("../lib/utils"),
     common = require('./common');
 
 var origDelay;
@@ -40,24 +41,38 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
         });
     };
 
-    it("Sends email on edit", function(done) {
+    it("Sends no email on text-only edit", function(done) {
         var event = common.server.db.events.get(1);
         expect(common.outbox.length).to.be(0);
+        var warnings = utils.getEventSanitizationWarnings(event);
+        expect(_.size(warnings)).to.be(0);
         postEventEdit("admin1", event.toJSON()).then(function(res) {
             expect(common.outbox.length).to.be(0);
+            setTimeout(function() {
+                expect(common.outbox.length).to.be(0);
+                done();
+            }, 200); // 200ms ought to be long enough for email to process..
+        }).catch(function(err) { done(err); });
+
+    });
+
+    it("Sends email on edit containing worrisome HTML", function(done) {
+        var event = common.server.db.events.get(1);
+        event.set("description",
+                  "<style>body { color: pink; }</style>" + event.get("description"));
+        var warnings = utils.getEventSanitizationWarnings(event);
+        expect(_.size(warnings)).to.be(1);
+        expect(common.outbox.length).to.be(0);
+
+        postEventEdit("admin1", event.toJSON()).then(function(res) {
             return common.await(function() { return common.outbox.length == 1; })
         }).then(function() {
             expect(common.outbox.length).to.be(1);
             var msg = common.outbox.shift();
             expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, common.recipientify));
             expect(msg.subject).to.eql("Unhangout: Event 1 edited");
-            _.each([
-               "title", "organizer", "description", "welcomeMessage",
-               "shortName", "dateAndTime", "timeZoneValue"
-            ], function(key) {
-                expect(
-                    msg.html.indexOf(_.escape(event.get(key)))
-                ).to.not.eql(-1);
+            _.each(["Risky Tags", "style", "color: pink"], function(txt) {
+                expect(msg.html.indexOf(txt)).to.not.eql(-1);
             });
             done();
         }).catch(function(err) {
@@ -67,6 +82,8 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
 
     it("Throttles multiple edits", function(done) {
         var event = common.server.db.events.get(1);
+        event.set("description",
+                  "<style>body{color:pink}</style>" + event.get("description"));
         var origTitle = event.get("title");
         expect(common.outbox.length).to.be(0);
         Promise.map([1, 2, 3, 4, 5], function(val) {
@@ -93,7 +110,7 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
     it("Notifies after event creation with new ID", function(done) {
         postEventEdit("superuser1", {
             title: "New Event",
-            description: "Description",
+            description: "Description <style>body{color: worrisome}</style>",
             shortName: "shawty"
         }).then(function() {
             return common.await(function() { return common.outbox.length == 1; });
@@ -109,5 +126,4 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
             done(err);
         });
     });
-
 });
