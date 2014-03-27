@@ -6,6 +6,7 @@ var server = require('../lib/unhangout-server'),
     request = require('superagent'),
     conf = require('../lib/options'),
     utils = require("../lib/utils"),
+    models = require("../lib/server-models"),
     common = require('./common');
 
 var origDelay;
@@ -125,5 +126,107 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
         }).catch(function(err) {
             done(err);
         });
+    });
+
+    it("Issues warnings for all relevant fields", function() {
+        function checkWarnings(props, expected) {
+            expect(
+                utils.getEventSanitizationWarnings(new models.ServerEvent(props))
+            ).to.eql(
+                expected
+            );
+        };
+        var fields = ["organizer", "description", "welcomeMessage", "overflowMessage"];
+        checkWarnings({
+            organizer: "test",
+            description: "test",
+            welcomeMessage: "test",
+            overflowMessage: "test"
+        }, {});
+
+        // mixed content warnings
+        fields.forEach(function(field) {
+            var props = {};
+            props[field] = "test <img src='http://i.imgur.com/E4p6tht.jpg' />";
+            var errors = {"mixed content": {}};
+            errors["mixed content"][field] = [{
+                tagName: "img",
+                attribName: "src",
+                change: "removed",
+                oldValue: "http://i.imgur.com/E4p6tht.jpg",
+                newValue: null
+            }];
+            checkWarnings(props, errors);
+        });
+
+        // Unsafe tag warnings
+        fields.forEach(function(field) {
+            var props = {};
+            props[field] = "test <style>body{color:pink}</style>";
+            var errors = {"risky tag": {}};
+            errors["risky tag"][field] = [{
+                tagName: "style",
+                change: "removed",
+                innerHTML: "body{color:pink}"
+            }];
+            checkWarnings(props, errors);
+        });
+
+        // Unsafe attribute warnings
+        fields.forEach(function(field) {
+            var props = {};
+            props[field] = "test <span style='color: pink;'>oh no</style>";
+            var errors = {"risky attribute": {}};
+            errors["risky attribute"][field] = [{
+                tagName: "span",
+                attribName: "style",
+                change: "removed",
+                oldValue: "color: pink;",
+                newValue: null
+            }];
+            checkWarnings(props, errors);
+        });
+
+        // Shadowable attribute warnings
+        fields.forEach(function(field) {
+            var props = {};
+            props[field] = "test <span class='login'>oh my</span>";
+            var errors = {"shadowable attribute": {}};
+            errors["shadowable attribute"][field] = [{
+                change: "changed",
+                tagName: "span",
+                attribName: "class",
+                oldValue: "login",
+                newValue: "userhtml-login"
+            }];
+            checkWarnings(props, errors);
+        });
+
+        // Multiple warnings
+        var props = {
+            "organizer": "<style>body{color:pink}</style>",
+            "description": "<span class='login'>oh my</span>",
+            "welcomeMessage": "<img src='http://i.imgur.com/E4p6tht.jpg'>",
+            "overflowMessage": "<span style='font-family: ugly;'>oy</span>"
+        };
+        var errors = {
+            "risky tag": {organizer: [{
+                change: "removed", tagName: "style",
+                innerHTML: "body{color:pink}"
+            }]},
+            "shadowable attribute": {description: [{
+                change: "changed", tagName: "span", attribName: "class",
+                oldValue: "login", newValue: "userhtml-login"
+            }]},
+            "mixed content": {welcomeMessage: [{
+                change: "removed", tagName: "img", attribName: "src",
+                oldValue: "http://i.imgur.com/E4p6tht.jpg", newValue: null
+            }]},
+            "risky attribute": {overflowMessage: [{
+                change: "removed", tagName: "span", attribName: "style",
+                oldValue: "font-family: ugly;", newValue: null
+            }]}
+        };
+        checkWarnings(props, errors);
     });
 });

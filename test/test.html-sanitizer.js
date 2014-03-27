@@ -18,17 +18,8 @@ describe("SANITIZE HTML", function() {
         expect(sanitize("<span id='bork' class='one two three'>ok</span>"
               )).to.eql('<span id="userhtml-bork" class="userhtml-one userhtml-two userhtml-three">ok</span>')
     });
-    it("Custom policy: allows all images and links and stuff in non-ssl", function() {
+    it("Custom policy: refuses non-https embeds", function() {
         var options = require("../lib/options");
-        options.UNHANGOUT_USE_SSL = false;
-        expect(sanitize("<img src='http://thisimage.com/stuff.gif'>"
-              )).to.eql('<img src="http://thisimage.com/stuff.gif">');
-        expect(sanitize('<a href="http://example.com">hey</a>'
-              )).to.eql('<a href="http://example.com">hey</a>');
-    });
-    it("Custom policy: refuses non-https embeds if we're secure", function() {
-        var options = require("../lib/options");
-        options.UNHANGOUT_USE_SSL = true;
         expect(sanitize("<img src='http:/thisimage.com/stuff.gif'>"
               )).to.eql("<img>");
         expect(sanitize('<img src="https://thisimage.com/stuff.gif">'
