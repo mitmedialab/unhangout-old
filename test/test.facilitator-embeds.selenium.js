@@ -51,6 +51,7 @@ describe("FACILITATOR EMBEDS", function() {
         session.set("activities", [{type: "webpage", url: "http://localhost:7777/public/html/test.html"}]);
         browser.get("http://localhost:7777/facilitator/" + session.id + "/");
         // Ensure the webpage is displayed.
+        browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
             expect(src).to.eql("http://localhost:7777/public/html/test.html");
 
@@ -61,6 +62,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.byCss(".remove-embed").click();
         // Ensure 'about' is displayed.
         browser.waitForSelector(".about-activity");
+        browser.waitForScript("$");
         browser.executeScript("return $('.about-activity').text();").then(function(text) {
             expect(text.indexOf("helps the Unhangout Permalink service")).to.not.eql(-1);
             expect(session.get("activities")).to.eql([{'type': 'about'}]);

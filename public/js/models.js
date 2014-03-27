@@ -42,12 +42,12 @@ models.Event = Backbone.Model.extend({
         return {
             title: "",
             organizer: "",
-            shortName: null,        // use this as a slug for nicer urls
+            shortName: null, // use this as a slug for nicer urls
             description: "",
             welcomeMessage: null,
             start: null,
             end: null,
-            connectedUsers: null,            // these two fields are setup in initialize
+            connectedUsers: null,
             sessions: null,
             hoa: null,
             youtubeEmbed: null,

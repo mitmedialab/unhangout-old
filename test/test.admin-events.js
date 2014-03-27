@@ -164,7 +164,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             title: "Excellent",
             description: "Party time",
             shortName: "unique-city",
-            dateAndTime: "wat",
+            dateAndTime: "wat lol no",
             timeZoneValue: "America/New_York"
         }
         request.post("http://localhost:7777/admin/event/new")
