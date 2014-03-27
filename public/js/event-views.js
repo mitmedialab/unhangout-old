@@ -604,6 +604,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     tagName: 'li',
 
     initialize: function() {
+        Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments)
         this.model.set("text", this.linkify(this.model.get("text")));
     },
 
@@ -643,21 +644,20 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             // system doesn't freak out.
             model.user = {shortDisplayName:""};
         }
-
         return model;
     },
 
     onRender: function() {
 
-        if(!this.model.has("user")) {
+        if (!this.model.has("user")) {
             // mark this chat message as a system message, so we can
             // display it differently.
             this.$el.addClass("system");
-        } else if(this.model.get("user").admin) {
+        } else if (this.options.isAdmin) {
             this.$el.find(".from").addClass("admin");
         }
 
-        if(this.model.get("past")) {
+        if (this.model.get("past")) {
             this.$el.addClass("past");
         }
     }
@@ -684,7 +684,12 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
 
         }, this));
     },
-
+    itemViewOptions: function(model, index) {
+        return {
+            model: model,
+            isAdmin: new models.User(model.get("user")).isAdminOf(this.options.event)
+        };
+    },
     onBeforeItemAdded: function() {
         this.scroller = $("#chat-container-region");
         var limit = Math.max(this.scroller[0].scrollHeight - this.scroller.height() - 10, 0);

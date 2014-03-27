@@ -1,6 +1,6 @@
 var server      = require('../lib/unhangout-server'),
     async       = require('async'),
-    should      = require('should'),
+    expect      = require("expect.js"),
     _           = require('underscore'),
     common      = require('./common');
 
@@ -50,9 +50,9 @@ describe("CHAT WINDOW", function() {
             var scrollTop = scrolls[0],
                 maxScroll = scrolls[1];
             if (isScrolledDown) {
-                should.equal(Math.abs(scrollTop - maxScroll) < 2, true);
+                expect(Math.abs(scrollTop - maxScroll)).to.be.lessThan(2);
             } else {
-                should.equal(scrollTop < maxScroll, true);
+                expect(scrollTop).to.be.lessThan(maxScroll);
             }
         });
     }
@@ -113,6 +113,47 @@ describe("CHAT WINDOW", function() {
             }
         });
         checkScroll(browser, false);
+
+    });
+
+    it("displays admin chat messages with a different color", function(done) {
+        var event = common.server.db.events.get(1);
+        var regular = common.server.db.users.findWhere({"sock-key": "regular1"});
+        var admin = common.server.db.users.findWhere({"sock-key": "admin1"})
+        var superuser = common.server.db.users.findWhere({superuser: true});
+
+        // Make sure our users are as we expect.
+        expect(regular.isAdminOf(event)).to.be(false)
+        expect(admin.isAdminOf(event)).to.be(true)
+        expect(superuser.isAdminOf(event)).to.be(true);
+        // Get the page so we can mock-authenticate.
+        browser.get("http://localhost:7777/event/" + event.id);
+
+        var counter = 0;
+        function checkFromAdmin(sockkey, isAdmin) {
+            var text = "admin check " + (counter++) + "\n";
+            browser.mockAuthenticate(sockkey);
+            browser.get("http://localhost:7777/event/" + event.id)
+            browser.waitForSelector("#chat-input");
+            browser.byCss("#chat-input").sendKeys(text);
+            browser.wait(function() {
+                var lastMessage = "return $('.chat-message:last').text();";
+                return browser.executeScript(lastMessage).then(function(msg) {
+                    return msg.indexOf(text.trim()) !== -1;
+                });
+            });
+            var isAdminMessage = "return $('.chat-message:last .from').hasClass('admin');"
+            browser.executeScript(isAdminMessage).then(function(msgIsAdmin) {
+                expect(msgIsAdmin).to.be(isAdmin);
+            });
+        }
+
+        checkFromAdmin(regular.getSockKey(), false);
+        checkFromAdmin(superuser.getSockKey(), true);
+        checkFromAdmin(regular.getSockKey(), false);
+        checkFromAdmin(admin.getSockKey(), true);
+
+        browser.then(function() { done(); });
 
     });
 });
