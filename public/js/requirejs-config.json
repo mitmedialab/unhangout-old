@@ -18,7 +18,7 @@
         "moment-timezone": "../vendor/moment-timezone.min",
         "moment-timezone-data": "../vendor/timezone-data",
         "jstz": "../vendor/jstz",
-        "sockjs": "../vendor/sockjs-0.3"
+        "sockjs": "../vendor/sockjs-0.3.min"
     },
     "shim": {
         "jquery": { "exports": "jQuery" },
