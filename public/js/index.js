@@ -21,7 +21,7 @@ require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
 
         $("#login-first-button").click(function() {
             $('#login-first-modal').modal('show');
-        })
+        });
 
         $("#create-event-button").click(function() {
             $('#event-mini-form-modal').modal('show');

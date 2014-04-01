@@ -56,7 +56,7 @@ models.Event = Backbone.Model.extend({
             dateAndTime: null,
             timeZoneValue: null,
             admins: []
-        }
+        };
     },
 
     initialize: function() {
@@ -71,7 +71,7 @@ models.Event = Backbone.Model.extend({
 
     formatDate: function() {
         if (this.get("dateAndTime") && this.get("timeZoneValue")) {
-            var date = moment(this.get("dateAndTime")).tz(this.get("timeZoneValue"))
+            var date = moment(this.get("dateAndTime")).tz(this.get("timeZoneValue"));
             if (date.isValid()) {
                 return date.format(this.DATE_DISPLAY_FORMAT) + " " + date.zoneName();
             }
@@ -92,12 +92,12 @@ models.Event = Backbone.Model.extend({
 
         // delete transient attributes that shouldn't
         // be saved to redis.
-        delete attrs["connectedUsers"];
+        delete attrs.connectedUsers;
 
         // for now just delete sessions; they'll save separately and will know their
         // event by id + url.
-        delete attrs["sessions"];
-        delete attrs["hoa"];
+        delete attrs.sessions;
+        delete attrs.hoa;
 
         return attrs;
     },
@@ -150,7 +150,7 @@ models.Event = Backbone.Model.extend({
     },
 
     setHoA: function(hoa) {
-        if (hoa == null) {
+        if (hoa === null) {
             this.set("hoa", null);
             this.set("hangout-broadcast-id", null);
         } else {
@@ -183,7 +183,7 @@ models.Event = Backbone.Model.extend({
     },
 
     getRoomId: function() {
-        return this.id ? "event/" + this.id : null
+        return this.id ? "event/" + this.id : null;
     },
 
     // Add the given user -- either a full user model, or an object with an
@@ -253,7 +253,7 @@ models.Event = Backbone.Model.extend({
         if (user.get && user.get('emails')) {
             emails = _.pluck(user.get("emails"), "value");
         } else if (user.email) {
-            emails = [user.email]
+            emails = [user.email];
         } else {
             emails = [];
         }
@@ -319,7 +319,7 @@ models.Session = Backbone.Model.extend({
         };
     },
     getRoomId: function() {
-        return this.id ? "session/" + this.id : null
+        return this.id ? "session/" + this.id : null;
     },
     addConnectedParticipant: function(user) {
         var participants = _.clone(this.get("connectedParticipants"));
@@ -332,7 +332,7 @@ models.Session = Backbone.Model.extend({
     removeConnectedParticipant: function(user) {
         var participants = this.get("connectedParticipants");
         var newParticipants = _.reject(participants, function (u) {
-            return u.id == user.id
+            return u.id == user.id;
         });
         return this.setConnectedParticipants(newParticipants);
     },
@@ -345,7 +345,7 @@ models.Session = Backbone.Model.extend({
                 id: u.id,
                 displayName: u.displayName,
                 picture: u.picture || (u.image && u.image.url ? u.image.url : "")
-            }
+            };
         });
         // Has anything changed?
         var current = this.get("connectedParticipants");
@@ -400,12 +400,12 @@ models.User = Backbone.Model.extend({
             displayName: "[unknown]",
             link: null,
             emails: []
-        }
+        };
     },
 
     initialize: function() {
         this.checkJSON();
-        this.on("change:_json", this.checkJSON)
+        this.on("change:_json", this.checkJSON);
     },
 
     checkJSON: function() {
@@ -418,8 +418,9 @@ models.User = Backbone.Model.extend({
             // have a google+ profile picture.
             if("picture" in json) {
                 this.set("picture", json.picture);
+            } else {
+                this.set("picture", "");
             }
-            else { this.set("picture", "")}
 
             if("link" in json) this.set("link", this.get("_json").link);
         }

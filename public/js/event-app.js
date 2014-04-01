@@ -47,6 +47,7 @@ $(document).ready(function() {
 
     // This is the big one - handles every incoming message.
     sock.onmessage = function(message) {
+        var session;
 
         // logger.log(message);
 
@@ -93,7 +94,7 @@ $(document).ready(function() {
 
             case "set-hoa":
                 logger.log("set hoa", msg.args);
-                if (msg.args == null) {
+                if (_.isNull(msg.args)) {
                     curEvent.setHoA(null);
                 } else {
                     curEvent.setHoA(new models.Session(msg.args));
@@ -101,7 +102,7 @@ $(document).ready(function() {
                 break;
 
             case "delete-session":
-                var session = curEvent.get("sessions").get(msg.args.id);
+                session = curEvent.get("sessions").get(msg.args.id);
                 // app.paginatedSessions.remove(session);
                 curEvent.removeSession(session);
 
@@ -110,7 +111,7 @@ $(document).ready(function() {
 
             // create a new session
             case "create-session":
-                var session = new models.Session(msg.args);
+                session = new models.Session(msg.args);
 
                 // this is sort of ugly to have to edit both.
                 // i'm not sure the former one is critical, but it is definitely
@@ -123,19 +124,19 @@ $(document).ready(function() {
             // update the list of a session's participants
             case "session-participants":
                 logger.log("participants in session "+msg.args.id, msg.args.participants);
-                var session = curEvent.get("sessions").get(msg.args.id);
+                session = curEvent.get("sessions").get(msg.args.id);
                 session.setConnectedParticipants(msg.args.participants);
                 break;
 
             // mark a session as having its hangout connected and communicating
             case "session-hangout-connected":
-                var session = curEvent.get("sessions").get(msg.args.id);
+                session = curEvent.get("sessions").get(msg.args.id);
                 session.set("hangoutConnected", true);
                 break;
 
             // mark a session as disconnected
             case "session-hangout-disconnected":
-                var session = curEvent.get("sessions").get(msg.args.id);
+                session = curEvent.get("sessions").get(msg.args.id);
                 session.setConnectedParticipants([]);
                 session.set("hangoutConnected", false);
                 break;
@@ -317,7 +318,7 @@ $(document).ready(function() {
 
     app.vent.on("about-nav", _.bind(function(hide) {
 
-        if (hide == undefined) {
+        if (_.isUndefined(hide)) {
             hide = aboutShown;
         }
 

@@ -14,7 +14,7 @@ var Logger = function(prefix, level) {
 
     // Ensure console exists and has necessary properties.
     if (typeof console === "undefined") {
-        console = {}
+        console = {};
     }
     if (!console.log) { console.log = function(){};}
     if (!console.info) { console.info = console.log; }
@@ -23,12 +23,14 @@ var Logger = function(prefix, level) {
 
     var prefixLogger = function(prefix, logFunc, logFuncThis) {
         return function() {
-            var args;
+            var args = [].slice.apply(arguments); // Duplicate arguments to an array
+            for (var i = 0; i < arguments.length; i++) {
+                args.push(arguments[i]);
+            }
             if (arguments.length > 0 && typeof arguments[0] === "string") {
-                arguments[0] = prefix + " " + arguments[0];
-                args = arguments;
+                args[0] = prefix + " " + arguments[0];
             } else {
-                args = [prefix].concat(arguments);
+                args.unshift(prefix);
             }
             if (logFunc.apply && typeof logFunc.apply === "function") {
                 logFunc.apply(logFuncThis, args);

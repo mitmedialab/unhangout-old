@@ -69,7 +69,7 @@ $(document).ready(function(){
     });
     $("#timeZoneValue").append(frag);
 
-    if($("#timeZoneValue").val() == "") {
+    if($("#timeZoneValue").val() === "") {
         // Automatic TimeZone Detection of the browser client
         $("#timeZoneValue").val(jstz.determine().name());
     }

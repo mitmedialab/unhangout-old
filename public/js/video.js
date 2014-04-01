@@ -16,7 +16,7 @@ if (!window.onYouTubeIframeAPIReady) {
             new YT.Player(params.id, params.attrs);
         });
         window.YouTubeLoadQueue = [];
-    }
+    };
 }
 
 
@@ -59,7 +59,7 @@ video.extractYoutubeId = function(val) {
         }
     }
     return ytid;
-}
+};
 
 video.YoutubeVideo = Backbone.View.extend({
     tagName: "table",

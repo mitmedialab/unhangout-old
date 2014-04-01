@@ -10,7 +10,7 @@ var FauxCanvas = function() {
     div.style.zIndex = '100000';
     div.style.display = 'none';
     var appended = false;
-    var aspectRatio = 1.5
+    var aspectRatio = 1.5;
 
     this.setPosition = function(value, opt_top) {
         var left = typeof opt_top != "undefined" ? value : value.left;
@@ -41,7 +41,7 @@ var FauxCanvas = function() {
         div.style.width  = (width-6)  + "px";
         div.style.height = (width/aspectRatio - 6) + "px";
     };
-}
+};
 var FauxNotice = function() {
     var div = document.createElement('div');
     div.id = "mock-hangout-notice";
@@ -59,8 +59,8 @@ var FauxNotice = function() {
     var messageEl = document.createElement('p');
     div.appendChild(messageEl);
 
-    var show = function() { div.style.display = 'block'; }
-    var hide = function() { div.style.display = 'none'; }
+    var show = function() { div.style.display = 'block'; };
+    var hide = function() { div.style.display = 'none'; };
 
     var closeEl = document.createElement('a');
     closeEl.innerHTML = 'X';

@@ -32,7 +32,7 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         var model = this.model;
         var context = model.toJSON();
         context.adminEvents = [];
-        context.user = model
+        context.user = model;
         events.each(function(event) {
             var admins = event.get("admins");
             if (event.userIsAdmin(model)) {
@@ -79,7 +79,7 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         var el = $(jqevt.currentTarget);
         var perm = el.attr("data-perm");
         var val = el.is(":checked");
-        var post = {}
+        var post = {};
         post[perm] = val;
 
         var parent = el.parent();
@@ -101,7 +101,7 @@ var UserRowView = Backbone.Marionette.ItemView.extend({
         var el = $(jqevt.currentTarget);
         var isSuperuser = el.is(":checked");
         // Safety: can't make yourself not a superuser.
-        if (isSuperuser == false && model.id == auth.USER_ID) {
+        if (!isSuperuser && model.id == auth.USER_ID) {
             alert("Can't remove your own superuser status. Ask another superuser to do it.");
             jqevt.preventDefault();
             jqevt.stopPropagation();

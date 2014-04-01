@@ -23,7 +23,7 @@ var FacilitatorView = Backbone.View.extend({
             document.location.protocol + "//" +
             document.location.hostname + ":" + document.location.port + "/sock"
         );
-        if (this.session.get("activities").length == 0) {
+        if (this.session.get("activities").length === 0) {
             this.session.set("activities", [{type: "about", autoHide: true}]);
         }
         this.session.on("change:activities", this.renderActivities);
@@ -72,7 +72,7 @@ var FacilitatorView = Backbone.View.extend({
         // Convenience wrapper for posting messages.
         sock.sendJSON = function(type, data) {
             sock.send(JSON.stringify({type: type, args: data}));
-        }
+        };
         // onopen, authorize ourselves, then join the room.
         sock.onopen = function() {
             sock.sendJSON("auth", {key: auth.SOCK_KEY, id: auth.USER_ID});
@@ -213,7 +213,7 @@ var FacilitatorView = Backbone.View.extend({
                 logger.error("Unknown activity", activityData);
                 return;
         }
-        view.on("activity-settings", this.addActivityDialog)
+        view.on("activity-settings", this.addActivityDialog);
         // Add it to the el -- we keep it around and hide/show rather than re-render.
         this.$(".activity").html(view.el);
         view.render();
@@ -238,14 +238,14 @@ var FacilitatorView = Backbone.View.extend({
     // Add a youtube video activity, complete with controls for simultaneous
     // playback.
     addActivityDialog: function(jqevt) {
-        if (jqevt) { jqevt.preventDefault(); };
+        if (jqevt) { jqevt.preventDefault(); }
         var view = new AddActivityDialog({
             hasCurrentEmbed: this.session.get("activities")[0].type != "about"
         });
         this.faces.hideVideoIfActive();
         view.on("submit", _.bind(function(data) {
             if (!data) {
-                data = {type: 'about'}
+                data = {type: 'about'};
             }
             this.session.set("activities", [data]);
             this.sock.sendJSON("session/set-activities", {
@@ -326,7 +326,7 @@ var AboutActivity = BaseActivityView.extend({
             that.autoHideInterval = setInterval(function() {
                 count--;
                 that.$(".countdown").html(count);
-                if (count == 0) {
+                if (count === 0) {
                     clearInterval(that.autoHideInterval);
                     that.$(".hide-app").click();
                 }
@@ -396,7 +396,6 @@ var VideoActivity = BaseActivityView.extend({
         });
         this.yt.on("control-video", _.bind(function(args) {
             args.sessionId = this.session.id;
-            args.act
             this.sock.sendJSON("session/control-video", args);
         }, this));
         this.yt.on("video-settings", _.bind(function() {
@@ -429,13 +428,13 @@ var WebpageActivity = BaseActivityView.extend({
         iframe.src = this.activity.url;
         iframe.onerror = iframe.onError = function() {
             alert("There was a problem loading that webpage.");
-        }
+        };
 
         var loadTimeout = setTimeout(iframe.onerror, 5000);
         var isLoaded = function() {
             clearTimeout(loadTimeout);
             $(".loading").remove();
-        }
+        };
         // Discussion of this approach to detecting when an iframe has loaded:
         // http://www.nczonline.net/blog/2009/09/15/iframes-onload-and-documentdomain/
         // This doesn't catch

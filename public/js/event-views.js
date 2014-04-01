@@ -105,7 +105,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.ui.hangoutUsers.append(fragment);
 
         for(var i=0; i<10-numAttendees; i++) {
-            this.ui.hangoutUsers.append($("<li class='empty'></li>"))
+            this.ui.hangoutUsers.append($("<li class='empty'></li>"));
             // fragment.appendChild($("<li class='empty'></li>"));
         }
 
@@ -172,7 +172,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemViewOptions: function() {
         return {event: this.options.event, sock: this.options.sock};
     }
-})
+});
 
 
 // UserViews are the little square profile pictures that we use throughout
@@ -263,7 +263,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var args = {
             message: formatSessionMessage(val),
             roomId: this.options.event.getRoomId()
-        }
+        };
         this.options.sock.send(JSON.stringify({
             type: "broadcast-message-to-sessions",
             args: args
@@ -284,7 +284,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 this.$(".webpage-url").show();
                 this.$(".youtube-url").hide();
                 break;
-        };
+        }
     },
     createSession: function(event) {
         event.preventDefault();
@@ -298,7 +298,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 break;
             case "video":
                 var ytid = this.extractYoutubeId($("#session_youtube_id", scope).val());
-                if (ytid == "" || _.isNull(ytid)) {
+                if (!ytid) {
                     $(".yt-error", scope).show();
                     $("#session_youtube_id", scope).parent().addClass("error");
                     return;
@@ -329,14 +329,14 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         }));
         $("input[type=text]", scope).val("");
         $(".yt-error, .url-error", scope).hide();
-        $(".error", scope).removeClass(".error")
+        $(".error", scope).removeClass(".error");
         scope.modal('hide');
     },
 
     closeDisconnected: function() {
         $("#disconnected-modal").modal('hide');
     }
-})
+});
 
 // Generates the admin menu items.
 views.AdminButtonView = Backbone.Marionette.Layout.extend({
@@ -397,7 +397,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     },
 
     onRender: function() {
-        if(this.firstRun && NUM_HANGOUTS_FARMED==0) {
+        if(this.firstRun && NUM_HANGOUTS_FARMED === 0) {
             // $("#no-urls-warning").modal('show');
             logger.log("No farmed hangouts available!");
         }
@@ -409,7 +409,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         return {
             event: this.options.event,
             numFarmedHangouts: NUM_HANGOUTS_FARMED
-        }
+        };
     }
 });
 
@@ -478,7 +478,7 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
 
         data = this.collection.toJSON();
 
-        data["numUsers"] = this.collection.length;
+        data.numUsers = this.collection.length;
 
         logger.log("running user list serialize data");
         return data;
@@ -604,7 +604,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     tagName: 'li',
 
     initialize: function() {
-        Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments)
+        Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments);
         this.model.set("text", this.linkify(this.model.get("text")));
     },
 
@@ -638,7 +638,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         // message) then convert its name to the short display name.
         if(this.model.has("user")) {
             var tempUser = new models.User(this.model.get("user"));
-            model.user["shortDisplayName"] = tempUser.getShortDisplayName();
+            model.user.shortDisplayName = tempUser.getShortDisplayName();
         } else {
             // fill in a sort of fake empty name, just to the templating
             // system doesn't freak out.
@@ -797,7 +797,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         var youtubeInputParent = youtubeInput.parent();
         var youtubeInputError = this.$("p.text-warning");
         var ytId = video.extractYoutubeId(youtubeInput.val());
-        if (ytId == null) {
+        if (ytId === null || ytId === undefined) {
             // Invalid youtube URL/embed code specified.
             youtubeInputError.show();
             youtubeInputParent.addClass("error");
@@ -882,7 +882,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             this.yt.on("renderControls", _.bind(function() {
                 this.renderControls();
             }, this));
-        };
+        }
         this.yt.on("control-video", _.bind(function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
             this.options.sock.send(JSON.stringify({type: "control-video", args: args}));
