@@ -146,7 +146,8 @@ var FacilitatorView = Backbone.View.extend({
         session.on("change:connectedParticipants", function() {
             sock.sendJSON("session/set-connected-participants", {
                 sessionId: session.id,
-                connectedParticipants: session.get("connectedParticipants")
+                connectedParticipants: session.get("connectedParticipants"),
+                "hangout-url": session.get("hangout-url")
             });
         });
         session.on("change:hangout-broadcast-id", function() {

@@ -269,15 +269,16 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 sock = thesock;
             });
         });
-        browser.waitTime(2000).then(function () {
-            expect(session.get("connectedParticipants").length).to.be(2);
+        browser.wait(function() {
+            return session.get("connectedParticipants").length == 2;
+        }).then(function() {
             common.restartServer(function onStopped(restart) {
                 framedDisconnectionModalShowing(true).then(function() {
                     restart();
                 });
             }, function onRestarted() {
                 framedDisconnectionModalShowing(false);
-                browser.waitTime(1000).then(function() {
+                browser.waitTime(5000).then(function() {
                     // Refresh session from new DB.
                     event = common.server.db.events.get(event.id);
                     session = event.get("sessions").get(session.id);
@@ -287,6 +288,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
     });
+
     it("Warns you when you're in the wrong hangout", function(done) {
         var session = event.get("sessions").at(0);
         var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
@@ -302,14 +304,18 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         browser.executeScript("return " + button + ".href").then(function(href) {
             expect(href).to.be("http://example.com/");
+        });
+        // Go to a different URL that won't throw a modal dialog up.
+        browser.get("http://localhost:7777/").then(function() {
             done();
         });
     });
+
     it("Doesn't clear hangout URL immediately, but rather after a delay.", function(done) {
         var session = event.get("sessions").at(1);
         session.set("hangoutConnected", false);
         session.set("hangout-url", null);
-        common.authedSock("regular1", session.getRoomId(), function(sock) {
+        common.authedSock("regular1", session.getRoomId()).then(function(sock) {
             sock.on("data", function(message) {
                 var msg = JSON.parse(message);
                 if (msg.type == "session/set-hangout-url-ack") {
@@ -324,9 +330,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                     // We don't test that it actually gets invalidated here,
                     // because the delay is LONG, and sinon doesn't play well
                     // with asynchronous socket comms.
-                    done();
+                    sock.promiseClose().then(done);
                 } else {
-                    done(new Error(message));
+                    sock.promiseClose().then(function() {
+                        done(new Error("Unexpected message: " + message));
+                    });
                 }
             });
             sock.write(JSON.stringify({
@@ -337,6 +345,39 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 },
             }));
         });
+    });
 
+    it("Doesn't set connected participants if URL is invalid.", function(done) {
+        var session = event.get("sessions").at(1);
+        var participants = [{id: "p1", displayName: "P1", picture: ""},
+                            {id: "p2", displayName: "P2", picture: ""},
+                            {id: "0", displayName: "Regular1 Mock", picture: ""}];
+        session.set("hangout-url", "http://example.com");
+        session.set("connectedParticipants", participants);
+
+        common.authedSock("regular1", session.getRoomId()).then(function(sock) {
+            sock.on("data", function(message) {
+                var msg = JSON.parse(message);
+                if (msg.type === "session/set-connected-participants-err") {
+                    expect(msg.args).to.eql("Not in correct hangout");
+                    expect(session.get("connectedParticipants")).to.eql(participants);
+                    sock.promiseClose().then(done);
+                } else {
+                    sock.promiseClose().then(function() {
+                        done(new Error("Unexpected message: " + message));
+                    });
+                }
+            });
+            sock.write(JSON.stringify({
+                type: "session/set-connected-participants",
+                args: {
+                    sessionId: session.id,
+                    "hangout-url": "http://example2.com",
+                    connectedParticipants: [
+                        {id: "0", displayName: "Regular1 Mock", picture: ""}
+                    ]
+                }
+            }));
+        });
     });
 });

@@ -32,6 +32,13 @@ describe("MOCK HANGOUT", function() {
         });
     });
 
+    afterEach(function(done) {
+        // Get a URL that won't throw modals at us.
+        browser.get("http://localhost:7777/public/html/test.html").then(function() {
+            done();
+        });
+    });
+
     it("Communicates the hangout's URL on connction.", function(done) {
         var u1 = common.server.db.users.at(0);
         browser.get("http://localhost:7777/");
@@ -56,11 +63,17 @@ describe("MOCK HANGOUT", function() {
         var u2 = common.server.db.users.at(1);
         var u3 = common.server.db.users.at(2);
         var u4 = common.server.db.users.at(3);
-        var url = "http://localhost:7777/test/hangout/" + session.id + "/";
+        var baseUrl = "http://localhost:7777/test/hangout/" + session.id + "/";
+        var queryUrl = baseUrl + "?mockUserIds=" + [u1.id, u2.id, u3.id].join(",");
+        // Set the hangout URL because connectedParticipants will be refused if
+        // it doesn't match the URL we get (which in the mock hangout will
+        // include ?mockUserIds=...).
+        session.set("hangout-url", queryUrl);
+        
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate(u1.get("sock-key"));
         // First, load the hangout without extra users.
-        browser.get(url);
+        browser.get(queryUrl);
         // Wait for iframe to load. Would be cleaner to introspect, but.. ugh.
         browser.waitForFunc(function() {
             return session.getNumConnectedParticipants() == 1;
@@ -68,16 +81,14 @@ describe("MOCK HANGOUT", function() {
             expect(session.getNumConnectedParticipants()).to.be(1);
         });
         // Next, load the hangout with u2 and u3 as non-app users
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/?mockUserIds=" + [
-            u1.id, u2.id, u3.id
-        ].join(","))
-        // Wait a longer time, for the cross-document message with participants to come through.
+        browser.get(queryUrl)
         browser.waitForFunc(function() {
             return session.getNumConnectedParticipants() == 3;
         }).then(function() {
             expect(_.pluck(session.get("connectedParticipants"), "id")).to.eql([
                 u1.id, u2.id, u3.id
             ]);
+            session.set("hangout-url", baseUrl);
             done();
         });
     });

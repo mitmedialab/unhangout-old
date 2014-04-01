@@ -72,10 +72,8 @@ var buildBrowser = function(callback) {
         return browser.executeScript("return true;").then(cb);
     };
     browser.waitTime = function(time) {
-        var waited = false;
-        return browser.wait(function() {
-            setTimeout(function() { waited = true; }, time);
-            return browser.then(function() { return waited; });
+        return new Promise(function(resolve, reject) {
+            setTimeout(resolve, time);
         });
     };
     browser.waitForFunc = function(cb) {
@@ -104,7 +102,11 @@ exports.getSeleniumBrowser = function(callback) {
         }
         seleniumServer = new SeleniumServer(seleniumPath, {port: 4444});
         seleniumServer.start().then(function() {
-            buildBrowser(callback);
+            // Throwing in a timeout on speculation that this makes
+            // intermittent timeouts in beforeAll hooks less common.
+            setTimeout(function() {
+                buildBrowser(callback);
+            }, 2000);
         });
     }
 };
@@ -213,26 +215,30 @@ exports.sockWithPromiseClose = function() {
 // 'userKey', and join it to the given room. Depends on `exports.server`
 // already being inited with users.
 exports.authedSock = function(userKey, room, callback) {
-    var newSock = exports.sockWithPromiseClose();
-    var user = exports.server.db.users.findWhere({"sock-key": userKey});
-    var onData = function(message) {
-        var msg = JSON.parse(message);
-        if (msg.type === "auth-ack") {
-            newSock.write(JSON.stringify({type: "join", args: {id: room}}));
-        } else if (msg.type === "join-ack") {
-            newSock.removeListener("data", onData);
-            callback && callback(newSock);
-        }
-    };
-    newSock.on("data", onData);
-    newSock.on("error", function(msg) {
-        console.log("socket error", msg);
-    });
-    newSock.once("connection", function() {
-        newSock.write(JSON.stringify({
-            type:"auth",
-            args:{ key: user.getSockKey(), id: user.id }
-        }));
+    return new Promise(function(resolve, reject) {
+        var newSock = exports.sockWithPromiseClose();
+        var user = exports.server.db.users.findWhere({"sock-key": userKey});
+        var onData = function(message) {
+            var msg = JSON.parse(message);
+            if (msg.type === "auth-ack") {
+                newSock.write(JSON.stringify({type: "join", args: {id: room}}));
+            } else if (msg.type === "join-ack") {
+                newSock.removeListener("data", onData);
+                callback && callback(newSock);
+                resolve(newSock);
+            }
+        };
+        newSock.on("data", onData);
+        newSock.on("error", function(msg) {
+            console.log("socket error", msg);
+            reject(new Error(msg));
+        });
+        newSock.once("connection", function() {
+            newSock.write(JSON.stringify({
+                type:"auth",
+                args:{ key: user.getSockKey(), id: user.id }
+            }));
+        });
     });
 };
 
