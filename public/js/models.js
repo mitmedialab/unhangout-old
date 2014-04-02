@@ -345,28 +345,6 @@ models.Session = Backbone.Model.extend({
         });
         return this.setConnectedParticipants(newParticipants);
     },
-    addJoiningParticipant: function(user, options) {
-        if (!_.findWhere(this.get("connectedParticipants"), {id: user.id})) {
-            var joining = this.get("joiningParticipants");
-            if (!_.findWhere(joining, {id: user.id})) {
-                joining.push(this._participantRepr(user));
-                if (!(options && options.silent)) {
-                    this.trigger("change:joiningParticipants", this, joining);
-                    this.trigger("add-joining-participant", this, user);
-                }
-            }
-        }
-    },
-    removeJoiningParticipant: function(user, options) {
-        var joining = this.get("joiningParticipants");
-        if (_.findWhere(joining, {id: user.id})) {
-            joining = _.reject(joining, function(u) { return u.id == user.id; });
-            this.set("joiningParticipants", joining, options);
-            if (!(options && options.silent)) {
-                this.trigger("remove-joining-participant", this, user);
-            }
-        }
-    },
     setConnectedParticipants: function(users) {
         if (users.length > 10) { return false; }
         // Clean incoming users..

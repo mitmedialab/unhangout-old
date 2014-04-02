@@ -122,6 +122,14 @@ $(document).ready(function() {
                 // app.paginatedSessions.add(session);
                 break;
 
+            // update the list of a session's not-yet-connected-but-joining participants
+            case "joining-participants":
+                logger.log("joining participants "+ msg.args.id, msg.args.participants);
+                console.log(msg.args.id);
+                session = curEvent.get("sessions").get(msg.args.id);
+                session.set("joiningParticipants", msg.args.participants);
+                break;
+
             // update the list of a session's participants
             case "session-participants":
                 logger.log("participants in session "+msg.args.id, msg.args.participants);

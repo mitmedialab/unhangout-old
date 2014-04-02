@@ -49,6 +49,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // if we get a notice that someone has connected to the associated participant,
         // re-render to show them.
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
+        this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
     },
 
     onRender: function() {
@@ -69,7 +70,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // don't show the x of 10 when it's live (at least until we have live data for that)
         this.$el.find(".start").show();
 
-        var numAttendees = this.model.getNumConnectedParticipants();
+        var numAttendees = this.model.getNumConnectedParticipants() + this.model.get("joiningParticipants").length;
 
         this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");
 
@@ -77,16 +78,11 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // the hangout-users div, and populate it with users.
         this.$el.addClass("hangout-connected");
 
-        // trying to simply not do the individual picture display to see if this helps.
-        // (it does mostly, but there's still some slowness)
-        this.ui.hangoutUsers.empty();
-
+        // Build the list of user views.
         var fragment = document.createDocumentFragment();
-
-        _.each(this.model.get("connectedParticipants"), _.bind(function(udata) {
-            // try looking up the user view from the main user list.
+        var drawUser = function (udata, joining) {
             var userView;
-            if(udata.id in userViewCache) {
+            if (udata.id in userViewCache) {
                 userView = userViewCache[udata.id];
             } else {
                 // vivify the user into a model when passing it in.  Note that
@@ -97,24 +93,32 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
                 userView = new views.UserView({model:new models.User(udata)});
                 userViewCache[udata.id] = userView;
             }
-
-            fragment.appendChild(userView.render().el.cloneNode(true));
-        }, this));
-
-
-        this.ui.hangoutUsers.append(fragment);
-
-        for(var i=0; i<10-numAttendees; i++) {
-            this.ui.hangoutUsers.append($("<li class='empty'></li>"));
-            // fragment.appendChild($("<li class='empty'></li>"));
+            var el = userView.render().el.cloneNode(true);
+            if (joining) {
+                el.className += " joining";
+            }
+            fragment.appendChild(el);
+        }
+        // Add connected users
+        _.each(this.model.get("connectedParticipants"), function(udata) { drawUser(udata); });
+        // Add joining users
+        _.each(this.model.get("joiningParticipants"), function(udata) { drawUser(udata, true); });
+        var emptyli;
+        for(var i = 0; i < this.model.MAX_ATTENDEES - numAttendees; i++) {
+            //this.ui.hangoutUsers.append($("<li class='empty'></li>"));
+            emptyli = document.createElement("li");
+            emptyli.className = "empty";
+            fragment.appendChild(emptyli);
         }
 
-
+        // Now add the fragment to the layout and display it
+        this.ui.hangoutUsers.html(fragment);
         this.ui.hangoutUsers.show();
+
         this.ui.hangoutOffline.hide();
 
         this.ui.attend.find(".icon-lock").hide();
-        if(!this.options.event.sessionsOpen() || numAttendees == this.model.MAX_ATTENDEES) {
+        if(!this.options.event.sessionsOpen() || numAttendees >= this.model.MAX_ATTENDEES) {
             this.ui.attend.find(".icon-lock").show();
 
             this.ui.attend.attr("disabled", true);
