@@ -314,12 +314,21 @@ models.Session = Backbone.Model.extend({
             shortCode: null,
             // State
             connectedParticipants: [],
+            joiningParticipants: [],
             activities: [],
             "hangout-broadcast-id": null // Youtube ID For Hangouts on air
         };
     },
     getRoomId: function() {
         return this.id ? "session/" + this.id : null;
+    },
+    _participantRepr: function(user) {
+        var json = user.toJSON ? user.toJSON() : user;
+        return {
+            id: json.id,
+            displayName: json.displayName,
+            picture: json.picture || (json.image && json.image.url ? json.image.url : "")
+        }
     },
     addConnectedParticipant: function(user) {
         var participants = _.clone(this.get("connectedParticipants"));
@@ -336,21 +345,53 @@ models.Session = Backbone.Model.extend({
         });
         return this.setConnectedParticipants(newParticipants);
     },
+    addJoiningParticipant: function(user, options) {
+        if (!_.findWhere(this.get("connectedParticipants"), {id: user.id})) {
+            var joining = this.get("joiningParticipants");
+            if (!_.findWhere(joining, {id: user.id})) {
+                joining.push(this._participantRepr(user));
+                if (!(options && options.silent)) {
+                    this.trigger("change:joiningParticipants", this, joining);
+                    this.trigger("add-joining-participant", this, user);
+                }
+            }
+        }
+    },
+    removeJoiningParticipant: function(user, options) {
+        var joining = this.get("joiningParticipants");
+        if (_.findWhere(joining, {id: user.id})) {
+            joining = _.reject(joining, function(u) { return u.id == user.id; });
+            this.set("joiningParticipants", joining, options);
+            if (!(options && options.silent)) {
+                this.trigger("remove-joining-participant", this, user);
+            }
+        }
+    },
     setConnectedParticipants: function(users) {
         if (users.length > 10) { return false; }
         // Clean incoming users..
-        users = _.map(users, function(u) {
-            u = (u.toJSON ? u.toJSON() : u);
-            return {
-                id: u.id,
-                displayName: u.displayName,
-                picture: u.picture || (u.image && u.image.url ? u.image.url : "")
-            };
-        });
-        // Has anything changed?
-        var current = this.get("connectedParticipants");
-        var intersection = _.intersection(_.pluck(users, "id"), _.pluck(current, "id"));
-        if (users.length != current.length || intersection.length != current.length) {
+        users = _.map(users, this._participantRepr);
+        var newUserIds = _.pluck(users, "id");
+        var currentUserIds = _.pluck(this.get("connectedParticipants", "id"));
+
+        // Handle any joining participants who have now connected.
+        var joining = this.get("joiningParticipants");
+        var filtered = [];
+        _.each(joining, _.bind(function(joiningUser) {
+            if (_.contains(newUserIds, joiningUser.id)) {
+                this.removeJoiningParticipant(joiningUser);
+            } else {
+                filtered.push(joiningUser);
+            }
+        }, this));
+        if (joining.length != filtered.length) {
+            this.set("joiningParticipants", filtered);
+        }
+
+        // Have connectedParticipants changed?
+        var intersection = _.intersection(newUserIds, currentUserIds);
+        if (users.length != currentUserIds.length ||
+                intersection.length != currentUserIds.length) {
             // We've changed.
             this.set("connectedParticipants", users);
             return true;
