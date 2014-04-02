@@ -20,8 +20,8 @@ var FacilitatorView = Backbone.View.extend({
         this.session = options.session;
         this.event = options.event;
         this.sock = new SockJS(
-            document.location.protocol + "//" +
-            document.location.hostname + ":" + document.location.port + "/sock"
+            document.location.protocol + "//" + document.location.hostname +
+            (document.location.port ? ":" + document.location.port : "") + "/sock"
         );
         if (this.session.get("activities").length === 0) {
             this.session.set("activities", [{type: "about", autoHide: true}]);
