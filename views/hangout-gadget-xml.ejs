@@ -166,6 +166,25 @@
                     }, 50);
                 };
 
+                function hangoutNoticeEscape(str) {
+                    // Hangout double-entity-quotes anything we send in, no
+                    // matter what we try to do.  So replace quotes, ampersands,
+                    // and angle brackets with unicode variants that won't get
+                    // escaped.
+
+                    // For want of a unicode straight-quote, we'll use curlies.
+                    str = str.replace(/([\w,.?!\)])'/g, "$1\u2019");
+                    str = str.replace(/'/g, "\u2018");
+                    str = str.replace(/([\w,.?!\)])"/g, "$1\u201d");
+                    str = str.replace(/"/g, "\u201c");
+                    // Ampersands..
+                    str = str.replace(/\&/g, "\uff06");
+                    // Angle brackets..
+                    str = str.replace(/</g, "\u3008");
+                    str = str.replace(/>/g, "\u3009");
+                    return str;
+                }
+
                 function receiveMessage(event) {
                     if (event.origin === "<%= unhangoutBaseUrl %>") {
                         switch (event.data.type) {
@@ -198,13 +217,15 @@
                             case "display-notice-if-hidden":
                                 if (!gapi.hangout.isAppVisible()) {
                                     gapi.hangout.layout.displayNotice(
-                                        event.data.args[0], event.data.args[1]
+                                        hangoutNoticeEscape(event.data.args[0]),
+                                        event.data.args[1]
                                     )
                                 }
                                 break;
                             case "display-notice":
                                 gapi.hangout.layout.displayNotice(
-                                    event.data.args[0], event.data.args[1]
+                                    hangoutNoticeEscape(event.data.args[0]),
+                                    event.data.args[1]
                                 )
                                 break;
                             case "dismiss-notice":

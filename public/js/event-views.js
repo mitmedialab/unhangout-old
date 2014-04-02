@@ -253,7 +253,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
     },
     updateSessionMessage: function(event) {
         $("#message-sessions-modal .faux-hangout-notice .message").html(
-            formatSessionMessage($("#session_message").val())
+            _.escape(formatSessionMessage($("#session_message").val()))
         );
     },
     sendSessionMessage: function(event) {

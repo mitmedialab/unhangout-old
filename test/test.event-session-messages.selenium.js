@@ -119,8 +119,34 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.byCss("textarea#session_message").getAttribute("value").then(function(text) {
             expect(text).to.eql("This is fun!\n Copy and paste: http://localhost:7777/event/" + event.id);
             done();
-
         });
+    });
 
+    it("Replaces entities with unicode", function(done) {
+        var session = event.get("sessions").at(1);
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("superuser1");
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.waitForSelector("iframe[name='gadget_frame']");
+        browser.switchTo().frame("gadget_frame");
+        browser.waitForSelector("iframe[name='facilitator_frame']");
+
+        browser.then(function() {
+            return common.authedSock("superuser1", event.getRoomId());
+        }).then(function(sock) {;
+            sock.write(JSON.stringify({
+                type: "broadcast-message-to-sessions",
+                args: {
+                    roomId: event.getRoomId(),
+                    message: "\"Say\", charlie's friend said, \"Do you remember 'Bobby Tables'? <>&"
+                }
+            }));
+            return sock.promiseClose();
+        });
+        browser.waitForSelector("#mock-hangout-notice p");
+        browser.byCss("#mock-hangout-notice p").getText().then(function(text) {
+            expect(text).to.eql("\u201cSay\u201d, charlie\u2019s friend said, \u201cDo you remember \u2018Bobby Tables\u2019? \u3008\u3009\uff06");
+            done();
+        });
     });
 });
