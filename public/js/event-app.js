@@ -36,7 +36,7 @@ $(document).ready(function() {
     // From here down, we're mostly concerned with managing networking and
     // communication.
     sock = new SockJS(document.location.protocol + "//" + document.location.hostname +
-            (document.location.port ? document.location.port + ":" : "") + "/sock");
+            (document.location.port ? ":" + document.location.port : "") + "/sock");
     // Register a bunch of listeners on the major events it will fire.
     sock.onopen = function() {
         // on connect, send the auth message.
