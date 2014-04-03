@@ -72,8 +72,10 @@ var buildBrowser = function(callback) {
         return browser.executeScript("return true;").then(cb);
     };
     browser.waitTime = function(time) {
-        return new Promise(function(resolve, reject) {
-            setTimeout(resolve, time);
+        var sentinel = false;
+        setTimeout(function() { sentinel = true; }, time);
+        return browser.wait(function() {
+            return sentinel;
         });
     };
     browser.waitForFunc = function(cb) {

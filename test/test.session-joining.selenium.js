@@ -1,7 +1,9 @@
 var expect = require('expect.js'),
     _ = require("underscore"),
     common = require('./common'),
-    models = require("../lib/server-models.js");
+    models = require("../lib/server-models.js"),
+    Promise = require("bluebird");
+    requests = require("superagent");
 
 describe("SESSION JOINING PARTICIPANT LISTS", function() {
     var browser = null,
@@ -10,7 +12,10 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     // Different leave-stop-timeout to monkey-patch in to test leave-stops.
     // Selenium is not compatible with sinon.useFakeTimers, so tests have to
     // wait this long in real-time.
+    var ORIG_LEAVE_STOP_TIMEOUT;
     var TEST_LEAVE_STOP_TIMEOUT = 3000;
+    var ORIG_JOINING_TIMEOUT;
+    var TEST_JOINING_TIMEOUT = 3000;
 
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
@@ -18,8 +23,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(80000);
+        // Reduce joining timeout to speed up the test.
+        ORIG_LEAVE_STOP_TIMEOUT = models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT;
+        ORIG_JOINING_TIMEOUT = models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT;
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = TEST_LEAVE_STOP_TIMEOUT;
+        models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = TEST_JOINING_TIMEOUT;
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
                 browser = theBrowser;
@@ -32,6 +40,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
     });
     after(function(done) {
+        models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = ORIG_LEAVE_STOP_TIMEOUT;
+        models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = ORIG_JOINING_TIMEOUT;
         browser.quit().then(function() {
             common.standardShutdown(done);
         });
@@ -378,6 +388,44 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                     ]
                 }
             }));
+        });
+    });
+
+    it("Adds joining participant UI", function(done) {
+        var session = event.get("sessions").at(0);
+        var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
+        var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
+
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate(u1.getSockKey());
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$");
+        browser.then(function() {
+            return new Promise(function (resolve, reject) {
+                var url = "http://localhost:7777/session/" + session.get("session-key");
+                requests.get(url)
+                    .set("x-mock-user", u2.getSockKey())
+                    .redirects(0)
+                    .end(function(res) {
+                        expect(res.status).to.be(302);
+                        expect(session.get("joiningParticipants")).to.eql([{
+                            id: u2.id,
+                            displayName: u2.get("displayName"),
+                            picture: u2.get("picture")
+                        }]);
+                        resolve();
+                    });
+            });
+        });
+        browser.waitForSelector(".hangout-users li.user.joining");
+        browser.byCsss(".hangout-users li.user.joining").then(function(els) {
+            expect(els.length).to.be(1);
+        });
+        browser.waitTime(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 2000);
+        browser.byCsss(".hangout-users li.user.joining").then(function(els) {
+            expect(els.length).to.be(0);
+            expect(session.get("joiningParticipants").length).to.be(0);
+            done();
         });
     });
 });
