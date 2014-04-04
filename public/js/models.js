@@ -151,11 +151,31 @@ models.Event = Backbone.Model.extend({
 
     setHoA: function(hoa) {
         if (hoa === null) {
+            if (this.get("hoa")) {
+                this.stopListening(this.get("hoa"));
+            }
             this.set("hoa", null);
             this.set("hangout-broadcast-id", null);
+            this.trigger("update-hoa", this, null);
         } else {
             this.set("hoa", hoa);
             hoa.event = this;
+            this.listenTo(hoa,
+                "change:hangout-pending " +
+                "change:hangout-url " +
+                "change:hangout-broadcast-id " +
+                "change:connectedParticipants",
+                _.bind(function(model) {
+                    // Do on next-tick to ensure the model has been updated by
+                    // other listeners.  Ugly hack -- symptom is that the
+                    // broadcast attributes are the attributes *before* the
+                    // change.
+                    setTimeout(_.bind(function() {
+                        this.trigger("update-hoa", this, model);
+                    }, this), 0);
+                }, this)
+            );
+            this.trigger("update-hoa", this, hoa);
         }
     },
 
@@ -393,7 +413,11 @@ models.Session = Backbone.Model.extend({
         }
     },
     getParticipationLink: function() {
-        return "/session/" + this.get("session-key");
+        if (this.get("isHoA")) {
+            return "/hoa-session/" + this.get("session-key");
+        } else {
+            return "/session/" + this.get("session-key");
+        }
     }
 });
 

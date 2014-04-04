@@ -785,7 +785,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             }
             this.renderControls();
         }, this);
-        this.listenTo(this.model, "change:hoa", this.render);
+        this.listenTo(this.model, "update-hoa", this.renderControls);
     },
     serializeData: function() {
         var context = this.model.toJSON();
@@ -860,10 +860,14 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     renderControls: function() {
         var hoa = this.model.get("hoa");
         var context = _.extend(this.model.toJSON(), {
-            hoaParticipationLink: hoa ? hoa.getParticipationLink() : null,
             numHoaParticipants: hoa ? hoa.getNumConnectedParticipants() : null,
             isPlayingForEveryone: this.yt.isPlayingForEveryone(),
         });
+        if (hoa && (hoa.get("hangout-url") || hoa.get("hangout-pending"))) {
+            context.hoaParticipationLink = hoa.getParticipationLink();
+        } else {
+            context.hoaParticipationLink = null;
+        }
 
         this.ui.controls.html(this.controlsTemplate(context));
 

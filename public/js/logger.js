@@ -24,11 +24,8 @@ var Logger = function(prefix, level) {
     var prefixLogger = function(prefix, logFunc, logFuncThis) {
         return function() {
             var args = [].slice.apply(arguments); // Duplicate arguments to an array
-            for (var i = 0; i < arguments.length; i++) {
-                args.push(arguments[i]);
-            }
-            if (arguments.length > 0 && typeof arguments[0] === "string") {
-                args[0] = prefix + " " + arguments[0];
+            if (args.length > 0 && typeof args[0] === "string") {
+                args[0] = prefix + " " + args[0];
             } else {
                 args.unshift(prefix);
             }

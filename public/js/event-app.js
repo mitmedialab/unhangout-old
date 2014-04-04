@@ -94,11 +94,14 @@ $(document).ready(function() {
                 break;
 
             case "set-hoa":
-                logger.log("set hoa", msg.args);
                 if (_.isNull(msg.args)) {
                     curEvent.setHoA(null);
+                } else if (curEvent.get("hoa")) {
+                    logger.debug("set hoa attrs", msg.args);
+                    curEvent.get("hoa").set(msg.args);
                 } else {
-                    curEvent.setHoA(new models.Session(msg.args));
+                    session = new models.Session(msg.args);
+                    curEvent.setHoA(session);
                 }
                 break;
 
@@ -125,7 +128,6 @@ $(document).ready(function() {
             // update the list of a session's not-yet-connected-but-joining participants
             case "joining-participants":
                 logger.log("joining participants "+ msg.args.id, msg.args.participants);
-                console.log(msg.args.id);
                 session = curEvent.get("sessions").get(msg.args.id);
                 session.set("joiningParticipants", msg.args.participants);
                 break;
@@ -318,6 +320,14 @@ $(document).ready(function() {
             }, this));
             this.admin.show(this.adminButtonView);
         }
+        var maybeMute = function() {
+            var hoa = curEvent.get("hoa");
+            if (hoa && _.findWhere(hoa.get("connectedParticipants"), {id: auth.USER_ID})) {
+                app.youtubeEmbedView.control({"mute": true});
+            }
+        };
+        curEvent.on("update-hoa", maybeMute);
+        maybeMute();
 
         logger.log("Initialized app.");
 

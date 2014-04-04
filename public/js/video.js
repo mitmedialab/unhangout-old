@@ -138,7 +138,7 @@ video.YoutubeVideo = Backbone.View.extend({
         );
     },
     receiveControl: function(args) {
-        this.logger.debug("Receive control", args.state);
+        this.logger.debug("Receive control", args.state, args);
         //
         // Mute control: out-of-band from regular video sync. Currently only
         // triggered by joining a hangout-on-air for which this is the embed.
