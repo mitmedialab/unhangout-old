@@ -1,0 +1,64 @@
+<% var title = event.get("title"); %>
+<% var subtitle = (type === "session-full" ? "Session full" :
+                   type === "create-hoa" ? "Create Hangout-on-air?" :
+                   type === "pending-hoa" ? "Hangout-on-air creation already started" :
+                   "unexpected"); %>
+
+<% include _header.ejs %>
+<% include _event-navbar.ejs %>
+
+<div class='container'>
+    <div class='row'>
+        <div class='span6 offset3'>
+            <h1><%= title %></h1>
+            <h2><%= subtitle %></h2>
+
+            <% if (type === "pending-hoa") { %>
+                <p>
+                It looks like <b><%= pendingUser.get("displayName") %></b>
+                started creating a hangout-on-air for this event
+                <b><%= moment(pendingTime).fromNow() %></b>.
+                If they're doing this for the first time, it can take a few
+                minutes to get set up with google for hangouts.
+                </p>
+                <p>
+                Would you like to wait for them to finish, and then try again,
+                or create a new hangout on air?
+                </p>
+                <p>
+                <a class='btn btn-primary' href='<%= session.getParticipationLink() %>'>Check again</a>
+                <a class='btn' href='/event/<%= event.id %>/create-hoa/'>Create a new hangout-on-air</a>
+                </p>
+            <% } else if (type === "create-hoa") { %>
+                <p>
+                It looks like everyone has left the old hangout-on-air.
+                Would you like to create a new one?
+                </p>
+                <p>
+                <a class='btn' href='/event/<%= event.id %>/create-hoa/'>Create a new hangout-on-air</a>
+                </p>
+            <% } else if (type === "session-full") { %>
+                <p>
+                Oh no!  It looks like other people beat you to the punch, and
+                this breakout session is already full.  Please close this
+                window and return to the
+                <a href='<%= event.getEventUrl() %>'>main event page</a>,
+                where you can join a different hangout.
+                </p>
+            <% } else { %>
+                <p>
+                Uh-oh, something unexpected happened while trying to join a session.
+                </p>
+                <p>
+                <a class='btn' href='<%= event.getEventUrl() %>'>Return to the event</a>
+                <a class='btn' href='<%= session.getParticipationLink() %>'>
+                    Try joining the session again.
+                </a>
+                </p>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<% include _footer.ejs %>
+

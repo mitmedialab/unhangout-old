@@ -22,19 +22,25 @@ if (!window.onYouTubeIframeAPIReady) {
 
 var VIDEO_DETAILS_CACHE = {};
 video.getVideoDetails = function(id, callback) {
-    if (VIDEO_DETAILS_CACHE[id]) {
+    if (id in VIDEO_DETAILS_CACHE) {
         return callback(VIDEO_DETAILS_CACHE[id]);
     }
-    var url = DATA_API_URL.replace("{id}", id);
-    $.getJSON(url, _.bind(function(data) {
+    $.getJSON(
+        DATA_API_URL.replace("{id}", id)
+    ).done(function(data) {
         VIDEO_DETAILS_CACHE[id] = {
             id: id,
             title: data.entry.title.$t,
             duration: parseInt(data.entry.media$group.yt$duration.seconds),
             thumbnail: data.entry.media$group.media$thumbnail[0]
         };
+    }).fail(function() {
+        VIDEO_DETAILS_CACHE[id] = null;
+    }).always(function() {
         callback(VIDEO_DETAILS_CACHE[id]);
-    }, this));
+    });
+
+
 };
 
 // From http://stackoverflow.com/a/6904504 , covering any of the 15 or so
@@ -138,7 +144,7 @@ video.YoutubeVideo = Backbone.View.extend({
         );
     },
     receiveControl: function(args) {
-        this.logger.debug("Receive control", args.state);
+        this.logger.debug("Receive control", args.state, args);
         //
         // Mute control: out-of-band from regular video sync. Currently only
         // triggered by joining a hangout-on-air for which this is the embed.

@@ -1,6 +1,7 @@
 var common = require("./common.js"),
     expect = require("expect.js"),
     googleapis = require("googleapis"),
+    models = require("../lib/server-models"),
     webdriver = require("selenium-webdriver");
 
 describe("CREATE HOA", function() {
@@ -15,7 +16,11 @@ describe("CREATE HOA", function() {
             browser = theBrowser;
             common.standardSetup(done);
         });
+
+        //
         // Set up mocks for googleapis, so we can dance right past them.
+        //
+
         googleapis.OAuth2Client = function() {
             this.generateAuthUrl = function() {
                 return "http://localhost:7777/event/create-hoa/callback";
@@ -118,13 +123,60 @@ describe("CREATE HOA", function() {
         browser.byCsss(".join-hoa").then(function(els) {
             expect(els.length).to.be(0);
         });
-        browser.executeScript(embedSrcScript).then(function(src) {
-            expect(src).to.not.be(null);
-            expect(src.indexOf("http://www.youtube.com/embed/" +
-                               event.get("hoa").get("hangout-broadcast-id"))
-            ).to.be(0);
+        browser.waitForSelector("iframe");
+        browser.wait(function() {
+            return browser.executeScript(embedSrcScript).then(function(src) {
+                return src !== null && src.indexOf(
+                    "http://www.youtube.com/embed/" +
+                    event.get("hoa").get("hangout-broadcast-id")) === 0;
+            });
         });
 
         browser.then(function() { done(); });
+    });
+
+    it("shows correct links for hoa statuses", function(done) {
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        event.setHoA(null);
+        event.start();
+        var hoa;
+        browser.get("http://localhost:7777");
+        browser.mockAuthenticate("superuser1");
+ 
+        // Get the page once -- the rest are live updates triggered by model
+        // changes.
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForScript("$");
+
+        function hasHoA(has) {
+            browser.wait(function() {
+                return browser.byCsss("a.create-hoa").then(function(els) {
+                    return els.length === (has ? 0 : 1);
+                });
+            });
+            return browser.wait(function() {
+                return browser.byCsss("a.join-hoa").then(function(els) {
+                    return els.length === (has ? 1 : 0);
+                });
+            });
+        };
+
+        hasHoA(false).then(function() {
+            // Add an hoa.
+            hoa = new models.ServerHoASession();
+            event.setHoA(hoa);
+            hoa.markHangoutPending();
+        });
+        hasHoA(true).then(function() {
+            hoa.set("hangout-pending", null);
+        });
+        hasHoA(false).then(function() {
+            hoa.set("hangout-url", "http://example.com/hoa");
+        });
+        hasHoA(true);
+        browser.byCss(".remove-hoa").click();
+        hasHoA(false).then(function() {
+            done();
+        });
     });
 });

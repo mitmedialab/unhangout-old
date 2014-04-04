@@ -45,20 +45,12 @@ var buildBrowser = function(callback) {
     browser.unMockAuthenticate = function(user) {
         return browser.executeScript("document.cookie = 'mock_user=; path=/';");
     };
-    browser.waitForSelector = function(selector, debug) {
+    browser.waitForSelector = function(selector) {
         return browser.wait(function() {
-            var script = "try { return !!document.querySelector('"
-                           + selector.replace(/'/g, "\\'") + "'); " +
-                "} catch(e) { return false; }";
-            return browser.executeScript(script).then(function(exists) {
-                if (!exists) {
-                    if (debug) { console.log(selector, "exists", exists) };
-                    return false;
-                } else {
-                    var displayed = browser.byCss(selector).isDisplayed();
-                    if (debug) { console.log(selector, "exists", exists, "awaiting displayed") };
-                    return displayed;
-                }
+            return browser.byCss(selector).then(function(el) {
+                return el.isDisplayed();
+            }).then(null, function(err) {
+                return false;
             });
         });
     };
@@ -72,8 +64,10 @@ var buildBrowser = function(callback) {
         return browser.executeScript("return true;").then(cb);
     };
     browser.waitTime = function(time) {
-        return new Promise(function(resolve, reject) {
-            setTimeout(resolve, time);
+        var sentinel = false;
+        setTimeout(function() { sentinel = true; }, time);
+        return browser.wait(function() {
+            return sentinel;
         });
     };
     browser.waitForFunc = function(cb) {
