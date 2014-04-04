@@ -874,9 +874,11 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         // Make the video details pretty.
         _.each(this.model.get("previousVideoEmbeds"), _.bind(function(embed) {
             video.getVideoDetails(embed.youtubeId, _.bind(function(data) {
-                this.$("[data-youtube-id='" + data.id + "']").replaceWith(
-                    this.previousVideoDetailsTemplate(data)
-                );
+                if (data) {
+                    this.$("[data-youtube-id='" + data.id + "']").replaceWith(
+                        this.previousVideoDetailsTemplate(data)
+                    );
+                }
             }, this));
         }, this));
     },
