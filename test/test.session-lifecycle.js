@@ -330,4 +330,20 @@ describe('SESSION LIFECYCLE', function() {
         expect(_.size(session.joiningTimeouts)).to.be(0);
         clock.restore();
     });
+
+    it("Expires HoA sessions too", function() {
+        var session = new models.ServerHoASession({
+            id: 1,
+            connectedParticipants: participants,
+            "hangout-url": "http://example.com"
+        });
+        var clock = sinon.useFakeTimers(new Date().getTime());
+        session.setConnectedParticipants([]);
+        session.stopWithDelay();
+        expect(session.get("hangout-stop-request-time")).to.be.a('number');
+        clock.tick(session.HANGOUT_LEAVE_STOP_TIMEOUT + 1);
+        expect(session.get("hangout-url")).to.be(null);
+        expect(session.get("hangout-stop-request-time")).to.be(null);
+        clock.restore();
+    });
 });
