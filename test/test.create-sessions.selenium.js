@@ -85,4 +85,36 @@ describe("CREATE SESSIONS", function() {
             done();
         });
     });
+
+    it("Creates an event session with youtube", function(done) {
+        event.get("sessions").reset();
+        event.start();
+        browser.get("http://localhost:7777");
+        browser.mockAuthenticate("superuser1");
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForSelector(".admin-button");
+        browser.byCss(".admin-button").click();
+        browser.byCss("#show-create-session-modal").click();
+        browser.waitForSelector("#session_name");
+        browser.byCss("#session_name").sendKeys("Video Session");
+        browser.byCss("input[value='video']").click();
+        browser.waitForSelector("#session_youtube_id");
+        browser.byCss("#session_youtube_id").sendKeys(
+            "https://www.youtube.com/watch?v=jNQXAC9IVRw"
+        );
+        browser.byCss("#create-session").click();
+        browser.byCsss(".session h3").then(function(els) {
+            expect(els.length).to.be(1);
+            expect(event.get("sessions").at(0).get("activities")).to.eql([{
+                type: "video",
+                video: {
+                    provider: "youtube", id: "jNQXAC9IVRw"
+                }
+            }]);
+            els[0].getText().then(function(text) {
+                expect(text).to.eql("Video Session");
+                done();
+            });
+        });
+    });
 });
