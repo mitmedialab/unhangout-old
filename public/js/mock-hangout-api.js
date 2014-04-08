@@ -122,6 +122,9 @@ gapi = {
                 cb({isApiReady: true});
             }
         },
+        getLocalParticipantId: function() {
+            return "mock-user-id"
+        },
         getHangoutUrl: function() {
             return MOCK_DATA.hangoutUrl;
         },
@@ -135,6 +138,11 @@ gapi = {
             if (_APP_IS_VISIBLE) {
                 alert("Hangout got 'hideApp' call; app is now 'invisible'.");
                 _APP_IS_VISIBLE = false;
+            }
+        },
+        av: {
+            muteParticipantMicrophone: function(participantId) {
+                console.log("Microphone muted");
             }
         },
         data: {

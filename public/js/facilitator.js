@@ -386,6 +386,7 @@ var VideoActivity = BaseActivityView.extend({
     template: _.template($("#video-activity").html()),
     initialize: function(options) {
         BaseActivityView.prototype.initialize.apply(this, arguments);
+        this._muteSentinel = false;
         this.sock = options.sock;
         _.bindAll(this, "onrender");
         // Get the title of the video from the data API -- it's not available
@@ -409,6 +410,19 @@ var VideoActivity = BaseActivityView.extend({
     },
     controlVideo: function(args) {
         this.yt.receiveControl(args);
+        if (args.state === "playing" && this.state !== "playing") {
+            postMessageToHangout({type: "mute"});
+            postMessageToHangout({
+                type: "display-notice",
+                args: [
+                    "Your microphone has been muted to prevent video echoes.",
+                    false
+                ]
+            });
+        }
+        if (args.state) {
+            this.state = args.state;
+        }
     }
 });
 
