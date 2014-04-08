@@ -301,7 +301,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 activities.push({type: "about", autoHide: true});
                 break;
             case "video":
-                var ytid = this.extractYoutubeId($("#session_youtube_id", scope).val());
+                var ytid = video.extractYoutubeId($("#session_youtube_id", scope).val());
                 if (!ytid) {
                     $(".yt-error", scope).show();
                     $("#session_youtube_id", scope).parent().addClass("error");
