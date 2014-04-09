@@ -28,6 +28,11 @@ body {
 
 .brand, .navbar-inverse .brand {
   color: #fff;
+  // Prevent wrapping of long titles
+  max-width: 550px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 a.dropdown-toggle {
