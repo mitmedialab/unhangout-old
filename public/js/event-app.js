@@ -327,6 +327,7 @@ $(document).ready(function() {
             }
         };
         curEvent.on("update-hoa", maybeMute);
+        curEvent.on("change:youtubeEmbed", maybeMute);
         maybeMute();
 
         logger.log("Initialized app.");
