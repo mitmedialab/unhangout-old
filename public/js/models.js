@@ -372,20 +372,6 @@ models.Session = Backbone.Model.extend({
         var newUserIds = _.pluck(users, "id");
         var currentUserIds = _.pluck(this.get("connectedParticipants", "id"));
 
-        // Handle any joining participants who have now connected.
-        var joining = this.get("joiningParticipants");
-        var filtered = [];
-        _.each(joining, _.bind(function(joiningUser) {
-            if (_.contains(newUserIds, joiningUser.id)) {
-                this.removeJoiningParticipant(joiningUser);
-            } else {
-                filtered.push(joiningUser);
-            }
-        }, this));
-        if (joining.length != filtered.length) {
-            this.set("joiningParticipants", filtered);
-        }
-
         // Have connectedParticipants changed?
         var intersection = _.intersection(newUserIds, currentUserIds);
         if (users.length != currentUserIds.length ||

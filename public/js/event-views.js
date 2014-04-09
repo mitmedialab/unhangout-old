@@ -118,13 +118,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.ui.hangoutOffline.hide();
 
         this.ui.attend.find(".icon-lock").hide();
-        if(!this.options.event.sessionsOpen() || numAttendees >= this.model.MAX_ATTENDEES) {
+        if (!this.options.event.sessionsOpen() || numAttendees >= this.model.MAX_ATTENDEES) {
             this.ui.attend.find(".icon-lock").show();
 
             this.ui.attend.attr("disabled", true);
             this.ui.attend.addClass("disabled");
 
-            if(numAttendees==this.model.MAX_ATTENDEES) {
+            if (numAttendees >= this.model.MAX_ATTENDEES) {
                 this.ui.attend.find(".text").text("JOIN (full)");
             }
         } else {
