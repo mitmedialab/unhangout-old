@@ -386,7 +386,6 @@ var VideoActivity = BaseActivityView.extend({
     template: _.template($("#video-activity").html()),
     initialize: function(options) {
         BaseActivityView.prototype.initialize.apply(this, arguments);
-        this._muteSentinel = false;
         this.sock = options.sock;
         _.bindAll(this, "onrender");
         // Get the title of the video from the data API -- it's not available
