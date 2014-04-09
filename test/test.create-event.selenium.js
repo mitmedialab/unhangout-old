@@ -80,8 +80,14 @@ describe("CREATE EVENT", function() {
             // Expose the 'about' div
             browser.waitForScript("$");
             browser.byCss("#about-nav a").click();
-            browser.waitForSelector("#about-event .scroll-up"); // Should have scroll-up
-            browser.executeScript("return $('#about-event .about-footer').is(':visible');").then(function(res) {
+            browser.wait(function() {
+                return browser.executeScript(
+                    "return $('#about-event').find('.scroll-up').length === 1;"
+                );
+            });
+            browser.executeScript(
+                "return $('#about-event .about-footer').is(':visible');"
+            ).then(function(res) {
                 // No longer have footer message.
                 expect(res).to.be(false);
             });
