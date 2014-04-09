@@ -72,5 +72,32 @@ describe("YOUTUBE EMBEDS", function() {
             done();
         });
     });
+
+    it("Clears the list of videos", function(done) {
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        event.start();
+        event.set("previousVideoEmbeds", [
+            {youtubeId: "wd9OY0E8A98"},
+            {youtubeId: "gjPr7sfS5bs"},
+            {youtubeId: "4DUz4tzhv-w"},
+            {youtubeId: "2laB2BmSNn0"}
+        ]);
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("superuser1");
+        browser.get("http://localhost:7777" + event.getEventUrl());
+        browser.waitForSelector(".inline-video-controls .dropdown-toggle");
+        browser.byCss(".inline-video-controls .dropdown-toggle").click();
+        browser.waitForSelector(".clear-previous-videos");
+        browser.byCsss(".restore-previous-video:not(.header)").then(function(els) {
+            expect(els.length).to.be(event.get("previousVideoEmbeds").length);
+        });
+        browser.byCss(".clear-previous-videos").click();
+        browser.switchTo().alert().accept();
+        browser.wait(function() {
+            return event.get("previousVideoEmbeds").length === 0;
+        }).then(function() {
+            done();
+        });
+    });
 });
 

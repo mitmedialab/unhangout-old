@@ -89,6 +89,10 @@ $(document).ready(function() {
                 logger.log("added yt embed id: " + JSON.stringify(msg.args));
                 break;
 
+            case "clear-previous-videos":
+                curEvent.set("previousVideoEmbeds", []);
+                break;
+
             case "control-video":
                 app.youtubeEmbedView.control(msg.args);
                 break;
