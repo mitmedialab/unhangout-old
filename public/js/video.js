@@ -257,6 +257,26 @@ video.YoutubeVideo = Backbone.View.extend({
                 }
             }
         }
+        // Trigger report of human-readable state.
+        var state;
+        switch (event.data) {
+            case YT.PlayerState.PAUSED:
+                state = "paused";
+                break;
+            case YT.PlayerState.PLAYING:
+                state = "playing";
+                break;
+            case YT.PlayerState.BUFFERING:
+                state = "buffering";
+                break;
+            case YT.PlayerState.CUED:
+                state = "cued";
+                break;
+            case YT.PlayerState.ENDED:
+                state = "ended";
+                break;
+        }
+        this.trigger("player-state-change", state);
     },
     playForEveryone: function(event) {
         if (event) { event.preventDefault(); }
