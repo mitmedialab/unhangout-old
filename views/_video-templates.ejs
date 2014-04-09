@@ -12,13 +12,16 @@
 </script>
 <script type='text/template' id='youtube-video-controls'>
     {{ if (showGroupControls) { }}
-        <a class='video-settings btn btn-warning'><i class='icon icon-gear'></i></a>
+        <a class='video-settings btn btn-warning'><i class='fa fa-cog'></i></a>
         <a class='play-for-everyone btn btn-warning'>
             {{ if (playing) { }}
-                <i class='icon icon-pause'></i>
+                <i class='fa fa-pause'></i>
                 Pause for all
+            {{ } else if (awaitingStart) { }}
+                <i class='fa fa-clock-o'></i>
+                Awaiting start
             {{ } else { }}
-                <i class='icon icon-play'></i>
+                <i class='fa fa-play'></i>
                 Play for all
             {{ } }}
         </a>
@@ -35,9 +38,9 @@
         {{ } }}
         <a class='sync-lock btn'>
             {{ if (intendToSync) { }}
-                <i class='icon icon-lock'></i>
+                <i class='fa fa-lock'></i>
             {{ } else { }}
-                <i class='icon icon-unlock'></i> Sync
+                <i class='fa fa-unlock'></i> Sync
             {{ } }}
         </a>
     </span>

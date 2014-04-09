@@ -113,9 +113,9 @@ video.YoutubeVideo = Backbone.View.extend({
         this.renderControls();
     },
     renderControls: function() {
-        var ctrl = this.ctrl || {};
         this.$(".video-controls").html(this.controlsTemplate({
-            playing: ctrl.state == "playing",
+            playing: this.isPlayingForEveryone(),
+            awaitingStart: this.isAwaitingStart(),
             synced: this.isSynced(),
             showGroupControls: this.showGroupControls,
             intendToSync: this.intendToSync,
@@ -162,6 +162,11 @@ video.YoutubeVideo = Backbone.View.extend({
         if (!this.intendToSync) {
             this.renderControls();
             return;
+        }
+        if (args.state === "pause" || args.state === "play") {
+            // Cancel polling for the video to start if someone else has
+            // triggered play.
+            this.cancelPollForStart();
         }
         // Has the video finished? Tell the server to pause.
         var dur = this.player.getDuration();
@@ -256,19 +261,48 @@ video.YoutubeVideo = Backbone.View.extend({
     playForEveryone: function(event) {
         if (event) { event.preventDefault(); }
         var playing = this.isPlayingForEveryone();
+        var awaitingStart = this.isAwaitingStart();
         var args;
-        if (playing) {
+        if (playing || awaitingStart) {
             args = {action: "pause"};
+            this.cancelPollForStart();
         } else {
             var dur = this.player.getDuration();
-            if (this.player.getCurrentTime() >= dur) {
-                time = 0;
+            if (dur === 0) {
+                this.pollForStart();
+                // Don't trigger any server-side control yet; but *do* start
+                // the player, so we get notified when its state changes.  If
+                // we pause, it'll get paused by the "control-video" broadcast.
+                this.player.playVideo();
+                return;
             } else {
-                time = this.player.getCurrentTime();
+                if (this.player.getCurrentTime() >= dur) {
+                    time = 0;
+                } else {
+                    time = this.player.getCurrentTime();
+                }
+                args = {action: "play", time: time};
             }
-            args = {action: "play", time: time};
         }
         this.trigger("control-video", args);
+    },
+    pollForStart: function() {
+        this._awaitingStart = setInterval(_.bind(function() {
+            var dur = this.player.getDuration();
+            if (dur > 0) {
+                this.cancelPollForStart();
+                this.playForEveryone();
+            }
+        }, this), 100);
+    },
+    cancelPollForStart: function() {
+        if (this._awaitingStart) {
+            clearInterval(this._awaitingStart);
+        }
+        this._awaitingStart = null;
+    },
+    isAwaitingStart: function() {
+        return !!this._awaitingStart;
     },
     toggleSync: function(event) {
         if (event) { event.preventDefault(); }
