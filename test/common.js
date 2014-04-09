@@ -59,9 +59,16 @@ var buildBrowser = function(callback) {
             return browser.executeScript("return typeof " + exportName + " !== 'undefined';");
         });
     };
-    // hack to get a promise... is there a better way?
     browser.then = function(cb) {
-        return browser.executeScript("return true;").then(cb);
+        // This uses a private property of the browser to access the current
+        // control flow of the "manager" (see
+        // https://code.google.com/p/selenium/wiki/WebDriverJs#Control_Flows).
+        // There doesn't seem to be a public method to access this the "public"
+        // interface to get a control flow (which is probably the browser's
+        // flow, but not necessarily) is:
+        //
+        //      require("selenium-webdriver").promise.controlFlow()
+        return browser.flow_.execute(cb);
     };
     browser.waitTime = function(time) {
         var sentinel = false;

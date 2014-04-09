@@ -768,6 +768,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         'click .set-video': 'setVideo',
         'click .remove-video': 'removeVideo',
         'click .restore-previous-video': 'restorePreviousVideo',
+        'click .clear-previous-videos': 'clearPreviousVideos',
         'click .play-for-all': 'playForAll',
         'click .remove-hoa': 'removeHoA'
 
@@ -786,6 +787,9 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             this.renderControls();
         }, this);
         this.listenTo(this.model, "update-hoa", this.renderControls);
+        // This might get double-renders for changed youtube embeds... but
+        // that's not a big deal, it doesn't happen at high velocity.
+        this.listenTo(this.model, "change:previousVideoEmbeds", this.renderControls);
     },
     serializeData: function() {
         var context = this.model.toJSON();
@@ -847,6 +851,15 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             }
         };
         this.options.sock.send(JSON.stringify(message));
+    },
+    clearPreviousVideos: function(jqevt) {
+        jqevt.preventDefault();
+        if (confirm("Clear list of videos? There's no undo.")) {
+            this.options.sock.send(JSON.stringify({
+                type: "clear-previous-videos",
+                args: {roomId: this.model.getRoomId()}
+            }));
+        }
     },
     setPlayerVisibility: function(visible) {
         // Display player if it's visible.
