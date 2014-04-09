@@ -231,6 +231,11 @@
                             case "dismiss-notice":
                                 gapi.hangout.layout.dismissNotice();
                                 break;
+                            case "mute":
+                                gapi.hangout.av.muteParticipantMicrophone(
+                                    gapi.hangout.getLocalParticipantId()
+                                );
+                                break;
                         }
                     }
                 }
