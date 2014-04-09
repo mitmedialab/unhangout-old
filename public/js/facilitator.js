@@ -409,6 +409,19 @@ var VideoActivity = BaseActivityView.extend({
     },
     controlVideo: function(args) {
         this.yt.receiveControl(args);
+        if (args.state === "playing" && this.state !== "playing") {
+            postMessageToHangout({type: "mute"});
+            postMessageToHangout({
+                type: "display-notice",
+                args: [
+                    "Your microphone has been muted to prevent video echoes.",
+                    false
+                ]
+            });
+        }
+        if (args.state) {
+            this.state = args.state;
+        }
     }
 });
 
