@@ -327,6 +327,11 @@ $(document).ready(function() {
             }
         };
         curEvent.on("update-hoa", maybeMute);
+        this.youtubeEmbedView.on("player-state-change", function(state) {
+            if (state === "playing") {
+                maybeMute();
+            }
+        });
         maybeMute();
 
         logger.log("Initialized app.");

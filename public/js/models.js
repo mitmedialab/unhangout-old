@@ -172,7 +172,7 @@ models.Event = Backbone.Model.extend({
                     // change.
                     setTimeout(_.bind(function() {
                         this.trigger("update-hoa", this, model);
-                    }, this), 0);
+                    }, this), 1);
                 }, this)
             );
             this.trigger("update-hoa", this, hoa);

@@ -862,6 +862,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         var context = _.extend(this.model.toJSON(), {
             numHoaParticipants: hoa ? hoa.getNumConnectedParticipants() : null,
             isPlayingForEveryone: this.yt.isPlayingForEveryone(),
+            isAwaitingStart: this.yt.isAwaitingStart()
         });
         if (hoa && (hoa.get("hangout-url") || hoa.get("hangout-pending"))) {
             context.hoaParticipationLink = hoa.getParticipationLink();
