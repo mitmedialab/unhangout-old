@@ -274,6 +274,7 @@ video.YoutubeVideo = Backbone.View.extend({
                 // the player, so we get notified when its state changes.  If
                 // we pause, it'll get paused by the "control-video" broadcast.
                 this.player.playVideo();
+                this.renderControls();
                 return;
             } else {
                 if (this.player.getCurrentTime() >= dur) {
