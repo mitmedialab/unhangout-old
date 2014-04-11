@@ -257,11 +257,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         return browser.wait(function() {
             return browser.executeScript(
                 // Three frames deep. [[INCEPTION]]
-                "return !!(" +
+                "var val;" +
+                "try { val = !!(" +
                     "document.getElementsByTagName('iframe')[0].contentWindow" +
                     ".document.getElementsByTagName('iframe')[0].contentWindow" +
                     ".document.getElementById('disconnected-modal')" +
-                ");"
+                "); } catch(e) { val = false; } ; return val;"
             ).then(function(result) {
                 return result == isShowing;
             });
@@ -275,7 +276,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get(
             "http://localhost:7777/test/hangout/" + session.id + "/"
         ).then(function() {
-            common.authedSock("regular2", session.getRoomId(), function(thesock) {
+            return common.authedSock("regular2", session.getRoomId()).then(function(thesock) {
                 sock = thesock;
             });
         });
@@ -288,11 +289,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 });
             }, function onRestarted() {
                 framedDisconnectionModalShowing(false);
-                browser.waitTime(5000).then(function() {
+                browser.wait(function() {
                     // Refresh session from new DB.
                     event = common.server.db.events.get(event.id);
                     session = event.get("sessions").get(session.id);
-                    expect(session.getNumConnectedParticipants()).to.be(1);
+                    return session.getNumConnectedParticipants() === 1;
+                }).then(function() {
                     done();
                 });
             });

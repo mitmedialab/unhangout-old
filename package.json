@@ -21,7 +21,7 @@
     "postinstall": "node ./bin/compile-assets.js",
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
-    "test": "NODE_ENV=testing mocha test/test.[a-c]* -g 'CREATE EVENT' -i && sleep 1 && NODE_ENV=testing mocha test/test.[a-c]* -g 'CREATE EVENT' && sleep 1 && NODE_ENV=testing mocha test/test.[d-r]* && sleep 1 && NODE_ENV=testing mocha test/test.s* -g 'SESSION JOINING' -i && sleep 1 && NODE_ENV=testing mocha test/test.session-joining.selenium.js && sleep 1 && NODE_ENV=testing mocha test/test.[t-z]*",
+    "test": "NODE_ENV=testing SKIP_SELENIUM_TESTS=1 mocha && NODE_ENV=testing mocha test/test.*.selenium.js",
     "forever-start": "NODE_ENV=production forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o logs/out.log -e logs/err.log bin/unhangout-server",
     "forever-stop": "forever stop bin/unhangout-server",
     "forever-restart": "NODE_ENV=production forever restart bin/unhangout-server",

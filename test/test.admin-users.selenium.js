@@ -94,6 +94,7 @@ describe("ADMIN USERS SELENIUM", function() {
         });
 
         // Pull up the add event modal, and add an event.
+        browser.waitForSelector(addSelector);
         browser.byCss(addSelector).click();
         // Wait for modal to fade in...
         browser.waitForSelector(".modal-body select");
