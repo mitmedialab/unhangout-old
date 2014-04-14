@@ -50,6 +50,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // re-render to show them.
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
+        // Maintain a list of slots and user preferences for them, so that we
+        // can render people in consistent-ish places in the list.
+        // The idea is that each user gets a "slotPreference", which is either
+        // the last slot they were rendered in.  If their preferred slot is occupied,
+        // they get the next unused slot, and their "preference" is updated.
+        this.userSlotPreference = {};
+        this.userSlots = {};
     },
 
     onRender: function() {
@@ -78,9 +85,29 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // the hangout-users div, and populate it with users.
         this.$el.addClass("hangout-connected");
 
+        // 
         // Build the list of user views.
+        //
+
         var fragment = document.createDocumentFragment();
-        var drawUser = function (udata, joining) {
+
+        // clear out slots for users that are no longer connected, and
+        // construct an array of any slots that are available.
+        var connectedAndJoining = _.pluck(this.model.get("connectedParticipants"), "id")
+            .concat(_.pluck(this.model.get("joiningParticipants"), "id"));
+        var available = [];
+        for (var i = 0; i < this.model.MAX_ATTENDEES; i++) {
+            if (this.userSlots[i]) {
+                if (_.contains(connectedAndJoining, this.userSlots[i].id)) {
+                    continue;
+                }
+                delete this.userSlots[i];
+            }
+            available.push(i);
+        }
+
+        var drawUser = _.bind(function (udata, joining) {
+            // Get the user view.
             var userView;
             if (udata.id in userViewCache) {
                 userView = userViewCache[udata.id];
@@ -97,18 +124,41 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             if (joining) {
                 el.className += " joining";
             }
-            fragment.appendChild(el);
-        }
-        // Add connected users
+
+            // Determine where it goes.
+            var slot = this.userSlots[this.userSlotPreference[udata.id]];
+            if (slot && slot.id === udata.id) {
+                slot.el = el;
+            } else {
+                var pos = null;
+                var pref = this.userSlotPreference[udata.id];
+                if (pref && _.contains(available, pref)) {
+                    pos = pref;
+                    available = _.without(available, pref);
+                } else if (available.length > 0) {
+                    pos = available.shift();
+                }
+                if (pos !== null) {
+                    this.userSlotPreference[udata.id] = pos;
+                    slot = {id: udata.id, el: el}
+                    this.userSlots[pos] = slot;
+                }
+            }
+        }, this);
+
+        // build slots for connected users
         _.each(this.model.get("connectedParticipants"), function(udata) { drawUser(udata); });
-        // Add joining users
+        // ... and joining users
         _.each(this.model.get("joiningParticipants"), function(udata) { drawUser(udata, true); });
         var emptyli;
-        for(var i = 0; i < this.model.MAX_ATTENDEES - numAttendees; i++) {
-            //this.ui.hangoutUsers.append($("<li class='empty'></li>"));
-            emptyli = document.createElement("li");
-            emptyli.className = "empty";
-            fragment.appendChild(emptyli);
+        for (var i = 0; i < this.model.MAX_ATTENDEES; i++) {
+            if (this.userSlots[i]) {
+                fragment.appendChild(this.userSlots[i].el);
+            } else {
+                emptyli = document.createElement("li");
+                emptyli.className = "empty";
+                fragment.appendChild(emptyli);
+            }
         }
 
         // Now add the fragment to the layout and display it
@@ -443,8 +493,6 @@ views.UserColumnLayout = Backbone.Marionette.Layout.extend({
 });
 
 // The actual core UserListView that manages displaying each individual user.
-// This logic is quite similar to the SessionListView, which also deals with
-// pagination in a flexible-height space.
 views.UserListView = Backbone.Marionette.CompositeView.extend({
     template: '#user-list-template',
     itemView: views.UserView,
@@ -463,15 +511,6 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
             // some reason totalRecords doesn't decrease when records
             // are removed, but totalUnfilteredRecords does. Could
             // be a bug.
-
-            // Other side note: be aware that there is some magic in
-            // marionette around adding to collections. It apparently
-            // tries to just auto-add the new record to the
-            // itemViewContainer. This is a little weird when
-            // combined with the pagination system, which doesn't
-            // necessarily show all incoming models. Just something
-            // to keep an eye on. More info here:
-            // https://github.com/marionettejs/backbone.marionette/blob/master/docs/marionette.compositeview.md#model-and-collection-rendering
 
             this.$el.find(".header .contents").text(this.collection.length);
         }, this);
