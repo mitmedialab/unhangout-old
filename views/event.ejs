@@ -66,7 +66,11 @@
 <script type="text/template" id="session-template">
     <h3>{{- title }}</h3>
     <div class="attend btn btn-info" data-toggle="button">
-        <span class="outer"><i class="icon-lock"></i><span class="text">JOIN</span></span>
+        <span class="outer">
+            <span class="text">JOIN</span>
+            <i class="icon-lock session-btn-icon"></i>
+            <i class="icon-play session-btn-icon"></i>
+        </span>
         <div class="attendance"></div>
     </div>
 
@@ -388,6 +392,7 @@
         <div class="modal-header"><h3></h3></div>
         <div class="modal-body">
             <p>It is time to join your session!</p>
+
             <a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
         </div>
     </div>
