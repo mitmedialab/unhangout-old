@@ -72,8 +72,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.ui.attend.removeClass("active");
         this.ui.attend.addClass("btn-success");
 
-        this.ui.attend.find(".text").text("JOIN");
-
         // don't show the x of 10 when it's live (at least until we have live data for that)
         this.$el.find(".start").show();
 
@@ -167,17 +165,20 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         this.ui.hangoutOffline.hide();
 
-        this.ui.attend.find(".icon-lock").hide();
         if (!this.options.event.sessionsOpen() || numAttendees >= this.model.MAX_ATTENDEES) {
-            this.ui.attend.find(".icon-lock").show();
+            this.ui.attend.find(".lock").show();
 
             this.ui.attend.attr("disabled", true);
             this.ui.attend.addClass("disabled");
 
             if (numAttendees >= this.model.MAX_ATTENDEES) {
-                this.ui.attend.find(".text").text("JOIN (full)");
+                this.ui.attend.find(".text").text("FULL");
+            } else {
+                this.ui.attend.find(".text").text("LOCKED");
             }
         } else {
+            this.ui.attend.find(".lock").hide();
+            this.ui.attend.find(".text").text("JOIN");
             this.ui.attend.removeAttr("disabled");
             this.ui.attend.removeClass("disabled");
         }

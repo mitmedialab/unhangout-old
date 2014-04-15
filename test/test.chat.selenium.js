@@ -61,6 +61,7 @@ describe("CHAT WINDOW", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate("regular1");
         browser.get("http://localhost:7777/event/" + evt.id);
+        browser.waitForScript("$");
         browser.waitForSelector("#chat-input");
         var msgCount = 50;
         for (var i = 0; i < msgCount; i++) {
@@ -134,6 +135,7 @@ describe("CHAT WINDOW", function() {
             var text = "admin check " + (counter++) + "\n";
             browser.mockAuthenticate(sockkey);
             browser.get("http://localhost:7777/event/" + event.id)
+            browser.waitForScript("$");
             browser.waitForSelector("#chat-input");
             browser.byCss("#chat-input").sendKeys(text);
             browser.wait(function() {

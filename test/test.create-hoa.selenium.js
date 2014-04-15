@@ -72,6 +72,9 @@ describe("CREATE HOA", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate(user.get("sock-key"));
         browser.get("http://localhost:7777/event/" + event.id);
+        browser.wait(function() {
+            return event.get("connectedUsers").length === 1;
+        });
         browser.waitForSelector(".create-hoa");
         browser.byCss(".create-hoa").click();
         // Switch to the hangout creation window.
