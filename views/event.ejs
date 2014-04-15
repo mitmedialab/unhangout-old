@@ -210,7 +210,7 @@
                         <i class='fa fa-list'></i>
                         <i class='fa fa-caret-down'></i>
                     </button>
-                    <ul class='dropdown-menu pull-right'>
+                    <ul class='dropdown-menu pull-right previous-videos'>
                         <li><a class='restore-previous-video header'>Previous videos</a></li>
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
                             <li>
@@ -247,7 +247,8 @@
 
 <script type='text/template' id="previous-video-details-template">
     <a tabindex='-1' href='#' class='restore-previous-video'
-       style='text-align: left; width: 250px;'
+       style='text-align: left;'
+       title='{{= title }}'
        data-youtube-id='{{= id }}'>
         <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
         <span class='title'>{{= title }}</span>
