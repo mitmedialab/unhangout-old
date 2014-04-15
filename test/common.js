@@ -45,8 +45,21 @@ var buildBrowser = function(callback) {
     browser.unMockAuthenticate = function(user) {
         return browser.executeScript("document.cookie = 'mock_user=; path=/';");
     };
-    browser.waitForSelector = function(selector) {
+    // This is sugar to wrap selenium's `wait` with a default timeout.  We want
+    // to throw exceptions rather than waiting for mocha's timeout so that we
+    // can see a stack trace (mocha's timeous don't provide one).
+    browser.waitWithTimeout = function(cb, timeout) {
+        var start = new Date().getTime();
+        timeout = timeout || 30000;
         return browser.wait(function() {
+            if (new Date().getTime() - start > timeout) {
+                throw new Error("Browser wait timeout of " + timeout + " exceeded.");
+            }
+            return cb();
+        });
+    };
+    browser.waitForSelector = function(selector) {
+        return browser.waitWithTimeout(function() {
             return browser.byCss(selector).then(function(el) {
                 return el.isDisplayed();
             }).then(null, function(err) {
@@ -55,7 +68,7 @@ var buildBrowser = function(callback) {
         });
     };
     browser.waitForScript = function(exportName) {
-        return browser.wait(function() {
+        return browser.waitWithTimeout(function() {
             return browser.executeScript("return typeof " + exportName + " !== 'undefined';");
         });
     };
@@ -78,7 +91,7 @@ var buildBrowser = function(callback) {
         });
     };
     browser.waitForFunc = function(cb) {
-        return browser.wait(function() {
+        return browser.waitWithTimeout(function() {
             return browser.then(function() { return cb(); })
         })
     };

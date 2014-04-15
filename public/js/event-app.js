@@ -364,13 +364,20 @@ $(document).ready(function() {
             }, {
                 done: function() {
                     el.hide();
+                    // This is introspected by browser tests that need to know
+                    // if we're done loading the about pane for the first time.
+                    window.EVENT_ABOUT_INITIALIZED = true;
                 }
             });
 
             aboutShown = false;
             $("#about-nav").removeClass("active");
         } else {
-            el.show().animate({"top":0});
+            el.show().animate({"top":0}, {
+                // This is introspected by browser tests that need to know if
+                // we're done loading the about pane for the first time.
+                done: function() { window.EVENT_ABOUT_INITIALIZED = true; }
+            });
             aboutShown = true;
 
             $("#about-nav").addClass("active");

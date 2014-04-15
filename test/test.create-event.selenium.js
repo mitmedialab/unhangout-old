@@ -47,6 +47,7 @@ describe("CREATE EVENT", function() {
             expect(url).to.be("http://localhost:7777/event/test-title");
             eventId = common.server.db.events.findWhere({shortName: "test-title"}).id
         }).then(function() {
+            var event = common.server.db.events.get(eventId);
             browser.get("http://localhost:7777/admin/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
@@ -77,20 +78,6 @@ describe("CREATE EVENT", function() {
 
             // View the started event
             browser.get("http://localhost:7777/event/" + eventId);
-            // Expose the 'about' div
-            browser.waitForScript("$");
-            browser.byCss("#about-nav a").click();
-            browser.wait(function() {
-                return browser.executeScript(
-                    "return $('#about-event').find('.scroll-up').length === 1;"
-                );
-            });
-            browser.executeScript(
-                "return $('#about-event .about-footer').is(':visible');"
-            ).then(function(res) {
-                // No longer have footer message.
-                expect(res).to.be(false);
-            });
 
             function aboutIsVisible(isVisible) {
                 return browser.wait(function() {
@@ -102,6 +89,27 @@ describe("CREATE EVENT", function() {
                 });
             }
 
+            browser.waitWithTimeout(function() {
+                return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED");
+            });
+
+            // Show the 'about' pane.
+            browser.byCss("#about-nav a").click();
+            aboutIsVisible(true);
+
+            // Make sure scroll-up is there.
+            browser.waitWithTimeout(function() {
+                return browser.executeScript(
+                    "return $('#about-event').find('.scroll-up').length === 1;"
+                );
+            });
+            // Make sure footer is not there.
+            browser.executeScript(
+                "return $('#about-event .about-footer').is(':visible');"
+            ).then(function(res) {
+                expect(res).to.be(false);
+            });
+
             // Hide the 'about' div
             browser.byCss("#about-nav a").click();
             aboutIsVisible(false);
@@ -112,7 +120,9 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-nav a").click();
             aboutIsVisible(true);
             browser.waitForSelector("#about-event .scroll-up");
-            browser.executeScript("$('#about-event .scroll-up')[0].scrollIntoView();");
+            browser.waitForSelector("#about-event .scroll-up");
+            // TODO this line fails occasionally with 'ElementNotVisibleError'
+            // -- timing issue?
             browser.byCss("#about-event .scroll-up").click();
             aboutIsVisible(false);
 

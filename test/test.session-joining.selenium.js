@@ -81,7 +81,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             return sock.promiseClose();
         });
         // The participant list should clear when the socket closes.
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return browser.byCsss(participantList + " i.icon-user").then(function(els) {
                 return els.length === 0;
             });
@@ -119,7 +119,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             return sock1.promiseClose();
         });
         // Have the socket leave the event page, but not the participant list.
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return browser.byCsss("#presence-gutter .user").then(function(els) {
                 return els.length == 1;
             });
@@ -134,7 +134,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             return sock2.promiseClose();
         });
         // Now noone should be left
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return browser.byCsss(participantList + " i.icon-user").then(function(els) {
                 return els.length == 0;
             });
@@ -146,7 +146,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     it("Preserves session list position", function(done) {
-        this.timeout(80000);
         // We'll use 3 sockets --- s1, s2, s3 in the session.
         var s1, s2, s3;
         var session = event.get("sessions").at(0);
@@ -157,25 +156,22 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate(observer.get("sock-key"));
         browser.get("http://localhost:7777" + event.getEventUrl());
-        browser.waitForScript("$");
-        browser.then(function() {
-            return common.authedSock(
-                u1.getSockKey(), session.getRoomId()
-            ).then(function(sock) { s1 = sock; });
+        browser.waitWithTimeout(function() {
+            return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED;");
         });
         browser.then(function() {
-            return common.authedSock(
-                u2.getSockKey(), session.getRoomId()
-            ).then(function(sock) { s2 = sock; });
-        });
-        browser.then(function() {
-            return common.authedSock(
-                u3.getSockKey(), session.getRoomId()
-            ).then(function(sock) { s3 = sock; });
+            return Promise.all([
+                common.authedSock(u1.getSockKey(), session.getRoomId())
+                    .then(function(sock) { s1 = sock; }),
+                common.authedSock(u2.getSockKey(), session.getRoomId())
+                    .then(function(sock) { s2 = sock; }),
+                common.authedSock(u3.getSockKey(), session.getRoomId())
+                    .then(function(sock) { s3 = sock; })
+            ]);
         });
         function checkSessionUsers(list) {
             var selector ="[data-session-id='" + session.id + "'] ul.hangout-users li";
-            return browser.wait(function() {
+            return browser.waitWithTimeout(function() {
                 return browser.byCsss(selector).then(function(els) {
                     return Promise.all(_.map(els, function(el, i) {
                         return new Promise(function(resolve, reject) {
@@ -195,7 +191,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                         return false;
                     });
                 });
-            });
+            }, 45000);
         };
         checkSessionUsers([u1, u2, u3, null, null, null, null, null, null, null]);
         browser.then(function() { return s2.promiseClose(); });
@@ -219,12 +215,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.mockAuthenticate("admin1");
         // Visit the session to "start" it.
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return session.getState() === "started";
         });
         // Then leave, by going to the event page, where we'll delete it.
         browser.get("http://localhost:7777/event/" + event.id);
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return session.getState() === "stopping";
         });
         browser.waitForScript("$");
@@ -251,7 +247,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 browser.get("http://localhost:7777/");
                 browser.mockAuthenticate("regular1");
                 browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
-                browser.wait(function() {
+                browser.waitWithTimeout(function() {
                     return session.getState() == "started";
                 });
                 // leave..
@@ -270,7 +266,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     function disconnectionModalShowing(isShowing) {
-        return browser.wait(function() {
+        return browser.waitWithTimeout(function() {
             return browser.executeScript(
                 "return window.$ && $('#disconnected-modal').is(':visible')"
             ).then(function(result) {
@@ -286,7 +282,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
         // Connect the browser and a socket to the event page.
         browser.get("http://localhost:7777/event/" + event.id);
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return event.get("connectedUsers").length === 1;
         });
         browser.then(function() {
@@ -294,7 +290,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 sock = thesock;
             });
         });
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return browser.byCsss("#presence-gutter .user").then(function(els) {
                 return els.length == 2;
             });
@@ -312,12 +308,18 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 // as it didn't fire reconnection. So we expect to see only one
                 // user now -- simulating what should happen if someone goes
                 // away during server down time.
+                var eventId = event.id;
                 disconnectionModalShowing(false);
-                browser.byCsss("#presence-gutter .user").then(function(els) {
-                    expect(els.length).to.be(1);
-                    // Refresh the event now that we've re-populated it.
-                    event = common.server.db.events.get(event.id)
-                    expect(event.get("connectedUsers").length).to.be(1);
+                browser.waitWithTimeout(function() {
+                    event = common.server.db.events.get(eventId);
+                    return event.get("connectedUsers").length === 1;
+                });
+                browser.waitWithTimeout(function() {
+                    return browser.byCsss("#presence-gutter .user").then(function(els) {
+                        return els.length === 1;
+                    })
+                });
+                browser.then(function() {
                     done();
                 });
             });
@@ -325,7 +327,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     });
     function framedDisconnectionModalShowing(isShowing) {
-        return browser.wait(function() {
+        return browser.waitWithTimeout(function() {
             return browser.executeScript(
                 // Three frames deep. [[INCEPTION]]
                 "var val;" +
@@ -347,7 +349,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock;
         var session = event.get("sessions").at(0);
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/")
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return session.getNumConnectedParticipants() === 1;
         });
         browser.then(function() {
@@ -355,7 +357,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 sock = thesock;
             });
         });
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return session.get("connectedParticipants").length == 2;
         }).then(function() {
             common.restartServer(function onStopped(restart) {
@@ -364,7 +366,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 });
             }, function onRestarted() {
                 framedDisconnectionModalShowing(false);
-                browser.wait(function() {
+                browser.waitWithTimeout(function() {
                     // Refresh session from new DB.
                     event = common.server.db.events.get(event.id);
                     session = event.get("sessions").get(session.id);
@@ -386,8 +388,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             session.set("hangout-url", "http://example.com/");
         });
         browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
-        browser.wait(function() {
-            return browser.executeScript("return !!" + button + ";");
+        browser.waitWithTimeout(function() {
+            return browser.executeScript(
+                "return !!" + button + ";"
+            ).then(null, function(err) {
+                return false;
+            });
         });
         browser.executeScript("return " + button + ".href").then(function(href) {
             expect(href).to.be("http://example.com/");
@@ -476,7 +482,9 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate(u1.getSockKey());
         browser.get("http://localhost:7777/event/" + event.id);
-        browser.waitForScript("$");
+        browser.waitWithTimeout(function() {
+            return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED;");
+        });
         browser.then(function() {
             return new Promise(function (resolve, reject) {
                 var url = "http://localhost:7777/session/" + session.get("session-key");
@@ -498,11 +506,15 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.byCsss(".hangout-users li.user.joining").then(function(els) {
             expect(els.length).to.be(1);
         });
-        browser.waitTime(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 2000);
-        browser.byCsss(".hangout-users li.user.joining").then(function(els) {
-            expect(els.length).to.be(0);
+        browser.waitTime(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 5000);
+        browser.then(function() {
             expect(session.get("joiningParticipants").length).to.be(0);
-            done();
         });
+        browser.waitWithTimeout(function() {
+            return browser.byCsss(".hangout-users li.user.joining").then(function(els) {
+                return els.length === 0;
+            });
+        });
+        browser.then(function() { done(); });
     });
 });
