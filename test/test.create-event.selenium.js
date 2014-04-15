@@ -112,6 +112,7 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-nav a").click();
             aboutIsVisible(true);
             browser.waitForSelector("#about-event .scroll-up");
+            browser.executeScript("$('#about-event .scroll-up')[0].scrollIntoView();");
             browser.byCss("#about-event .scroll-up").click();
             aboutIsVisible(false);
 

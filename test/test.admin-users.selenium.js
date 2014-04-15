@@ -99,8 +99,9 @@ describe("ADMIN USERS SELENIUM", function() {
         // Wait for modal to fade in...
         browser.waitForSelector(".modal-body select");
         browser.byCss(".modal-body select").sendKeys(event.get("title"));
-        browser.byLinkText("Add").click().then(function() {
-            expect(user.isAdminOf(event)).to.be(true);
+        browser.byLinkText("Add").click();
+        browser.wait(function() {
+            return user.isAdminOf(event) === true;
         });
 
         // Ensure the new admin can access the admin page.

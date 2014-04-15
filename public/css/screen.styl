@@ -572,7 +572,7 @@ hr.noshade {
 
     width: 130px;
 
-    .icon-lock {
+    .lock {
       margin-right: 5px;
     }
   }
@@ -1171,25 +1171,37 @@ hr.noshade {
 
 /*-------------------------- HOW TO UNHANGOUT -------------------------*/
 
+.how-to-container {
+  
+  .footer {
+    margin-left: 70px;
+    margin-top: -10px;
+  }
+
+  .video-frame {
+    margin: 50px;
+    border: 10px #DfDFDf;
+    margin-left: 120px;
+
+  }
+}
+
 .how-to-unhangout {
+  margin-left: 50px;
+  height: 400px;
   color: #444;
-  margin-left: 20px;
-  margin-top: 10px;
-  height: 450px;
   font-family: "open sans",arial,sans-serif;
 
   h4 {
-    margin-top: 45px;
-    margin-left: 600px;
     font-weight: 200;
     font-size: 22px;
   }
 
   img {
     margin-left: 70px;
-    float: left;
-    width: 500px;
-    height: 433px;
+    margin-top: -35px;
+    width: 400px;
+    height: 333px;
   }
 
   p {
@@ -1199,15 +1211,26 @@ hr.noshade {
   }
 
   .step-description {
-    float: right;
+    float: left;
     width: 340px;
     margin-top: 30px;
   }
 
   .step-icon {
-    //color: #63666a;
     color: $navbar;
     margin-left: 20px;
+  }
+
+  /* For the Breakout Room Section */
+  .breakout-section {
+
+    img {
+      margin-top: 5px;
+    }
+  } 
+
+  .breakout-step-description {
+      margin-top: -20px;
   }
 }
 
@@ -1222,13 +1245,6 @@ hr.noshade {
     text-align:center;
     background: $navbar;
     //background: gray;
-}
-
-.how-to-container {
-  .footer {
-    margin-left: 70px;
-    margin-top: -10px;
-  }
 }
 
 /* ------------------------- ABOUT PAGE -------------------------------*/

@@ -145,6 +145,74 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
     });
 
+    it("Preserves session list position", function(done) {
+        this.timeout(80000);
+        // We'll use 3 sockets --- s1, s2, s3 in the session.
+        var s1, s2, s3;
+        var session = event.get("sessions").at(0);
+        var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
+        var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
+        var u3 = common.server.db.users.findWhere({"sock-key": "admin1"});
+        var observer = common.server.db.users.findWhere({"sock-key": "admin2"});
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate(observer.get("sock-key"));
+        browser.get("http://localhost:7777" + event.getEventUrl());
+        browser.waitForScript("$");
+        browser.then(function() {
+            return common.authedSock(
+                u1.getSockKey(), session.getRoomId()
+            ).then(function(sock) { s1 = sock; });
+        });
+        browser.then(function() {
+            return common.authedSock(
+                u2.getSockKey(), session.getRoomId()
+            ).then(function(sock) { s2 = sock; });
+        });
+        browser.then(function() {
+            return common.authedSock(
+                u3.getSockKey(), session.getRoomId()
+            ).then(function(sock) { s3 = sock; });
+        });
+        function checkSessionUsers(list) {
+            var selector ="[data-session-id='" + session.id + "'] ul.hangout-users li";
+            return browser.wait(function() {
+                return browser.byCsss(selector).then(function(els) {
+                    return Promise.all(_.map(els, function(el, i) {
+                        return new Promise(function(resolve, reject) {
+                            el.getAttribute("class").then(function(cls) {
+                                if (list[i] === null && cls === "empty") {
+                                    return resolve();
+                                } else if (cls === "user focus") {
+                                    return resolve();
+                                } else {
+                                    return reject("Unexpected class " + cls);
+                                }
+                            }).then(null, function(err) {
+                                return reject("Selenium error");
+                            });
+                        });
+                    })).catch(function() {
+                        return false;
+                    });
+                });
+            });
+        };
+        checkSessionUsers([u1, u2, u3, null, null, null, null, null, null, null]);
+        browser.then(function() { return s2.promiseClose(); });
+        checkSessionUsers([u1, null, u3, null, null, null, null, null, null, null]);
+        browser.then(function() { return s1.promiseClose(); });
+        checkSessionUsers([null, null, u3, null, null, null, null, null, null, null]);
+        browser.then(function() {
+            return common.authedSock(
+                u2.getSockKey(), session.getRoomId()
+            ).then(function(sock) { s2 = sock });
+        });
+        checkSessionUsers([null, u2, u3, null, null, null, null, null, null, null]);
+        browser.then(function() { return s3.promiseClose(); })
+        browser.then(function() { return s2.promiseClose(); });
+        browser.then(function() { done(); });
+    });
+
     it("Handles stop conditions when session has been deleted", function(done) {
         var session = event.get("sessions").at(0);
         browser.get("http://localhost:7777/");
@@ -218,7 +286,10 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
         // Connect the browser and a socket to the event page.
         browser.get("http://localhost:7777/event/" + event.id);
-        browser.waitForScript("$").then(function() {
+        browser.wait(function() {
+            return event.get("connectedUsers").length === 1;
+        });
+        browser.then(function() {
             common.authedSock("regular2", event.getRoomId(), function(thesock) {
                 sock = thesock;
             });
@@ -265,6 +336,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 "); } catch(e) { val = false; } ; return val;"
             ).then(function(result) {
                 return result == isShowing;
+            }).then(null, function(err) {
+                return false;
             });
         });
     }
@@ -273,9 +346,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.mockAuthenticate("regular1");
         var sock;
         var session = event.get("sessions").at(0);
-        browser.get(
-            "http://localhost:7777/test/hangout/" + session.id + "/"
-        ).then(function() {
+        browser.get("http://localhost:7777/test/hangout/" + session.id + "/")
+        browser.wait(function() {
+            return session.getNumConnectedParticipants() === 1;
+        });
+        browser.then(function() {
             return common.authedSock("regular2", session.getRoomId()).then(function(thesock) {
                 sock = thesock;
             });
