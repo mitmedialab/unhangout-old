@@ -104,16 +104,15 @@ describe("CREATE HOA", function() {
             browser.switchTo().window(handles[0]);
         });
 
-        browser.waitForSelector(".join-hoa");
-
         // Wait for the hangout broadcast video to be embedded.
         browser.waitForScript("$");
+        browser.waitForSelector(".join-hoa");
         var embedSrcScript = "return $('.video-player iframe').attr('src');";
-        browser.executeScript(embedSrcScript).then(function(src) {
-            expect(src).to.not.be(null);
-            expect(src.indexOf("http://www.youtube.com/embed/" +
-                               event.get("hoa").get("hangout-broadcast-id"))
-            ).to.be(0);
+        browser.wait(function() {
+            return browser.executeScript(embedSrcScript).then(function(src) {
+                return src && src.indexOf("http://www.youtube.com/embed/" +
+                               event.get("hoa").get("hangout-broadcast-id")) === 0;
+            });
         });
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
             expect(href).to.eql(event.get("hoa").getParticipationLink());
