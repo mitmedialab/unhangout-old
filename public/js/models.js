@@ -336,6 +336,7 @@ models.Session = Backbone.Model.extend({
             connectedParticipants: [],
             joiningParticipants: [],
             activities: [],
+            joinCap: this.MAX_ATTENDEES,
             "hangout-broadcast-id": null // Youtube ID For Hangouts on air
         };
     },

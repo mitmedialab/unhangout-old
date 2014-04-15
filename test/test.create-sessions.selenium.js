@@ -117,4 +117,48 @@ describe("CREATE SESSIONS", function() {
             });
         });
     });
+
+    it("Creates an event session with joinCap", function(done) {
+        event.get("sessions").reset();
+        event.start();
+        browser.get("http://localhost:7777");
+        browser.mockAuthenticate("superuser1");
+        browser.get("http://localhost:7777/event/" + event.id);
+        browser.waitForEventReady(event, "superuser1");
+        browser.byCss(".admin-button").click();
+        browser.byCss("#show-create-session-modal").click();
+        browser.waitForSelector("#join_cap");
+
+        // Error for NaN
+        browser.byCss("#join_cap").clear();
+        browser.byCss("#join_cap").sendKeys("wat");
+        browser.byCss("#create-session").click();
+        browser.waitForSelector(".join-cap-error");
+        browser.executeScript("$('.join-cap-error').hide();");
+
+        // Error for too low
+        browser.byCss("#join_cap").clear();
+        browser.byCss("#join_cap").sendKeys("1");
+        browser.byCss("#create-session").click();
+        browser.waitForSelector(".join-cap-error");
+        browser.executeScript("$('.join-cap-error').hide();");
+
+        // Error for too high
+        browser.byCss("#join_cap").clear();
+        browser.byCss("#join_cap").sendKeys("11");
+        browser.byCss("#create-session").click();
+        browser.waitForSelector(".join-cap-error");
+        browser.executeScript("$('.join-cap-error').hide();");
+
+        // Goldilocks
+        browser.byCss("#join_cap").clear();
+        browser.byCss("#join_cap").sendKeys("3");
+        browser.byCss("#create-session").click();
+        browser.waitForSelector(".session .hangout-users");
+        browser.byCsss(".session .hangout-users li").then(function(els) {
+            expect(els.length).to.be(3);
+            expect(event.get("sessions").at(0).get("joinCap")).to.be(3);
+            done();
+        });
+    });
 });

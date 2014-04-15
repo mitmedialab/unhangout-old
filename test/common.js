@@ -95,6 +95,23 @@ var buildBrowser = function(callback) {
             return browser.then(function() { return cb(); })
         })
     };
+
+    browser.waitForEventReady = function(event, sockKey) {
+        return browser.waitWithTimeout(function() {
+            return browser.executeScript(
+                "return !!window.EVENT_ABOUT_INITIALIZED;"
+            ).then(function(aboutReady) {
+                if (aboutReady && event && sockKey) {
+                    return !!event.get("connectedUsers").findWhere({"sock-key": sockKey});
+                } else if (aboutReady && event) {
+                    return event.get("connectedUsers").length >= 1;
+                } else {
+                    return aboutReady;
+                }
+            });
+        });
+    };
+
     browser.manage().window().setSize(1024, 768).then(function() {
         callback(browser);
     });

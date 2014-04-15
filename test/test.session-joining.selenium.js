@@ -92,6 +92,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             done();
         });
     });
+
     it("Updates session participant list when present in the event", function(done) {
         var sock1, sock2;
         var session = event.get("sessions").at(0);
@@ -207,6 +208,57 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.then(function() { return s3.promiseClose(); })
         browser.then(function() { return s2.promiseClose(); });
         browser.then(function() { done(); });
+    });
+
+    it("Limits participants to the join cap", function(done) {
+        var session = event.get("sessions").at(0);
+        var joinButtonText = "[data-session-id='" + session.id + "'] .attend .text";
+        session.set("joinCap", 2);
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("admin1");
+        browser.get("http://localhost:7777" + event.getEventUrl());
+
+        function buttonTextIs(text) {
+            return browser.waitForSelector(joinButtonText).then(function() {;
+                return browser.waitWithTimeout(function() {
+                    return browser.byCss(joinButtonText).getText().then(function(txt) {
+                        return text === txt;
+                    });
+                });
+            });
+        }
+        // Initially, sessions are locked.
+        buttonTextIs("LOCKED");
+
+        // Open the sessions and we should have JOIN.
+        browser.then(function() { event.openSessions(); });
+        // event.openSessions doesn't trigger broadcast, so just re-grab the page.
+        browser.get("http://localhost:7777" + event.getEventUrl());
+        buttonTextIs("JOIN");
+
+        // Add connected participants (triggering broadcast), and we should be full.
+        browser.then(function() {
+            session.setConnectedParticipants([
+                {id: "t1", displayName: "test1"},
+                {id: "t2", displayName: "test2"},
+            ]);
+        });
+        buttonTextIs("FULL");
+
+        // Remove one, and we're back to JOINable.
+        browser.then(function() {
+            session.setConnectedParticipants([{id: "t1", displayName: "test1"}]);
+        });
+        buttonTextIs("JOIN");
+
+        browser.then(function() {
+            // Clean up.
+            event.closeSessions();
+            session.set("joinCap", 10);
+            session.onHangoutStopped();
+            done();
+        });
+
     });
 
     it("Handles stop conditions when session has been deleted", function(done) {

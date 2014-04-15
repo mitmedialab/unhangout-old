@@ -324,6 +324,16 @@
                     <label for="session_name">SESSION NAME</label>
                     <input type="text" name="session_name" value="" id="session_name">
                 </div>
+                <div class='control-group'>
+                    <label for='join_cap'>LIMIT JOINING TO</label>
+                    <span class='help-block join-cap-error hide'>
+                       Please enter a number between 2 and 10.
+                    </span>
+                    <input type='number' min='2' max='10' step='1'
+                           value='10' style='width: 40px' 
+                           name='join_cap' id='join_cap' />
+                     <span class='help-block'>Minimum 2, maximum 10</span>
+                </div>
                 <div class="control-group">
                     <div class='pull-left'>
                         <label>SESSION TYPE</label>
