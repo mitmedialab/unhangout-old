@@ -346,4 +346,22 @@ describe('SESSION LIFECYCLE', function() {
         expect(session.get("hangout-stop-request-time")).to.be(null);
         clock.restore();
     });
+
+    it("Doesn't crash on removal of joining participant when session has been deleted.", function(done) {
+        // https://github.com/drewww/unhangout/issues/311
+        common.standardSetup(function() {
+            var event = common.server.db.events.get(1);
+            var session = event.get("sessions").at(0);
+            session.addJoiningParticipant(common.server.db.users.get(1));
+
+            var clock = sinon.useFakeTimers(new Date().getTime());
+            session.onRestart();
+            session.destroy();
+            event.removeSession(session);
+            clock.tick(session.JOINING_EXPIRATION_TIMEOUT + 1);
+            clock.restore();
+
+            common.standardShutdown(done);
+        });
+    });
 });
