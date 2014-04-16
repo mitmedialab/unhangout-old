@@ -1,9 +1,21 @@
 var expect      = require('expect.js'),
     common      = require('./common'),
-    moment      = require('moment');
+    moment      = require('moment'),
+    request     = require("superagent"),
+    Promise     = require("bluebird");
 
 describe("CREATE EVENT", function() {
     var browser = null;
+    var aboutIsVisible = function(isVisible) {
+        return browser.waitWithTimeout(function() {
+            return browser.executeScript(
+                'return $("#about-event").is(":visible");'
+            ).then(function(visible) {
+                return visible === isVisible;
+            });
+        });
+    }
+
 
     if (process.env.SKIP_SELENIUM_TESTS) { return; }
     this.timeout(60000); // Extra long timeout for selenium :(
@@ -79,16 +91,6 @@ describe("CREATE EVENT", function() {
             // View the started event
             browser.get("http://localhost:7777/event/" + eventId);
 
-            function aboutIsVisible(isVisible) {
-                return browser.wait(function() {
-                    return browser.executeScript(
-                        'return $("#about-event").is(":visible");'
-                    ).then(function(visible) {
-                        return visible === isVisible;
-                    });
-                });
-            }
-
             browser.waitWithTimeout(function() {
                 return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED");
             });
@@ -155,6 +157,40 @@ describe("CREATE EVENT", function() {
                 done();
             });
         });
+    });
+
+    it("Hides the 'about' pane on event start", function(done) {
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        event.stop()
+
+        var startStop = function(action) {
+            var url = "http://localhost:7777/admin/event/" + event.id + "/" + action;
+            browser.then(function() {
+                return new Promise(function(resolve, reject) {
+                    request.post(url)
+                        .set("x-mock-user", "superuser1")
+                        .set("X-Requested-With", "XMLHttpRequest")
+                        .redirects(0)
+                        .end(function(res) {
+                            if (res.status === 200) {
+                                resolve();
+                            } else {
+                                reject("Unexpected status " + res.status);
+                            }
+                        });
+                });
+            });
+        }
+
+        browser.get("http://localhost:7777/");
+        browser.mockAuthenticate("regular1");
+        browser.get("http://localhost:7777" + event.getEventUrl());
+        aboutIsVisible(true);
+        startStop("start");
+        aboutIsVisible(false);
+        startStop("stop");
+        aboutIsVisible(true);
+        browser.then(function() { done(); });
     });
 });
 
