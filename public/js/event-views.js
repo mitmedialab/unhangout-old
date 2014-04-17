@@ -149,7 +149,9 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // ... and joining users
         _.each(this.model.get("joiningParticipants"), function(udata) { drawUser(udata, true); });
         var emptyli;
-        for (var i = 0; i < this.model.MAX_ATTENDEES; i++) {
+        var numSlots = Math.max(this.model.get("joinCap"),
+                                this.model.getNumConnectedParticipants());
+        for (var i = 0; i < numSlots; i++) {
             if (this.userSlots[i]) {
                 fragment.appendChild(this.userSlots[i].el);
             } else {
@@ -165,13 +167,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         this.ui.hangoutOffline.hide();
 
-        if (!this.options.event.sessionsOpen() || numAttendees >= this.model.MAX_ATTENDEES) {
+        if (!this.options.event.sessionsOpen() || numAttendees >= this.model.get("joinCap")) {
             this.ui.attend.find(".lock").show();
 
             this.ui.attend.attr("disabled", true);
             this.ui.attend.addClass("disabled");
 
-            if (numAttendees >= this.model.MAX_ATTENDEES) {
+            if (numAttendees >= this.model.get("joinCap")) {
                 this.ui.attend.find(".text").text("FULL");
             } else {
                 this.ui.attend.find(".text").text("LOCKED");
@@ -344,8 +346,15 @@ views.DialogView = Backbone.Marionette.Layout.extend({
     createSession: function(event) {
         event.preventDefault();
         var scope = $("#create-session-modal");
-        var title = $("#session_name", scope).val();
+        var title = $("[name=session_name]", scope).val();
+        var joinCap = parseInt($.trim($("[name=join_cap]", scope).val()));
         var type = $("[name='session_type']:checked", scope).val();
+
+        if (isNaN(joinCap) || joinCap < 2 || joinCap > 10) {
+            $(".join-cap-error", scope).show();
+            return;
+        }
+
         var activities = [];
         switch (type) {
             case "simple":
@@ -379,11 +388,12 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 title: title,
                 description:"",
                 activities: activities,
+                joinCap: joinCap,
                 roomId: this.options.event.getRoomId()
             }
         }));
         $("input[type=text]", scope).val("");
-        $(".yt-error, .url-error", scope).hide();
+        $(".yt-error, .url-error, .join-cap-error", scope).hide();
         $(".error", scope).removeClass(".error");
         scope.modal('hide');
     },
