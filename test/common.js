@@ -58,14 +58,14 @@ var buildBrowser = function(callback) {
             return cb();
         });
     };
-    browser.waitForSelector = function(selector) {
+    browser.waitForSelector = function(selector, timeout) {
         return browser.waitWithTimeout(function() {
             return browser.byCss(selector).then(function(el) {
                 return el.isDisplayed();
             }).then(null, function(err) {
                 return false;
             });
-        });
+        }, timeout);
     };
     browser.waitForScript = function(exportName) {
         return browser.waitWithTimeout(function() {

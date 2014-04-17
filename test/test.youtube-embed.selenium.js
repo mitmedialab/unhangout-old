@@ -37,12 +37,12 @@ describe("YOUTUBE EMBEDS", function() {
                 event.set("youtubeEmbed", "");
             });
             browser.get("http://localhost:7777/event/" + event.id);
-            browser.waitForSelector(".inline-video-controls [name=youtube_id]");
+            browser.waitForSelector(".inline-video-controls [name=youtube_id]", 45000);
             browser.byCss(".inline-video-controls [name=youtube_id]").sendKeys(url);
             browser.byCss(".set-video").click();
             if (success) {
                 // Wait for embed to finish..
-                browser.waitForSelector("iframe");
+                browser.waitForSelector("iframe", 45000);
                 return browser.byCss("iframe").getAttribute("src").then(function(src) {
                     var url = "http://www.youtube.com/embed/" + ytId + "?";
                     expect(src.substring(0, url.length)).to.eql(url);

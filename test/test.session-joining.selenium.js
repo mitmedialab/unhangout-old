@@ -112,8 +112,10 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         // Two sockets should show up on the event page -- the browser, and the
         // bare socket.
-        browser.byCsss("#presence-gutter .user").then(function(els) {
-            expect(els.length).to.be(2);
+        browser.waitWithTimeout(function() {
+            return browser.byCsss("#presence-gutter .user").then(function(els) {
+                return els.length === 2;
+            });
         });
         // One socket should show up in the participant list.
         browser.waitForSelector(participantList + " i.icon-user").then(function() {
@@ -282,7 +284,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 // We're left untouched, as a 'save' would throw an error.
                 expect(session.getState()).to.eql("stopping overdue; uncleared stopping; stale url; unstopped");
                 done();
-            }, TEST_LEAVE_STOP_TIMEOUT + 1);
+            }, TEST_LEAVE_STOP_TIMEOUT + 10);
         });
     });
 

@@ -72,7 +72,7 @@ describe("CREATE HOA", function() {
         browser.get("http://localhost:7777/");
         browser.mockAuthenticate(user.get("sock-key"));
         browser.get("http://localhost:7777/event/" + event.id);
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return event.get("connectedUsers").length === 1;
         });
         browser.waitForSelector(".create-hoa");
@@ -84,7 +84,7 @@ describe("CREATE HOA", function() {
         ).then(function(handles) {
             browser.switchTo().window(handles[1]);
         });
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return !!event.get("hoa");
         });
         browser.getCurrentUrl().then(function(url) {
@@ -108,10 +108,13 @@ describe("CREATE HOA", function() {
         browser.waitForScript("$");
         browser.waitForSelector(".join-hoa");
         var embedSrcScript = "return $('.video-player iframe').attr('src');";
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return browser.executeScript(embedSrcScript).then(function(src) {
-                return src && src.indexOf("http://www.youtube.com/embed/" +
-                               event.get("hoa").get("hangout-broadcast-id")) === 0;
+                return (
+                    src && event.get("hoa") && 
+                    src.indexOf("http://www.youtube.com/embed/" +
+                                event.get("hoa").get("hangout-broadcast-id")) === 0
+                );
             });
         });
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
@@ -126,13 +129,13 @@ describe("CREATE HOA", function() {
             expect(els.length).to.be(0);
         });
         browser.waitForSelector("iframe");
-        browser.wait(function() {
+        browser.waitWithTimeout(function() {
             return browser.executeScript(embedSrcScript).then(function(src) {
                 return src !== null && src.indexOf(
                     "http://www.youtube.com/embed/" +
                     event.get("hoa").get("hangout-broadcast-id")) === 0;
             });
-        });
+        }, 45000);
 
         browser.then(function() { done(); });
     });
@@ -151,12 +154,12 @@ describe("CREATE HOA", function() {
         browser.waitForScript("$");
 
         function hasHoA(has) {
-            browser.wait(function() {
+            browser.waitWithTimeout(function() {
                 return browser.byCsss("a.create-hoa").then(function(els) {
                     return els.length === (has ? 0 : 1);
                 });
             });
-            return browser.wait(function() {
+            return browser.waitWithTimeout(function() {
                 return browser.byCsss("a.join-hoa").then(function(els) {
                     return els.length === (has ? 1 : 0);
                 });
