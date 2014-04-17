@@ -25,7 +25,7 @@ describe('HTTP ADMIN EVENTS API', function() {
         user.setPerm("createEvents", true);
 
         async.map(["superuser1", "regular1"], function(user, done) {
-            request.get("http://localhost:7777/admin/event/new")
+            request.get(common.URL + "/admin/event/new")
                 .set("x-mock-user", user)
                 .redirects(0)
                 .end(function(res) {
@@ -45,7 +45,7 @@ describe('HTTP ADMIN EVENTS API', function() {
               ).to.be(false);
 
         async.map(["admin1", "regular1"], function(user, done) {
-            request.get("http://localhost:7777/admin/event/new")
+            request.get(common.URL + "/admin/event/new")
                 .set("x-mock-user", user)
                 .redirects(0)
                 .end(function(res) {
@@ -60,7 +60,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     it('/admin/event/new rejects POST from non-admins', function(done) {
         expect(common.server.db.users.findWhere(
             {'sock-key': 'regular1'}).hasPerm("createEvents")).to.be(false);
-        request.post('http://localhost:7777/admin/event/new')
+        request.post(common.URL + '/admin/event/new')
             .set("x-mock-user", "regular1")
             .send({title:"Test Event", description:"Description of the test event."})
             .redirects(0)
@@ -72,7 +72,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 
 
     it('/admin/event/new accepts POST from superuser', function(done) {
-        request.post('http://localhost:7777/admin/event/new')
+        request.post(common.URL + '/admin/event/new')
             .set("x-mock-user", "superuser1")
             .send({title:"Test Event 1234", description:"Description of the test event."})
             .redirects(0)
@@ -92,7 +92,7 @@ describe('HTTP ADMIN EVENTS API', function() {
         var user = common.server.db.users.findWhere({"sock-key": "admin1"});
         user.setPerm("createEvents", true);
 
-        request.post('http://localhost:7777/admin/event/new')
+        request.post(common.URL + '/admin/event/new')
             .set("x-mock-user", "admin1")
             .send({title:"Test Event 2345", description:"Description of the test event."})
             .redirects(0)
@@ -112,7 +112,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 
     it('/admin/event/new errors POST missing required params', function(done) {
         // title is missing
-        request.post('http://localhost:7777/admin/event/new')
+        request.post(common.URL + '/admin/event/new')
             .set("x-mock-user", "superuser1")
             .send({description:"Description of the test event."})
             .redirects(0)
@@ -124,7 +124,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 
     it('/admin/event/new errors POST with duplicate event shortNames', function(done) {
         var evt = common.server.db.events.at(0);
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .send({description: "Fun times", title: "Great",
                   shortName: evt.get("shortName")})
@@ -136,7 +136,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     });
 
     it('/admin/event/new errors POST with tricky shortname chars', function(done) {
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .send({description: "Fun times", title: "Great",
                   shortName: "oh/kay"})
@@ -148,7 +148,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     });
 
     it('/admin/event/new errors POST with number-only shortnames', function(done) {
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .send({description: "Fun times", title: "Great",
                   shortName: "12345"})
@@ -167,7 +167,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             dateAndTime: "wat lol no",
             timeZoneValue: "America/New_York"
         }
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .send(params)
             .redirects(0)
@@ -185,7 +185,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
             timeZoneValue: "wat"
         };
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .send(params)
             .redirects(0)
@@ -205,7 +205,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 timeZoneValue: "America/New_York",
                 overflowUserCap: overflowUserCap
             };
-            request.post("http://localhost:7777/admin/event/new")
+            request.post(common.URL + "/admin/event/new")
                 .set("x-mock-user", "superuser1")
                 .send(params)
                 .redirects(0)
@@ -227,7 +227,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             timeZoneValue: "America/New_York",
             overflowUserCap: "10"
         };
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "admin1")
             .send(params)
             .redirects(0)
@@ -240,7 +240,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     });
 
     it("/admin/event/new GET shows overflowUserCap to superusers", function(done) {
-        request.get("http://localhost:7777/admin/event/new")
+        request.get(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .redirects(0)
             .end(function(res) {
@@ -254,7 +254,7 @@ describe('HTTP ADMIN EVENTS API', function() {
         var user = common.server.db.users.findWhere({"sock-key": "admin1"});
         user.setPerm("createEvents", true);
         expect(user.isSuperuser()).to.be(false);
-        request.get("http://localhost:7777/admin/event/new")
+        request.get(common.URL + "/admin/event/new")
             .set("x-mock-user", "admin1")
             .redirects(0)
             .end(function(res) {
@@ -272,7 +272,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             dateAndTime: "",
             timeZoneValue: "America/Denver"
         };
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .send(params)
             .redirects(0)
@@ -295,7 +295,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
             timeZoneValue: "America/New_York"
         };
-        request.post("http://localhost:7777/admin/event/new")
+        request.post(common.URL + "/admin/event/new")
             .set("x-mock-user", "superuser1")
             .send(params)
             .redirects(0)
@@ -312,7 +312,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     });
 
     it('/admin/event/new POST redirects to event page on success', function(done) {
-        request.post('http://localhost:7777/admin/event/new')
+        request.post(common.URL + '/admin/event/new')
             .set("x-mock-user", "superuser1")
             .send({title:"Test Event", description:"Description of the test event."})
             .redirects(0)
@@ -334,7 +334,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             description: "My description",
             overflowMessage: "Oh noes we's overfloes"
         }
-        request.post('http://localhost:7777/admin/event/new')
+        request.post(common.URL + '/admin/event/new')
             .set("x-mock-user", "superuser1")
             .send(params)
             .redirects(0)
@@ -354,7 +354,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 //
                 // Should also clear all optional params.
                 //
-                request.post('http://localhost:7777/admin/event/' + evt.id)
+                request.post(common.URL + '/admin/event/' + evt.id)
                     .set("x-mock-user", "superuser1")
                     .send({
                         title: "My title",
@@ -383,7 +383,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 
 
     it('/admin/event/:id rejects POST from non-admins', function(done) {
-        request.post('http://localhost:7777/admin/event/1')
+        request.post(common.URL + '/admin/event/1')
             .set("x-mock-user", "regular1")
             .send({title:"Test Event", description:"Description of the test event."})
             .redirects(0)
@@ -399,7 +399,7 @@ describe('HTTP ADMIN EVENTS API', function() {
         var user = common.server.db.users.findWhere({"sock-key": "admin2"});
         user.setPerm("createEvents", true);
 
-        request.post('http://localhost:7777/admin/event/1')
+        request.post(common.URL + '/admin/event/1')
             .set("x-mock-user", "admin2")
             .send({title:"Test Event", description:"Description of the test event."})
             .redirects(0)
@@ -419,7 +419,7 @@ describe('HTTP ADMIN EVENTS API', function() {
         // .. but they shouldn't need createEvents permission.
         user.setPerm("createEvents", false);
 
-        request.post('http://localhost:7777/admin/event/1')
+        request.post(common.URL + '/admin/event/1')
             .set("x-mock-user", "admin1")
             .send({title:"Test Event", description:"Description of the test event."})
             .redirects(0)
@@ -434,7 +434,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     });
 
     it('/admin/event/:id accepts POST from superuser', function(done) {
-        request.post('http://localhost:7777/admin/event/1')
+        request.post(common.URL + '/admin/event/1')
             .set("x-mock-user", "superuser1")
             .send({title:"Test Event", description:"Description of the test event."})
             .redirects(0)

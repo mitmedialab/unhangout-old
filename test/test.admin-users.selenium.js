@@ -22,52 +22,52 @@ describe("ADMIN USERS SELENIUM", function() {
     });
 
     it("Can't access user page unauthenticated", function(done) {
-        browser.get("http://localhost:7777/admin/users/");
+        browser.get(common.URL + "/admin/users/");
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.not.eql("http://localhost:7777/admin/users/");
+            expect(url).to.not.eql(common.URL + "/admin/users/");
             done();
         });
     });
     it("Can't access user page as non-superuser", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
-        browser.get("http://localhost:7777/admin/users/")
+        browser.get(common.URL + "/admin/users/")
         browser.getPageSource().then(function(source) {
             expect(source.indexOf("Permission denied")).to.not.eql(-1);
             done();
         });
     });
     it("Shows admin link for admins", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.byCss(".identity .dropdown > a").click();
         browser.waitForSelector("[href='/logout']")
         browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql("http://localhost:7777/admin/");
+            expect(url).to.eql(common.URL + "/admin/");
             done();
         });
     });
     it("Shows admin link for superusers", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.byCss(".identity .dropdown > a").click();
         browser.waitForSelector("[href='/logout']")
         browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql("http://localhost:7777/admin/");
+            expect(url).to.eql(common.URL + "/admin/");
             done();
         });
     });
     it("Manages superusers", function(done) {
         var user = common.server.db.users.findWhere({superuser: false});
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/admin/users/")
+        browser.get(common.URL + "/admin/users/")
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql("http://localhost:7777/admin/users/");
+            expect(url).to.eql(common.URL + "/admin/users/");
         });
         var selector = "tr[data-user-id='" + user.id + "'] input[type='checkbox']";
         browser.waitForSelector(selector);
@@ -82,15 +82,15 @@ describe("ADMIN USERS SELENIUM", function() {
     it("Manages admins", function(done) {
         var user = common.server.db.users.findWhere({"sock-key": 'regular1'});
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        var eventUrl = "http://localhost:7777/admin/event/" + event.id;
+        var eventUrl = common.URL + "/admin/event/" + event.id;
         var addSelector = "tr[data-user-id='" + user.id + "'] .add-event";
         var removeSelector = "[data-event-id='" + event.id + "'].remove-event";
 
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/admin/users/")
+        browser.get(common.URL + "/admin/users/")
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql("http://localhost:7777/admin/users/");
+            expect(url).to.eql(common.URL + "/admin/users/");
         });
 
         // Pull up the add event modal, and add an event.
@@ -113,7 +113,7 @@ describe("ADMIN USERS SELENIUM", function() {
 
         // Remove admin-ship for this event.
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/admin/users/");
+        browser.get(common.URL + "/admin/users/");
         browser.waitForSelector(removeSelector);
         browser.byCss(removeSelector).click().then(function() {
             return common.await(function() {
@@ -125,7 +125,7 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.mockAuthenticate(user.get("sock-key"));
         browser.get(eventUrl);
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql("http://localhost:7777/");
+            expect(url).to.eql(common.URL + "/");
             done();
         });
     });
@@ -135,9 +135,9 @@ describe("ADMIN USERS SELENIUM", function() {
                            " input.perm[data-perm='createEvents']";
 
         expect(user.hasPerm("createEvents")).to.be(false);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/admin/users/");
+        browser.get(common.URL + "/admin/users/");
         browser.waitForSelector(permSelector);
         browser.byCss(permSelector).click();
         browser.wait(function() {
@@ -145,7 +145,7 @@ describe("ADMIN USERS SELENIUM", function() {
                 return true;
             }
         });
-        browser.get("http://localhost:7777/admin/users/");
+        browser.get(common.URL + "/admin/users/");
         browser.waitForScript("$");
         browser.executeScript('return $("'+permSelector+'").is(":checked");').then(function(checked) {
             expect(checked).to.be(true);
@@ -156,7 +156,7 @@ describe("ADMIN USERS SELENIUM", function() {
                 return true;
             }
         });
-        browser.get("http://localhost:7777/admin/users/");
+        browser.get(common.URL + "/admin/users/");
         browser.waitForScript("$");
         browser.executeScript('return $("'+permSelector+'").is(":checked");').then(function(checked) {
             expect(checked).to.be(false);
@@ -165,9 +165,9 @@ describe("ADMIN USERS SELENIUM", function() {
 
     });
     it("Filters users", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/admin/users/");
+        browser.get(common.URL + "/admin/users/");
         browser.waitForSelector("input.filter-name");
         browser.byCss("input.filter-name").sendKeys("Regular");
         browser.byCsss("tr").then(function(els) {

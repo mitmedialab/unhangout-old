@@ -58,9 +58,9 @@ describe("CHAT WINDOW", function() {
     }
 
     it("scrolls chat window", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777/event/" + evt.id);
+        browser.get(common.URL + "/event/" + evt.id);
         browser.waitForScript("$");
         browser.waitForSelector("#chat-input");
         var msgCount = 50;
@@ -128,13 +128,13 @@ describe("CHAT WINDOW", function() {
         expect(admin.isAdminOf(event)).to.be(true)
         expect(superuser.isAdminOf(event)).to.be(true);
         // Get the page so we can mock-authenticate.
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
 
         var counter = 0;
         function checkFromAdmin(sockkey, isAdmin) {
             var text = "admin check " + (counter++) + "\n";
             browser.mockAuthenticate(sockkey);
-            browser.get("http://localhost:7777/event/" + event.id)
+            browser.get(common.URL + "/event/" + event.id)
             browser.waitForScript("$");
             browser.waitForSelector("#chat-input");
             browser.byCss("#chat-input").sendKeys(text);

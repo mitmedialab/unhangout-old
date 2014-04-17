@@ -17,9 +17,14 @@ var TEST_CONF = _.extend({}, conf, {
     "UNHANGOUT_GOOGLE_CLIENT_SECRET": true,
     "UNHANGOUT_HANGOUT_APP_ID": "rofl",
     "UNHANGOUT_REDIS_DB": 1,
+    "UNHANGOUT_PORT": 7778,
     "mockAuth": true,
-    "baseUrl": "http://localhost:7777"
+    "baseUrl": "http://localhost:7778"
 });
+
+exports.URL = TEST_CONF.baseUrl;
+exports.PORT = TEST_CONF.UNHANGOUT_PORT;
+
 TEST_CONF.UNHANGOUT_HANGOUT_ORIGIN_REGEX = TEST_CONF.baseUrl;
 
 var seleniumServer = null;
@@ -230,7 +235,7 @@ exports.restartServer = function(onStopped, onRestarted) {
 };
 
 exports.sockWithPromiseClose = function() {
-    var sock = sock_client.create("http://localhost:7777/sock");
+    var sock = sock_client.create(exports.URL + "/sock");
     sock.promiseClose = function() {
         var promise = new Promise(function(resolve, reject) {
             sock.once("close", function() { resolve() });

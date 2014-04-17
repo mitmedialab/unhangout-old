@@ -115,7 +115,7 @@ describe('unhangout server', function() {
 
         describe("GET /", function() {
             it('should return without error', function(done) {
-                request('http://localhost:7777/').end(function(res) {
+                request(common.URL).end(function(res) {
                     should.exist(res);
                     res.status.should.equal(200);
                     done();
@@ -125,7 +125,7 @@ describe('unhangout server', function() {
 
         describe("GET /event/:id", function() {
             it('should show static event page if unauthenticated', function(done) {
-                request('http://localhost:7777/event/1')
+                request(common.URL + '/event/1')
                 .redirects(0)
                 .end(function(res) {
                     res.status.should.equal(200);
@@ -141,7 +141,7 @@ describe('unhangout server', function() {
 
         describe("GET /event/:id", function() {
             it('should show dynamic event page', function(done) {
-                request('http://localhost:7777/event/1')
+                request(common.URL + '/event/1')
                 .set("x-mock-user", "regular1")
                 .end(function(res) {
                     res.status.should.equal(200);
@@ -156,7 +156,7 @@ describe('unhangout server', function() {
         afterEach(common.standardShutdown);
 
         it('should accept email addresses', function(done) {
-            request.post('http://localhost:7777/subscribe/')
+            request.post(common.URL + '/subscribe/')
             .send("email=email@example.com")
             .end(function(res) {
                 res.status.should.equal(200);

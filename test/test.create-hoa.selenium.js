@@ -23,7 +23,7 @@ describe("CREATE HOA", function() {
 
         googleapis.OAuth2Client = function() {
             this.generateAuthUrl = function() {
-                return "http://localhost:7777/event/create-hoa/callback";
+                return common.URL + "/event/create-hoa/callback";
             };
             this.getToken = function(code, callback) {
                 return callback(null, "mock-token");
@@ -69,9 +69,9 @@ describe("CREATE HOA", function() {
 
         var windowHandle;
 
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate(user.get("sock-key"));
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitWithTimeout(function() {
             return event.get("connectedUsers").length === 1;
         });
@@ -93,7 +93,7 @@ describe("CREATE HOA", function() {
             // sure how valuable it is to test here, but at least we know that
             // the session redirect is running.
             expect(url).to.eql(
-                "http://localhost:7777/test/hangout/" + event.get("hoa").id + "/?isHoA=1"
+                common.URL + "/test/hangout/" + event.get("hoa").id + "/?isHoA=1"
             );
         });
 
@@ -124,7 +124,7 @@ describe("CREATE HOA", function() {
         // Now make sure that a regular user sees the embedded video, but does
         // not see the "join current hangout" link.
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.byCsss(".join-hoa").then(function(els) {
             expect(els.length).to.be(0);
         });
@@ -145,12 +145,12 @@ describe("CREATE HOA", function() {
         event.setHoA(null);
         event.start();
         var hoa;
-        browser.get("http://localhost:7777");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
  
         // Get the page once -- the rest are live updates triggered by model
         // changes.
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitForScript("$");
 
         function hasHoA(has) {

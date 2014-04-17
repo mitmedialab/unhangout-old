@@ -28,7 +28,7 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
 
     function postEventEdit(user, params) {
         return new Promise(function(resolve, reject) {
-            request.post("http://localhost:7777/admin/event/" + (params.id || "new"))
+            request.post(common.URL + "/admin/event/" + (params.id || "new"))
                 .set("x-mock-user", user)
                 .send(params)
                 .redirects(0)

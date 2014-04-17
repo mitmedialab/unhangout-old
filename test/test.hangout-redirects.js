@@ -40,7 +40,7 @@ describe("HANGOUT REDIRECTS", function() {
     afterEach(common.standardShutdown);
 
     function checkRedirect(expected, user, done) {
-        request.get("http://localhost:7777" + session.getParticipationLink())
+        request.get(common.URL + session.getParticipationLink())
             .timeout(models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT + 2)
             .set("x-mock-user", user)
             .redirects(0)
@@ -190,7 +190,7 @@ describe("HANGOUT REDIRECTS", function() {
             {id: "u8", displayName: "U8", picture: ""},
             {id: "u9", displayName: "U9", picture: ""},
         ]);
-        request.get("http://localhost:7777" + session.getParticipationLink())
+        request.get(common.URL + session.getParticipationLink())
             .set("x-mock-user", "regular1")
             .redirects(0)
             .end(function(res) {
@@ -209,7 +209,7 @@ describe("HANGOUT REDIRECTS", function() {
 
 
         it("Session router redirects to hoa-session for HoAs", function(done) {
-            request.get("http://localhost:7777/session/" + hoa.get("session-key"))
+            request.get(common.URL + "/session/" + hoa.get("session-key"))
                 .set("x-mock-user", "regular1")
                 .redirects(0)
                 .end(function(res) {
@@ -221,7 +221,7 @@ describe("HANGOUT REDIRECTS", function() {
                 });
         });
         it("redirects to regular session if it isn't an hoa", function(done) {
-            request.get("http://localhost:7777/hoa-session/" + session.get("session-key"))
+            request.get(common.URL + "/hoa-session/" + session.get("session-key"))
                 .set("x-mock-user", "regular1")
                 .redirects(0)
                 .end(function(res) {
@@ -233,7 +233,7 @@ describe("HANGOUT REDIRECTS", function() {
                 });
         });
         it("gives forbiden for non-admins", function(done) {
-            request.get("http://localhost:7777" + hoa.getParticipationLink())
+            request.get(common.URL + hoa.getParticipationLink())
                 .set("x-mock-user", "regular1")
                 .redirects(0)
                 .end(function(res) {
@@ -243,7 +243,7 @@ describe("HANGOUT REDIRECTS", function() {
         });
         it("uses existing URL if present", function(done) {
             hoa.set("hangout-url", "http://example.com/hoastic");
-            request.get("http://localhost:7777" + hoa.getParticipationLink())
+            request.get(common.URL + hoa.getParticipationLink())
                 .set("x-mock-user", "superuser1")
                 .redirects(0)
                 .end(function(res) {
@@ -261,7 +261,7 @@ describe("HANGOUT REDIRECTS", function() {
 
             clock.tick(hoa.HANGOUT_CREATION_TIMEOUT / 2);
 
-            request.get("http://localhost:7777" + hoa.getParticipationLink())
+            request.get(common.URL + hoa.getParticipationLink())
                 .set("x-mock-user", "superuser1")
                 .redirects(0)
                 .end(function(res) {
@@ -271,7 +271,7 @@ describe("HANGOUT REDIRECTS", function() {
                     );
                     clock.tick(hoa.HANGOUT_CREATION_TIMEOUT / 2 + 1);
                     // After timeout shows create-hoa.
-                    request.get("http://localhost:7777" + hoa.getParticipationLink())
+                    request.get(common.URL + hoa.getParticipationLink())
                         .set("x-mock-user", "superuser1")
                         .redirects(0)
                         .end(function(res) {
@@ -284,7 +284,7 @@ describe("HANGOUT REDIRECTS", function() {
 
         });
         it("renders create-hoa if there's no URL", function(done) {
-            request.get("http://localhost:7777" + hoa.getParticipationLink())
+            request.get(common.URL + hoa.getParticipationLink())
                 .set("x-mock-user", "superuser1")
                 .redirects(0)
                 .end(function(res) {

@@ -33,10 +33,10 @@ describe("YOUTUBE EMBEDS", function() {
         event.start();
 
         function tryEmbed(url, success) {
-            browser.get("http://localhost:7777/").then(function() {
+            browser.get(common.URL).then(function() {
                 event.set("youtubeEmbed", "");
             });
-            browser.get("http://localhost:7777/event/" + event.id);
+            browser.get(common.URL + "/event/" + event.id);
             browser.waitForSelector(".inline-video-controls [name=youtube_id]", 45000);
             browser.byCss(".inline-video-controls [name=youtube_id]").sendKeys(url);
             browser.byCss(".set-video").click();
@@ -59,7 +59,7 @@ describe("YOUTUBE EMBEDS", function() {
                 });
             }
         }
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         tryEmbed(ytId, true);
         tryEmbed("foo", false);
@@ -82,9 +82,9 @@ describe("YOUTUBE EMBEDS", function() {
             {youtubeId: "4DUz4tzhv-w"},
             {youtubeId: "2laB2BmSNn0"}
         ]);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777" + event.getEventUrl());
+        browser.get(common.URL + event.getEventUrl());
         browser.waitForSelector(".inline-video-controls .dropdown-toggle");
         browser.byCss(".inline-video-controls .dropdown-toggle").click();
         browser.waitForSelector(".clear-previous-videos");

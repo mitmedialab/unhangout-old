@@ -17,7 +17,7 @@ describe('HTTP ADMIN EVENTS API', function() {
     });
 
     function checkEventTitle(titleSuffix, sockKey, done) {
-        request.get("http://localhost:7777/event/" + event.id)
+        request.get(common.URL + "/event/" + event.id)
             .set("x-mock-user", sockKey)
             .redirects(0)
             .end(function(res) {
@@ -56,7 +56,7 @@ describe('HTTP ADMIN EVENTS API', function() {
 
     it("Shows custom overflowMessage.", function(done) {
         event.set("overflowMessage", "Hot diggity");
-        request.get("http://localhost:7777/event/" + event.id)
+        request.get(common.URL + "/event/" + event.id)
             .set("x-mock-user", "regular1")
             .redirects(0)
             .end(function(res) {

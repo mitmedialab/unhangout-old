@@ -20,7 +20,7 @@ describe('PERMALINKS', function(){
     afterEach(common.standardShutdown);
 
     it("should require authentication for permalinks", function(done) {
-        request.get('http://localhost:7777/h/')
+        request.get(common.URL + '/h/')
             .redirects(0)
             .end(function(res){
                 expect(res.status).to.be(302);
@@ -29,7 +29,7 @@ describe('PERMALINKS', function(){
             });
     });
     it("should require authentication for permalink details", function(done) {
-        request.get('http://localhost:7777/h/test')
+        request.get(common.URL + '/h/test')
             .redirects(0)
             .end(function(res){
                 expect(res.status).to.be(302);
@@ -38,7 +38,7 @@ describe('PERMALINKS', function(){
             });
     });
     it('should direct to the landing page when there is no code', function(done){
-        request.get('http://localhost:7777/h/')
+        request.get(common.URL + '/h/')
             .set("x-mock-user", "regular1")
             .end(function(res){
                 expect(res.status).to.be(200);
@@ -47,7 +47,7 @@ describe('PERMALINKS', function(){
     });
 
     it('if :code is new, it should create a new session on the server', function(done){
-        request.get('http://localhost:7777/h/new-test')
+        request.get(common.URL + '/h/new-test')
             .set("x-mock-user", "regular1")
             .redirects(0)
             .end(function(res){
@@ -61,14 +61,14 @@ describe('PERMALINKS', function(){
     });
 
     it('if :code is active, multiple requests only create one session', function(done){
-        request.get('http://localhost:7777/h/test2')
+        request.get(common.URL + '/h/test2')
             .set("x-mock-user", "regular1")
             .redirects(0)
             .end(function(res){
                 expect(res.status).to.be(302);
                 expect(res.headers.location.indexOf("/h/admin/test2")).to.be(0);
                 var length = common.server.db.permalinkSessions.length;
-                request.get('http://localhost:7777/h/test2')
+                request.get(common.URL + '/h/test2')
                     .set("x-mock-user", "regular1")
                     .end(function(res){
                         expect(res.status).to.be(200);
@@ -79,11 +79,11 @@ describe('PERMALINKS', function(){
     });
 
     it('if :code is new, it should present the form only for first visitor', function(done){
-        request.get('http://localhost:7777/h/test2')
+        request.get(common.URL + '/h/test2')
             .set("x-mock-user", "regular1")
             .end(function(res){
                 expect(res.text.indexOf('<input')).to.not.eql(-1);
-                request.get('http://localhost:7777/h/test2')
+                request.get(common.URL + '/h/test2')
                     .set("x-mock-user", "regular1")
                     .end(function(res){
                         expect(res.text.indexOf('<input')).to.be(-1);
@@ -94,7 +94,7 @@ describe('PERMALINKS', function(){
 
     it('should reject requests without a valid creation key in the request body', function(done){
         var session = common.server.db.permalinkSessions[0];
-        request.post('http://localhost:7777/h/admin/test')
+        request.post(common.URL + '/h/admin/test')
             .set("x-mock-user", "regular1")
             .send({creationKey: 'wrong1', title: 'migrate title', description: 'something cool'})
             .end(function(res){
@@ -105,7 +105,7 @@ describe('PERMALINKS', function(){
 
     it('should update session title and description when valid creation key is present', function(done){
         var session = common.server.db.permalinkSessions.at(0);
-        request.post('http://localhost:7777/h/admin/test')
+        request.post(common.URL + '/h/admin/test')
             .set("x-mock-user", "regular1")
             .send({creationKey: session.get('creationKey'), title: 'migrate title', description: 'something cool'})
             .end(function(res){

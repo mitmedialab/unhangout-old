@@ -24,7 +24,7 @@ describe("EMAIL REQUEST FOR ADMIN", function() {
     });
 
     function postSignupRequest(user, body, callback) {
-        request.post("http://localhost:7777/admin-request/")
+        request.post(common.URL + "/admin-request/")
             .set("x-mock-user", user)
             .send(body)
             .redirects(0)
@@ -35,7 +35,7 @@ describe("EMAIL REQUEST FOR ADMIN", function() {
             });
     };
     it("Rejects unauthenticated requests", function(done) {
-        request.post("http://localhost:7777/admin-request/")
+        request.post(common.URL + "/admin-request/")
             .send(validBody)
             .end(function(res) {
                 expect(res.status).to.be(403);

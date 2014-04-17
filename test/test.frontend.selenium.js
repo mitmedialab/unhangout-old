@@ -30,7 +30,7 @@ describe("FRONT PAGE", function() {
     };
 
     it("gets home page and nav links activate", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.byCss("h1").getText().then(function(text) {
             text.should.equal("Unhangouts");
         });
@@ -42,16 +42,16 @@ describe("FRONT PAGE", function() {
     });
 
     it("shows a static event page to unauthenticated users", function(done) {
-        browser.get("http://localhost:7777/event/1");
+        browser.get(common.URL + "/event/1");
         browser.waitForSelector(".event-static");
         browser.byLinkText("Login").click();
         browser.getCurrentUrl().then(function(url) {
             url.indexOf("https://accounts.google.com/").should.equal(0);
         });
         // Get the dynamic page after auth.
-        browser.get("http://localhost:7777/event/1");
+        browser.get(common.URL + "/event/1");
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777/event/1");
+        browser.get(common.URL + "/event/1");
         browser.waitForSelector("#app").then(function() {
             done();
         });

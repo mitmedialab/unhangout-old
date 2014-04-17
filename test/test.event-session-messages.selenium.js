@@ -33,10 +33,10 @@ describe("EVENT SESSION MESSAGES", function() {
         // event's session rooms.
         var sock;
         var session = event.get("sessions").at(0);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         // Admin goes to the event page.  Connect a socket to a session.
-        browser.get("http://localhost:7777/event/" + event.id)
+        browser.get(common.URL + "/event/" + event.id)
         browser.wait(function() {
             return browser.executeScript("return window.$ !== null");
         }).then(function() {
@@ -75,9 +75,9 @@ describe("EVENT SESSION MESSAGES", function() {
         var sock;
         var session = event.get("sessions").at(0);
 
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.get(common.URL + "/test/hangout/" + session.id + "/");
         browser.waitForSelector("iframe[name='gadget_frame']");
         browser.switchTo().frame("gadget_frame");
         browser.waitForSelector("iframe[name='facilitator_frame']");
@@ -106,9 +106,9 @@ describe("EVENT SESSION MESSAGES", function() {
     });
 
     it("Adds event url to message", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
         browser.waitForSelector("#message-sessions");
@@ -117,16 +117,16 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.byCss("textarea#session_message").sendKeys("This is fun!");
         browser.byCss(".add-url-to-message").click();
         browser.byCss("textarea#session_message").getAttribute("value").then(function(text) {
-            expect(text).to.eql("This is fun!\n Copy and paste: http://localhost:7777/event/" + event.id);
+            expect(text).to.eql("This is fun!\n Copy and paste: " + common.URL + "/event/" + event.id);
             done();
         });
     });
 
     it("Replaces entities with unicode", function(done) {
         var session = event.get("sessions").at(1);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.get(common.URL + "/test/hangout/" + session.id + "/");
         browser.waitForSelector("iframe[name='gadget_frame']");
         browser.switchTo().frame("gadget_frame");
         browser.waitForSelector("iframe[name='facilitator_frame']");

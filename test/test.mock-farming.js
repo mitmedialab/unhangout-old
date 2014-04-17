@@ -5,8 +5,8 @@ var common = require("./common.js"),
     googleapis = require('googleapis'),
     async = require('async');
 
-var FARM_URL = "http://localhost:7777/hangout-farming";
-var CALLBACK_URL = "http://localhost:7777/hangout-callback";
+var FARM_URL = common.URL + "/hangout-farming";
+var CALLBACK_URL = common.URL + "/hangout-callback";
 var MOCK_AUTH_URL = "http://example.com/mock-auth-url";
 var MOCK_HANGOUT_URL = "http://example.com/mock-hangout-url";
 

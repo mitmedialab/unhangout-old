@@ -1,5 +1,6 @@
 var RoomManager = require("../lib/room-manager").RoomManager,
     createUsers = require("../lib/passport-mock").createUsers,
+    common = require("./common"), // common before options, so we can monkey-patch it
     models = require("../lib/server-models"),
     http = require("http"),
     async = require("async"),
@@ -8,7 +9,6 @@ var RoomManager = require("../lib/room-manager").RoomManager,
     sockjs_client = require('sockjs-client-ws'),
     async = require("async"),
     Promise = require("bluebird"),
-    common = require("./common"),
     _ = require("underscore");
 
 var users = createUsers(new models.ServerUserList());
@@ -52,7 +52,7 @@ function authedSocket(user, callback) {
 describe("ROOM MANAGER", function() {
     before(function() {
         socketServer.installHandlers(server, {prefix: '/sock'});
-        server.listen(7777, '0.0.0.0');
+        server.listen(common.PORT, '0.0.0.0');
     });
     after(function() {
         server.close();

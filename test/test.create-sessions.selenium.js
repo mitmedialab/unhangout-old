@@ -28,9 +28,9 @@ describe("CREATE SESSIONS", function() {
 
     it("Creates a permalink session", function(done) {
         var sess;
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777/h/");
+        browser.get(common.URL + "/h/");
         browser.byCss("#permalink-title").sendKeys("This won't work");
         browser.byCss("#permalink-create-submit").click();
         browser.byCss(".help-block").getText().then(function(text) {
@@ -60,9 +60,9 @@ describe("CREATE SESSIONS", function() {
         // Start with no sessions.
         event.get("sessions").reset();
         event.start();
-        browser.get("http://localhost:7777");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/event/" + event.id)
+        browser.get(common.URL + "/event/" + event.id)
         browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
         browser.byCss("#show-create-session-modal").click();
@@ -89,9 +89,9 @@ describe("CREATE SESSIONS", function() {
     it("Creates an event session with youtube", function(done) {
         event.get("sessions").reset();
         event.start();
-        browser.get("http://localhost:7777");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
         browser.byCss("#show-create-session-modal").click();
@@ -121,9 +121,9 @@ describe("CREATE SESSIONS", function() {
     it("Creates an event session with joinCap", function(done) {
         event.get("sessions").reset();
         event.start();
-        browser.get("http://localhost:7777");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "superuser1");
         browser.byCss(".admin-button").click();
         browser.byCss("#show-create-session-modal").click();

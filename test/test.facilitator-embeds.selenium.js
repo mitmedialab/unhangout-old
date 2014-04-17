@@ -30,9 +30,9 @@ describe("FACILITATOR EMBEDS", function() {
 
     it("Gets an about page with auto-hide for new sessions", function(done) {
         var session = event.get("sessions").at(0);
-        browser.get("http://localhost:7777/")
+        browser.get(common.URL)
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777/facilitator/" + session.id + "/");
+        browser.get(common.URL + "/facilitator/" + session.id + "/");
         browser.waitForSelector(".cancel-autohide");
         browser.waitForScript("$");
         browser.executeScript(
@@ -44,16 +44,16 @@ describe("FACILITATOR EMBEDS", function() {
     });
     it("Displays, removes, and changes embedded webpages", function(done) {
         var session = event.get("sessions").at(0);
-        browser.get("http://localhost:7777/")
+        browser.get(common.URL)
         browser.mockAuthenticate("regular1");
 
         // Load a session page with a webpage activity.
-        session.set("activities", [{type: "webpage", url: "http://localhost:7777/public/html/test.html"}]);
-        browser.get("http://localhost:7777/facilitator/" + session.id + "/");
+        session.set("activities", [{type: "webpage", url: common.URL + "/public/html/test.html"}]);
+        browser.get(common.URL + "/facilitator/" + session.id + "/");
         // Ensure the webpage is displayed.
         browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
-            expect(src).to.eql("http://localhost:7777/public/html/test.html");
+            expect(src).to.eql(common.URL + "/public/html/test.html");
 
         });
         // Remove the embed.
@@ -76,15 +76,15 @@ describe("FACILITATOR EMBEDS", function() {
         // Nothing should happen... the next call should fail if the modal is closed.
 
         // Allows non-blank URLs.
-        browser.byCss(".modal-body input[type='text']").sendKeys("http://localhost:7777/public/html/test.html");
+        browser.byCss(".modal-body input[type='text']").sendKeys(common.URL + "/public/html/test.html");
         browser.byCss(".modal input[type='submit']").click();
         browser.waitForSelector("iframe");
         browser.byCss(".webpage-activity"); // throws error if it's not there
         browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
-            expect(src).to.eql("http://localhost:7777/public/html/test.html");
+            expect(src).to.eql(common.URL + "/public/html/test.html");
             expect(session.get("activities")).to.eql([{
-                'type': 'webpage', 'url': "http://localhost:7777/public/html/test.html"
+                'type': 'webpage', 'url': common.URL + "/public/html/test.html"
             }]);
         });
         // Embeds youtube videos.
@@ -99,7 +99,7 @@ describe("FACILITATOR EMBEDS", function() {
         browser.waitForSelector("iframe");
         browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {
-            expect(src).to.eql("https://www.youtube.com/embed/NIylUcGDi-Y?wmode=transparent&enablejsapi=1&origin=http%3A%2F%2Flocalhost%3A7777")
+            expect(src).to.eql("https://www.youtube.com/embed/NIylUcGDi-Y?wmode=transparent&enablejsapi=1&origin=" + encodeURIComponent(common.URL))
             expect(session.get("activities")).to.eql([{
                 'type': 'video', 'video': {'provider': "youtube", 'id': 'NIylUcGDi-Y'}
             }]);

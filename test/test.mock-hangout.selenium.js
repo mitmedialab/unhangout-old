@@ -34,20 +34,20 @@ describe("MOCK HANGOUT", function() {
 
     afterEach(function(done) {
         // Get a URL that won't throw modals at us.
-        browser.get("http://localhost:7777/public/html/test.html").then(function() {
+        browser.get(common.URL + "/public/html/test.html").then(function() {
             done();
         });
     });
 
     it("Communicates the hangout's URL on connction.", function(done) {
         var u1 = common.server.db.users.at(0);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate(u1.get("sock-key"));
         // At first, there's no hangout url..
         expect(session.get("hangout-url")).to.be(null);
 
         // but after we connect ...
-        var url = "http://localhost:7777/test/hangout/" + session.id + "/";
+        var url = common.URL + "/test/hangout/" + session.id + "/";
         browser.get(url);
         browser.waitForFunc(function() {
             return session.getNumConnectedParticipants() == 1;
@@ -63,14 +63,14 @@ describe("MOCK HANGOUT", function() {
         var u2 = common.server.db.users.at(1);
         var u3 = common.server.db.users.at(2);
         var u4 = common.server.db.users.at(3);
-        var baseUrl = "http://localhost:7777/test/hangout/" + session.id + "/";
+        var baseUrl = common.URL + "/test/hangout/" + session.id + "/";
         var queryUrl = baseUrl + "?mockUserIds=" + [u1.id, u2.id, u3.id].join(",");
         // Set the hangout URL because connectedParticipants will be refused if
         // it doesn't match the URL we get (which in the mock hangout will
         // include ?mockUserIds=...).
         session.set("hangout-url", queryUrl);
         
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate(u1.get("sock-key"));
         // First, load the hangout without extra users.
         browser.get(queryUrl);
@@ -121,12 +121,12 @@ describe("MOCK HANGOUT", function() {
     it("Shows an auth error when not authenticated.", function(done) {
         // Clear any latent auth
         session.set("connectedParticipants", []);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.unMockAuthenticate();
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
 
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.get(common.URL + "/test/hangout/" + session.id + "/");
         hangoutShowsNoAuthError().then(function() {
             expect(session.getNumConnectedParticipants()).to.be(0);
             done();
@@ -136,13 +136,13 @@ describe("MOCK HANGOUT", function() {
     it("Authenticates with local storage.", function(done) {
         // Set the mock cookie.
         session.set("connectedParticipants", []);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         // Now visit a page again, which should trigger setting local storage.
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         // Remove auth cookie (but not localStorage).
         browser.unMockAuthenticate();
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.get(common.URL + "/test/hangout/" + session.id + "/");
         var frame = "document.querySelector('iframe').contentWindow.";
         // Now visit the hangout. We should be authed by local storage.
         hangoutShowsAboutActivity().then(function() {
@@ -160,11 +160,11 @@ describe("MOCK HANGOUT", function() {
         session.set("hangout-url", null);
 
         // Make sure we're logged out.
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.unMockAuthenticate();
         browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
 
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/" +
+        browser.get(common.URL + "/test/hangout/" + session.id + "/" +
                     "?sockKey=" + user.get("sock-key") +
                     "&userId=" + user.id);
         hangoutShowsAboutActivity().then(function() {

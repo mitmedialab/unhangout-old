@@ -13,7 +13,7 @@ describe("HTTP ADMIN USERS API", function() {
     afterEach(common.standardShutdown);
 
     function postUsers(user, body, callback) {
-        request.post("http://localhost:7777/admin/users/")
+        request.post(common.URL + "/admin/users/")
             .set("x-mock-user", user)
             .send(body)
             .redirects(0)
@@ -21,7 +21,7 @@ describe("HTTP ADMIN USERS API", function() {
     }
 
     it("allows GET from superusers", function(done) {
-        request.get("http://localhost:7777/admin/users/")
+        request.get(common.URL + "/admin/users/")
             .set("x-mock-user", "superuser1")
             .redirects(0)
             .end(function(res) {
@@ -30,7 +30,7 @@ describe("HTTP ADMIN USERS API", function() {
             });
     });
     it("denies GET from non-superusers", function(done) {
-        request.get("http://localhost:7777/admin/users/")
+        request.get(common.URL + "/admin/users/")
             .set("x-mock-user", "admin1")
             .redirects(0)
             .end(function(res) {

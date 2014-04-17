@@ -52,9 +52,9 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock;
         var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         var ready = false;
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitForScript("$");
         browser.byCsss("#presence-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
@@ -97,11 +97,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock1, sock2;
         var session = event.get("sessions").at(0);
         var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         // Connect the browser to the event page, then connect a socket
         // belonging to the same user to both event and session rooms.
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitForScript("$").then(function() {
             common.authedSock("regular2", event.getRoomId(), function(sock) {
                 sock1 = sock;
@@ -156,9 +156,9 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
         var u3 = common.server.db.users.findWhere({"sock-key": "admin1"});
         var observer = common.server.db.users.findWhere({"sock-key": "admin2"});
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate(observer.get("sock-key"));
-        browser.get("http://localhost:7777" + event.getEventUrl());
+        browser.get(common.URL + event.getEventUrl());
         browser.waitWithTimeout(function() {
             return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED;");
         });
@@ -216,9 +216,9 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var session = event.get("sessions").at(0);
         var joinButtonText = "[data-session-id='" + session.id + "'] .attend .text";
         session.set("joinCap", 2);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
-        browser.get("http://localhost:7777" + event.getEventUrl());
+        browser.get(common.URL + event.getEventUrl());
 
         function buttonTextIs(text) {
             return browser.waitForSelector(joinButtonText).then(function() {;
@@ -235,7 +235,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Open the sessions and we should have JOIN.
         browser.then(function() { event.openSessions(); });
         // event.openSessions doesn't trigger broadcast, so just re-grab the page.
-        browser.get("http://localhost:7777" + event.getEventUrl());
+        browser.get(common.URL + event.getEventUrl());
         buttonTextIs("JOIN");
 
         // Add connected participants (triggering broadcast), and we should be full.
@@ -265,15 +265,15 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Handles stop conditions when session has been deleted", function(done) {
         var session = event.get("sessions").at(0);
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
         // Visit the session to "start" it.
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.get(common.URL + "/test/hangout/" + session.id + "/");
         browser.waitWithTimeout(function() {
             return session.getState() === "started";
         });
         // Then leave, by going to the event page, where we'll delete it.
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitWithTimeout(function() {
             return session.getState() === "stopping";
         });
@@ -298,14 +298,14 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         common.server.db.permalinkSessions.add(session);
         session.save({}, {
             success: function() {
-                browser.get("http://localhost:7777/");
+                browser.get(common.URL);
                 browser.mockAuthenticate("regular1");
-                browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+                browser.get(common.URL + "/test/hangout/" + session.id + "/");
                 browser.waitWithTimeout(function() {
                     return session.getState() == "started";
                 });
                 // leave..
-                browser.get("http://localhost:7777/").then(function() {
+                browser.get(common.URL).then(function() {
                     expect(session.getState()).to.eql("stopping");
                     setTimeout(function() {
                         expect(session.getState()).to.eql("stopped");
@@ -330,12 +330,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     }
 
     it("Auto-reconnects event sockets on server restart", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         var sock;
 
         // Connect the browser and a socket to the event page.
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitWithTimeout(function() {
             return event.get("connectedUsers").length === 1;
         });
@@ -398,11 +398,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
     }
     it("Reconnects session sockets on server restart", function(done) {
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         var sock;
         var session = event.get("sessions").at(0);
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/")
+        browser.get(common.URL + "/test/hangout/" + session.id + "/")
         browser.waitWithTimeout(function() {
             return session.getNumConnectedParticipants() === 1;
         });
@@ -437,11 +437,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementById('wrong-hangout-url')"
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1").then(function() {
             session.set("hangout-url", "http://example.com/");
         });
-        browser.get("http://localhost:7777/test/hangout/" + session.id + "/");
+        browser.get(common.URL + "/test/hangout/" + session.id + "/");
         browser.waitWithTimeout(function() {
             return browser.executeScript(
                 "return !!" + button + ";"
@@ -453,7 +453,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             expect(href).to.be("http://example.com/");
         });
         // Go to a different URL that won't throw a modal dialog up.
-        browser.get("http://localhost:7777/").then(function() {
+        browser.get(common.URL).then(function() {
             done();
         });
     });
@@ -533,15 +533,15 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
 
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate(u1.getSockKey());
-        browser.get("http://localhost:7777/event/" + event.id);
+        browser.get(common.URL + "/event/" + event.id);
         browser.waitWithTimeout(function() {
             return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED;");
         });
         browser.then(function() {
             return new Promise(function (resolve, reject) {
-                var url = "http://localhost:7777/session/" + session.get("session-key");
+                var url = common.URL + "/session/" + session.get("session-key");
                 requests.get(url)
                     .set("x-mock-user", u2.getSockKey())
                     .redirects(0)

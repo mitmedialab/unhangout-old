@@ -34,11 +34,11 @@ describe("CREATE EVENT", function() {
 
     it("Creates an event via admin page", function(done) {
         // Authenticate
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
 
         // Create a new event.
-        browser.get("http://localhost:7777/admin/");
+        browser.get(common.URL + "/admin/");
         browser.byLinkText("new").click();
         browser.waitForSelector("[name='title']");
         browser.byCss("[name='title']").sendKeys("Test Title");
@@ -56,11 +56,11 @@ describe("CREATE EVENT", function() {
         browser.byCss(".btn-primary.create-event").click()
         var eventId;
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.be("http://localhost:7777/event/test-title");
+            expect(url).to.be(common.URL + "/event/test-title");
             eventId = common.server.db.events.findWhere({shortName: "test-title"}).id
         }).then(function() {
             var event = common.server.db.events.get(eventId);
-            browser.get("http://localhost:7777/admin/")
+            browser.get(common.URL + "/admin/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
                     expect(text).to.be("Test Title");
@@ -68,7 +68,7 @@ describe("CREATE EVENT", function() {
             );
 
             // Event hasn't started
-            browser.get("http://localhost:7777/event/" + eventId)
+            browser.get(common.URL + "/event/" + eventId)
             browser.getTitle().then(function(title) {
                 expect(title).to.be("Test Title — powered by unhangout");
             });
@@ -85,11 +85,11 @@ describe("CREATE EVENT", function() {
             });
 
             // Start the event.
-            browser.get("http://localhost:7777/admin");
+            browser.get(common.URL + "/admin");
             browser.byCss(".start-event[data-event='" + eventId + "']").click();
 
             // View the started event
-            browser.get("http://localhost:7777/event/" + eventId);
+            browser.get(common.URL + "/event/" + eventId);
 
             browser.waitWithTimeout(function() {
                 return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED");
@@ -164,7 +164,7 @@ describe("CREATE EVENT", function() {
         event.stop()
 
         var startStop = function(action) {
-            var url = "http://localhost:7777/admin/event/" + event.id + "/" + action;
+            var url = common.URL + "/admin/event/" + event.id + "/" + action;
             browser.then(function() {
                 return new Promise(function(resolve, reject) {
                     request.post(url)
@@ -182,9 +182,9 @@ describe("CREATE EVENT", function() {
             });
         }
 
-        browser.get("http://localhost:7777/");
+        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
-        browser.get("http://localhost:7777" + event.getEventUrl());
+        browser.get(common.URL + event.getEventUrl());
         aboutIsVisible(true);
         startStop("start");
         aboutIsVisible(false);
