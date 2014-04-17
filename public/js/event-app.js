@@ -395,6 +395,9 @@ $(document).ready(function() {
         // Make about pane hide itself.
         app.vent.trigger("about-nav", true);
     }
+    curEvent.on("change:start change:end", function() {
+        app.vent.trigger("about-nav", curEvent.isLive());
+    });
 
     // Handles clicks on the nav bar links.
     $("#about-nav").click(function(jqevt) {
