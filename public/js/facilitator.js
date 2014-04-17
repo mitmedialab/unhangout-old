@@ -402,6 +402,21 @@ var VideoActivity = BaseActivityView.extend({
         this.yt.on("video-settings", _.bind(function() {
             this.trigger("activity-settings");
         }, this));
+        this.yt.on("player-state-change", _.bind(function(state) {
+            if (state === "playing") {
+                postMessageToHangout({type: "mute"});
+                if (!this.muteWarningShown) {
+                    postMessageToHangout({
+                        type: "display-notice",
+                        args: [
+                            "Your microphone has been muted to prevent video echoes.",
+                            false
+                        ]
+                    });
+                    this.muteWarningShown = true;
+                }
+            }
+        }, this));
     },
     onrender: function() {
         this.$el.html(this.yt.el);
@@ -409,19 +424,6 @@ var VideoActivity = BaseActivityView.extend({
     },
     controlVideo: function(args) {
         this.yt.receiveControl(args);
-        if (args.state === "playing" && this.state !== "playing") {
-            postMessageToHangout({type: "mute"});
-            postMessageToHangout({
-                type: "display-notice",
-                args: [
-                    "Your microphone has been muted to prevent video echoes.",
-                    false
-                ]
-            });
-        }
-        if (args.state) {
-            this.state = args.state;
-        }
     }
 });
 
