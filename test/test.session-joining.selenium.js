@@ -55,7 +55,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitForScript("$");
+        browser.waitForEventReady(event, "regular1");
         browser.byCsss("#presence-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
         });
@@ -102,7 +102,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Connect the browser to the event page, then connect a socket
         // belonging to the same user to both event and session rooms.
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitForScript("$").then(function() {
+        browser.waitForEventReady(event, "regular1");
+        browser.then(function() {
             common.authedSock("regular2", event.getRoomId(), function(sock) {
                 sock1 = sock;
                 common.authedSock("regular2", session.getRoomId(), function(sock) {
@@ -159,9 +160,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get(common.URL);
         browser.mockAuthenticate(observer.get("sock-key"));
         browser.get(common.URL + event.getEventUrl());
-        browser.waitWithTimeout(function() {
-            return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED;");
-        });
+        browser.waitForEventReady(event, observer.get("sock-key"));
         browser.then(function() {
             return Promise.all([
                 common.authedSock(u1.getSockKey(), session.getRoomId())
@@ -221,6 +220,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get(common.URL + event.getEventUrl());
 
         function buttonTextIs(text) {
+            browser.waitForEventReady(event, "admin1");
             return browser.waitForSelector(joinButtonText).then(function() {;
                 return browser.waitWithTimeout(function() {
                     return browser.byCss(joinButtonText).getText().then(function(txt) {
@@ -277,7 +277,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.waitWithTimeout(function() {
             return session.getState() === "stopping";
         });
-        browser.waitForScript("$");
+        browser.waitForEventReady(event, "admin1");
         browser.byCss("[data-session-id='" + session.id + "'] .delete").click();
         browser.then(function() {
             setTimeout(function() {
@@ -336,8 +336,9 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
         // Connect the browser and a socket to the event page.
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitWithTimeout(function() {
-            return event.get("connectedUsers").length === 1;
+        browser.waitForEventReady(event, "regular1");
+        browser.then(function() {
+            expect(event.get("connectedUsers").length).to.be(1);
         });
         browser.then(function() {
             common.authedSock("regular2", event.getRoomId(), function(thesock) {
@@ -536,9 +537,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.get(common.URL);
         browser.mockAuthenticate(u1.getSockKey());
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitWithTimeout(function() {
-            return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED;");
-        });
+        browser.waitForEventReady(event, u1.getSockKey());
         browser.then(function() {
             return new Promise(function (resolve, reject) {
                 var url = common.URL + "/session/" + session.get("session-key");

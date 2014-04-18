@@ -4,7 +4,7 @@ var server      = require('../lib/unhangout-server'),
     _           = require('underscore'),
     common      = require('./common');
 
-describe("CHAT WINDOW", function() {
+describe("CHAT", function() {
     var browser = null;
     var sock = null;
     var evt = null;
@@ -61,7 +61,7 @@ describe("CHAT WINDOW", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + evt.id);
-        browser.waitForScript("$");
+        browser.waitForEventReady(evt, "regular1");
         browser.waitForSelector("#chat-input");
         var msgCount = 50;
         for (var i = 0; i < msgCount; i++) {
@@ -135,7 +135,7 @@ describe("CHAT WINDOW", function() {
             var text = "admin check " + (counter++) + "\n";
             browser.mockAuthenticate(sockkey);
             browser.get(common.URL + "/event/" + event.id)
-            browser.waitForScript("$");
+            browser.waitForEventReady(event, sockkey);
             browser.waitForSelector("#chat-input");
             browser.byCss("#chat-input").sendKeys(text);
             browser.wait(function() {

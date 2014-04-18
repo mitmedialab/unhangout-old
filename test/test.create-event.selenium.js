@@ -69,6 +69,7 @@ describe("CREATE EVENT", function() {
 
             // Event hasn't started
             browser.get(common.URL + "/event/" + eventId)
+            browser.waitForEventReady(event, "superuser1");
             browser.getTitle().then(function(title) {
                 expect(title).to.be("Test Title — powered by unhangout");
             });
@@ -90,10 +91,7 @@ describe("CREATE EVENT", function() {
 
             // View the started event
             browser.get(common.URL + "/event/" + eventId);
-
-            browser.waitWithTimeout(function() {
-                return browser.executeScript("return !!window.EVENT_ABOUT_INITIALIZED");
-            });
+            browser.waitForEventReady(event, "superuser1");
 
             // Show the 'about' pane.
             browser.byCss("#about-nav a").click();
@@ -185,6 +183,7 @@ describe("CREATE EVENT", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + event.getEventUrl());
+        browser.waitForEventReady(event, "regular1");
         aboutIsVisible(true);
         startStop("start");
         aboutIsVisible(false);

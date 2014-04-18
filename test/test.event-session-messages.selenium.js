@@ -37,9 +37,8 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.mockAuthenticate("superuser1");
         // Admin goes to the event page.  Connect a socket to a session.
         browser.get(common.URL + "/event/" + event.id)
-        browser.wait(function() {
-            return browser.executeScript("return window.$ !== null");
-        }).then(function() {
+        browser.waitForEventReady(event, "superuser1");
+        browser.then(function() {
             common.authedSock("regular2", session.getRoomId(), function(theSock) {
                 sock = theSock;
                 function onData(data) {
@@ -109,7 +108,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitForSelector(".admin-button");
+        browser.waitForEventReady(event, "superuser1");
         browser.byCss(".admin-button").click();
         browser.waitForSelector("#message-sessions");
         browser.byCss("#message-sessions").click();

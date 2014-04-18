@@ -72,9 +72,7 @@ describe("CREATE HOA", function() {
         browser.get(common.URL);
         browser.mockAuthenticate(user.get("sock-key"));
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitWithTimeout(function() {
-            return event.get("connectedUsers").length === 1;
-        });
+        browser.waitForEventReady(event, user.get("sock-key"));
         browser.waitForSelector(".create-hoa");
         browser.byCss(".create-hoa").click();
         // Switch to the hangout creation window.
@@ -106,7 +104,6 @@ describe("CREATE HOA", function() {
 
         // Wait for the hangout broadcast video to be embedded.
         browser.waitForScript("$");
-        browser.waitForSelector(".join-hoa");
         var embedSrcScript = "return $('.video-player iframe').attr('src');";
         browser.waitWithTimeout(function() {
             return browser.executeScript(embedSrcScript).then(function(src) {
@@ -125,6 +122,7 @@ describe("CREATE HOA", function() {
         // not see the "join current hangout" link.
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + event.id);
+        browser.waitForEventReady(event, "regular1");
         browser.byCsss(".join-hoa").then(function(els) {
             expect(els.length).to.be(0);
         });
@@ -151,7 +149,7 @@ describe("CREATE HOA", function() {
         // Get the page once -- the rest are live updates triggered by model
         // changes.
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitForScript("$");
+        browser.waitForEventReady(event, "superuser1");
 
         function hasHoA(has) {
             browser.waitWithTimeout(function() {

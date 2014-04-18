@@ -7,7 +7,7 @@ describe("YOUTUBE EMBEDS", function() {
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
-    this.timeout(60000); // Extra long timeout for selenium :(
+    this.timeout(80000); // Extra long timeout for selenium :(
 
     before(function(done) {
         common.getSeleniumBrowser(function (theBrowser) {
@@ -37,6 +37,7 @@ describe("YOUTUBE EMBEDS", function() {
                 event.set("youtubeEmbed", "");
             });
             browser.get(common.URL + "/event/" + event.id);
+            browser.waitForEventReady(event, "superuser1", 45000);
             browser.waitForSelector(".inline-video-controls [name=youtube_id]", 45000);
             browser.byCss(".inline-video-controls [name=youtube_id]").sendKeys(url);
             browser.byCss(".set-video").click();
@@ -68,7 +69,9 @@ describe("YOUTUBE EMBEDS", function() {
         tryEmbed("http://www.youtube.com/embed/" + ytId, true);
         tryEmbed("http://www.youtube.com/v/" + ytId + "?fs=1&hl=en_US", true);
         tryEmbed("http://www.youtube.com/watch?feature=player_embedded&v=" + ytId, true);
-        tryEmbed("https://youtu.be/" + ytId, true).then(function() {
+        tryEmbed("https://youtu.be/" + ytId, true);
+        browser.get(common.URL);
+        browser.then(function() {
             done();
         });
     });
@@ -85,6 +88,7 @@ describe("YOUTUBE EMBEDS", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + event.getEventUrl());
+        browser.waitForEventReady(event, "superuser1");
         browser.waitForSelector(".inline-video-controls .dropdown-toggle");
         browser.byCss(".inline-video-controls .dropdown-toggle").click();
         browser.waitForSelector(".clear-previous-videos");

@@ -63,7 +63,7 @@ describe("CREATE SESSIONS", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id)
-        browser.waitForSelector(".admin-button");
+        browser.waitForEventReady(event, "superuser1");
         browser.byCss(".admin-button").click();
         browser.byCss("#show-create-session-modal").click();
         browser.waitForSelector("#session_name");

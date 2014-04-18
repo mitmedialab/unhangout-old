@@ -101,7 +101,7 @@ var buildBrowser = function(callback) {
         })
     };
 
-    browser.waitForEventReady = function(event, sockKey) {
+    browser.waitForEventReady = function(event, sockKey, timeout) {
         return browser.waitWithTimeout(function() {
             return browser.executeScript(
                 "return !!window.EVENT_ABOUT_INITIALIZED;"
@@ -114,7 +114,7 @@ var buildBrowser = function(callback) {
                     return aboutReady;
                 }
             });
-        });
+        }, timeout);
     };
 
     browser.manage().window().setSize(1024, 768).then(function() {
