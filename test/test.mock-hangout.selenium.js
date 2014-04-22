@@ -167,11 +167,8 @@ describe("MOCK HANGOUT", function() {
         browser.get(common.URL + "/test/hangout/" + session.id + "/" +
                     "?sockKey=" + user.get("sock-key") +
                     "&userId=" + user.id);
+        browser.waitForHangoutReady(session, user.get("sock-key"));
         hangoutShowsAboutActivity().then(function() {
-            return common.await(function() {
-                return session.getNumConnectedParticipants() == 1;
-            });
-        }).then(function() {
             done();
         });
     });

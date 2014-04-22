@@ -120,6 +120,14 @@ var FacilitatorView = Backbone.View.extend({
                     this.faces.hideVideoIfActive();
                     // Get out of here!
                     new SwitchHangoutsDialog({correctUrl: msg.args.url});
+                    // Signal for test harnesses to know the page and socket
+                    // communication is done.
+                    window.FACILITATOR_LOADED = true;
+                    break;
+                case "session/set-hangout-url-ack":
+                    // Signal for test harnesses to know the page and socket
+                    // communication is done.
+                    window.FACILITATOR_LOADED = true;
                     break;
                 case "session/set-activities":
                     this.session.set("activities", msg.args.activities);

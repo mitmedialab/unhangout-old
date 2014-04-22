@@ -77,6 +77,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
+        browser.waitForHangoutReady(session, "regular1");
         browser.waitForSelector("iframe[name='gadget_frame']");
         browser.switchTo().frame("gadget_frame");
         browser.waitForSelector("iframe[name='facilitator_frame']");
@@ -126,6 +127,7 @@ describe("EVENT SESSION MESSAGES", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
+        browser.waitForHangoutReady(session, "superuser1");
         browser.waitForSelector("iframe[name='gadget_frame']");
         browser.switchTo().frame("gadget_frame");
         browser.waitForSelector("iframe[name='facilitator_frame']");
