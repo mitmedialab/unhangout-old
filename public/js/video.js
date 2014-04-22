@@ -1,7 +1,7 @@
 define([
-   "underscore", "jquery", "backbone", "logger",
+   "underscore", "jquery", "backbone", "logger", "extract-youtube-id",
    "underscore-template-config"
-], function(_, $, Backbone, logger) {
+], function(_, $, Backbone, logger, extractYoutubeId) {
 
 var DATA_API_URL = "https://gdata.youtube.com/feeds/api/videos/{id}?v=2&alt=json-in-script&callback=?",
     IFRAME_API_URL = "https://www.youtube.com/iframe_api",
@@ -43,29 +43,7 @@ video.getVideoDetails = function(id, callback) {
 
 };
 
-// From http://stackoverflow.com/a/6904504 , covering any of the 15 or so
-// different variations on youtube URLs.  Also works permissively on full
-// iframe/object embed codes.  Returns empty string if empty string is given;
-// returns null if no valid ID is found; otherwise, returns the 11 character
-// YouTube ID.
-video.extractYoutubeId = function(val) {
-    if (val === "") {
-        return "";
-    }
-    var ytid;
-    if (/^[-A-Za-z0-9_]{11}$/.test(val)) {
-        ytid = val;
-    } else {
-        var re = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i;
-        var match = re.exec(val);
-        if (match) {
-            ytid = match[1];
-        } else {
-            ytid = null;
-        }
-    }
-    return ytid;
-};
+video.extractYoutubeId = extractYoutubeId.extractYoutubeId;
 
 video.YoutubeVideo = Backbone.View.extend({
     tagName: "table",

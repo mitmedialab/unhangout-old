@@ -404,6 +404,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock;
         var session = event.get("sessions").at(0);
         browser.get(common.URL + "/test/hangout/" + session.id + "/")
+        // TODO: add a function like "waitForHangoutReady" here, similar to
+        // "waitForEventReady"
         browser.waitWithTimeout(function() {
             return session.getNumConnectedParticipants() === 1;
         });
