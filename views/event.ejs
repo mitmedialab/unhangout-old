@@ -37,11 +37,22 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
+    {{ if (!event.isLive()) { }}
+
+    <div class="alert alert-block alert-success banner">
+        <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>
+
+        Congratulations! You have successfully logged in. This event has not yet started, come back at the posted start time to participate!
+    </div>
+
+     {{ } }}
+       
     <h3>{{- title }}</h3>
     {{ if (organizer) { }}
         <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
     {{ } }}
     <br/>
+
     {{ if (formattedDate) { }}
         {{- formattedDate }}
     {{ } }}
@@ -56,11 +67,8 @@
 
         </div>
 
-     {{ } else { }}
-        <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
      {{ } }}
-
-
+        
 </script>
 
 <script type="text/template" id="session-template">
