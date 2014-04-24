@@ -26,6 +26,58 @@ if (typeof exports !== 'undefined') {
     moment = require("moment");
 }
 
+models.BaseModel = Backbone.Model.extend({
+    // Add something to a model property which is a list, and trigger the
+    // 'change' event for that property if it has changed.
+    listAdd: function(property, item, options) {
+        if (!_.contains(list, item)) {
+            var list = _.clone(list);
+            list.push(item);
+            // Will trigger changes, as it's a new list.
+            this.set(property, list);
+        }
+    },
+    // Remove something to a model property which is a list, and trigger the
+    // 'change' event for that property if it has changed.
+    listRemove: function(property, item) {
+        var list = this.get(property);
+        var length = list.length;
+        list = _.without(list, item);
+        if (list.length != length) {
+            // will trigger changes, as it's a new list.
+            this.set(property, list);
+        }
+    },
+
+    // Register all of the events on a backbone object (collection or model)
+    // which is a property of this model on this model.  This enables listeners
+    // to be set up to process events pertaining to the collection.  The events
+    // triggered will have the signature:
+    //    (<property>:<original-event>, model, ..original-event-args..)
+    // For example, for the property "sessions":
+    //    ("sessions:add", event, session)
+    //    ("sessions:change:title", event, session, "New title")
+    registerSubEvents: function(property) {
+        if (!this._subEventHandlers) {
+            this._subEventHandlers = {};
+        }
+        var sub = this.get(property);
+        this._subEventHandlers[property] = _.bind(function() {
+            var params = Array.prototype.slice.call(arguments);
+            params[0] = property + ":" + params[0];
+            params.splice(1, 0, this);
+            this.trigger.apply(this, params);
+        }, this)
+        this.listenTo(sub, "all", this._subEventHandlers[property])
+    },
+    // Unregister the events from `registerSubEvents`.
+    unregisterSubEvents: function(property) {
+        var sub = this.get(property);
+        this.stopListening(sub, "all", this._subEventHandlers[property]);
+        delete this._subEventHandlers[property];
+
+    }
+});
 
 // The base model objects in unhangout are quite straightforward. They are mostly just
 // collections of attributes with some helper methods for editing and reading
@@ -33,10 +85,10 @@ if (typeof exports !== 'undefined') {
 // in the server-models.js extensions of these objects.
 
 // The event model. Events are the top level object, and have many sessions within them.
-models.Event = Backbone.Model.extend({
+models.Event = models.BaseModel.extend({
     idRoot: "event",
     urlRoot: "event",
-    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
+    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm[]a",
 
     defaults: function() {
         return {
@@ -45,8 +97,7 @@ models.Event = Backbone.Model.extend({
             shortName: null, // use this as a slug for nicer urls
             description: "",
             welcomeMessage: null,
-            start: null,
-            end: null,
+            open: false,
             connectedUsers: null,
             sessions: null,
             hoa: null,
@@ -63,10 +114,35 @@ models.Event = Backbone.Model.extend({
         // these are the main sub-collections of this model.
         this.set("sessions", new models.SessionList(null, this));
         this.set("connectedUsers", new models.UserList());
+        this.initializeSubEvents();
     },
+    initializeSubEvents: function() {
+        // Replicate events from these sub-collections on the event. This lets
+        // us use this model as a choke point for all socket traffic -- we need
+        // only listen to change/add/etc. events triggered on this model to
+        // initiate socket updates.
+        this.registerSubEvents("sessions");
+        this.registerSubEvents("connectedUsers");
 
-    numUsersConnected: function() {
-        return this.get("connectedUsers").length;
+        // Collect various changes on the HoA into one trigger, for convenience
+        // of both views that must update on changes to the hoa, and for the
+        // socket handler on the server.
+        this.on("hoa:change:hangout-pending " +
+                "hoa:change:hangout-url " +
+                "hoa:change:hangout-broadcast-id " +
+                "hoa:change:connectedParticipants",
+                _.bind(function(event, hoa) {
+            // Do it on next-tick to ensure the model has been updated by other
+            // listeners.  It's an ugly hack... the symptom is that the
+            // attributes that get broadcast are the attributes *before* the
+            // change.
+            setTimeout(_.bind(function() {
+                this.trigger("update-hoa", this, hoa);
+            }, this), 1);
+        }, this));
+        this.on("change:hoa", _.bind(function(event, hoa) {
+            this.trigger("update-hoa", event, hoa);
+        }, this));
     },
 
     formatDate: function() {
@@ -102,30 +178,6 @@ models.Event = Backbone.Model.extend({
         return attrs;
     },
 
-    addSession: function(session) {
-        this.get("sessions").add(session);
-        session.trigger("change:collection");
-    },
-
-    removeSession: function(session) {
-        this.get("sessions").remove(session);
-        session.trigger("change:collection");
-    },
-
-    openSessions: function() {
-        this.set("sessionsOpen", true);
-        this.trigger("open-sessions");
-    },
-
-    closeSessions: function() {
-        this.set("sessionsOpen", false);
-        this.trigger("close-sessions");
-    },
-
-    sessionsOpen: function() {
-        return this.get("sessionsOpen");
-    },
-
     url: function() {
         // okay this is sort of stupid, but we want to have a fixed width
         // url because that makes it easier to match events from redis with
@@ -142,63 +194,26 @@ models.Event = Backbone.Model.extend({
         var cur = this.get("youtubeEmbed");
         if (ytId) {
             if (!_.findWhere(prev, {youtubeId: ytId})) {
+                // Clone so that setting triggers change events.
+                prev = _.clone(prev);
                 prev.unshift({youtubeId: ytId});
-                this.trigger("change:previousVideoEmbeds");
+                this.set("previousVideoEmbeds", prev);
             }
         }
         this.set("youtubeEmbed", ytId);
     },
 
     setHoA: function(hoa) {
+        if (this.get("hoa")) {
+            this.unregisterSubEvents("hoa");
+        }
         if (hoa === null) {
-            if (this.get("hoa")) {
-                this.stopListening(this.get("hoa"));
-            }
             this.set("hoa", null);
             this.set("hangout-broadcast-id", null);
-            this.trigger("update-hoa", this, null);
         } else {
-            this.set("hoa", hoa);
             hoa.event = this;
-            this.listenTo(hoa,
-                "change:hangout-pending " +
-                "change:hangout-url " +
-                "change:hangout-broadcast-id " +
-                "change:connectedParticipants",
-                _.bind(function(model) {
-                    // Do on next-tick to ensure the model has been updated by
-                    // other listeners.  Ugly hack -- symptom is that the
-                    // broadcast attributes are the attributes *before* the
-                    // change.
-                    setTimeout(_.bind(function() {
-                        this.trigger("update-hoa", this, model);
-                    }, this), 1);
-                }, this)
-            );
-            this.trigger("update-hoa", this, hoa);
-        }
-    },
-
-    isLive: function() {
-        var curTime = new Date().getTime();
-        var test = !_.isNull(this.get("start")) && curTime >= this.get("start") && _.isNull(this.get("end"));
-        return test;
-    },
-
-    start: function() {
-        if(this.isLive()) {
-            return new Error("Tried to start an event that was already live.");
-        } else {
-            this.set("start", new Date().getTime());
-            this.set("end", null);
-        }
-    },
-
-    stop: function() {
-        if(!this.isLive()) {
-            return new Error("Tried to stop an event that was already live.");
-        } else {
-            this.set("end", new Date().getTime());
+            this.set("hoa", hoa);
+            this.registerSubEvents("hoa");
         }
     },
 

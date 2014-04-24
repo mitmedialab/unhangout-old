@@ -167,7 +167,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         this.ui.hangoutOffline.hide();
 
-        if (!this.options.event.sessionsOpen() || numAttendees >= this.model.get("joinCap")) {
+        if (!this.options.event.get("sessionsOpen") || numAttendees >= this.model.get("joinCap")) {
             this.ui.attend.find(".lock").show();
 
             this.ui.attend.attr("disabled", true);
@@ -193,7 +193,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     attend: function() {
         // if the event currently has closed sessions, ignore
         // clicks on the join button.
-        if(!this.options.event.sessionsOpen()) {
+        if(!this.options.event.get("sessionsOpen")) {
             return;
         }
 
@@ -450,9 +450,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         }).fail(function(err) {
             logger.error(err);
             alert("Server error!");
-        }).done(_.bind(function() {
-            window.location.href = window.location.href;
-        }, this));
+        });
     },
 
     messageSessions: function(jqevt) {
@@ -461,19 +459,9 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
 
     },
 
-    onRender: function() {
-        if(this.firstRun && NUM_HANGOUTS_FARMED === 0) {
-            // $("#no-urls-warning").modal('show');
-            logger.log("No farmed hangouts available!");
-        }
-    },
-
-    // this little hack is to make sure the hangout count
-    // is available in the template rendering.
     serializeData: function() {
         return {
             event: this.options.event,
-            numFarmedHangouts: NUM_HANGOUTS_FARMED
         };
     }
 });
@@ -576,9 +564,6 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
             event: this.options.event,
             sock: this.options.sock
         });
-
-        logger.log("initializing chat layout with: " + JSON.stringify(this.options.messages));
-        logger.log("and users: " + JSON.stringify(this.options.users));
     },
 
     onRender: function() {
@@ -641,7 +626,7 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
-        if(!this.options.event.isLive()) {
+        if(!this.options.event.get("open")) {
             this.$el.find("#chat-input").attr("disabled", true);
             this.$el.find("#chat-input").addClass("disabled");
         } else {
@@ -746,9 +731,11 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
     },
     onBeforeItemAdded: function() {
         this.scroller = $("#chat-container-region");
-        var limit = Math.max(this.scroller[0].scrollHeight - this.scroller.height() - 10, 0);
-        this._isScrolled = this.scroller.scrollTop() < limit;
-        return null;
+        if (this.scroller.length > 0) {
+            var limit = Math.max(this.scroller[0].scrollHeight - this.scroller.height() - 10, 0);
+            this._isScrolled = this.scroller.scrollTop() < limit;
+            return null;
+        }
     },
     onAfterItemAdded: function() {
         var latest = this.collection.at(this.collection.length - 1);
@@ -787,7 +774,7 @@ views.AboutEventView = Backbone.Marionette.ItemView.extend({
     },
     scrollUp: function(jqevt) {
         if (jqevt) { jqevt.preventDefault(); }
-        if (this.model.isLive() && $("#about-event").is(":visible")) {
+        if (this.model.get("open") && $("#about-event").is(":visible")) {
             // Delegate click to #about-nav, assuming it will handle the
             // scroll-up.  Slightly ugly but works.
             $("#about-nav").click();
@@ -795,7 +782,7 @@ views.AboutEventView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
-        if(this.model.isLive()) {
+        if(this.model.get("open")) {
             this.$el.find(".footer").hide();
         } else {
             this.$el.find(".footer").show();

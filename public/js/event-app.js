@@ -15,7 +15,7 @@ require([
 ], function($, _, Backbone, logging, models, eventViews, SockJS, auth) {
 
 var sock;
-var curEvent, users, messages;
+var curEvent, messages;
 var app;
 var curSession = null;
 var logger = new logging.Logger("event-app");
@@ -23,8 +23,6 @@ var logger = new logging.Logger("event-app");
 $(document).ready(function() {
     logger.log("Starting app!");
 
-    var interval = 0;
-    var messageShown = false ;
     var aboutShown = false;
 
     //------------------------------------------------------------------------//
@@ -50,11 +48,11 @@ $(document).ready(function() {
     sock.onmessage = function(message) {
         var session;
 
-        // logger.log(message);
-
         // messages come across the wire as raw strings in the data field.
         // parse them into a proper object here.
         var msg = JSON.parse(message.data);
+        logger.log("SOCKET", msg.type, msg.args);
+
 
         if(msg.type.indexOf("-err")!=-1) {
             logger.error("Got an error from the server!", message);
@@ -66,12 +64,14 @@ $(document).ready(function() {
         switch(msg.type) {
             // join an EVENT
             case "join":
-                users.add(new models.User(msg.args.user));
+                curEvent.get("connectedUsers").add(new models.User(msg.args.user));
                 break;
 
             // leave an EVENT
             case "leave":
-                users.remove(users.get(msg.args.user.id));
+                curEvent.get("connectedUsers").remove(
+                    curEvent.get("connectedUsers").get(msg.args.user.id)
+                );
                 break;
 
             // chat message received
@@ -104,6 +104,7 @@ $(document).ready(function() {
                     logger.debug("set hoa attrs", msg.args);
                     curEvent.get("hoa").set(msg.args);
                 } else {
+                    logger.debug("set new hoa");
                     session = new models.Session(msg.args);
                     curEvent.setHoA(session);
                 }
@@ -111,8 +112,7 @@ $(document).ready(function() {
 
             case "delete-session":
                 session = curEvent.get("sessions").get(msg.args.id);
-                // app.paginatedSessions.remove(session);
-                curEvent.removeSession(session);
+                curEvent.get("sessions").remove(session);
 
                 logger.log("removing session: " + msg.args.id);
                 break;
@@ -143,26 +143,13 @@ $(document).ready(function() {
                 session.setConnectedParticipants(msg.args.participants);
                 break;
 
-            // mark a session as having its hangout connected and communicating
-            case "session-hangout-connected":
-                session = curEvent.get("sessions").get(msg.args.id);
-                session.set("hangoutConnected", true);
-                break;
-
-            // mark a session as disconnected
-            case "session-hangout-disconnected":
-                session = curEvent.get("sessions").get(msg.args.id);
-                session.setConnectedParticipants([]);
-                session.set("hangoutConnected", false);
-                break;
-
             case "open-sessions":
-                curEvent.openSessions();
+                curEvent.set("sessionsOpen", true);
                 app.sessionListView.render();
                 break;
 
             case "close-sessions":
-                curEvent.closeSessions();
+                curEvent.set("sessionsOpen", false);
                 app.sessionListView.render();
                 break;
 
@@ -233,18 +220,18 @@ $(document).ready(function() {
     //                                                                          //
     //------------------------------------------------------------------------//
 
-    // The EVENT_ATTRS constant comes from the event.ejs file. They are the way
+    // The *_ATTRS constants come from the event.ejs file. They are the way
     // that the server communicates the initial state of the event to the
-    // client - in a big JSON blob. Subsequent updates all happen over the
+    // client - in big JSON blobs. Subsequent updates all happen over the
     // sockJS channel, but the initial state is embedded there.
     curEvent = new models.ClientEvent(EVENT_ATTRS);
+    curEvent.get("sessions").reset(SESSION_ATTRS);
     if (HOA_ATTRS) {
-        curEvent.set("hoa", new models.Session(HOA_ATTRS));
-        curEvent.get("hoa").event = curEvent;
+        curEvent.setHoA(new models.Session(HOA_ATTRS));
     }
-    curEvent.get("sessions").add(EVENT_ATTRS.sessions);
-    users = new models.UserList(EVENT_ATTRS.connectedUsers);
-    messages = new models.ChatMessageList();
+    curEvent.get("connectedUsers").reset(CONNECTED_USERS);
+
+    messages = new models.ChatMessageList(RECENT_MESSAGES);
 
     logger.log("Inflated models.");
 
@@ -289,7 +276,7 @@ $(document).ready(function() {
         });
         this.chatView = new eventViews.ChatLayout({
             messages: messages,
-            users: users,
+            users: curEvent.get("connectedUsers"),
             event: curEvent,
             sock: sock
         });
@@ -319,7 +306,7 @@ $(document).ready(function() {
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, sock: sock
             });
-            curEvent.on("change:sessionsOpen change:start", _.bind(function() {
+            curEvent.on("change:sessionsOpen change:open", _.bind(function() {
                 this.adminButtonView.render();
             }, this));
             this.admin.show(this.adminButtonView);
@@ -345,7 +332,6 @@ $(document).ready(function() {
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {
-
         if (_.isUndefined(hide)) {
             hide = aboutShown;
         }
@@ -354,8 +340,8 @@ $(document).ready(function() {
 
         $(".updated").addClass("hide");
         if (hide) {
-            if(!curEvent.isLive()) {
-                // don't let people dismiss the about screen if the event isn't live.
+            if(!curEvent.get("open")) {
+                // don't let people dismiss the about screen if the event isn't open.
                 return;
             }
 
@@ -387,16 +373,17 @@ $(document).ready(function() {
 
     app.start();
 
-    // if the event isn't live yet, force the about page to show.
-    if(!curEvent.isLive()) {
+    // if the event isn't open yet, force the about page to show.
+    if(!curEvent.get("open")) {
         // Force about pane to show itself.
         app.vent.trigger("about-nav", false);
     } else {
         // Make about pane hide itself.
         app.vent.trigger("about-nav", true);
     }
-    curEvent.on("change:start change:end", function() {
-        app.vent.trigger("about-nav", curEvent.isLive());
+    curEvent.on("change:open", function() {
+        app.vent.trigger("about-nav", curEvent.get("open"));
+        app.chatView.chatInputView.onRender();
     });
 
     // Handles clicks on the nav bar links.

@@ -63,7 +63,7 @@ describe("CREATE HOA", function() {
 
     it("creates an hoa with event page", function(done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        event.start();
+        event.set("open", true);
         var user = common.server.db.users.findWhere({"sock-key": "admin1"});
         expect(user.isAdminOf(event)).to.be(true);
 
@@ -141,7 +141,7 @@ describe("CREATE HOA", function() {
     it("shows correct links for hoa statuses", function(done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         event.setHoA(null);
-        event.start();
+        event.set("open", true);
         var hoa;
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");

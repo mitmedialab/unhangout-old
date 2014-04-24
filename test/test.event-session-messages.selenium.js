@@ -16,7 +16,7 @@ describe("EVENT SESSION MESSAGES", function() {
             browser = theBrowser;
             common.standardSetup(function() {
                 event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                event.start();
+                event.set("open", true);
                 done();
             });
         });

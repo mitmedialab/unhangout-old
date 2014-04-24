@@ -19,7 +19,7 @@ describe("MOCK HANGOUT", function() {
                 browser = theBrowser;
                 common.standardSetup(function() {
                     event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                    event.start();
+                    event.set("open", true);
                     session = event.get("sessions").at(0);
                     done();
                 });

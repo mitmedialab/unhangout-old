@@ -23,7 +23,7 @@ describe("CHAT", function() {
             function(done) {
                 common.standardSetup(function() {
                     evt = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                    evt.start();
+                    evt.set("open", true);
                     done();
                 });
             },

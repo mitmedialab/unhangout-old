@@ -1,11 +1,11 @@
-var server = require('../lib/unhangout-server'),
+var unhangoutServer = require('../lib/unhangout-server'),
     should = require('should'),
     _ = require('underscore')._,
     request = require('superagent'),
     seed = require('../bin/seed.js'),
     common = require("./common");
 
-var s;
+var server;
 var sock;
 var session;
 
@@ -38,73 +38,59 @@ describe('unhangout server', function() {
 
     describe('configuration', function() {
         beforeEach(function() {
-            s = new server.UnhangoutServer();
+            server = new unhangoutServer.UnhangoutServer();
         });
-
-        /* Leaving this one out for now -- we have many more required params
-         * than just google credentials, and having moved conf to
-         * lib/options.js, that file does the error-throwing.
-        it('should not initialize without google credentials', function(done) {
-            s.on("error", function() {
-                done();
-            });
-            s.on("inited", function() {
-                should.fail("Expected an error.");
-            });
-            s.init({});
-        });
-        */
 
         it('#start should fail if init is not called first', function(done) {
-            s.on("error", function() {
+            server.on("error", function() {
                 done();
             });
 
-            s.on("started", function() {
+            server.on("started", function() {
                 should.fail("expected an error");
             });
-            s.start();
+            server.start();
         });
 
         it("#stop should fail if not started", function(done) {
-            s.on("error", function() {
+            server.on("error", function() {
                 done();
             });
 
-            s.on("started", function() {
+            server.on("started", function() {
                 should.fail("expected an error");
             });
-            s.stop();
+            server.stop();
         });
 
         it("#destroy should succeed regardless of state", function(done) {
-            s.on("destroyed", function() {
+            server.on("destroyed", function() {
                 done();
             });
 
-            s.on("error", function() {
+            server.on("error", function() {
                 should.fail();
             })
 
-            s.destroy();
+            server.destroy();
         });
     });
 
 
     describe('setup', function() {
         beforeEach(function(done) {
-            s = new server.UnhangoutServer();
-            s.on("inited", done);
-            s.init({"UNHANGOUT_GOOGLE_CLIENT_ID":true, "UNHANGOUT_GOOGLE_CLIENT_SECRET":true});
+            server = new unhangoutServer.UnhangoutServer();
+            server.on("inited", done);
+            server.init({"UNHANGOUT_GOOGLE_CLIENT_ID":true, "UNHANGOUT_GOOGLE_CLIENT_SECRET":true});
         });
 
         afterEach(function(done) {
-            common.standardShutdown(done, s);
+            common.standardShutdown(done, server);
         });
 
         it("#start should emit 'started' message when complete", function(done) {
-            s.on("started", done);
-            s.start();
+            server.on("started", done);
+            server.start();
         });
     });
 
@@ -287,7 +273,7 @@ describe('unhangout server', function() {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
                     if(msg.type=="open-sessions-ack") {
-                        common.server.db.events.get(1).sessionsOpen().should.be.true
+                        common.server.db.events.get(1).get("sessionsOpen").should.be.true
                         done();
                     } else if(msg.type=="open-sessions-err") {
                         console.error(msg);
@@ -331,7 +317,7 @@ describe('unhangout server', function() {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
                     if(msg.type=="close-sessions-ack") {
-                        common.server.db.events.get(1).sessionsOpen().should.be.false
+                        common.server.db.events.get(1).get("sessionsOpen").should.be.false
                         done();
                     } else if(msg.type=="close-sessions-err") {
                         should.fail();
