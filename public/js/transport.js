@@ -33,7 +33,7 @@ var Transport = function(roomId) {
         switch (msg.type) {
             case "auth-ack":
                 this._setState("JOINING");
-                this.send("join", {id: roomId, lastTimeStamp: window.INITIAL_DATA_TIMESTAMP});
+                this.send("join", {id: roomId, timestamp: window.INITIAL_DATA_TIMESTAMP});
                 break;
             case "auth-err":
                 this._setState("AUTH-ERROR");

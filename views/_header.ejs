@@ -31,7 +31,7 @@
         <% } else { %>
             window.UNHANGOUT_AUTH = null;
         <% } %>
-        window.INITIAL_DATA_TIMESTAMP = <%- process.hrtime() %>;
+        window.INITIAL_DATA_TIMESTAMP = <%- JSON.stringify(process.hrtime()) %>;
     </script>
 </head>
 <body>
