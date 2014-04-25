@@ -122,6 +122,8 @@ describe("CHAT", function() {
         var regular = common.server.db.users.findWhere({"sock-key": "regular1"});
         var admin = common.server.db.users.findWhere({"sock-key": "admin1"})
         var superuser = common.server.db.users.findWhere({superuser: true});
+        // chat coloring only works for admins specified by ID, not email...
+        event.set("admins", [{id: admin.id}]);
 
         // Make sure our users are as we expect.
         expect(regular.isAdminOf(event)).to.be(false)

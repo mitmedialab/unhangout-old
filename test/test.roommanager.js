@@ -433,13 +433,21 @@ describe("ROOM MANAGER", function() {
                     async.parallel([
                         function(done) {
                             clientSock2.once("data", function(message) {
-                                expect(JSON.parse(message)).to.eql(data);
+                                var msg = JSON.parse(message);
+                                expect(msg.timestamp).to.be.an('array');
+                                expect(msg.timestamp.length).to.be(2);
+                                delete msg.timestamp;
+                                expect(msg).to.eql(data);
                                 done();
                             });
                         },
                         function(done) {
                             clientSock3.once("data", function(message) {
-                                expect(JSON.parse(message)).to.eql(data);
+                                var msg = JSON.parse(message);
+                                expect(msg.timestamp).to.be.an('array');
+                                expect(msg.timestamp.length).to.be(2);
+                                delete msg.timestamp;
+                                expect(msg).to.eql(data);
                                 done();
                             });
                         }
@@ -454,8 +462,9 @@ describe("ROOM MANAGER", function() {
                         });
                     });
                     // broadcast to everyone but clientSock1.
-                    mgr.broadcast('funroom', data.type, data.args,
-                                  mgr.userIdToSockets[user1.id][0]);
+                    mgr.broadcast('funroom', data.type, data.args, function(s) {
+                        return s.id != mgr.userIdToSockets[user1.id][0].id
+                    });
                 });
             });
         });
@@ -533,7 +542,144 @@ describe("ROOM MANAGER", function() {
                 });
             });
         });
+    });
+    it("Refuses join with invalid timestamps", function(done) {
+        var user = users.at(0);
+        var mgr = new RoomManager(socketServer, users);
+        authedSocket(user, function(sock) {
+            sock.write(JSON.stringify({
+                type: "join", args: {id: "someroom", timestamp: "bogus"}
+            }));
+            sock.once("data", function(message) {
+                var msg = JSON.parse(message);
+                expect(msg.type).to.be("join-err");
+                expect(msg.args).to.be("Invalid timestamp");
+                // Ensure we didn't join.
+                expect(mgr.roomToSockets.someroom).to.be(undefined);
+                expect(mgr.socketIdToRooms[sock.id]).to.be(undefined);
+                expect(mgr.roomToUsers.someroom).to.be(undefined);
+                sock.promiseClose().then(function() {
+                    mgr.destroy(); 
+                    done();
+                });
+            });
+        });
+
+    });
+    it("sends 'stale-state-err' if joining with timestamp too old", function(done) {
+        var user = users.at(0);
+        var hrnow = process.hrtime();
+        var mgr = new RoomManager(socketServer, users);
+        hrnow[0] = hrnow[0] - mgr.OP_LOG_AGE;
+        authedSocket(user, function(sock) {
+            sock.write(JSON.stringify({
+                type: "join",
+                args: {id: "someroom", timestamp: hrnow}
+            }));
+            sock.once("data", function(message) {
+                var msg = JSON.parse(message);
+                expect(msg.type).to.be("stale-state-err");
+                // Ensure we didn't join.
+                expect(mgr.roomToSockets.someroom).to.be(undefined);
+                expect(mgr.socketIdToRooms[sock.id]).to.be(undefined);
+                expect(mgr.roomToUsers.someroom).to.be(undefined);
+                sock.promiseClose().then(function() {
+                    mgr.destroy();
+                    done();
+                });
+            });
+        });
+    });
+
+    it("catches sockets up if they present a timestamp on join", function(done) {
+        var user = users.at(0);
+        // A timestamp, before any messages have been sent, which we'll present
+        // for the user.
+        var hrnow = process.hrtime();
+        var mgr = new RoomManager(socketServer, users);
+        // queue up a few messages..
+        mgr.sync("someroom", "important", [1, 2, 3]);
+        mgr.sync("someroom", "don't forget", [4, 5, 6]);
 
 
+        // Now connect a socket, which should get the messages in order.
+        authedSocket(user, function(sock) {
+            var messages = [];
+            var expected = [
+                ["join-ack", undefined],
+                ["important", [1, 2, 3]],
+                ["don't forget", [4, 5, 6]]
+            ];
+
+            // The routine that will be called on data..
+            var finish = _.after(expected.length, function() {
+                expect(messages).to.eql(expected);
+                sock.promiseClose().then(function() {
+                    mgr.destroy();
+                    done();
+                });
+            });
+
+            sock.write(JSON.stringify({
+                type: "join",
+                args: {id: "someroom", timestamp: hrnow}
+            }));
+            sock.on("data", function(message) {
+                var msg = JSON.parse(message);
+                messages.push([msg.type, msg.args]);
+                finish();
+            });
+        });
+    });
+
+    it("Doesn't resend messages before the timestamp", function(done) {
+        var user = users.at(0);
+        // A timestamp, before any messages have been sent, which we'll present
+        // for the user.
+        var hrnow = process.hrtime();
+        var mgr = new RoomManager(socketServer, users);
+        // queue up a few messages..
+        mgr.sync("someroom", "important", [1, 2, 3]);
+        mgr.sync("someroom", "don't forget", [4, 5, 6]);
+        // Munge the log so that the first message comes *before* the timestamp
+        expect(mgr.opLog.someroom[0][1]).to.be("important");
+        mgr.opLog.someroom[0][0][0] = hrnow[0] - 1; // back one second
+
+        // Now connect a socket, which should get the messages in order.
+        authedSocket(user, function(sock) {
+            var messages = [];
+            var expected = [
+                ["join-ack", undefined],
+                ["don't forget", [4, 5, 6]]
+            ];
+
+            // The routine that will be called on data..
+            var finish = _.after(expected.length, function() {
+                expect(messages).to.eql(expected);
+                sock.promiseClose().then(function() {
+                    mgr.destroy();
+                    done();
+                });
+            });
+
+            sock.write(JSON.stringify({
+                type: "join",
+                args: {id: "someroom", timestamp: hrnow}
+            }));
+            sock.on("data", function(message) {
+                var msg = JSON.parse(message);
+                messages.push([msg.type, msg.args]);
+                finish();
+            });
+        });
+    });
+    it("Clears sync log messages with timestamps that are too old", function() {
+        var mgr = new RoomManager(socketServer, users);
+        mgr.sync("someroom", "important", [1, 2, 3]);
+        mgr.opLog.someroom[0][0][0] -= mgr.OP_LOG_AGE - 1;
+        mgr.sync("someroom", "yeah dog", [4, 5, 6]);
+        expect(mgr.opLog.someroom.length).to.be(1);
+        expect(mgr.opLog.someroom[0][1]).to.eql("yeah dog");
+        mgr.destroy();
     });
 });

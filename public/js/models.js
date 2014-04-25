@@ -73,6 +73,9 @@ models.BaseModel = Backbone.Model.extend({
     // Unregister the events from `registerSubEvents`.
     unregisterSubEvents: function(property) {
         var sub = this.get(property);
+        if (sub === null) {
+            sub = this.previous(property);
+        }
         this.stopListening(sub, "all", this._subEventHandlers[property]);
         delete this._subEventHandlers[property];
 
@@ -124,24 +127,29 @@ models.Event = models.BaseModel.extend({
         this.registerSubEvents("sessions");
         this.registerSubEvents("connectedUsers");
 
-        // Collect various changes on the HoA into one trigger, for convenience
-        // of both views that must update on changes to the hoa, and for the
-        // socket handler on the server.
-        this.on("hoa:change:hangout-pending " +
-                "hoa:change:hangout-url " +
-                "hoa:change:hangout-broadcast-id " +
-                "hoa:change:connectedParticipants",
-                _.bind(function(event, hoa) {
-            // Do it on next-tick to ensure the model has been updated by other
-            // listeners.  It's an ugly hack... the symptom is that the
-            // attributes that get broadcast are the attributes *before* the
-            // change.
-            setTimeout(_.bind(function() {
-                this.trigger("update-hoa", this, hoa);
-            }, this), 1);
-        }, this));
         this.on("change:hoa", _.bind(function(event, hoa) {
-            this.trigger("update-hoa", event, hoa);
+            if (this.previous("hoa") && (!hoa || hoa.id != this.previous("hoa").id)) {
+                this.unregisterSubEvents("hoa");
+            } else if (!hoa.event) {
+                hoa.event = this;
+                this.registerSubEvents("hoa");
+            }
+        }, this));
+        this.on("change:youtubeEmbed", _.bind(function(event, ytId) {
+            // Prepend the current embed (if any) to the list of previous embeds
+            // (if it's not already there), and set the current embed to the given
+            // ytId.
+            var prev = this.get("previousVideoEmbeds");
+            if (ytId) {
+                var val = {youtubeId: ytId};
+                if (!_.findWhere(prev, val)) {
+                    // Clone so that setting triggers change events.
+                    prev = _.clone(prev);
+                    prev.unshift(val);
+                    this.set("previousVideoEmbeds", prev);
+                }
+            }
+            this.set("youtubeEmbed", ytId);
         }, this));
     },
 
@@ -184,37 +192,6 @@ models.Event = models.BaseModel.extend({
         // the loader. We want to use ??? selectors instead of *, which
         // matches /event/id/session/id as well as /event/id
         return this.urlRoot + "/" + pad(this.id, 5);
-    },
-
-    setEmbed: function(ytId) {
-        // Prepend the current embed (if any) to the list of previous embeds
-        // (if it's not already there), and set the current embed to the given
-        // ytId.
-        var prev = this.get("previousVideoEmbeds");
-        var cur = this.get("youtubeEmbed");
-        if (ytId) {
-            if (!_.findWhere(prev, {youtubeId: ytId})) {
-                // Clone so that setting triggers change events.
-                prev = _.clone(prev);
-                prev.unshift({youtubeId: ytId});
-                this.set("previousVideoEmbeds", prev);
-            }
-        }
-        this.set("youtubeEmbed", ytId);
-    },
-
-    setHoA: function(hoa) {
-        if (this.get("hoa")) {
-            this.unregisterSubEvents("hoa");
-        }
-        if (hoa === null) {
-            this.set("hoa", null);
-            this.set("hangout-broadcast-id", null);
-        } else {
-            hoa.event = this;
-            this.set("hoa", hoa);
-            this.registerSubEvents("hoa");
-        }
     },
 
     getRoomId: function() {
@@ -278,6 +255,7 @@ models.Event = models.BaseModel.extend({
     //      { id: <user.id>}
     // 2. by email:
     //      { email: <email> }
+    // TODO: Remove by-email.  Right now, this only would affect tests.
     //
     // This utility function matches a compares a user (either a full user
     // model or an object with like {email: <email>}) to see if it matches
@@ -352,7 +330,6 @@ models.Session = Backbone.Model.extend({
             joiningParticipants: [],
             activities: [],
             joinCap: this.MAX_ATTENDEES,
-            "hangout-broadcast-id": null // Youtube ID For Hangouts on air
         };
     },
     getRoomId: function() {
@@ -428,7 +405,7 @@ models.SessionList = Backbone.Collection.extend({
 
     // sould not ever be called.
     url: function() {
-        console.log("GETTING LOCAL SESSION LIST");
+        console.log("ERROR; url called for models.SessionList");
         return "WAT";
     }
 });

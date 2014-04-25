@@ -2,7 +2,8 @@ var common = require("./common.js"),
     expect = require("expect.js"),
     googleapis = require("googleapis"),
     models = require("../lib/server-models"),
-    webdriver = require("selenium-webdriver");
+    webdriver = require("selenium-webdriver"),
+    request = require("superagent");
 
 describe("CREATE HOA", function() {
     var browser;
@@ -140,7 +141,7 @@ describe("CREATE HOA", function() {
 
     it("shows correct links for hoa statuses", function(done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        event.setHoA(null);
+        event.set("hoa", null);
         event.set("open", true);
         var hoa;
         browser.get(common.URL);
@@ -148,7 +149,7 @@ describe("CREATE HOA", function() {
  
         // Get the page once -- the rest are live updates triggered by model
         // changes.
-        browser.get(common.URL + "/event/" + event.id);
+        browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "superuser1");
 
         function hasHoA(has) {
@@ -167,7 +168,7 @@ describe("CREATE HOA", function() {
         hasHoA(false).then(function() {
             // Add an hoa.
             hoa = new models.ServerHoASession();
-            event.setHoA(hoa);
+            event.set("hoa", hoa);
             hoa.markHangoutPending();
         });
         hasHoA(true).then(function() {
@@ -181,5 +182,40 @@ describe("CREATE HOA", function() {
         hasHoA(false).then(function() {
             done();
         });
+    });
+
+    it("shows pending page for pending hoa's", function(done) {
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        var hoa = new models.ServerHoASession();
+        var user = common.server.db.users.findWhere({"sock-key": "admin1"});
+        expect(user).to.not.be(undefined);
+        event.set("hoa", hoa);
+        hoa.markHangoutPending(user);
+        expect(hoa.getParticipationLink()).to.eql("/hoa-session/" + hoa.get("session-key"));
+        request.get(common.URL + hoa.getParticipationLink())
+            .set("x-mock-user", "superuser1")
+            .redirects(0)
+            .end(function(res) {
+                expect(res.status).to.be(200);
+                expect(res.text).to.contain("started creating a hangout-on-air");
+                done();
+            });
+    });
+
+    it("shows 'create new one' page for stale hoa's", function(done) {
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        var hoa = new models.ServerHoASession()
+        event.set("hoa", hoa);
+        // not marking it pending -- nor giving it a URL.
+
+        expect(hoa.getParticipationLink()).to.eql("/hoa-session/" + hoa.get("session-key"));
+        request.get(common.URL + hoa.getParticipationLink())
+            .set("x-mock-user", "superuser1")
+            .redirects(0)
+            .end(function(res) {
+                expect(res.status).to.be(200);
+                expect(res.text).to.contain("looks like everyone has left the old");
+                done();
+            });
     });
 });

@@ -205,12 +205,9 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     },
 
     "delete": function() {
-        this.options.sock.send(JSON.stringify({
-            type: "delete-session",
-            args: {
-                id: this.model.id, roomId: this.options.event.getRoomId()
-            }
-        }));
+        this.options.transport.send("delete-session", {
+            id: this.model.id, roomId: this.options.event.getRoomId()
+        });
     }
 });
 
@@ -227,7 +224,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     id: "session-list",
 
     itemViewOptions: function() {
-        return {event: this.options.event, sock: this.options.sock};
+        return {event: this.options.event, transport: this.options.transport};
     }
 });
 
@@ -321,10 +318,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             message: formatSessionMessage(val),
             roomId: this.options.event.getRoomId()
         };
-        this.options.sock.send(JSON.stringify({
-            type: "broadcast-message-to-sessions",
-            args: args
-        }));
+        this.options.transport.send("broadcast-message-to-sessions", args);
         $("#message-sessions-modal").modal('hide');
     },
     changeSessionType: function() {
@@ -382,16 +376,13 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 break;
         }
 
-        this.options.sock.send(JSON.stringify({
-            type:"create-session",
-            args: {
-                title: title,
-                description:"",
-                activities: activities,
-                joinCap: joinCap,
-                roomId: this.options.event.getRoomId()
-            }
-        }));
+        this.options.transport.send("create-session", {
+            title: title,
+            description:"",
+            activities: activities,
+            joinCap: joinCap,
+            roomId: this.options.event.getRoomId()
+        });
         $("input[type=text]", scope).val("");
         $(".yt-error, .url-error, .join-cap-error", scope).hide();
         $(".error", scope).removeClass(".error");
@@ -421,18 +412,16 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
 
     openSessions: function(jqevt) {
         jqevt.preventDefault();
-        this.options.sock.send(JSON.stringify({
-            type: "open-sessions",
-            args: {roomId: this.options.event.getRoomId()}
-        }));
+        this.options.transport.send("open-sessions", {
+            roomId: this.options.event.getRoomId()
+        });
     },
 
     closeSessions: function(jqevt) {
         jqevt.preventDefault();
-        this.options.sock.send(JSON.stringify({
-            type: "close-sessions",
-            args: {roomId: this.options.event.getRoomId()}
-        }));
+        this.options.transport.send("close-sessions", {
+            roomId: this.options.event.getRoomId()
+        });
     },
 
     startEvent: function(jqevt) {
@@ -562,7 +551,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
         });
         this.chatInputView = new views.ChatInputView({
             event: this.options.event,
-            sock: this.options.sock
+            transport: this.options.transport
         });
     },
 
@@ -614,10 +603,9 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
         var msg = this.ui.chatInput.val();
 
         if(msg.length>0) {
-            this.options.sock.send(JSON.stringify({
-                type: "chat",
-                args: {text: msg, roomId: this.options.event.getRoomId()}
-            }));
+            this.options.transport.send("chat", {
+                text: msg, roomId: this.options.event.getRoomId()
+            });
             this.ui.chatInput.val("");
         }
 
@@ -823,7 +811,12 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             }
             this.renderControls();
         }, this);
-        this.listenTo(this.model, "update-hoa", this.renderControls);
+        this.listenTo(this.model, "hoa:change:connectedParticipants " +
+                                  "hoa:change:joiningParticipants " + 
+                                  "hoa:change:hangout-url " +
+                                  "hoa:change:hangout-pending " +
+                                  "change:hoa",
+                        this.renderControls);
         // This might get double-renders for changed youtube embeds... but
         // that's not a big deal, it doesn't happen at high velocity.
         this.listenTo(this.model, "change:previousVideoEmbeds", this.renderControls);
@@ -849,30 +842,26 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         } else {
             youtubeInputParent.removeClass("error");
             youtubeInputError.hide();
-            var message = {
-                type: "embed",
-                args: {ytId: ytId, roomId: this.model.getRoomId()}
-            };
-            this.options.sock.send(JSON.stringify(message));
+            this.options.transport.send("embed", {
+                ytId: ytId, roomId: this.model.getRoomId()
+            });
         }
     },
     removeVideo: function(jqevt) {
         jqevt.preventDefault();
-        this.model.setEmbed(null);
-        this.options.sock.send(JSON.stringify({
-            type: "embed",
-            args: {ytId: null, roomId: this.model.getRoomId()}
-        }));
+        this.model.set("youtubeEmbed", null);
+        this.options.transport.send("embed", {
+            ytId: null, roomId: this.model.getRoomId()
+        });
     },
     removeHoA: function(jqevt) {
         jqevt.preventDefault();
         // ensure hangout-broadcast-id is null, even if other things are
         // incongruent.
-        this.model.setHoA(null);
-        this.options.sock.send(JSON.stringify({
-            type: "remove-hoa",
-            args: {roomId: this.model.getRoomId()}
-        }));
+        this.model.set("hoa", null);
+        this.options.transport.send("remove-hoa", {
+            roomId: this.model.getRoomId()
+        });
     },
     playForAll: function(jqevt) {
         this.yt.playForEveryone(jqevt);
@@ -880,22 +869,17 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     restorePreviousVideo: function(jqevt) {
         jqevt.preventDefault();
         var ytId = $(jqevt.currentTarget).attr("data-youtube-id");
-        var message = {
-            type:"embed",
-            args: {
-                ytId: ytId,
-                roomId: this.model.getRoomId()
-            }
-        };
-        this.options.sock.send(JSON.stringify(message));
+        this.options.transport.send("embed", {
+            ytId: ytId,
+            roomId: this.model.getRoomId()
+        });
     },
     clearPreviousVideos: function(jqevt) {
         jqevt.preventDefault();
         if (confirm("Clear list of videos? There's no undo.")) {
-            this.options.sock.send(JSON.stringify({
-                type: "clear-previous-videos",
-                args: {roomId: this.model.getRoomId()}
-            }));
+            this.options.transport.send("clear-previous-videos", {
+                roomId: this.model.getRoomId()
+            });
         }
     },
     setPlayerVisibility: function(visible) {
@@ -946,7 +930,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }
         this.yt.on("control-video", _.bind(function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
-            this.options.sock.send(JSON.stringify({type: "control-video", args: args}));
+            this.options.transport.send("control-video", args);
         }, this));
 
         this.$(".video-player").html(this.yt.el);

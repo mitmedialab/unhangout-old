@@ -1,5 +1,6 @@
 var server = require('../lib/unhangout-server'),
     models = require("../lib/server-models"),
+    request = require("superagent"),
     expect = require('expect.js'),
     _ = require('underscore'),
     sinon = require('sinon'),

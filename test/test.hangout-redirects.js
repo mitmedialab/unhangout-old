@@ -203,8 +203,7 @@ describe("HANGOUT REDIRECTS", function() {
         var hoa;
         beforeEach(function() {
             hoa = new models.ServerHoASession({id: "t1"});
-            event.setHoA(hoa);
-            hoa.event = event;
+            event.set("hoa", hoa);
         });
 
 

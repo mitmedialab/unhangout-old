@@ -6,8 +6,8 @@
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
-        var SESSION_ATTRS = <%- JSON.stringify(event.get("sessions").invoke("toClientJSONForUser", user)) %>;
-        var HOA_ATTRS = <%- event.get("hoa") ? JSON.stringify(event.get("hoa").toClientJSONForUser(user)) : "null" %>;
+        var SESSION_ATTRS = <%- JSON.stringify(event.get("sessions").invoke("toClientJSON")) %>;
+        var HOA_ATTRS = <%- event.get("hoa") && user.isAdminOf(event) ? JSON.stringify(event.get("hoa").toClientJSON()) : "null" %>;
         var CONNECTED_USERS = <%- JSON.stringify(event.get("connectedUsers").invoke("toClientJSON")) %>
         var RECENT_MESSAGES = <%- JSON.stringify(event.get("recentMessages")) %>;
     <% } %>
