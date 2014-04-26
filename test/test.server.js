@@ -1,11 +1,12 @@
-var server = require('../lib/unhangout-server'),
+var unhangoutServer = require('../lib/unhangout-server'),
     should = require('should'),
+    expect = require('expect.js'),
     _ = require('underscore')._,
     request = require('superagent'),
     seed = require('../bin/seed.js'),
     common = require("./common");
 
-var s;
+var server;
 var sock;
 var session;
 
@@ -38,73 +39,59 @@ describe('unhangout server', function() {
 
     describe('configuration', function() {
         beforeEach(function() {
-            s = new server.UnhangoutServer();
+            server = new unhangoutServer.UnhangoutServer();
         });
-
-        /* Leaving this one out for now -- we have many more required params
-         * than just google credentials, and having moved conf to
-         * lib/options.js, that file does the error-throwing.
-        it('should not initialize without google credentials', function(done) {
-            s.on("error", function() {
-                done();
-            });
-            s.on("inited", function() {
-                should.fail("Expected an error.");
-            });
-            s.init({});
-        });
-        */
 
         it('#start should fail if init is not called first', function(done) {
-            s.on("error", function() {
+            server.on("error", function() {
                 done();
             });
 
-            s.on("started", function() {
+            server.on("started", function() {
                 should.fail("expected an error");
             });
-            s.start();
+            server.start();
         });
 
         it("#stop should fail if not started", function(done) {
-            s.on("error", function() {
+            server.on("error", function() {
                 done();
             });
 
-            s.on("started", function() {
+            server.on("started", function() {
                 should.fail("expected an error");
             });
-            s.stop();
+            server.stop();
         });
 
         it("#destroy should succeed regardless of state", function(done) {
-            s.on("destroyed", function() {
+            server.on("destroyed", function() {
                 done();
             });
 
-            s.on("error", function() {
+            server.on("error", function() {
                 should.fail();
             })
 
-            s.destroy();
+            server.destroy();
         });
     });
 
 
     describe('setup', function() {
         beforeEach(function(done) {
-            s = new server.UnhangoutServer();
-            s.on("inited", done);
-            s.init({"UNHANGOUT_GOOGLE_CLIENT_ID":true, "UNHANGOUT_GOOGLE_CLIENT_SECRET":true});
+            server = new unhangoutServer.UnhangoutServer();
+            server.on("inited", done);
+            server.init({"UNHANGOUT_GOOGLE_CLIENT_ID":true, "UNHANGOUT_GOOGLE_CLIENT_SECRET":true});
         });
 
         afterEach(function(done) {
-            common.standardShutdown(done, s);
+            common.standardShutdown(done, server);
         });
 
         it("#start should emit 'started' message when complete", function(done) {
-            s.on("started", done);
-            s.start();
+            server.on("started", done);
+            server.start();
         });
     });
 
@@ -253,11 +240,11 @@ describe('unhangout server', function() {
             it("should broadcast a create-session message to clients", function(done) {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
-
-                    // note create-session not create-session-ack
-                    if(msg.type=="create-session") {
-                        msg.args.title.should.equal("New Session");
-                        msg.args.description.should.equal("This is a description.");
+                    if(msg.type == "state" && msg.args.type === 'Session') {
+                        expect(msg.args.path).to.eql(['event', 'sessions']);
+                        expect(msg.args.op).to.eql('insert');
+                        expect(msg.args.value.title).to.be("New Session");
+                        expect(msg.args.value.description).to.be("This is a description.");
                         done();
                     } else if(msg.type=="create-session-err") {
                         should.fail();
@@ -287,7 +274,7 @@ describe('unhangout server', function() {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
                     if(msg.type=="open-sessions-ack") {
-                        common.server.db.events.get(1).sessionsOpen().should.be.true
+                        common.server.db.events.get(1).get("sessionsOpen").should.be.true
                         done();
                     } else if(msg.type=="open-sessions-err") {
                         console.error(msg);
@@ -310,7 +297,10 @@ describe('unhangout server', function() {
             it("should generate messages to everyone in the event on open sessions", function(done) {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
-                    if(msg.type=="open-sessions") {
+                    if(msg.type === "state" && msg.args.path[1] === "sessionsOpen") {
+                        expect(msg.args.path).to.eql(["event", "sessionsOpen"]);
+                        expect(msg.args.op).to.be("set");
+                        expect(msg.args.value).to.be(true);
                         done();
                     } else if(msg.type=="open-sessions-err") {
                         should.fail();
@@ -330,34 +320,38 @@ describe('unhangout server', function() {
             it("should accept close messages from admins", function(done) {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
-                    if(msg.type=="close-sessions-ack") {
-                        common.server.db.events.get(1).sessionsOpen().should.be.false
+                    if(msg.type === "close-sessions-ack") {
                         done();
                     } else if(msg.type=="close-sessions-err") {
                         should.fail();
                     }
                 });
 
+                var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
                 var user = common.server.db.users.findWhere({"sock-key": "regular1"});
                 user.set("superuser", true);
 
                 sock.write(JSON.stringify({type:"close-sessions", args: {
-                    roomId: common.server.db.events.findWhere({
-                        shortName: "writers-at-work"
-                    }).getRoomId()
+                    roomId: event.getRoomId()
                 }}));
             });
 
             it("should generate messages to everyone in the event on close sessions", function(done) {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
-                    if(msg.type=="close-sessions") {
+                    if (msg.type === "state" && msg.args.path[1] === "sessionsOpen") {
+                        expect(msg.args.path).to.eql(["event", "sessionsOpen"]);
+                        expect(msg.args.op).to.be("set");
+                        expect(msg.args.value).to.be(false);
+                        common.server.db.events.get(1).get("sessionsOpen").should.be.false
                         done();
-                    } else if(msg.type=="close-sessions-err") {
+                    } else if (msg.type=="close-sessions-err") {
                         should.fail();
                     }
                 });
 
+                var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+                event.set("sessionsOpen", true, {silent: true});
                 var user = common.server.db.users.findWhere({"sock-key": "regular1"});
                 user.set("superuser", true);
 
@@ -430,8 +424,8 @@ describe('unhangout server', function() {
             it("should generate messages to everyone in the event on embed", function(done) {
                 sock.on("data", function(message) {
                     var msg = JSON.parse(message);
-                    if(msg.type=="embed") {
-                        msg.args.ytId.should.equal("QrsIICQ1eg8");
+                    if(msg.type === "state" && msg.args.path[1] === "youtubeEmbed") {
+                        msg.args.value.should.equal("QrsIICQ1eg8");
                         done();
                     } else if(msg.type=="embed-err") {
                         should.fail();
@@ -486,32 +480,6 @@ describe('unhangout server', function() {
                     }).getRoomId()
                 }}));
             });
-
-
-        //  These two tests should in principle work, but the mock authentication scheme we're using
-        //  doesn't seem to gracefully support having TWO mock users. So, putting these tests on hold for now
-        //  until we can really create a second user to test against.
-//            it("should broadcast a chat message to everyone in event", function(done) {
-//                connectNewSock(function(altSock) {
-//                    // at this point we have two sockets; sock and altSock. Both are connected to event.
-//                    altSock.on("data", function(message) {
-//
-//                        var msg = JSON.parse(message);
-//                        if(msg.type=="chat") {
-//                            msg.args.should.have.keys("text", "user", "time");
-//                            msg.args.text.should.equal("hello world");
-//                            done();
-//                        }
-//                    });
-//
-//                    sock.write(JSON.stringify({type:"chat", args:{text:"hello world"}}));
-//                });
-//            });
-//
-//            it("should not send the chat message to users in other events", function(done) {
-//                done();
-//            });
         });
-
     });
 })

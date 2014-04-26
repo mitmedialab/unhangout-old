@@ -69,11 +69,11 @@ exports.run = function(dbId, redis, callback) {
                     description:"Connected Learning TV is in the middle of a 12-month experiment where we take 1 month at a time to focus on key connected learning communities and topics/themes. What have you found most useful about this format? What do you wish was different? What would make it easier for you (and your peers) to get involved in the series and the Connected Learning community? Facilitated by Jon Barilone, CLTV"
                 }));
 
-                events[0].addSession(sessions[0], true);
-                events[0].addSession(sessions[1], true);
-                events[0].addSession(sessions[2], true);
-                events[0].addSession(sessions[3], true);
-                events[0].addSession(sessions[4], true);
+                events[0].get("sessions").add(sessions[0]);
+                events[0].get("sessions").add(sessions[1]);
+                events[0].get("sessions").add(sessions[2]);
+                events[0].get("sessions").add(sessions[3]);
+                events[0].get("sessions").add(sessions[4]);
 
                 events.push(new models.ServerEvent({
                     title: "Test Event 2",
@@ -85,16 +85,6 @@ exports.run = function(dbId, redis, callback) {
                     welcomeMessage: "Welcome to test",
                     admins: [{email: "admin2@example.com"}]
                 }))
-
-                // events[0].addSession(sessions[5]);
-                // events[0].addSession(sessions[6]);
-                // events[0].addSession(sessions[7]);
-                // events[0].addSession(sessions[8]);
-                // events[0].addSession(sessions[9]);
-
-                // events[1].addSession(sessions[10]);
-                // events[1].addSession(sessions[11]);
-                // events[1].addSession(sessions[12]);
 
                 _.each(sessions, function(session) {
                     if(_.isUndefined(session.collection)) {

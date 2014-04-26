@@ -19,7 +19,7 @@ describe("MOCK HANGOUT", function() {
                 browser = theBrowser;
                 common.standardSetup(function() {
                     event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                    event.start();
+                    event.set("open", true);
                     session = event.get("sessions").at(0);
                     done();
                 });
@@ -133,19 +133,30 @@ describe("MOCK HANGOUT", function() {
         });
     });
 
+    /*
+    * No longer using local-storage -- just do cookie or URL params.  Most
+    * browsers that have 3rd-party cookies disabled also disable 3rd-party
+    * local storage.
     it("Authenticates with local storage.", function(done) {
         // Set the mock cookie.
         session.set("connectedParticipants", []);
+        browser.then(function() { console.log("a1"); });
         browser.get(common.URL);
+        browser.then(function() { console.log("a2"); });
         browser.mockAuthenticate("regular1");
+        browser.then(function() { console.log("a3"); });
         // Now visit a page again, which should trigger setting local storage.
         browser.get(common.URL);
+        browser.then(function() { console.log("a4"); });
         // Remove auth cookie (but not localStorage).
         browser.unMockAuthenticate();
+        browser.then(function() { console.log("a5"); });
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
         var frame = "document.querySelector('iframe').contentWindow.";
         // Now visit the hangout. We should be authed by local storage.
+        browser.then(function() { console.log("a6"); });
         hangoutShowsAboutActivity().then(function() {
+            browser.then(function() { console.log("a7"); });
             return common.await(function() {
                 return session.getNumConnectedParticipants() == 1;
             });
@@ -153,6 +164,7 @@ describe("MOCK HANGOUT", function() {
             done();
         });
     });
+    */
 
     it("Gets sock key from URL param if localStorage/cookie fail", function(done) {
         var user = common.server.db.users.findWhere({"sock-key": "regular1"});
@@ -167,11 +179,8 @@ describe("MOCK HANGOUT", function() {
         browser.get(common.URL + "/test/hangout/" + session.id + "/" +
                     "?sockKey=" + user.get("sock-key") +
                     "&userId=" + user.id);
+        browser.waitForHangoutReady(session, user.get("sock-key"));
         hangoutShowsAboutActivity().then(function() {
-            return common.await(function() {
-                return session.getNumConnectedParticipants() == 1;
-            });
-        }).then(function() {
             done();
         });
     });

@@ -5,20 +5,24 @@ var expect      = require('expect.js'),
     Promise     = require("bluebird");
 
 describe("CREATE EVENT", function() {
-    var browser = null;
-    var aboutIsVisible = function(isVisible) {
-        return browser.waitWithTimeout(function() {
-            return browser.executeScript(
-                'return $("#about-event").is(":visible");'
-            ).then(function(visible) {
-                return visible === isVisible;
-            });
-        });
-    }
-
-
     if (process.env.SKIP_SELENIUM_TESTS) { return; }
     this.timeout(60000); // Extra long timeout for selenium :(
+
+    var browser = null;
+    var aboutIsVisible = function(isVisible) {
+        var query = (isVisible ? "" : "!") + '$("#about-event").is(":visible")';
+        return browser.waitWithTimeout(function() {
+            return browser.executeScript("return " + query + ";");
+        });
+    }
+    var chatIsEnabled = function(isEnabled) {
+        var query = '$("#chat-input").attr("disabled") === ' + (
+            isEnabled ? "undefined" : '"disabled"'
+        );
+        return browser.waitWithTimeout(function() {
+            return browser.executeScript("return " + query + ";");
+        });
+    }
 
     before(function(done) {
         common.getSeleniumBrowser(function (theBrowser) {
@@ -84,6 +88,7 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-event .about-footer").getText().then(function(text) {
                 expect(text.indexOf("has not yet started")).to.not.eql(-1);
             });
+            chatIsEnabled(false);
 
             // Start the event.
             browser.get(common.URL + "/admin");
@@ -92,6 +97,7 @@ describe("CREATE EVENT", function() {
             // View the started event
             browser.get(common.URL + "/event/" + eventId);
             browser.waitForEventReady(event, "superuser1");
+            chatIsEnabled(true);
 
             // Show the 'about' pane.
             browser.byCss("#about-nav a").click();
@@ -121,8 +127,6 @@ describe("CREATE EVENT", function() {
             aboutIsVisible(true);
             browser.waitForSelector("#about-event .scroll-up");
             browser.waitForSelector("#about-event .scroll-up");
-            // TODO this line fails occasionally with 'ElementNotVisibleError'
-            // -- timing issue?
             browser.byCss("#about-event .scroll-up").click();
             aboutIsVisible(false);
 
@@ -159,7 +163,7 @@ describe("CREATE EVENT", function() {
 
     it("Hides the 'about' pane on event start", function(done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        event.stop()
+        event.set("open", false);
 
         var startStop = function(action) {
             var url = common.URL + "/admin/event/" + event.id + "/" + action;
@@ -185,10 +189,13 @@ describe("CREATE EVENT", function() {
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "regular1");
         aboutIsVisible(true);
+        chatIsEnabled(false);
         startStop("start");
         aboutIsVisible(false);
+        chatIsEnabled(true);
         startStop("stop");
         aboutIsVisible(true);
+        chatIsEnabled(false);
         browser.then(function() { done(); });
     });
 });

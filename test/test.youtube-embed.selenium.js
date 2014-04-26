@@ -24,7 +24,7 @@ describe("YOUTUBE EMBEDS", function() {
 
     it("Clears the list of videos", function(done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        event.start();
+        event.set("open", true);
         event.set("previousVideoEmbeds", [
             {youtubeId: "wd9OY0E8A98"},
             {youtubeId: "gjPr7sfS5bs"},
@@ -50,16 +50,10 @@ describe("YOUTUBE EMBEDS", function() {
         });
     });
 
-    // NOTE: Would be better to do this test using the video parsing function
-    // directly (public/js/videos.js -> video.extractYoutubeId), but that would
-    // require loading the requirejs format frontend library using amdefine or
-    // some such and getting it to load properly with all the front-end
-    // libraries it uses (_, $, Backbone, logger).  This approach is much
-    // slower to execute, but works, and easier to bootstrap.
     it("Tries a variety of YouTube urls", function (done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var ytId = "pco91kroVgQ";
-        event.start();
+        event.set("open", true);
 
         function tryEmbed(url, success) {
             browser.get(common.URL).then(function() {

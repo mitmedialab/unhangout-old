@@ -33,7 +33,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 browser = theBrowser;
                 common.standardSetup(function() {
                     event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                    event.start();
+                    event.set("open", true);
                     done();
                 });
             });
@@ -233,8 +233,9 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         buttonTextIs("LOCKED");
 
         // Open the sessions and we should have JOIN.
-        browser.then(function() { event.openSessions(); });
-        // event.openSessions doesn't trigger broadcast, so just re-grab the page.
+        browser.then(function() { event.set("sessionsOpen", true); });
+        // Merely changing sessionsOpen on the event doesn't currently trigger
+        // broadcast, so just re-grab the page.
         browser.get(common.URL + event.getEventUrl());
         buttonTextIs("JOIN");
 
@@ -255,7 +256,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
         browser.then(function() {
             // Clean up.
-            event.closeSessions();
+            event.set("sessionsOpen", false);
             session.set("joinCap", 10);
             session.onHangoutStopped();
             done();
@@ -269,9 +270,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.mockAuthenticate("admin1");
         // Visit the session to "start" it.
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
-        browser.waitWithTimeout(function() {
-            return session.getState() === "started";
-        });
+        browser.waitForHangoutReady(session, "admin1");
         // Then leave, by going to the event page, where we'll delete it.
         browser.get(common.URL + "/event/" + event.id);
         browser.waitWithTimeout(function() {
@@ -301,9 +300,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 browser.get(common.URL);
                 browser.mockAuthenticate("regular1");
                 browser.get(common.URL + "/test/hangout/" + session.id + "/");
-                browser.waitWithTimeout(function() {
-                    return session.getState() == "started";
-                });
+                browser.waitForHangoutReady(session, "regular1");
                 // leave..
                 browser.get(common.URL).then(function() {
                     expect(session.getState()).to.eql("stopping");
@@ -404,11 +401,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock;
         var session = event.get("sessions").at(0);
         browser.get(common.URL + "/test/hangout/" + session.id + "/")
-        // TODO: add a function like "waitForHangoutReady" here, similar to
-        // "waitForEventReady"
-        browser.waitWithTimeout(function() {
-            return session.getNumConnectedParticipants() === 1;
-        });
+        browser.waitForHangoutReady(session, "regular1");
         browser.then(function() {
             return common.authedSock("regular2", session.getRoomId()).then(function(thesock) {
                 sock = thesock;
@@ -463,7 +456,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Doesn't clear hangout URL immediately, but rather after a delay.", function(done) {
         var session = event.get("sessions").at(1);
-        session.set("hangoutConnected", false);
         session.set("hangout-url", null);
         common.authedSock("regular1", session.getRoomId()).then(function(sock) {
             sock.on("data", function(message) {

@@ -1,8 +1,8 @@
 require([
-    "jquery", "underscore-template-config", "backbone", "sockjs", "client-models",
-    "video", "logger", "auth-localstorage",
+    "jquery", "underscore-template-config", "backbone", "transport", "client-models",
+    "video", "logger", "auth",
     "bootstrap"
-], function($, _, Backbone, SockJS, models, video, logging, auth) {
+], function($, _, Backbone, transport, models, video, logging, auth) {
 
 
 var logger = new logging.Logger("FACILITATOR");
@@ -19,10 +19,6 @@ var FacilitatorView = Backbone.View.extend({
                   "addActivityDialog", "toggleSidebar", "handleCrossDocumentMessages");
         this.session = options.session;
         this.event = options.event;
-        this.sock = new SockJS(
-            document.location.protocol + "//" + document.location.hostname +
-            (document.location.port ? ":" + document.location.port : "") + "/sock"
-        );
         if (this.session.get("activities").length === 0) {
             this.session.set("activities", [{type: "about", autoHide: true}]);
         }
@@ -67,91 +63,71 @@ var FacilitatorView = Backbone.View.extend({
         }
     },
     bindSocket: function() {
-        var sock = this.sock;
         var session = this.session;
-        // Convenience wrapper for posting messages.
-        sock.sendJSON = function(type, data) {
-            sock.send(JSON.stringify({type: type, args: data}));
-        };
-        // onopen, authorize ourselves, then join the room.
-        sock.onopen = function() {
-            sock.sendJSON("auth", {key: auth.SOCK_KEY, id: auth.USER_ID});
-        };
+        var trans = new transport.Transport(session.getRoomId());
+        this.trans = trans;
 
-        // onclose, handle disconnections to reload the page.
-        sock.onclose = function() {
-            app.faces.hideVideoIfActive();
-            $('#disconnected-modal').modal('show');
-            var checkIfServerUp = function() {
-                var ping = document.location;
-                $.ajax({
-                    url: ping,
-                    cache: false,
-                    async: false,
-                    success: function(msg) {
-                        postMessageToHangout({'type': 'reload'});
-                    },
-                    error: function(msg) {
-                        timeout = setTimeout(checkIfServerUp, 250);
-                    }
-                });
-            };
-            checkIfServerUp();
-        };
+        trans.registerModel("session", session);
 
-        // Our socket is not just correct, not just articulate... it is *on message*.
-        sock.onmessage = _.bind(function(message) {
-            var msg = JSON.parse(message.data);
-            logger.debug("SOCK", msg.type, msg.args);
-            switch (msg.type) {
-                case "auth-ack":
-                    // When we're authorized, join the room for this session.
-                    sock.sendJSON("join", {id: "session/" + session.id});
-                    break;
-                case "join-ack":
-                    // Once we have a socket open, acknowledge the hangout
-                    // gadget informing us of the hangout URL.
-                    window.addEventListener("message",
-                                            this.handleCrossDocumentMessages,
-                                            false);
-                    break;
-                case "session/set-hangout-url-err":
-                    logger.error("Bad hangout url.");
-                    this.faces.hideVideoIfActive();
-                    // Get out of here!
-                    new SwitchHangoutsDialog({correctUrl: msg.args.url});
-                    break;
-                case "session/set-activities":
-                    this.session.set("activities", msg.args.activities);
-                    break;
-                case "session/control-video":
-                    if (this.currentActivity && this.currentActivity.activity.type == "video") {
-                        this.currentActivity.controlVideo(msg.args);
-                    }
-                    break;
-                case "session/event-message":
-                    this.displayEventMessage(msg.args);
-                    break;
+        trans.on("join-ack", _.bind(function() {
+            // Once we have a socket open, acknowledge the hangout gadget
+            // informing us of the hangout URL.
+            window.addEventListener("message",
+                                    this.handleCrossDocumentMessages,
+                                    false);
+        }, this));
+
+        trans.on("session/set-hangout-url-err", _.bind(function(args) {
+            logger.error("BAD HANGOUT URL");
+            this.faces.hideVideoIfActive();
+            new SwitchHangoutsDialog({correctUrl: args.url});
+            // Used by test harness to know we're done with the whole socket
+            // dance.
+            window.FACILITATOR_LOADED = true;
+        }, this));
+
+        trans.on("session/set-hangout-url-ack", function() {
+            // Used by test harness to know we're done with the whole socket
+            // dance.
+            window.FACILITATOR_LOADED = true;
+        });
+
+        trans.on("session/control-video", _.bind(function(args) {
+            if (this.currentActivity && this.currentActivity.activity.type === "video") {
+                this.currentActivity.controlVideo(args);
             }
-        }, this);
+        }, this));
+
+        trans.on("session/event-message", _.bind(function(args) {
+            this.displayEventMessage(args);
+        }, this));
+
+        trans.on("close", function() {
+            app.faces.hideVideoIfActive();
+            $("#disconnected-modal").modal('show');
+        });
+        trans.on("back-up", function() {
+            postMessageToHangout({'type': 'reload'});
+        });
+ 
         // Let the server know about changes to the hangout URL.
         session.on("change:hangout-url", function() {
             logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
-            sock.sendJSON("session/set-hangout-url", {
+            trans.send("session/set-hangout-url", {
                 url: session.get("hangout-url"),
                 id: session.get("hangout-id"),
                 sessionId: session.id
             });
         });
         session.on("change:connectedParticipants", function() {
-            sock.sendJSON("session/set-connected-participants", {
+            trans.send("session/set-connected-participants", {
                 sessionId: session.id,
                 connectedParticipants: session.get("connectedParticipants"),
                 "hangout-url": session.get("hangout-url")
             });
         });
         session.on("change:hangout-broadcast-id", function() {
-            sock.sendJSON("session/set-hangout-broadcast-id", {
+            trans.send("session/set-hangout-broadcast-id", {
                 sessionId: session.id,
                 "hangout-broadcast-id": session.get("hangout-broadcast-id")
             });
@@ -198,7 +174,7 @@ var FacilitatorView = Backbone.View.extend({
         switch (activityData.type) {
             case "video":
                 view = new VideoActivity({session: this.session, activity: activityData,
-                                          sock: this.sock});
+                                          transport: this.trans});
                 break;
             case "webpage":
                 view = new WebpageActivity({session: this.session, activity: activityData});
@@ -249,7 +225,7 @@ var FacilitatorView = Backbone.View.extend({
                 data = {type: 'about'};
             }
             this.session.set("activities", [data]);
-            this.sock.sendJSON("session/set-activities", {
+            this.trans.send("session/set-activities", {
                 sessionId: this.session.id,
                 activities: [data]
             });
@@ -386,7 +362,7 @@ var VideoActivity = BaseActivityView.extend({
     template: _.template($("#video-activity").html()),
     initialize: function(options) {
         BaseActivityView.prototype.initialize.apply(this, arguments);
-        this.sock = options.sock;
+        this.trans = options.transport;
         _.bindAll(this, "onrender");
         // Get the title of the video from the data API -- it's not available
         // from the iframe API.
@@ -397,7 +373,7 @@ var VideoActivity = BaseActivityView.extend({
         });
         this.yt.on("control-video", _.bind(function(args) {
             args.sessionId = this.session.id;
-            this.sock.sendJSON("session/control-video", args);
+            this.trans.send("session/control-video", args);
         }, this));
         this.yt.on("video-settings", _.bind(function() {
             this.trigger("activity-settings");

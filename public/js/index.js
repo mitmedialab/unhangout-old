@@ -11,7 +11,6 @@ require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
                 data: {email:email}
             }).done(function() {
                 $('#subscription-modal').modal('show');
-                console.log("posted email");
             }).fail(function() {
                 alert("Server error.. please try later.");
             });

@@ -182,7 +182,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             title: "Excellent",
             description: "Party time",
             shortName: "unique-city",
-            dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
+            dateAndTime: "Tuesday, Nov 11, 2014 11:32pm",
             timeZoneValue: "wat"
         };
         request.post(common.URL + "/admin/event/new")
@@ -201,7 +201,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 title: "Excellent",
                 description: "Party time",
                 shortName: "unique-city",
-                dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
+                dateAndTime: "Tuesday, Nov 11, 2014 11:32pm",
                 timeZoneValue: "America/New_York",
                 overflowUserCap: overflowUserCap
             };
@@ -223,7 +223,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             title: "Excellent",
             description: "Party time",
             shortName: "unique-city",
-            dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
+            dateAndTime: "Tuesday, Nov 11, 2014 11:32pm",
             timeZoneValue: "America/New_York",
             overflowUserCap: "10"
         };
@@ -292,7 +292,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             title: "Excellent",
             description: "Party time",
             shortName: "unique-city",
-            dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
+            dateAndTime: "Tuesday, Nov 11, 2014 11:32pm",
             timeZoneValue: "America/New_York"
         };
         request.post(common.URL + "/admin/event/new")
@@ -305,7 +305,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 expect(evt).to.not.be(undefined);
                 expect(evt.get("dateAndTime")).to.eql("2014-11-12T04:32:00+00:00");
                 expect(evt.get("timeZoneValue")).to.eql("America/New_York");
-                expect(evt.formatDate()).to.eql("Tuesday Nov 11, 2014 11:32 pm EST");
+                expect(evt.formatDate()).to.eql("Tuesday Nov 11, 2014 11:32pm EST");
                 done();
 
             });
@@ -328,7 +328,7 @@ describe('HTTP ADMIN EVENTS API', function() {
             title: "My title",
             organizer: "My organizer",
             shortName: "my-shortName",
-            dateAndTime: "Tuesday, Nov 11, 2014 11:32 pm",
+            dateAndTime: "Tuesday, Nov 11, 2014 11:32pm",
             timeZoneValue: "America/Denver",
             welcomeMessage: "Wilkommen",
             description: "My description",
