@@ -218,4 +218,22 @@ describe("CREATE HOA", function() {
                 done();
             });
     });
+
+    it("Doesn't error when creating a new hoa for events with a stale one (issue #330)", function(done) {
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        var hoa = new models.ServerHoASession()
+        hoa.event = event;
+        event.set("hoa", hoa);
+        hoa.save({}, {
+            success: function() {
+                request.get(common.URL + "/event/" + event.id + "/create-hoa/")
+                    .set("x-mock-user", "superuser1")
+                    .end(function(res) {
+                        expect(event.get("hoa").id).to.not.eql(hoa.id);
+                        expect(res.status).to.be(200);
+                        done();
+                    });
+            }
+        });
+    });
 });
