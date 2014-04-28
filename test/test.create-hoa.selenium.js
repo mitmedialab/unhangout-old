@@ -83,6 +83,7 @@ describe("CREATE HOA", function() {
         ).then(function(handles) {
             browser.switchTo().window(handles[1]);
         });
+        browser.waitForHangoutReady();
         browser.waitWithTimeout(function() {
             return !!event.get("hoa");
         });

@@ -130,7 +130,10 @@ models.Event = models.BaseModel.extend({
                 this.unregisterSubEvents(null, prev);
             } else if (hoa && hoa.event != this) {
                 hoa.event = this;
+            }
+            if (hoa && hoa.eventsRegisteredFor != this) {
                 this.registerSubEvents("hoa");
+                hoa.eventsRegisteredFor = this;
             }
         }, this));
         this.on("change:youtubeEmbed", _.bind(function(event, ytId) {
