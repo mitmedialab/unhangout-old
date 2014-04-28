@@ -71,11 +71,8 @@ models.BaseModel = Backbone.Model.extend({
         this.listenTo(sub, "all", this._subEventHandlers[property])
     },
     // Unregister the events from `registerSubEvents`.
-    unregisterSubEvents: function(property) {
-        var sub = this.get(property);
-        if (sub === null) {
-            sub = this.previous(property);
-        }
+    unregisterSubEvents: function(property, sub) {
+        var sub = sub || this.get(property);
         this.stopListening(sub, "all", this._subEventHandlers[property]);
         delete this._subEventHandlers[property];
 
@@ -128,9 +125,10 @@ models.Event = models.BaseModel.extend({
         this.registerSubEvents("connectedUsers");
 
         this.on("change:hoa", _.bind(function(event, hoa) {
-            if (this.previous("hoa") && (!hoa || hoa.id != this.previous("hoa").id)) {
-                this.unregisterSubEvents("hoa");
-            } else if (!hoa.event) {
+            var prev = this.previous("hoa");
+            if (prev && (!hoa || hoa.id != prev.id)) {
+                this.unregisterSubEvents(null, prev);
+            } else if (hoa && hoa.event != this) {
                 hoa.event = this;
                 this.registerSubEvents("hoa");
             }
