@@ -185,6 +185,10 @@ exports.stopSeleniumServer = function() {
     }
 };
 
+exports.seedDatabase = function(cb) {
+    seed.run(1, redis, cb);
+};
+
 exports.server = null;
 // A list of all open connections to the HTTP server, which we can nuke to
 // allow us to force-restart the server.
@@ -215,7 +219,7 @@ exports.standardSetup = function(done, skipSeed) {
         });
     });
     if (!skipSeed) {
-        seed.run(1, redis, function() {
+        exports.seedDatabase(function() {
             exports.server.init(TEST_CONF);
         });
     } else {

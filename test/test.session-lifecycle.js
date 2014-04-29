@@ -357,6 +357,8 @@ describe('SESSION LIFECYCLE', function() {
             connectedParticipants: participants,
             "hangout-url": "http://example.com"
         });
+        session.event = new models.ServerEvent();
+        expect(session.isDeleted()).to.be(false);
         var clock = sinon.useFakeTimers(new Date().getTime());
         session.setConnectedParticipants([]);
         session.stopWithDelay();
@@ -367,21 +369,63 @@ describe('SESSION LIFECYCLE', function() {
         clock.restore();
     });
 
+});
+
+describe("Crash on removal", function() {
+    beforeEach(function(done) {
+        sync.setPersist(true);
+        common.standardSetup(done);
+    });
+    afterEach(common.standardShutdown);
+
     it("Doesn't crash on removal of joining participant when session has been deleted.", function(done) {
         // https://github.com/drewww/unhangout/issues/311
-        common.standardSetup(function() {
-            var event = common.server.db.events.get(1);
-            var session = event.get("sessions").at(0);
-            session.addJoiningParticipant(common.server.db.users.get(1));
+        var event = common.server.db.events.get(1);
+        var session = event.get("sessions").at(0);
+        session.addJoiningParticipant(common.server.db.users.get(1));
 
-            var clock = sinon.useFakeTimers(new Date().getTime());
-            session.onRestart();
-            session.destroy();
-            event.get("sessions").remove(session);
-            clock.tick(session.JOINING_EXPIRATION_TIMEOUT + 1);
-            clock.restore();
+        var clock = sinon.useFakeTimers(new Date().getTime());
+        session.onRestart();
+        session.destroy();
+        event.get("sessions").remove(session);
+        clock.tick(session.JOINING_EXPIRATION_TIMEOUT + 1);
+        clock.restore();
 
-            common.standardShutdown(done);
+        done();
+    });
+
+    it("Doesn't crash on expiry of hoa when session has been deleted.", function(done) {
+        var event = common.server.db.events.get(1);
+        var hoa = new models.ServerHoASession();
+        hoa.event = event;
+        hoa.save({}, {
+            error: function() { done(err) },
+            success: function() {
+                hoa.destroy({
+                    error: function() { done(err); },
+                    success: function() {
+                        hoa.event = null;
+                        hoa.onHangoutStopped();
+                        done();
+                    }
+                });
+            }
         });
+    });
+    it("Doesn't crash with onRestart of expired hoa without event", function() {
+        var hoa = new models.ServerHoASession({
+            "hangout-stop-request-time": Date.now() - models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT - 1
+        });
+        hoa.onRestart();
+    });
+    it("Doesn't crash on joining expiry for hoa without event", function() {
+        var hoa = new models.ServerHoASession();
+        hoa.event = common.server.db.events.at(0);
+        clock = sinon.useFakeTimers();
+        hoa.addJoiningParticipant({id: 1, displayName: "whatever"});
+        hoa.event = null;
+        clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 1);
+        clock.restore();
+        // no error means we passed
     });
 });

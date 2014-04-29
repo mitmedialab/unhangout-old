@@ -161,11 +161,15 @@ $(document).ready(function() {
                 app.youtubeEmbedView.control({"mute": true});
             }
         };
-        this.youtubeEmbedView.on("player-state-change", function(state) {
+        this.youtubeEmbedView.yt.on("player-state-change", function(state) {
             if (state === "playing") {
                 maybeMute();
             }
         });
+        // The following two calls aren't necessary for muting, as we mute when
+        // the video starts playing. But this gives the appearance of muting
+        // even if the video hasn't started yet.
+        curEvent.on("change:youtubeEmbed", maybeMute);
         maybeMute();
 
         logger.log("Initialized app.");
