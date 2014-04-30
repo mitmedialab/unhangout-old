@@ -25,14 +25,20 @@ body {
   border-color: $navbar;
 }
 
-
 .brand, .navbar-inverse .brand {
-  color: #fff;
-  // Prevent wrapping of long titles
-  max-width: 550px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    color: #fff;
+    // Prevent wrapping of long titles
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.short-titles {
+    max-width: 550px;
+}
+
+.long-titles {
+    max-width: 900px;  
 }
 
 a.dropdown-toggle {
