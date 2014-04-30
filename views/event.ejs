@@ -3,6 +3,7 @@
 
 <script>
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
+
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
         <% if (event.get("hoa")) { %>
@@ -13,6 +14,7 @@
     <% } %>
     <% if (user.isSuperuser()) { %>
         var NUM_HANGOUTS_FARMED = <%= numFarmedHangouts %>;
+
     <% } else { %>
         var NUM_HANGOUTS_FARMED = null;
     <% } %>
@@ -37,16 +39,18 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    {{ if (!event.isLive()) { }}
+    
+    {{ if (!event.isLive() && ('<%- messages %>')) { }}
 
     <div class="alert alert-block alert-success banner">
-        <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>
+        <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
 
-        Congratulations! You have successfully logged in. This event has not yet started, come back at the posted start time to participate!
+        <%- messages %>
+
     </div>
 
-     {{ } }}
-       
+    {{ } }}
+
     <h3>{{- title }}</h3>
     {{ if (organizer) { }}
         <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
