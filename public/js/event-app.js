@@ -234,7 +234,6 @@ $(document).ready(function() {
         app.chatView.chatInputView.onRender();
 
         $(".event-banner").toggle(!curEvent.get("open")); 
-        $(".login-banner").toggle(!curEvent.get("open"));
     });
 
     // Handles clicks on the nav bar links.
