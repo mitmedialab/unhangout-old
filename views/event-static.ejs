@@ -10,7 +10,7 @@
 </script>
 
     <div class='event-static'>
-         <% if (event.get("dateAndTime")) { %>
+         <% if (!event.get("open")) { %>
             <div class="alert alert-block alert-info ">
             <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
 
