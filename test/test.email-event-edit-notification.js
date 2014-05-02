@@ -15,7 +15,7 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
     beforeEach(function(done) {
         common.standardSetup(function() {
             origDelay = common.server.options.EVENT_EDIT_NOTIFICATION_DELAY;
-            common.server.options.EVENT_EDIT_NOTIFICATION_DELAY = 5;
+            common.server.options.EVENT_EDIT_NOTIFICATION_DELAY = 20;
             common.startEmailServer(done);
         });
     });
@@ -96,13 +96,15 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
             expect(common.outbox.length).to.be(0);
             return common.await(function() { return common.outbox.length > 0; });
         }).then(function() {
-            expect(common.outbox.length).to.be(1);
-            var msg = common.outbox.shift();
-            expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, common.recipientify));
-            expect(msg.subject).to.eql("Unhangout: Event 1 edited");
-            var expectedTitle = origTitle.substring(0, origTitle.length - 1) + 5;
-            expect(msg.html.indexOf(_.escape(expectedTitle))).to.not.eql(-1);
-            done();
+            
+                expect(common.outbox.length).to.be(1);
+                var msg = common.outbox.shift();
+                expect(msg.to).to.eql(_.map(conf.UNHANGOUT_MANAGERS, common.recipientify));
+                expect(msg.subject).to.eql("Unhangout: Event 1 edited");
+                var expectedTitle = origTitle.substring(0, origTitle.length - 1) + 5;
+                expect(msg.html.indexOf(_.escape(expectedTitle))).to.not.eql(-1);
+                done();
+
         }).catch(function(err) {
             done(err);
         });

@@ -39,16 +39,23 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    
     {{ if (!event.isLive() && ('<%- messages %>')) { }}
 
-    <div class="alert alert-block alert-success banner">
+    <div class="alert alert-block alert-success login-banner">
         <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
 
         <%- messages %>
-
     </div>
 
+    {{ } }}
+
+    {{ if (!event.isLive()) { }}
+        <div class="alert alert-block alert-info event-banner">
+        <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
+
+        This event has not yet started, come back at the posted start time to participate!
+
+        </div>
     {{ } }}
 
     <h3>{{- title }}</h3>

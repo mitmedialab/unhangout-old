@@ -10,6 +10,15 @@
 </script>
 
     <div class='event-static'>
+         <% if (event.get("dateAndTime")) { %>
+            <div class="alert alert-block alert-info ">
+            <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
+
+            This event has not yet started, come back at the posted start time to participate!
+
+            </div>
+       <% } %>
+
         <h3><%= title %></h3>
         <h4 style="color: #2E7DAA">hosted by <%- event.get("organizer") %></h4>
         <br/>
