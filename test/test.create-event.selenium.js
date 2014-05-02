@@ -103,7 +103,7 @@ describe("CREATE EVENT", function() {
                     "return $('#about-event').find('.scroll-up').length === 1;"
                 );
             });
-            // Make sure footer is not there.
+            // Make sure 'event hasn't started' banner is not there.
             browser.executeScript(
                 "return $('#about-event .event-banner').is(':visible');"
             ).then(function(res) {

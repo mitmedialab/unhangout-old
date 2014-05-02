@@ -39,7 +39,7 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    {{ if (!event.isLive() && ('<%- messages %>')) { }}
+    {{ if (<%- messages.length > 0 %>) { }}
 
     <div class="alert alert-block alert-success login-banner">
         <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
