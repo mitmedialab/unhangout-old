@@ -4,6 +4,7 @@
 <script>
     // Initial data
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
+
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
         var SESSION_ATTRS = <%- JSON.stringify(event.get("sessions").invoke("toClientJSON")) %>;
@@ -32,11 +33,21 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
+    {{ if (!event.get('open')) { }}
+        <div class="alert alert-block alert-info event-banner">
+        <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
+
+        This event has not yet started, come back at the posted start time to participate!
+
+        </div>
+    {{ } }}
+
     <h3>{{- title }}</h3>
     {{ if (organizer) { }}
         <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
     {{ } }}
     <br/>
+
     {{ if (formattedDate) { }}
         {{- formattedDate }}
     {{ } }}
@@ -51,11 +62,8 @@
 
         </div>
 
-     {{ } else { }}
-        <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
      {{ } }}
-
-
+        
 </script>
 
 <script type="text/template" id="session-template">

@@ -224,6 +224,7 @@ $(document).ready(function() {
     if(!curEvent.get("open")) {
         // Force about pane to show itself.
         app.vent.trigger("about-nav", false);
+        
     } else {
         // Make about pane hide itself.
         app.vent.trigger("about-nav", true);
@@ -231,6 +232,8 @@ $(document).ready(function() {
     curEvent.on("change:open", function() {
         app.vent.trigger("about-nav", curEvent.get("open"));
         app.chatView.chatInputView.onRender();
+
+        $(".event-banner").toggle(!curEvent.get("open")); 
     });
 
     // Handles clicks on the nav bar links.

@@ -32,9 +32,11 @@
             window.UNHANGOUT_AUTH = null;
         <% } %>
         window.INITIAL_DATA_TIMESTAMP = <%- JSON.stringify(process.hrtime()) %>;
+
     </script>
 </head>
 <body>
+
 <div class='bad-browser-warning'>
     <div class='alert alert-warning'>
         <i class='fa fa-warning'></i> Your browser is out of date, and not supported &mdash; Unhangouts may not work as expected. Please <a href='http://browsehappy.com/'>Update your browser</a>!
@@ -43,3 +45,22 @@
         </a>
     </div>
 </div>
+
+<% messages.forEach(function(message) { %>
+    <div class="alert alert-block alert-success flash-banner">
+        <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>
+
+        <%- message %>
+    </div>
+<% }); %>
+
+<script type='text/javascript'>
+    var banners = document.querySelectorAll(".flash-banner");
+    for (var i = 0; i < banners.length; i++) {
+        (function(el) {
+            setTimeout(function() {
+                el.style.display = 'none';
+            }, 5000);
+        })(banners[i]);
+    }
+</script>
