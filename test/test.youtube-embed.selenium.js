@@ -1,5 +1,6 @@
 var expect = require('expect.js'),
-    common = require('./common');
+    common = require('./common'),
+    extractYoutubeId = require("../public/js/extract-youtube-id");
 
 describe("YOUTUBE EMBEDS", function() {
     var browser = null;
@@ -21,16 +22,38 @@ describe("YOUTUBE EMBEDS", function() {
         });
     });
 
-    // NOTE: Would be better to do this test using the video parsing function
-    // directly (public/js/videos.js -> video.extractYoutubeId), but that would
-    // require loading the requirejs format frontend library using amdefine or
-    // some such and getting it to load properly with all the front-end
-    // libraries it uses (_, $, Backbone, logger).  This approach is much
-    // slower to execute, but works, and easier to bootstrap.
+    it("Clears the list of videos", function(done) {
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        event.set("open", true);
+        event.set("previousVideoEmbeds", [
+            {youtubeId: "wd9OY0E8A98"},
+            {youtubeId: "gjPr7sfS5bs"},
+            {youtubeId: "4DUz4tzhv-w"},
+            {youtubeId: "2laB2BmSNn0"}
+        ]);
+        browser.get(common.URL);
+        browser.mockAuthenticate("superuser1");
+        browser.get(common.URL + event.getEventUrl());
+        browser.waitForEventReady(event, "superuser1");
+        browser.waitForSelector(".inline-video-controls .dropdown-toggle");
+        browser.byCss(".inline-video-controls .dropdown-toggle").click();
+        browser.waitForSelector(".clear-previous-videos");
+        browser.byCsss(".restore-previous-video:not(.header)").then(function(els) {
+            expect(els.length).to.be(event.get("previousVideoEmbeds").length);
+        });
+        browser.byCss(".clear-previous-videos").click();
+        browser.switchTo().alert().accept();
+        browser.wait(function() {
+            return event.get("previousVideoEmbeds").length === 0;
+        }).then(function() {
+            done();
+        });
+    });
+
     it("Tries a variety of YouTube urls", function (done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var ytId = "pco91kroVgQ";
-        event.start();
+        event.set("open", true);
 
         function tryEmbed(url, success) {
             browser.get(common.URL).then(function() {
@@ -64,44 +87,35 @@ describe("YOUTUBE EMBEDS", function() {
         browser.mockAuthenticate("superuser1");
         tryEmbed(ytId, true);
         tryEmbed("foo", false);
-        tryEmbed("http://www.youtube.com", false);
         tryEmbed("https://www.youtube.com/watch?v=" + ytId, true);
-        tryEmbed("http://www.youtube.com/embed/" + ytId, true);
-        tryEmbed("http://www.youtube.com/v/" + ytId + "?fs=1&hl=en_US", true);
-        tryEmbed("http://www.youtube.com/watch?feature=player_embedded&v=" + ytId, true);
-        tryEmbed("https://youtu.be/" + ytId, true);
         browser.get(common.URL);
         browser.then(function() {
             done();
         });
     });
 
-    it("Clears the list of videos", function(done) {
-        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        event.start();
-        event.set("previousVideoEmbeds", [
-            {youtubeId: "wd9OY0E8A98"},
-            {youtubeId: "gjPr7sfS5bs"},
-            {youtubeId: "4DUz4tzhv-w"},
-            {youtubeId: "2laB2BmSNn0"}
-        ]);
-        browser.get(common.URL);
-        browser.mockAuthenticate("superuser1");
-        browser.get(common.URL + event.getEventUrl());
-        browser.waitForEventReady(event, "superuser1");
-        browser.waitForSelector(".inline-video-controls .dropdown-toggle");
-        browser.byCss(".inline-video-controls .dropdown-toggle").click();
-        browser.waitForSelector(".clear-previous-videos");
-        browser.byCsss(".restore-previous-video:not(.header)").then(function(els) {
-            expect(els.length).to.be(event.get("previousVideoEmbeds").length);
-        });
-        browser.byCss(".clear-previous-videos").click();
-        browser.switchTo().alert().accept();
-        browser.wait(function() {
-            return event.get("previousVideoEmbeds").length === 0;
-        }).then(function() {
-            done();
-        });
+    it("Extracts youtube ID's", function() {
+        var ytId = "pco91kroVgQ";
+
+
+        function tryExtract(url, success) {
+            var res = extractYoutubeId.extractYoutubeId(url);
+            if (success) {
+                expect(res).to.be(ytId);
+            } else {
+                expect(res).to.be(null);
+            }
+        }
+
+        tryExtract("foo", false);
+        tryExtract(ytId, true);
+        tryExtract("http://www.youtube.com", false);
+        tryExtract("http://www.youtube.com/embed/" + ytId, true);
+        tryExtract("http://www.youtube.com/v/" + ytId + "?fs=1&hl=en_US", true);
+        tryExtract("http://www.youtube.com/watch?feature=player_embedded&v=" + ytId, true);
+        tryExtract("https://youtu.be/" + ytId, true);
+        tryExtract('<iframe width="560" height="315" src="//www.youtube.com/embed/' + ytId + '" frameborder="0" allowfullscreen></iframe>', true);
+
     });
 });
 

@@ -1,5 +1,6 @@
 var server = require('../lib/unhangout-server'),
     models = require("../lib/server-models"),
+    request = require("superagent"),
     expect = require('expect.js'),
     _ = require('underscore'),
     sinon = require('sinon'),
@@ -240,8 +241,8 @@ describe('SESSION LIFECYCLE', function() {
         // Collect a list of broadcasts from the event to make sure they match
         // expectation.
         var broadcasts = [];
-        event.on("broadcast", function(event, type, data) {
-            broadcasts.push({type: type, data: data});
+        event.on("all", function() {
+            broadcasts.push(Array.prototype.slice.call(arguments, 0))
         });
 
         var clock = sinon.useFakeTimers();
@@ -250,10 +251,11 @@ describe('SESSION LIFECYCLE', function() {
         session.addJoiningParticipant(u1);
         expect(session.get("joiningParticipants")).to.eql([participants[0]])
         expect(session.joiningTimeouts[u1.id]).to.not.eql(undefined);
-        expect(broadcasts.pop()).to.eql({
-            type: "joining-participants",
-            data: {id: session.id, participants: [participants[0]]}
-        });
+        expect(broadcasts).to.eql([
+            ["sessions:change:joiningParticipants", event, session, [participants[0]], {}],
+            ["sessions:change", event, session, {}]
+        ]);
+        broadcasts = [];
 
         // Tick forward till expiration
         clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 1);
@@ -261,11 +263,10 @@ describe('SESSION LIFECYCLE', function() {
         expect(session.joiningTimeouts[u1.id]).to.be(undefined);
         expect(session.get("joiningParticipants")).to.eql([]);
 
-        expect(broadcasts.pop()).to.eql({
-            type: "joining-participants",
-            data: {id: session.id, participants: []}
-        });
-        expect(broadcasts).to.eql([]);
+        expect(broadcasts).to.eql([
+            ["sessions:change:joiningParticipants", event, session, [], {}],
+            ["sessions:change", event, session, {}]
+        ]);
         clock.restore();
     });
 
@@ -275,48 +276,67 @@ describe('SESSION LIFECYCLE', function() {
         event.get("sessions").add(session);
         var p0 = participants[0];
         var p1 = participants[1];
-        var u1 = new models.ServerUser(p0);
-        var u2 = new models.ServerUser(p1);
+        var u0 = new models.ServerUser(p0);
+        var u1 = new models.ServerUser(p1);
 
         // Collect a list of broadcasts from the event to make sure they match
         // expectation.
         var broadcasts = [];
-        event.on("broadcast", function(event, type, data) {
-            var copy = _.clone(data);
-            for (var key in copy) {
-                copy[key] = _.clone(copy[key]);
+        event.on("all", function() {
+            var copy = Array.prototype.slice.call(arguments);
+            // clone parameter args, so we can keep a history without them
+            // being mutated.
+            if (copy[3]) {
+                copy[3] = _.clone(copy[3]);
             }
-            broadcasts.push({type: type, data: copy});
+            broadcasts.push(copy);
         });
 
         var clock = sinon.useFakeTimers();
 
+        session.addJoiningParticipant(u0);
         session.addJoiningParticipant(u1);
-        session.addJoiningParticipant(u2);
         expect(_.size(session.joiningTimeouts)).to.be(2);
 
         // Advance by half the expiration time
         clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT/2)
 
-        session.addConnectedParticipant(u1);
+        session.addConnectedParticipant(u0);
         expect(session.get("connectedParticipants")).to.eql([p0]);
-        expect(broadcasts).to.eql([
-            {type: "joining-participants", data: {id: session.id, participants: [p0]}},
-            {type: "joining-participants", data: {id: session.id, participants: [p0, p1]}},
-            {type: "joining-participants", data: {id: session.id, participants: [p1]}},
-            {type: "session-participants", data: {id: session.id, participants: [p0]}},
-        ]);
+        var expectedBroadcasts = [
+            ["sessions:change:joiningParticipants", event, session, [p0], {}],
+            ["sessions:change", event, session, {}],
+            ["sessions:change:joiningParticipants", event, session, [p0, p1], {}],
+            ["sessions:change", event, session, {}],
+            ["sessions:change:connectedParticipants", event, session, [p0], {}],
+            ["sessions:change", event, session, {}],
+            ["sessions:change:joiningParticipants", event, session, [p1], {}],
+            ["sessions:change", event, session, {}],
+        ];
+        // Split this nasty thing up so it's a little easier to parse.
+        expect(broadcasts.length).to.eql(expectedBroadcasts.length);
+        for (var i = 0; i < broadcasts.length; i++) {
+            for (var j = 0; j < broadcasts[i].length; j++) {
+                // console.log(i, j, broadcasts[i][0]);
+                expect(broadcasts[i][j]).to.eql(expectedBroadcasts[i][j]);
+                expect(broadcasts[i].length).to.eql(expectedBroadcasts[i].length);
+            }
+        }
+        broadcasts = [];
+
         expect(_.size(session.joiningTimeouts)).to.be(1);
-        expect(session.joiningTimeouts[u2.id]).to.not.eql(undefined);
+        expect(session.joiningTimeouts[u1.id]).to.not.eql(undefined);
 
         clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT/2 + 1)
+        clock.restore();
+
 
         expect(_.size(session.joiningTimeouts)).to.be(0);
         expect(session.get("joiningParticipants")).to.eql([]);
-        expect(broadcasts[broadcasts.length - 1]).to.eql({
-            type: "joining-participants", data: {id: session.id, participants: []}
-        });
-        clock.restore();
+        expect(broadcasts).to.eql([
+            ["sessions:change:joiningParticipants", event, session, [], {}],
+            ["sessions:change", event, session, {}]
+        ]);
     });
 
     it("Expires joining participants on restart after timeout", function() {
@@ -337,6 +357,8 @@ describe('SESSION LIFECYCLE', function() {
             connectedParticipants: participants,
             "hangout-url": "http://example.com"
         });
+        session.event = new models.ServerEvent();
+        expect(session.isDeleted()).to.be(false);
         var clock = sinon.useFakeTimers(new Date().getTime());
         session.setConnectedParticipants([]);
         session.stopWithDelay();
@@ -347,21 +369,63 @@ describe('SESSION LIFECYCLE', function() {
         clock.restore();
     });
 
+});
+
+describe("Crash on removal", function() {
+    beforeEach(function(done) {
+        sync.setPersist(true);
+        common.standardSetup(done);
+    });
+    afterEach(common.standardShutdown);
+
     it("Doesn't crash on removal of joining participant when session has been deleted.", function(done) {
         // https://github.com/drewww/unhangout/issues/311
-        common.standardSetup(function() {
-            var event = common.server.db.events.get(1);
-            var session = event.get("sessions").at(0);
-            session.addJoiningParticipant(common.server.db.users.get(1));
+        var event = common.server.db.events.get(1);
+        var session = event.get("sessions").at(0);
+        session.addJoiningParticipant(common.server.db.users.get(1));
 
-            var clock = sinon.useFakeTimers(new Date().getTime());
-            session.onRestart();
-            session.destroy();
-            event.removeSession(session);
-            clock.tick(session.JOINING_EXPIRATION_TIMEOUT + 1);
-            clock.restore();
+        var clock = sinon.useFakeTimers(new Date().getTime());
+        session.onRestart();
+        session.destroy();
+        event.get("sessions").remove(session);
+        clock.tick(session.JOINING_EXPIRATION_TIMEOUT + 1);
+        clock.restore();
 
-            common.standardShutdown(done);
+        done();
+    });
+
+    it("Doesn't crash on expiry of hoa when session has been deleted.", function(done) {
+        var event = common.server.db.events.get(1);
+        var hoa = new models.ServerHoASession();
+        hoa.event = event;
+        hoa.save({}, {
+            error: function() { done(err) },
+            success: function() {
+                hoa.destroy({
+                    error: function() { done(err); },
+                    success: function() {
+                        hoa.event = null;
+                        hoa.onHangoutStopped();
+                        done();
+                    }
+                });
+            }
         });
+    });
+    it("Doesn't crash with onRestart of expired hoa without event", function() {
+        var hoa = new models.ServerHoASession({
+            "hangout-stop-request-time": Date.now() - models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT - 1
+        });
+        hoa.onRestart();
+    });
+    it("Doesn't crash on joining expiry for hoa without event", function() {
+        var hoa = new models.ServerHoASession();
+        hoa.event = common.server.db.events.at(0);
+        clock = sinon.useFakeTimers();
+        hoa.addJoiningParticipant({id: 1, displayName: "whatever"});
+        hoa.event = null;
+        clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 1);
+        clock.restore();
+        // no error means we passed
     });
 });

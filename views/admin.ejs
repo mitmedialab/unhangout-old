@@ -29,7 +29,7 @@
                     </diV>
 
 
-                    <% if(event.isLive()) { %>
+                    <% if(event.get("open")) { %>
                         <form action="/admin/event/<%=event.id%>/stop" method="post">
                             <button type="submit" class="btn btn-warning btn-small stop-event"
                                     data-event='<%= event.id %>'>stop</button>

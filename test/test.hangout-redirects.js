@@ -19,7 +19,7 @@ describe("HANGOUT REDIRECTS", function() {
             common.server.db.events.any(function(e) {
                 event = e;
                 if (e.get("sessions").length > 0) {
-                    e.start();
+                    e.set("open", true);
                     session = e.get("sessions").at(0);
                     suffix = function(sockKey, sess) {
                         sess = sess || session;
@@ -203,8 +203,7 @@ describe("HANGOUT REDIRECTS", function() {
         var hoa;
         beforeEach(function() {
             hoa = new models.ServerHoASession({id: "t1"});
-            event.setHoA(hoa);
-            hoa.event = event;
+            event.set("hoa", hoa);
         });
 
 

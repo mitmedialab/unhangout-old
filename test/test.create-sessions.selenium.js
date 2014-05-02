@@ -59,7 +59,7 @@ describe("CREATE SESSIONS", function() {
     it("Creates an event session", function(done) {
         // Start with no sessions.
         event.get("sessions").reset();
-        event.start();
+        event.set("open", true);
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id)
@@ -88,10 +88,11 @@ describe("CREATE SESSIONS", function() {
 
     it("Creates an event session with youtube", function(done) {
         event.get("sessions").reset();
-        event.start();
+        event.set("open", true);
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
+        browser.waitForEventReady(event, "superuser1");
         browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
         browser.byCss("#show-create-session-modal").click();
@@ -120,7 +121,7 @@ describe("CREATE SESSIONS", function() {
 
     it("Creates an event session with joinCap", function(done) {
         event.get("sessions").reset();
-        event.start();
+        event.set("open", true);
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);

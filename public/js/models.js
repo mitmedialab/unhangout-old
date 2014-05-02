@@ -26,6 +26,58 @@ if (typeof exports !== 'undefined') {
     moment = require("moment");
 }
 
+models.BaseModel = Backbone.Model.extend({
+    // Add something to a model property which is a list, and trigger the
+    // 'change' event for that property if it has changed.
+    listAdd: function(property, item, options) {
+        if (!_.contains(list, item)) {
+            var list = _.clone(list);
+            list.push(item);
+            // Will trigger changes, as it's a new list.
+            this.set(property, list);
+        }
+    },
+    // Remove something to a model property which is a list, and trigger the
+    // 'change' event for that property if it has changed.
+    listRemove: function(property, item) {
+        var list = this.get(property);
+        var length = list.length;
+        list = _.without(list, item);
+        if (list.length != length) {
+            // will trigger changes, as it's a new list.
+            this.set(property, list);
+        }
+    },
+
+    // Register all of the events on a backbone object (collection or model)
+    // which is a property of this model on this model.  This enables listeners
+    // to be set up to process events pertaining to the collection.  The events
+    // triggered will have the signature:
+    //    (<property>:<original-event>, model, ..original-event-args..)
+    // For example, for the property "sessions":
+    //    ("sessions:add", event, session)
+    //    ("sessions:change:title", event, session, "New title")
+    registerSubEvents: function(property) {
+        if (!this._subEventHandlers) {
+            this._subEventHandlers = {};
+        }
+        var sub = this.get(property);
+        this._subEventHandlers[property] = _.bind(function() {
+            var params = Array.prototype.slice.call(arguments);
+            params[0] = property + ":" + params[0];
+            params.splice(1, 0, this);
+            this.trigger.apply(this, params);
+        }, this)
+        this.listenTo(sub, "all", this._subEventHandlers[property])
+    },
+    // Unregister the events from `registerSubEvents`.
+    unregisterSubEvents: function(property, sub) {
+        var sub = sub || this.get(property);
+        this.stopListening(sub, "all", this._subEventHandlers[property]);
+        delete this._subEventHandlers[property];
+
+    }
+});
 
 // The base model objects in unhangout are quite straightforward. They are mostly just
 // collections of attributes with some helper methods for editing and reading
@@ -33,10 +85,10 @@ if (typeof exports !== 'undefined') {
 // in the server-models.js extensions of these objects.
 
 // The event model. Events are the top level object, and have many sessions within them.
-models.Event = Backbone.Model.extend({
+models.Event = models.BaseModel.extend({
     idRoot: "event",
     urlRoot: "event",
-    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
+    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm[]a",
 
     defaults: function() {
         return {
@@ -45,8 +97,7 @@ models.Event = Backbone.Model.extend({
             shortName: null, // use this as a slug for nicer urls
             description: "",
             welcomeMessage: null,
-            start: null,
-            end: null,
+            open: false,
             connectedUsers: null,
             sessions: null,
             hoa: null,
@@ -63,10 +114,44 @@ models.Event = Backbone.Model.extend({
         // these are the main sub-collections of this model.
         this.set("sessions", new models.SessionList(null, this));
         this.set("connectedUsers", new models.UserList());
+        this.initializeSubEvents();
     },
+    initializeSubEvents: function() {
+        // Replicate events from these sub-collections on the event. This lets
+        // us use this model as a choke point for all socket traffic -- we need
+        // only listen to change/add/etc. events triggered on this model to
+        // initiate socket updates.
+        this.registerSubEvents("sessions");
+        this.registerSubEvents("connectedUsers");
 
-    numUsersConnected: function() {
-        return this.get("connectedUsers").length;
+        this.on("change:hoa", _.bind(function(event, hoa) {
+            var prev = this.previous("hoa");
+            if (prev && (!hoa || hoa.id != prev.id)) {
+                this.unregisterSubEvents(null, prev);
+            } else if (hoa && hoa.event != this) {
+                hoa.event = this;
+            }
+            if (hoa && hoa.eventsRegisteredFor != this) {
+                this.registerSubEvents("hoa");
+                hoa.eventsRegisteredFor = this;
+            }
+        }, this));
+        this.on("change:youtubeEmbed", _.bind(function(event, ytId) {
+            // Prepend the current embed (if any) to the list of previous embeds
+            // (if it's not already there), and set the current embed to the given
+            // ytId.
+            var prev = this.get("previousVideoEmbeds");
+            if (ytId) {
+                var val = {youtubeId: ytId};
+                if (!_.findWhere(prev, val)) {
+                    // Clone so that setting triggers change events.
+                    prev = _.clone(prev);
+                    prev.unshift(val);
+                    this.set("previousVideoEmbeds", prev);
+                }
+            }
+            this.set("youtubeEmbed", ytId);
+        }, this));
     },
 
     formatDate: function() {
@@ -102,104 +187,12 @@ models.Event = Backbone.Model.extend({
         return attrs;
     },
 
-    addSession: function(session) {
-        this.get("sessions").add(session);
-        session.trigger("change:collection");
-    },
-
-    removeSession: function(session) {
-        this.get("sessions").remove(session);
-        session.trigger("change:collection");
-    },
-
-    openSessions: function() {
-        this.set("sessionsOpen", true);
-        this.trigger("open-sessions");
-    },
-
-    closeSessions: function() {
-        this.set("sessionsOpen", false);
-        this.trigger("close-sessions");
-    },
-
-    sessionsOpen: function() {
-        return this.get("sessionsOpen");
-    },
-
     url: function() {
         // okay this is sort of stupid, but we want to have a fixed width
         // url because that makes it easier to match events from redis with
         // the loader. We want to use ??? selectors instead of *, which
         // matches /event/id/session/id as well as /event/id
         return this.urlRoot + "/" + pad(this.id, 5);
-    },
-
-    setEmbed: function(ytId) {
-        // Prepend the current embed (if any) to the list of previous embeds
-        // (if it's not already there), and set the current embed to the given
-        // ytId.
-        var prev = this.get("previousVideoEmbeds");
-        var cur = this.get("youtubeEmbed");
-        if (ytId) {
-            if (!_.findWhere(prev, {youtubeId: ytId})) {
-                prev.unshift({youtubeId: ytId});
-                this.trigger("change:previousVideoEmbeds");
-            }
-        }
-        this.set("youtubeEmbed", ytId);
-    },
-
-    setHoA: function(hoa) {
-        if (hoa === null) {
-            if (this.get("hoa")) {
-                this.stopListening(this.get("hoa"));
-            }
-            this.set("hoa", null);
-            this.set("hangout-broadcast-id", null);
-            this.trigger("update-hoa", this, null);
-        } else {
-            this.set("hoa", hoa);
-            hoa.event = this;
-            this.listenTo(hoa,
-                "change:hangout-pending " +
-                "change:hangout-url " +
-                "change:hangout-broadcast-id " +
-                "change:connectedParticipants",
-                _.bind(function(model) {
-                    // Do on next-tick to ensure the model has been updated by
-                    // other listeners.  Ugly hack -- symptom is that the
-                    // broadcast attributes are the attributes *before* the
-                    // change.
-                    setTimeout(_.bind(function() {
-                        this.trigger("update-hoa", this, model);
-                    }, this), 1);
-                }, this)
-            );
-            this.trigger("update-hoa", this, hoa);
-        }
-    },
-
-    isLive: function() {
-        var curTime = new Date().getTime();
-        var test = !_.isNull(this.get("start")) && curTime >= this.get("start") && _.isNull(this.get("end"));
-        return test;
-    },
-
-    start: function() {
-        if(this.isLive()) {
-            return new Error("Tried to start an event that was already live.");
-        } else {
-            this.set("start", new Date().getTime());
-            this.set("end", null);
-        }
-    },
-
-    stop: function() {
-        if(!this.isLive()) {
-            return new Error("Tried to stop an event that was already live.");
-        } else {
-            this.set("end", new Date().getTime());
-        }
     },
 
     getRoomId: function() {
@@ -263,6 +256,7 @@ models.Event = Backbone.Model.extend({
     //      { id: <user.id>}
     // 2. by email:
     //      { email: <email> }
+    // TODO: Remove by-email.  Right now, this only would affect tests.
     //
     // This utility function matches a compares a user (either a full user
     // model or an object with like {email: <email>}) to see if it matches
@@ -337,7 +331,6 @@ models.Session = Backbone.Model.extend({
             joiningParticipants: [],
             activities: [],
             joinCap: this.MAX_ATTENDEES,
-            "hangout-broadcast-id": null // Youtube ID For Hangouts on air
         };
     },
     getRoomId: function() {
@@ -413,7 +406,7 @@ models.SessionList = Backbone.Collection.extend({
 
     // sould not ever be called.
     url: function() {
-        console.log("GETTING LOCAL SESSION LIST");
+        console.log("ERROR; url called for models.SessionList");
         return "WAT";
     }
 });
