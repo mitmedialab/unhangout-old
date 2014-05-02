@@ -33,16 +33,6 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    {{ if (<%- messages.length > 0 %>) { }}
-
-    <div class="alert alert-block alert-success login-banner">
-        <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
-
-        <%- messages %>
-    </div>
-
-    {{ } }}
-
     {{ if (!event.get('open')) { }}
         <div class="alert alert-block alert-info event-banner">
         <a class="close" data-dismiss="alert" href="#"><i class="icon-remove-circle"></i></a>   
