@@ -89,9 +89,7 @@ video.YoutubeVideo = Backbone.View.extend({
             window.onYouTubeIframeAPIReady();
         }
         this.renderControls();
-        if (this.permitGroupControl) {
-            setInterval(_.bind(this.renderTime, this), 500);
-        }
+        setInterval(_.bind(this.renderTime, this), 500);
     },
     renderControls: function() {
         this.$(".video-controls").html(this.controlsTemplate({
@@ -117,8 +115,7 @@ video.YoutubeVideo = Backbone.View.extend({
         };
         if (this.ctrl) {
             if (this.ctrl.state === "playing") {
-                time = formatTime(this.ctrl.time +
-                                  (Date.now() - this.ctrl.localBegin) / 1000);
+                time = formatTime(this.getCurSyncSeconds());
             } else if (this.ctrl.state === "paused") {
                 if (!this.player) {
                     time = "";
@@ -148,13 +145,9 @@ video.YoutubeVideo = Backbone.View.extend({
         if (!this.player) {
             return false;
         }
-        if (this.ctrl.state === "playing") {
-            // How long since the control signal told us to begin, in seconds?
-            var diff = (Date.now() - this.ctrl.localBegin) / 1000;
-            // Use that diff to figure out where we ought to be in the video.
-            var expected = this.ctrl.time + diff;
-            // Consider us synced if we're within 10 seconds of that.
-            return Math.abs(expected - this.player.getCurrentTime()) < 10
+        var curSyncTime = this.getCurSyncSeconds();
+        if (curSyncTime !== null) {
+            return Math.abs(curSyncTime - this.player.getCurrentTime()) < 10
         } else {
             return true;
         }
@@ -163,6 +156,13 @@ video.YoutubeVideo = Backbone.View.extend({
         return this.player && (
             (this.ctrl.state == "playing") == (this.player.getPlayerState() == YT.PlayerState.PLAYING)
         );
+    },
+    getCurSyncSeconds: function() {
+        // Return the current sync time of the playing video, or null if none.
+        if (this.isSyncAvailable()) {
+            return this.ctrl.time + (Date.now() - this.ctrl.localBegin) / 1000;
+        }
+        return null;
     },
     receiveControl: function(args) {
         this.logger.debug("Receive control", args.state, args);
@@ -198,19 +198,6 @@ video.YoutubeVideo = Backbone.View.extend({
             // triggered play.
             this.cancelPollForStart();
         }
-        // Has the video finished? Tell the server to pause.
-        var dur = this.player.getDuration();
-        if (args.state === "playing" && dur > 0 && args.time > dur) {
-            this.logger.info("Pausing, video is over");
-            if (this.permitGroupControl) {
-                this.logger.info("Telling server to pause.");
-                this.trigger("control-video", {action: "pause"});
-            } else {
-                this.logger.debug("Not telling server to pause - not permitted.");
-            }
-            this.player.pauseVideo();
-            return;
-        }
         if (!this.isPlayStatusSynced()) {
             if (args.state === "playing") {
                 this.logger.debug("Playing");
@@ -228,9 +215,11 @@ video.YoutubeVideo = Backbone.View.extend({
     },
     syncTime: function() {
         if (!this.isTimeSynced()) {
-            var curTime = this.ctrl.time + (Date.now() - this.ctrl.localBegin) / 1000;
-            this.logger.debug("Seeking to", curTime);
-            this.player.seekTo(curTime, true);
+            var curSyncTime = this.getCurSyncSeconds();
+            if (curSyncTime !== null) {
+                this.logger.debug("Seeking to", curSyncTime);
+                this.player.seekTo(curSyncTime, true);
+            }
         }
     },
     handleMute: function(mute) {
@@ -260,17 +249,28 @@ video.YoutubeVideo = Backbone.View.extend({
         // so we have to be a little tricky about figuring out if someone has
         // tried to seek to elsewhere in the video.
         //
-        // If we get a pause signal ...
-        if (event.data == YT.PlayerState.PAUSED &&
-                // ... when 'sync' enabled ...
-                this.intendToSync &&
-                // ... and the video is playing ...
-                this.isSyncAvailable()) {
-            // ... interpret it as an intention to seek or pause.
-            this.logger.debug("times", this.ctrl.time, this.player.getCurrentTime());
-            if (this.ctrl.state === "playing" && Math.abs(
-                    this.player.getDuration() - this.ctrl.time) > 10) {
-                this.toggleSync();
+        // If we get a pause signal and the video is playing ...
+        if (event.data == YT.PlayerState.PAUSED && this.isSyncAvailable()) {
+            // Has the video finished? Tell the server to pause.
+            var curSyncTime = this.getCurSyncSeconds();
+            var dur = this.player.getDuration();
+            var closeEnoughToEnd = dur > 0 && Math.abs(curSyncTime - dur) < 10;
+            if (this.isTimeSynced() && closeEnoughToEnd) {
+                this.logger.info("Pausing, video is over");
+                if (this.permitGroupControl) {
+                    this.logger.info("Telling server to pause.");
+                    this.trigger("control-video", {action: "pause"});
+                } else {
+                    this.logger.debug("Not telling server to pause - not permitted.");
+                }
+                this.player.pauseVideo();
+            } else if (this.intendToSync) {
+                // ... interpret it as an intention to seek or pause.
+                this.logger.debug("times", this.ctrl.time, this.player.getCurrentTime());
+                if (this.ctrl.state === "playing" && Math.abs(
+                        this.player.getDuration() - curSyncTime) > 10) {
+                    this.toggleSync();
+                }
             }
         }
         // Trigger report of human-readable state.
