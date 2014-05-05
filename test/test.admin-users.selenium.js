@@ -72,10 +72,16 @@ describe("ADMIN USERS SELENIUM", function() {
         var selector = "tr[data-user-id='" + user.id + "'] input[type='checkbox']";
         browser.waitForSelector(selector);
         browser.byCss(selector).click().then(function() {
-            expect(user.isSuperuser()).to.be(true);
+            browser.wait(function() {
+                return user.isSuperuser() === true;
+            });
         });
         browser.byCss(selector).click().then(function() {
-            expect(user.isSuperuser()).to.be(false);
+            browser.wait(function() {
+                return user.isSuperuser() === false;
+            });
+        });
+        browser.then(function() {
             done();
         });
     });
@@ -98,7 +104,7 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.byCss(addSelector).click();
         // Wait for modal to fade in...
         browser.waitForSelector(".modal-body select");
-        browser.byCss(".modal-body select").sendKeys(event.get("title"));
+        browser.selectOption(".modal-body select", event.get("title"));
         browser.byLinkText("Add").click();
         browser.wait(function() {
             return user.isAdminOf(event) === true;
@@ -152,9 +158,7 @@ describe("ADMIN USERS SELENIUM", function() {
         });
         browser.byCss(permSelector).click();
         browser.wait(function() {
-            if (user.hasPerm("createEvents") === false) {
-                return true;
-            }
+            return user.hasPerm("createEvents") === false;
         });
         browser.get(common.URL + "/admin/users/");
         browser.waitForScript("$");

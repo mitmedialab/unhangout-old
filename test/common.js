@@ -44,6 +44,22 @@ var buildBrowser = function(callback) {
     browser.byLinkText = function(linkText) {
         return browser.findElement(webdriver.By.linkText(linkText));
     };
+    browser.selectOption = function(selector, text) {
+        // Can't seem to find any implementation of
+        // https://selenium.googlecode.com/git-history/selenium-2.37.0/docs/api/py/webdriver_support/selenium.webdriver.support.select.html
+        // for javascript.
+        return browser.executeScript([
+            "return (function() {",
+                "var options = document.querySelectorAll('" + selector + " option');",
+                "for (var i = 0; i < options.length; i++) { ",
+                    "if (options[i].innerHTML.trim() == '" + text + "') {",
+                        "options[i].selected = true;",
+                        "return true;",
+                    "}",
+                "};",
+                "return false;",
+            "})();"].join(""));
+    };
     browser.mockAuthenticate = function(user) {
         return browser.executeScript("document.cookie = 'mock_user=" + user + "; path=/';");
     };
@@ -89,10 +105,12 @@ var buildBrowser = function(callback) {
         return browser.flow_.execute(cb);
     };
     browser.waitTime = function(time) {
-        var sentinel = false;
-        setTimeout(function() { sentinel = true; }, time);
-        return browser.wait(function() {
-            return sentinel;
+        return browser.then(function() {
+            var sentinel = false;
+            setTimeout(function() { sentinel = true; }, time);
+            return browser.wait(function() {
+                return sentinel;
+            });
         });
     };
     browser.waitForFunc = function(cb) {
@@ -164,7 +182,14 @@ exports.getSeleniumBrowser = function(callback) {
         } else {
             seleniumPath = __dirname + "/../" + conf.TESTING_SELENIUM_PATH;
         }
-        seleniumServer = new SeleniumServer(seleniumPath, {port: 4444});
+        var opts = {port: 4444};
+        if (conf.TESTING_SELENIUM_VERBOSE) {
+            opts.stdio = "inherit"; // enable verbose logging
+        }
+        if (conf.TESTING_FIREFOX_BIN) {
+            opts.jvmArgs = ["-Dwebdriver.firefox.bin=" + conf.TESTING_FIREFOX_BIN];
+        }
+        seleniumServer = new SeleniumServer(seleniumPath, opts);
         seleniumServer.start().then(function() {
             // Throwing in a timeout on speculation that this makes
             // intermittent timeouts in beforeAll hooks less common.

@@ -421,7 +421,7 @@ describe("Crash on removal", function() {
     it("Doesn't crash on joining expiry for hoa without event", function() {
         var hoa = new models.ServerHoASession();
         hoa.event = common.server.db.events.at(0);
-        clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers();
         hoa.addJoiningParticipant({id: 1, displayName: "whatever"});
         hoa.event = null;
         clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 1);

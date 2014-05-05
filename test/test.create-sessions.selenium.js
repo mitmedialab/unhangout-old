@@ -133,6 +133,9 @@ describe("CREATE SESSIONS", function() {
         // Error for NaN
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("wat");
+        browser.byCss("#join_cap").getAttribute("value").then(function(val) {
+            expect(val).to.be("wat");
+        });
         browser.byCss("#create-session").click();
         browser.waitForSelector(".join-cap-error");
         browser.executeScript("$('.join-cap-error').hide();");
@@ -153,6 +156,8 @@ describe("CREATE SESSIONS", function() {
 
         // Goldilocks
         browser.byCss("#join_cap").clear();
+        browser.then(function() { console.log("hu"); });
+        browser.waitTime(2000);
         browser.byCss("#join_cap").sendKeys("3");
         browser.byCss("#create-session").click();
         browser.waitForSelector(".session .hangout-users");

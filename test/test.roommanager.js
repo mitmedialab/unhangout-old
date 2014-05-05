@@ -2,6 +2,7 @@ var RoomManager = require("../lib/room-manager").RoomManager,
     createUsers = require("../lib/passport-mock").createUsers,
     common = require("./common"), // common before options, so we can monkey-patch it
     models = require("../lib/server-models"),
+    monotonic = require("../lib/monotonic-counter"),
     http = require("http"),
     async = require("async"),
     expect = require("expect.js"),
@@ -9,6 +10,7 @@ var RoomManager = require("../lib/room-manager").RoomManager,
     sockjs_client = require('sockjs-client-ws'),
     async = require("async"),
     Promise = require("bluebird"),
+    sinon = require("sinon"),
     _ = require("underscore");
 
 var users = createUsers(new models.ServerUserList());
@@ -568,8 +570,8 @@ describe("ROOM MANAGER", function() {
     });
     it("sends 'stale-state-err' if joining with timestamp too old", function(done) {
         var user = users.at(0);
-        var hrnow = process.hrtime();
         var mgr = new RoomManager(socketServer, users);
+        var hrnow = monotonic.timestamp();
         hrnow[0] = hrnow[0] - mgr.OP_LOG_AGE;
         authedSocket(user, function(sock) {
             sock.write(JSON.stringify({
@@ -595,8 +597,8 @@ describe("ROOM MANAGER", function() {
         var user = users.at(0);
         // A timestamp, before any messages have been sent, which we'll present
         // for the user.
-        var hrnow = process.hrtime();
         var mgr = new RoomManager(socketServer, users);
+        var hrnow = monotonic.timestamp();
         // queue up a few messages..
         mgr.sync("someroom", "important", [1, 2, 3]);
         mgr.sync("someroom", "don't forget", [4, 5, 6]);
@@ -636,8 +638,8 @@ describe("ROOM MANAGER", function() {
         var user = users.at(0);
         // A timestamp, before any messages have been sent, which we'll present
         // for the user.
-        var hrnow = process.hrtime();
         var mgr = new RoomManager(socketServer, users);
+        var hrnow = monotonic.timestamp();
         // queue up a few messages..
         mgr.sync("someroom", "important", [1, 2, 3]);
         mgr.sync("someroom", "don't forget", [4, 5, 6]);
@@ -681,5 +683,30 @@ describe("ROOM MANAGER", function() {
         expect(mgr.opLog.someroom.length).to.be(1);
         expect(mgr.opLog.someroom[0][1]).to.eql("yeah dog");
         mgr.destroy();
+    });
+
+    it("Counts monotonically", function() {
+        var clock = sinon.useFakeTimers(0);
+        monotonic._resetCount();
+
+        // Starts at time 0 with counter 1.
+        expect(monotonic.timestamp()).to.eql([0, 1]);
+        // 1 millisecond should advance time, but not clear counter.
+        clock.tick(1)
+        // multiple messages in the same millisecond inc the counter.
+        expect(monotonic.timestamp()).to.eql([1, 2]);
+        expect(monotonic.timestamp()).to.eql([1, 3]);
+        expect(monotonic.timestamp()).to.eql([1, 4]);
+        // Subsequent ticks of less than 2ms continue incing counter.
+        clock.tick(1)
+        expect(monotonic.timestamp()).to.eql([2, 5]);
+        clock.tick(1)
+        expect(monotonic.timestamp()).to.eql([3, 6]);
+        // but a gap of 2ms clears the counter.
+        clock.tick(2)
+        expect(monotonic.timestamp()).to.eql([5, 1]);
+        clock.tick(2)
+        expect(monotonic.timestamp()).to.eql([7, 1]);
+        clock.restore();
     });
 });
