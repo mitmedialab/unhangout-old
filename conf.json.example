@@ -31,6 +31,6 @@
 
     "EMAIL_LOG_RECIPIENTS": ["sysadmin1@example.com"],
     "TESTING_SELENIUM_PATH": "bin/selenium-server-standalone.jar",
-    "TESTING_SELENIUM_VERBOSE": "false",
+    "TESTING_SELENIUM_VERBOSE": false,
     "TESTING_FIREFOX_BIN": null
 }
