@@ -11,7 +11,16 @@
                     <span class="icon-bar"></span>
                 </button>
                 
-                <a class="brand" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
+                <% if(user) { %>
+
+                    <a class="brand short-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
+
+                <% } else { %>
+
+                    <a class="brand long-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
+
+                <% } %>
+
                 <div class="nav-collapse collapse">
                     <ul class="nav">
                         <% if (user) { %>
