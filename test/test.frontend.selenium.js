@@ -21,7 +21,7 @@ describe("FRONT PAGE", function() {
 
     var navLinkActive = function(href) {
         return function() {
-            browser.wait(function() {
+            browser.waitWithTimeout(function() {
                 return browser.byCsss("li.active a[href='" + href + "']").then(function(els) {
                     return els.length == 1;
                 });
