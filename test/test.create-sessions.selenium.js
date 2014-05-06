@@ -156,8 +156,6 @@ describe("CREATE SESSIONS", function() {
 
         // Goldilocks
         browser.byCss("#join_cap").clear();
-        browser.then(function() { console.log("hu"); });
-        browser.waitTime(2000);
         browser.byCss("#join_cap").sendKeys("3");
         browser.byCss("#create-session").click();
         browser.waitForSelector(".session .hangout-users");

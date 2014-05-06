@@ -41,6 +41,9 @@
                 <i class='fa fa-lock'></i>
             {{ } else { }}
                 <i class='fa fa-unlock'></i> Sync
+                {{ if (playing) { }}
+                    <span class='time-indicator'></span>
+                {{ } }}
             {{ } }}
         </a>
     </span>

@@ -89,6 +89,7 @@ video.YoutubeVideo = Backbone.View.extend({
             window.onYouTubeIframeAPIReady();
         }
         this.renderControls();
+        setInterval(_.bind(this.renderTime, this), 500);
     },
     renderControls: function() {
         this.$(".video-controls").html(this.controlsTemplate({
@@ -97,9 +98,36 @@ video.YoutubeVideo = Backbone.View.extend({
             synced: this.isSynced(),
             showGroupControls: this.showGroupControls,
             intendToSync: this.intendToSync,
-            syncAvailable: this.syncAvailable()
+            syncAvailable: this.isSyncAvailable()
         }));
         this.trigger("renderControls");
+    },
+    renderTime: function() {
+        var time;
+        var formatTime = function(seconds) {
+            var hours = parseInt(seconds / (60 * 60));
+            var minutes = parseInt((seconds % 3600) / 60);
+            var seconds = parseInt(seconds % 60);
+            hours = (hours > 0 ? hours + ":" : "");
+            minutes = ((hours && (minutes < 10)) ? "0" : "") + minutes + ":";
+            seconds = (seconds < 10 ? "0" : "") + seconds;
+            return hours + minutes + seconds;
+        };
+        if (this.ctrl) {
+            if (this.ctrl.state === "playing") {
+                time = formatTime(this.getCurSyncSeconds());
+            } else if (this.ctrl.state === "paused") {
+                if (!this.player) {
+                    time = "";
+                } else {
+                    time = formatTime(this.player.getCurrentTime());
+                }
+            }
+        } else {
+            time = "";
+        }
+        this.$(".time-indicator").html(time);
+        this.trigger("render-time", time);
     },
     setVideoId: function(id) {
         if (id != this.ytID) {
@@ -107,19 +135,34 @@ video.YoutubeVideo = Backbone.View.extend({
             this.render();
         }
     },
-    syncAvailable: function() {
-        return (!!this.ctrl) && (new Date().getTime() - this.timeOfLastControl) < 5000 && (this.ctrl.state == "playing");
+    isSyncAvailable: function() {
+        return !!this.ctrl && this.ctrl.state === "playing";
     },
     isSynced: function() {
-        return this.syncAvailable() && this.playStatusSynced() && this.timeSynced();
+        return this.isSyncAvailable() && this.isPlayStatusSynced() && this.isTimeSynced();
     },
-    timeSynced: function() {
-        return this.player && (Math.abs(this.ctrl.time - this.player.getCurrentTime()) < 10);
+    isTimeSynced: function() {
+        if (!this.player) {
+            return false;
+        }
+        var curSyncTime = this.getCurSyncSeconds();
+        if (curSyncTime !== null) {
+            return Math.abs(curSyncTime - this.player.getCurrentTime()) < 10
+        } else {
+            return true;
+        }
     },
-    playStatusSynced: function() {
+    isPlayStatusSynced: function() {
         return this.player && (
             (this.ctrl.state == "playing") == (this.player.getPlayerState() == YT.PlayerState.PLAYING)
         );
+    },
+    getCurSyncSeconds: function() {
+        // Return the current sync time of the playing video, or null if none.
+        if (this.isSyncAvailable()) {
+            return this.ctrl.time + (Date.now() - this.ctrl.localBegin) / 1000;
+        }
+        return null;
     },
     receiveControl: function(args) {
         this.logger.debug("Receive control", args.state, args);
@@ -133,46 +176,51 @@ video.YoutubeVideo = Backbone.View.extend({
         //
         // Regular video sync.
         //
-        this.timeOfLastControl = new Date().getTime();
         this.ctrl = args;
-        if (!this.player) { return; }
+        if (args.localBegin === undefined) {
+            this.ctrl.localBegin = Date.now();
+        }
+        if (!this.player) {
+            // If we don't have a player yet, delay until it's ready.
+            setTimeout(_.bind(function() {
+                this.logger.debug("player not ready yet, delaying.");
+                this.receiveControl(args);
+            }, this), 1000);
+            return;
+        }
         // Do we have no intention of syncing?  Return.
         if (!this.intendToSync) {
             this.renderControls();
             return;
         }
-        if (args.state === "pause" || args.state === "play") {
+        if (args.state === "paused" || args.state === "playing") {
             // Cancel polling for the video to start if someone else has
             // triggered play.
             this.cancelPollForStart();
         }
-        // Has the video finished? Tell the server to pause.
-        var dur = this.player.getDuration();
-        if (args.state === "playing" && dur > 0 && args.time > dur) {
-            this.logger.info("Pausing, video is over");
-            if (this.permitGroupControl) {
-                this.logger.info("Telling server to pause.");
-                this.trigger("control-video", {action: "pause"});
+        if (!this.isPlayStatusSynced()) {
+            if (args.state === "playing") {
+                this.logger.debug("Playing");
+                this.player.playVideo();
+                this.once("player-state-playing", _.bind(this.syncTime, this));
             } else {
-                this.logger.debug("Not telling server to pause - not permitted.");
+                this.logger.debug("Pausing");
+                this.player.pauseVideo();
             }
-            this.player.pauseVideo();
-            return;
+        } else if (args.state === "playing") {
+            this.syncTime();
         }
-        // Sync us up!
-        if (!this.timeSynced()) {
-            this.player.seekTo(args.time);
-        }
-        if (!this.playStatusSynced()) {
-            if (this.player.getPlayerState() != YT.PlayerState.BUFFERING) {
-                if (args.state == "playing") {
-                    this.player.playVideo();
-                } else {
-                    this.player.pauseVideo();
-                }
-            }
-        }
+
         this.renderControls();
+    },
+    syncTime: function() {
+        if (!this.isTimeSynced()) {
+            var curSyncTime = this.getCurSyncSeconds();
+            if (curSyncTime !== null) {
+                this.logger.debug("Seeking to", curSyncTime);
+                this.player.seekTo(curSyncTime, true);
+            }
+        }
     },
     handleMute: function(mute) {
         if (!this.player) {
@@ -201,36 +249,26 @@ video.YoutubeVideo = Backbone.View.extend({
         // so we have to be a little tricky about figuring out if someone has
         // tried to seek to elsewhere in the video.
         //
-        // If we get a pause signal ...
-        if (event.data == YT.PlayerState.PAUSED &&
-                // ... when 'sync' enabled ...
-                this.intendToSync &&
-                // ... and the video is playing ...
-                this.syncAvailable()) {
-            // ... interpret it as an intention to seek or pause.
-            this.logger.debug("times", this.ctrl.time, this.player.getCurrentTime());
-            if (this.permitGroupControl) {
-                // We'd like to offer admin's means to control video through
-                // the native controls -- but it seems to be fraught, in at
-                // least two ways: first, admins might inadvertently control
-                // the video for others by clicking, not thinking that it will
-                // change the video for everyone. Second, unintentional events
-                // (e.g. network lags) might look like intentional control
-                // events -- we can't distinguish those.
-                //
-                // As an example, we can't find any reasonable way to
-                // distinguish intentional pauses from unintentional pauses.
-                // YouTube throws pause signals (sometimes more than one)
-                // whenever play is interrupted, either from a seek, a
-                // reversion to buffering, or whatever.
-                //
-                // As a result, we're essentially disabling pause and seek for
-                // admins.  For non-admins, we just un-sync.
-            } else {
-                // Non-admin: just toggle intendToSync, but only if we're not
-                // at the end of the video.
+        // If we get a pause signal and the video is playing ...
+        if (event.data == YT.PlayerState.PAUSED && this.isSyncAvailable()) {
+            // Has the video finished? Tell the server to pause.
+            var curSyncTime = this.getCurSyncSeconds();
+            var dur = this.player.getDuration();
+            var closeEnoughToEnd = dur > 0 && Math.abs(curSyncTime - dur) < 10;
+            if (this.isTimeSynced() && closeEnoughToEnd) {
+                this.logger.info("Pausing, video is over");
+                if (this.permitGroupControl) {
+                    this.logger.info("Telling server to pause.");
+                    this.trigger("control-video", {action: "pause"});
+                } else {
+                    this.logger.debug("Not telling server to pause - not permitted.");
+                }
+                this.player.pauseVideo();
+            } else if (this.intendToSync) {
+                // ... interpret it as an intention to seek or pause.
+                this.logger.debug("times", this.ctrl.time, this.player.getCurrentTime());
                 if (this.ctrl.state === "playing" && Math.abs(
-                        this.player.getDuration() - this.ctrl.time) > 10) {
+                        this.player.getDuration() - curSyncTime) > 10) {
                     this.toggleSync();
                 }
             }
@@ -255,6 +293,7 @@ video.YoutubeVideo = Backbone.View.extend({
                 break;
         }
         this.trigger("player-state-change", state);
+        this.trigger("player-state-" + state);
     },
     playForEveryone: function(event) {
         if (event) { event.preventDefault(); }
