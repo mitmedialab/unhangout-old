@@ -166,12 +166,21 @@ video.YoutubeVideo = Backbone.View.extend({
     },
     receiveControl: function(args) {
         this.logger.debug("Receive control", args.state, args);
-        //
+
         // Mute control: out-of-band from regular video sync. Currently only
         // triggered by joining a hangout-on-air for which this is the embed.
-        //
         if (args.mute === true || args.mute === false) {
-            return this.handleMute(args.mute);
+            this.handleMute(args.mute);
+            // If this is a mute, return to skip all other play control logic.
+            return;
+        }
+        
+        // Discard earlier delayed control if any, to ensure that quick button
+        // presses don't throw a not-ready player into confusion.
+        if (this._receiveControlTimeout) {
+            this.logger.debug("Replacing previous ctrl with", args);
+            clearTimeout(this._receiveControlTimeout);
+            this._receiveControlTimeout = null;
         }
         //
         // Regular video sync.
@@ -180,12 +189,17 @@ video.YoutubeVideo = Backbone.View.extend({
         if (args.localBegin === undefined) {
             this.ctrl.localBegin = Date.now();
         }
-        if (!this.player) {
-            // If we don't have a player yet, delay until it's ready.
-            setTimeout(_.bind(function() {
+        if (!this.player || video.extractYoutubeId(this.player.getVideoUrl()) != this.ytID) {
+            // If the player isn't ready yet, and this is a play signal, delay
+            // until it's ready.  If it's a pause signal, just ignore.
+            if (args.state === "playing") {
                 this.logger.debug("player not ready yet, delaying.");
-                this.receiveControl(args);
-            }, this), 1000);
+                this._receiveControlTimeout = setTimeout(_.bind(function() {
+                    this.receiveControl(args);
+                }, this), 1000);
+            } else {
+                this.logger.debug("ignoring pause before player is ready.");
+            }
             return;
         }
         // Do we have no intention of syncing?  Return.
@@ -202,6 +216,7 @@ video.YoutubeVideo = Backbone.View.extend({
             if (args.state === "playing") {
                 this.logger.debug("Playing");
                 this.player.playVideo();
+                // `syncTime` only works correctly if the player is playing.
                 this.once("player-state-playing", _.bind(this.syncTime, this));
             } else {
                 this.logger.debug("Pausing");
@@ -224,9 +239,10 @@ video.YoutubeVideo = Backbone.View.extend({
     },
     handleMute: function(mute) {
         if (!this.player) {
-            // This is a slightly ugly, slightly dangerous hack -- if we get a
-            // mute request, but the player isn't ready yet, delay 100ms and
-            // try again.
+            // This is a slightly ugly hack -- if we get a mute request, but
+            // the player isn't ready yet, delay 100ms and try again.  The
+            // failure mode for this is to be force-muted more than you intend
+            // to, which is preferable to the other way around.
             return setTimeout(_.bind(function() {
                 this.handleMute(mute);
             }, this), 100);
@@ -244,10 +260,9 @@ video.YoutubeVideo = Backbone.View.extend({
     },
     onPlayerStateChange: function(event) {
         this.renderControls();
-        this.logger.debug("onPlayerStateChange", event.data);
         // Google gives us no "onSeekTo" or seek-related player state change,
-        // so we have to be a little tricky about figuring out if someone has
-        // tried to seek to elsewhere in the video.
+        // which might be nice for shared scrubbing. All of this is overloaded
+        // on `pause`.
         //
         // If we get a pause signal and the video is playing ...
         if (event.data == YT.PlayerState.PAUSED && this.isSyncAvailable()) {
@@ -292,6 +307,7 @@ video.YoutubeVideo = Backbone.View.extend({
                 state = "ended";
                 break;
         }
+        this.logger.debug("onPlayerStateChange", event.data, state);
         this.trigger("player-state-change", state);
         this.trigger("player-state-" + state);
     },
