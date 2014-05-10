@@ -1,9 +1,10 @@
 var server = require('../lib/unhangout-server'),
+    models = require('../lib/server-models'),
+    common = require('./common'),
     expect = require('expect.js'),
     async = require("async"),
     _ = require('underscore')._,
-    request = require('superagent'),
-    common = require('./common');
+    request = require('superagent');
 
 var sock;
 var session;
@@ -445,5 +446,90 @@ describe('HTTP ADMIN EVENTS API', function() {
                 expect(evt.get("description")).to.be("Description of the test event.");
                 done();
             });
+    });
+
+    it("/admin/event/:id POST's do not squash subevent propagation", function(done) {
+        // Regression test for https://github.com/drewww/unhangout/issues/339
+        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        var hoa = new models.ServerHoASession();
+        hoa.event = event;
+        event.set("hoa", hoa);
+        var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+        var ensureMessagesPropagate = function(done) {
+            // Check that messages propagate.
+            event.once("recentMessages:add", function(event, msg) {
+                expect(msg.get('text')).to.be("propagate!");
+                done();
+            });
+            event.logChat(new models.ServerChatMessage({
+                text: "propagate!", user: user
+            }));
+        };
+        var ensureUserJoiningPropagates = function(done) {
+            // Check that joining users propagate.  Set up a trigger to notice
+            // when a user has been added
+            event.once("connectedUsers:add", function(event, u) {
+                expect(u.id).to.be(user.id);
+                // Great, add trigger fired.  Now remove the user, then we're done.
+                event.once("connectedUsers:remove", function(event, u) {
+                    expect(u.id).to.be(user.id);
+                    done();
+                });
+                event.get("connectedUsers").remove(u);
+            });
+            event.get("connectedUsers").add(user);
+        };
+        var ensureSessionChangesPropagate = function(done) {
+            var sess = event.get("sessions").at(0);
+            event.once("sessions:remove", function(event, s) {
+                expect(s.id).to.be(sess.id);
+                // Great, the session removal trigger fired.  Add it back in.
+                event.once("sessions:add", function(event, s) {
+                    expect(s.id).to.be(sess.id);
+                    done();
+                });
+                event.get("sessions").add(sess);
+            });
+            event.get("sessions").remove(sess);
+        };
+        var ensureHoAChangesPropagate = function(done) {
+            event.once("hoa:change:hangout-url", function(event, hoa, url) {
+                expect(url).to.be("http://example.com");
+                event.once("hoa:change:hangout-url", function(event, hoa, url) {
+                    expect(url).to.be(null);
+                    done();
+                });
+                event.get("hoa").set("hangout-url", null);
+            });
+            event.get("hoa").set("hangout-url", "http://example.com");
+        };
+        async.series([
+            // Make sure event propagation works.
+            function(done) { ensureMessagesPropagate(done); },
+            function(done) { ensureUserJoiningPropagates(done); },
+            function(done) { ensureSessionChangesPropagate(done); },
+            function(done) { ensureHoAChangesPropagate(done); },
+            function(done) {
+                // Now edit the event.
+                request.post(common.URL + '/admin/event/' + event.id)
+                    .set("x-mock-user", "superuser1")
+                    .send({title: "New title!", description: "Fine description."})
+                    .redirects(0)
+                    .end(function(res) {
+                        expect(res.status).to.be(302);
+                        expect(event.get("title")).to.be("New title!");
+                        expect(event.get("description")).to.be("Fine description.");
+                        done();
+                    });
+
+            },
+            // Make sure event propagation still works after editing.
+            function(done) { ensureMessagesPropagate(done); },
+            function(done) { ensureUserJoiningPropagates(done); },
+            function(done) { ensureSessionChangesPropagate(done); },
+            function(done) { ensureHoAChangesPropagate(done); },
+        ], function(err) {
+            return done(err);
+        });
     });
 });

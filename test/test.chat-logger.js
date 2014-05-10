@@ -5,7 +5,8 @@ var fs = require("fs"),
     models = require("../lib/server-models"),
     chatLogger = require("../lib/chat-logger"),
     common = require("./common"),
-    Promise = require("bluebird");
+    Promise = require("bluebird"),
+    _ = require("underscore");
 
 describe("CHAT LOGGER", function() {
     this.timeout(8000); // Give a little extra time in case travis is bogged down.
@@ -14,6 +15,14 @@ describe("CHAT LOGGER", function() {
     // instead of inside ../test/, so we can compare it to the version that
     // ../lib/chat-logger.
     var expectedFile = path.join(__dirname, "/../lib") + "/../public/logs/chat/test.txt";
+
+    function closeAllOpenStreams() {
+        _.each(chatLogger._queues.openStreams, function(stream, filename) {
+            stream.end(null, 'utf8');
+            delete chatLogger._queues.openStreams[filename];
+            delete chatLogger._queues.closingStreams[filename];
+        });
+    }
 
     function removeChatLog() {
         return new Promise(function(resolve, reject) {
@@ -47,6 +56,8 @@ describe("CHAT LOGGER", function() {
         user = new models.ServerUser({
             displayName: "Testy McTester",
         });
+        // Close any streams that may have been opened by other tests.
+        closeAllOpenStreams();
         removeChatLog().then(done);
     });
     afterEach(function(done) {
