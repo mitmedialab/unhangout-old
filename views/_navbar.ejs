@@ -1,26 +1,28 @@
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <span class="brand">Unhangouts </span>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <span class="brand">Unhangouts </span>
 
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/about/">About</a></li>
-                        <li><a href="/how-to-unhangout/">How to Unhangout</a></li>
-                        <li><a href="http://unhangout.tumblr.com/" target="_blank">Blog</a></li>
+            <!--<button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>-->
 
-                        <% if(user && user.isSuperuser()) { %>
-                            <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
-                        <% } %>
-                    </ul>
-                    <% include _identity.ejs %>
-                </div><!--/.nav-collapse -->
-            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav">
+                    <li><a href="/">Home</a></li>
+                    <li><a href="/about/">About</a></li>
+                    <li><a href="/how-to-unhangout/">How to Unhangout</a></li>
+                    <li><a href="http://unhangout.tumblr.com/" target="_blank">Blog</a></li>
+
+                    <% if(user && user.isSuperuser()) { %>
+                        <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
+                    <% } %>
+                </ul>
+                <% include _identity.ejs %>
+            </div><!--/.nav-collapse -->
+
         </div>
     </div>
+</div>
