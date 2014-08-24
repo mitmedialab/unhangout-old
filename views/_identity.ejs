@@ -1,4 +1,4 @@
-<ul class="nav pull-right identity">
+<ul class="nav navbar-nav pull-right identity">
 <li>
 <% if(!user) {%>
     <a href="/auth/google">Login</a>
@@ -16,10 +16,12 @@
                     <a role="menuitem" tabindex="-1" href="/admin/">My Events</a>
                 </li>
             <% } %>
+
             <li role="presentation">
                 <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
             </li>
         </ul>
+
     </div>
 <% } %>
 </li>

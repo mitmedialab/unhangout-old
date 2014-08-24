@@ -18,29 +18,6 @@ body {
   background: $navbar;
 }
 
-.navbar-fixed-top .container {
-  width: 1130px;  
-}
-
-.navbar .nav {
-  margin: 3px 0 10px 0;  
-}
-
-.navbar-inverse .navbar-inner
-{
-  // Use nib's linear-gradient expander to target all browsers.
-  background-image: linear-gradient(top, $navbar, $navbar);
-  border-color: $navbar;
-}
-
-.brand, .navbar-inverse .brand {
-    color: #fff;
-    // Prevent wrapping of long titles
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 .short-titles {
     max-width: 550px;
 }
@@ -73,58 +50,37 @@ a.dropdown-toggle {
   height: auto;
 }
 
-.navbar .nav > li > a {
-    color: $navbar-li;
- }
+/* ===================== Navbar Styles =================== */
 
-.nav {
-  li.active > a{
-    background-color: $navbar-li-bgcolor !important;
-  }
-
-  .circle {
-    background-color: #da4f49;
-    width: 6px;
-    height: 12px;
-    border-radius: 5px;
-
-    margin-right: 5px;
-
-    display: block;
-    position: absolute;
-    right: 5px;
-    top: 14px;
-
-    &.hide {
-      display: none;
-    }
-  }
+.navbar-default {
+  background-color: #2E7DAA;
 }
 
-.dropdown-menu {
-  z-index: 10001;
+.navbar-default .navbar-brand {
+  color: white;
+}
+  
+.navbar-default .navbar-nav > li {
+  color: white;
 }
 
-.dropdown-menu>li>a {
-  color: #333;
+.navbar-default .navbar-nav > li > a {
+  color: $navbar-li;
 }
 
-.dropdown-menu>li>a:hover,.dropdown-menu>li>a:focus{
-  text-decoration:none;
-  color:#fff;
-  background: $navbar;
+.navbar-default .navbar-nav > li > a:hover {
+  color: white;
 }
 
-.dropdown-menu > li.active > a {
-    background: white !important;
-    color: black !important;
-}
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
+  background-color: $navbar;
+  color: white;
+} 
 
-.dropdown-menu > li.active > a:hover, .dropdown-menu > li.active > a:focus {
-    background: $navbar !important;
-    color: white !important;
+.nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
+  background-color: $navbar;
 }
-
+  
 /* ----------------COMMON ELEMENTS AND UTILITIES------------*/
 
 hr.noshade {
@@ -133,11 +89,6 @@ hr.noshade {
 }
 
 .identity {
-  height: 40px;
-
-  & > div {
-    float: right;
-  }
 
   .admin-button:hover, .admin-button:visited, .admin-button:active {
     color: orange;
@@ -170,12 +121,6 @@ hr.noshade {
     color: white;
     text-decoration: none;
   }
-}
-
-.event-navbar {
-  .container {
-      width: 1000px;
-    }
 }
 
 .event-page-container {
@@ -1054,7 +999,6 @@ hr.noshade {
 }
 
 .profile-thumbnail {
-  margin-top: -5px;
   border-radius: 5px;
 }
 
