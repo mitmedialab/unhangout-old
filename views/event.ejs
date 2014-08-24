@@ -28,7 +28,7 @@
             <div id="main-right" class="span6"></div>
         </div>
     </div>
-</div>
+</div> 
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
@@ -258,6 +258,7 @@
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
            id='event-settings-label'>Event Settings</a>
+
         <ul class="dropdown-menu" role="menu" aria-labelledby="event-settings-label">
             <li role="presentation">
                 {{ if (event.get("open")) { }}
@@ -296,6 +297,13 @@
             </li>
         </ul>
     </div>
+
+    <!-- This is a workaround to display dropdown menu. Looks like a bug: http://laravel.io/forum/02-22-2014-twitter-bootstrap-311-not-displaying-dropdown-items -->
+
+    <script type="text/javascript">
+        $('.dropdown-toggle').dropdown();
+    </script>
+
 </script>
 
 <script type="text/template" id="session-live-bar-template">

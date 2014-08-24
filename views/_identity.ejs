@@ -1,29 +1,28 @@
-<ul class="nav navbar-nav pull-right identity">
-<li>
-<% if(!user) {%>
-    <a href="/auth/google">Login</a>
-<% } else { %>
-    <div class="dropdown">
-        <a class="dropdown-toggle username" data-toggle="dropdown" id='user-menu-label'>
-            <img class="profile-thumbnail" src="<%= user.get("picture")%>"
-                 style='width: 30px; height: 30px' alt='Profile'>
-            <%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
-        </a>
+<ul class="navbar-nav nav pull-right identity">
+    <li>
+    <% if(!user) {%>
+        <a href="/auth/google">Login</a>
+    <% } else { %>
+        <div class="dropdown">
+            <a class="dropdown-toggle username" data-toggle="dropdown" id='user-menu-label'>
+                <img class="profile-thumbnail" src="<%= user.get("picture")%>"
+                     style='width: 30px; height: 30px' alt='Profile'>
+                <%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
+            </a>
 
-        <ul class="dropdown-menu" role="menu" aria-labelledby="user-menu-label">
-            <% if (user.isSuperuser() || user.isAdminOfSomeEvent()) { %>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="user-menu-label">
+                <% if (user.isSuperuser() || user.isAdminOfSomeEvent()) { %>
+                    <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="/admin/">My Events</a>
+                    </li>
+                <% } %>
+
                 <li role="presentation">
-                    <a role="menuitem" tabindex="-1" href="/admin/">My Events</a>
+                    <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
                 </li>
-            <% } %>
+            </ul>
 
-            <li role="presentation">
-                <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
-            </li>
-        </ul>
-
-    </div>
-<% } %>
-</li>
+        </div>
+    <% } %>
+    </li>
 </ul>
-
