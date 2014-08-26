@@ -18,16 +18,28 @@
         <div class="row">
             <div id="global"></div>
             <div id="dialogs"></div>
-        </div>
+        </div> 
+
         <div class="row" id="main">
-            <div id="top"></div>
-            <div id="left" class="span6">
+            <div id="top"></div> 
+
+            <div class="col-lg-5">
                 <div id="top-left"></div>
-                <div id="main-left"></div>
+                <div id="main-left"></div>     
             </div>
-            <div id="main-right" class="span6"></div>
-        </div>
+
+            <div class="col-lg-5">
+               
+            </div>
+
+            <div class="col-lg-2">
+               
+            </div>
+
+            <!-- <div id="main-right" class="span6"></div> -->
+        </div> 
     </div>
+
 </div> 
 
 <!-- event templates -->
@@ -169,10 +181,11 @@
 </script>
 
 <script type="text/template" id="video-embed-template">
-    <div class='video-player'></div>
-    <div class='video-placeholder'>Video</div>
-    <div class='video-controls'></div>
+    <div class='video-player row'></div>
+    <!--<div class='video-placeholder row'>Video</div>-->
+    <!--<div class='video-controls row'></div>-->
 </script>
+
 <script type='text/template' id="video-embed-controls-template">
     {{ if (youtubeEmbed) { }}
         <div class='current-video-controls'>
