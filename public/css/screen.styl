@@ -151,25 +151,14 @@ hr.noshade {
   padding: 10px;
 }
 
+#main {
+  margin-top: -10px;  
+}
+
 #main-right {
-  position: absolute;
-  height: 100%;
-
-  box-sizing: border-box;
-  background-color: $background-light;
-  padding-left: 10px;
-
+  background-color: #eee;
   z-index: 10;
-
-  right: 20px;
-  left: 440px;
-
-  // &.bar {
-  //   top: 40px;
-  // }
-
-  width: 550px;
-
+  height: 93vh;
   overflow: hidden;
 }
 
@@ -647,19 +636,14 @@ hr.noshade {
 
 #chat-input-region {
     position: absolute;
-    bottom: 0px;
-    left: 0px;
-    right: 55px;
-
-    width: 370px;
-    height: 35px;
-
-    padding-left: 10px;
-
-    background-color: $background-light;
+    bottom: 10px;
+    padding: 10px;
+    background-color: #eee;
+    width: 90%;
 
     input {
-      width: 360px;
+      width: 80%;
+      height: 30px;
     }
 }
 
@@ -692,15 +676,8 @@ hr.noshade {
   }
 
   #chat-container-region {
-    width: 398px;
-    bottom: 40px;
-    margin-left: 0px;
+    width: 80%;
 
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 150px;
     overflow-y: auto;
 
     #chat-list-container {
@@ -711,12 +688,14 @@ hr.noshade {
 
       .chat-message {
         word-wrap: break-word;
+        list-style-type: none;
+
+        padding-left: 25px;
+        padding-right: 10px;
 
         &.past {
           opacity: 0.3;
         }
-
-        padding-left: 100px;
 
         &.system {
           text-align: center;
@@ -737,13 +716,12 @@ hr.noshade {
         }
 
         span.from {
-          margin-left: -120px;
           float: left;
           display: block;
           font-weight: bold;
-
-          width: 115px;
+          width: 120px;
           text-align: right;
+          margin-left: -130px;
 
           &.admin {
             color: orange;
