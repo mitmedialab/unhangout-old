@@ -390,6 +390,8 @@ hr.noshade {
 
 .session {
   position: relative;
+
+  box-sizing: border-box;
   display: inline-block;
   float: left;
 
@@ -403,6 +405,7 @@ hr.noshade {
   margin-right: 30px;
   
   overflow: hidden;
+
 
   .hangout-users, .hangout-offline {
     position: absolute;
@@ -426,9 +429,11 @@ hr.noshade {
     }
 
     .user {
-      
+      margin-top: 5px;
+      margin-left: 0px;
+
       img {
-        width: 30px;
+        width: 35px;
       }
 
       &.admin {
@@ -563,7 +568,7 @@ hr.noshade {
         }
 
       }
-    }
+    } 
 
     .counter {
       background-color: $background;
