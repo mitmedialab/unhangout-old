@@ -21,6 +21,7 @@
         </div> 
 
         <div class="row" id="main">
+
             <div id="top"></div> 
 
             <div class="col-lg-5 left">
@@ -37,32 +38,33 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    
-    <div class="container">
-        <h3>{{- title }}</h3>
-        {{ if (organizer) { }}
-            <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
-        {{ } }}
-        <br/>
-        {{ if (formattedDate) { }}
-            {{- formattedDate }}
-        {{ } }}
-        <br/><br/>
-        {{= description }}
+        
+        <div class="container about-event-container">
+            <h2>{{- title }}</h2>
+            {{ if (organizer) { }}
+                <h3>hosted by {{= organizer }}</h4>
+            {{ } }}
+            <br/>
+            <h4>
+            {{ if (formattedDate) { }}
+                {{- formattedDate }}
+            {{ } }}
+            </h4>
 
-        {{ if (event.get("open")) { }}
+            <br/><br/>
 
-            <a class="scroll-up pull-right" href="#about-nav">
-                <i class="icon-chevron-up chevron"></i>
-            </a>
+            <p>{{= description }}</p>
 
-            </div>
+            {{ if (event.get("open")) { }}
 
-         {{ } else { }}
-            <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
-         {{ } }}
+                <a class="scroll-up pull-right" href="#about-nav">
+                    <i class="icon-chevron-up chevron"></i>
+                </a>
 
-     </div>
+            {{ } else { }}
+                <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i></div>
+            {{ } }}
+        </div>
 
 </script>
 
