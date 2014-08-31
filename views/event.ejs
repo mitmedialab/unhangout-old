@@ -37,29 +37,32 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
+    
+    <div class="container">
+        <h3>{{- title }}</h3>
+        {{ if (organizer) { }}
+            <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
+        {{ } }}
+        <br/>
+        {{ if (formattedDate) { }}
+            {{- formattedDate }}
+        {{ } }}
+        <br/><br/>
+        {{= description }}
 
-    <h3>{{- title }}</h3>
-    {{ if (organizer) { }}
-        <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
-    {{ } }}
-    <br/>
-    {{ if (formattedDate) { }}
-        {{- formattedDate }}
-    {{ } }}
-    <br/><br/>
-    {{= description }}
+        {{ if (event.get("open")) { }}
 
-    {{ if (event.get("open")) { }}
+            <a class="scroll-up pull-right" href="#about-nav">
+                <i class="icon-chevron-up chevron"></i>
+            </a>
 
-        <a class="scroll-up pull-right" href="#about-nav">
-            <i class="icon-chevron-up chevron"></i>
-        </a>
+            </div>
 
-        </div>
+         {{ } else { }}
+            <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
+         {{ } }}
 
-     {{ } else { }}
-        <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
-     {{ } }}
+     </div>
 
 </script>
 
