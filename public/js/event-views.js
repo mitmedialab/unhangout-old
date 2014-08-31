@@ -180,7 +180,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             }
         } else {
             this.ui.attend.find(".lock").hide();
-            this.ui.attend.find(".text").text("JOIN");
+            this.ui.attend.find(".text").text("Join a breakout room");
             this.ui.attend.removeAttr("disabled");
             this.ui.attend.removeClass("disabled");
         }

@@ -37,6 +37,7 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
+
     <h3>{{- title }}</h3>
     {{ if (organizer) { }}
         <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
@@ -59,7 +60,6 @@
      {{ } else { }}
         <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
      {{ } }}
-
 
 </script>
 

@@ -371,8 +371,8 @@ hr.noshade {
   display: inline-block;
   float: left;
 
-  height: 240px;
-  width: 235px;   
+  height: 200px;
+  width: 96%;   
 
   margin-left: -15px;
 
@@ -384,16 +384,16 @@ hr.noshade {
 
   .hangout-users, .hangout-offline {
     position: absolute;
-    top: 95px;
-    right: 10px;
-    padding-left: 14px;
+    top: 80px;
+    left: -20px;
+    width: 150%;
 
     .user, .empty {
       float: left;
       margin-right: 5px;
       margin-top: 8px;
-      width: 37px;
-      height: 37px;
+      width: 40px;
+      height: 40px;
 
       list-style: none;
     }
@@ -404,11 +404,11 @@ hr.noshade {
     }
 
     .user {
-      margin-top: 5px;
+      margin-top: 8px;
       margin-left: 0px;
 
       img {
-        width: 35px;
+        width: 40px;
       }
 
       &.admin {
@@ -465,16 +465,17 @@ hr.noshade {
     border-radius: 2px;
     background: $navbar;
     
-    top: 195px;
-    left: 15px; 
-    right: 15px;
+    top: 140px;
+    left: 20px;
+    right: 18px;
     bottom: 5px;
 
-    font-size: 1.2em;
-    line-height: 1.4em;
+    font-size: 1.4em;
+    font-weight: 300;
+    line-height: 1.2em;
     letter-spacing: 1px;
     
-    height: 35px;
+    height: 40px; 
 
     .lock {
       margin-right: 5px;
@@ -577,7 +578,7 @@ hr.noshade {
     position: absolute;
 
     right: 15px;
-    top: 195px;
+    top: 100px;
 
     height: 35px;
 
@@ -592,7 +593,16 @@ hr.noshade {
       width: 20px;
 
       &.delete {
-        right: 0px;
+        right: 3px;
+        top: 40px;
+        width: 40px;
+        height: 40px;
+
+        i {
+          font-size: 20px;
+          margin-top: 2px;
+        }
+
       }
     }
   }
@@ -607,12 +617,12 @@ hr.noshade {
   }
 
   .attendance {
-    position: absolute;
-    top: -1px;
-    left: 0px;
-    height: 32px;
-    width: 50%;
-    background-color: rgba(66, 94, 97, 0.5);
+    //position: absolute;
+    //top: -1px;
+    //left: 0px;
+    //height: 40px;
+    //width: 50%;
+    //background-color: rgba(66, 94, 97, 0.5);
   }
 }
 
@@ -1008,6 +1018,7 @@ hr.noshade {
 }
 
 #about-event {
+
   .about-footer {
     padding-top: 1em;
     clear: both;
