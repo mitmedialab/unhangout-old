@@ -914,10 +914,13 @@ hr.noshade {
 
 .jumbotron {
   color: $navbar;
-  height: 120px;
-  background-size: 1400px;
   margin-top: -20px;
+  background-color: white;
   font-family: "open sans",arial,sans-serif;
+
+  h2 {
+    padding-left: 100px;
+  }
 
   h1 {
     padding-top: 20px;
@@ -1398,26 +1401,65 @@ td form {
 
 /* ---------------------EVENT FORM -------------------------*/
 
-.event-form-container {
-  margin-top: 30px;
-  background: #FAFAFA;
-    border-radius: 10px;
-    border: solid #DfDFDf;
-    border-width: 1px;
+.create-unhangout-container {
+  margin-top: 20px;
 
-    .btn-primary {
-      background: $navbar;
-      width: 572px;
-    }
+  .event-form-container {
+      margin-top: 50px;
+      margin-bottom: 50px;
+      background: #FAFAFA;
+      padding: 20px;
+      border-radius: 10px;
+      border: solid #DfDFDf;
+      border-width: 1px;
 
-    .control-label, span {
-      color: #999;
-    }
+      .btn-primary {
+        background: $navbar;
+      }
 
-    .container {
-      width: 573px;
-      margin-left: -0px;
-    }
+      
+      .control-label, span {
+          color: #999;
+          font-weight: 400;
+          font-size: 1.1em;
+      }
+
+      .create-event { 
+         font-size: 1.2em;
+         font-weight: 400;
+         line-height: 0.2em;
+         letter-spacing: 0.1em;
+      } 
+
+      .add-icon {
+        width: 33px;
+        height: 33px;
+
+        position: absolute;
+        top: 0px;
+        right: 49px;
+        background-color: #eee;
+
+        .icon-remove {
+          margin-left: -2px;
+        }
+      }
+
+      .remove-icon {
+        width: 33px;
+        height: 33px;
+
+        position: absolute;
+        top: 0px;
+        right: 15px;
+
+        background-color: #eee;
+
+        .icon-th {
+          margin-left: -2px;
+        }
+      }
+  }
 }
 
 /* --------------------- IE OVERRIDES -----------------------*/
