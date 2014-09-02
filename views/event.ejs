@@ -11,6 +11,7 @@
         var CONNECTED_USERS = <%- JSON.stringify(event.get("connectedUsers").invoke("toClientJSON")) %>
         var RECENT_MESSAGES = <%- JSON.stringify(event.get("recentMessages")) %>;
     <% } %>
+
 </script>
 
 <div class="container event-page-container">
@@ -283,7 +284,7 @@
                         Start event
                     </a>
                 {{ } }}
-                <a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">
+                <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
                     <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
                 </a>
                 <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
@@ -313,6 +314,11 @@
 
     <script type="text/javascript">
         $('.dropdown-toggle').dropdown();
+
+        //Hide the youtube and webpage url form controls
+        $(".youtube-url").hide();
+        $(".webpage-url").hide();
+        
     </script>
 
 </script>
@@ -321,61 +327,110 @@
     <div>Your session is now live!</div>
     <a class="btn btn-success" target="_blank">Join Hangout!</a>
 </script>
+
 <script type="text/template" id="dialogs-template">
-    <div id="create-session-modal" class="modal hide fade">
-        <form>
+
+    <!-- Modal Session Dialog -->
+    <div id="create-session-modal" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="form-horizontal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>CREATE SESSION</h3>
+                <h4 class="modal-title">Create Session</h4>
             </div>
-            <div class="modal-body">
-                <div class="control-group">
-                    <label for="session_name">SESSION NAME</label>
-                    <input type="text" name="session_name" value="" id="session_name">
+
+          <div class="modal-body">
+            
+            <div class="form-group">
+                <label class="col-lg-3 control-label" for="session_name">Session Name</label>
+
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="session_name" value="" id="session_name">
                 </div>
-                <div class='control-group'>
-                    <label for='join_cap'>LIMIT JOINING TO</label>
-                    <span class='help-block join-cap-error hide'>
-                       Please enter a number between 2 and 10.
-                    </span>
-                    <input type='number' min='2' max='10' step='1'
-                           value='10' style='width: 40px' 
-                           name='join_cap' id='join_cap' />
-                     <span class='help-block'>Minimum 2, maximum 10</span>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg-3 control-label" for='join_cap'>Participant Limit</label>
+
+                <span class='help-block join-cap-error hide'>
+                   Please enter a number between 2 and 10.
+                </span>
+
+                <div class="col-lg-4">
+                    <input class="form-control" type='number' min='2' max='10' step='1'
+                       value='10' 
+                       name='join_cap' id='join_cap' />
+                    <span class='help-inline'>Minimum 2, maximum 10</span>
                 </div>
-                <div class="control-group">
-                    <div class='pull-left'>
-                        <label>SESSION TYPE</label>
-                        <label><input type="radio" name="session_type" value="simple" checked='checked'/> Simple</label>
-                        <label><input type="radio" name="session_type" value="video" /> Youtube Video</label>
-                        <label><input type="radio" name="session_type" value="webpage" /> Webpage</label>
-                    </div>
-                    <div class='pull-left' style='margin-left: 1em;'>
-                        <div class='youtube-url hide control-group' style='margin-top: 1.5em;'>
-                            <p class="yt-error hide">
-                                Unrecognized youtube URL.  Please use the URL for a single video.
-                            </p>
-                            <label for="session_youtube_id">Youtube video URL</label>
-                            <input type="text" name="youtube_id" value=""
+            </div>
+
+             <div class="form-group">
+                     
+                <label class="col-lg-3 control-label">
+                    Session Type
+                </label>
+
+                <div class="col-lg-9">
+                    <label class="radio-inline">
+                      <input type="radio" name="session_type" value="simple" checked="checked"/> Simple 
+                    </label>
+
+                    <label class="radio-inline">
+                      <input type="radio" name="session_type" value="video" /> Youtube Video
+                    </label>
+
+                    <label class="radio-inline">
+                      <input type="radio" name="session_type" value="webpage"  /> Webpage
+                    </label>
+                    
+                    <div class='form-group youtube-url'>
+                        <p class="yt-error hide">
+                            Unrecognized youtube URL.  Please use the URL for a single video.
+                        </p>
+
+                        <label class="col-lg-4 control-label" for="session_youtube_id">Youtube URL</label>
+                        
+                        <div class="col-lg-8">
+
+                            <input class="form-control" type="text" name="youtube_id" value=""
                                    id="session_youtube_id"
-                                   placeholder='https://youtube.com...'>
+                                   placeholder='https://youtube.com'>
+
                             <span class='help-block'>Paste the URL or embed code for a youtube video.</span>
+
                         </div>
-                        <div class='webpage-url control-group hide' style='margin-top: 3em;'>
-                            <label for='session_webpage'>Webpage URL</label>
-                            <input type='text' placeholder='https://example.com...' id='session_webpage'/>
+                    </div>
+
+                    <div class='form-group webpage-url'>
+                        <label class="col-lg-4 control-label" for='session_webpage'>Webpage URL</label>
+
+                        <div class="col-lg-8">
+
+                            <input class="form-control" type='text' placeholder='https://example.com' id='session_webpage'/>
+
                             <div class='url-error hide' style='display: none;'>
                                 Sorry, but only secure pages (those starting with "https")
                                 can be embedded in hangouts.
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <input type='submit' class="btn btn-primary" id="create-session" value="Create Session" />
-            </div>
-        </form>
+          </div> 
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            <button type="button" class="btn btn-primary" data-dismiss="modal" id="create-session" value="Create Session">Create Session</button>
+          </div>
+
+        </div>
+      </div>
+      </form>
+
     </div>
+
     <div id="message-sessions-modal" class="modal hide fade">
         <div class="modal-header"><h3>Send Message to All Hangout Sessions</h3></div>
         <div class="modal-body">
@@ -427,7 +482,10 @@
             <a href="#" class="btn btn-primary" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
         </div>
     </div>
+
+    
 </script>
+
 
 <% include _video-templates.ejs %>
 

@@ -323,6 +323,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
     },
     changeSessionType: function() {
         var val = this.$("[name='session_type']:checked").val();
+
         switch (val) {
             case "simple":
                 this.$(".youtube-url, .webpage-url").hide();
