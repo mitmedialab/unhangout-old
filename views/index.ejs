@@ -1,92 +1,100 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-<div class="container event-container">
+<div class="container home-page-container">
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="videowrapper well">
+                <iframe src="http://player.vimeo.com/video/90475288?title=0&amp;byline=0&amp;portrait=0" height="300" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe> 
+            </div>
+            <!--<hr class="line-break">-->
+        </div>
+
+        <div class="col-lg-5">
+            <h3>About</h3>
+
+            <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
+
+            <div class="button-container">
+
+                <h3>Would you be interested in running your own unhangout?</h3>
+
+                <div class="create-event-button">
+                    <% if (!user) { %>
+                        <button id="login-first-button" class="btn btn-primary btn-lg" type="button">
+                            <i class="fa fa-edit fa-lg"></i>
+                            Create an Unhangout
+                        </button>
+                    <% } else { %>
+
+                        <% if(user && user.hasPerm("createEvents")) { %>
+
+                            <a href="/admin/event/new">
+                                <button id="create-event-button" class="btn btn-primary btn-lg" type="button">
+                                    <i class="fa fa-edit fa-lg"></i>
+                                    Create an Unhangout
+                                </button>
+                            </a>
+
+                        <% } else { %>
+                            <button id="create-event-button" class="btn btn-primary btn-lg" type="button">
+                                <i class="fa fa-edit fa-lg"></i>
+                                    Create an Unhangout
+                            </button>
+
+                    <% } } %>
+                </div>
+
+            </div>
+
+            <!--<hr class="line-break">-->
+
+        </div>  
+    </div>
+
     <div class="row">
 
-    <h3> Past Events </h3>
+        <div class="col-lg-7">
+            <h3>Upcoming Events</h3>
 
-    <div class="col-md-3 event-box">
-        <a href="http://unhangout.media.mit.edu/event/medialab" target="_blank">
-            <img src="/public/img/events/mlvisit.jpg" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Media Lab Virtual Visit </h4>
-            <p>Aug 28, 2014 11:00am EDT </p>
-        </a>
-    </div>
+            <div class="mini-event-box">
+                <div class="col-lg-5">
+                    <img src="/public/img/events/learning-aloud.png" class="img-responsive">
+                </div>
 
-    <div class="col-md-3 event-box">
-        <a href="http://unhangout.media.mit.edu/event/idc" target="_blank">
-            <img src="/public/img/events/idc.jpg" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>IDC 2014 Conference - Online Conference </h4>
-            <p>Jun 11, 2014 9:00am EDT </p>
-        </a>
+                <div class="col-lg-7">
+                    <a href=" https://unhangout.media.mit.edu/event/learning-aloud" target="_blank"><h4>Learning Aloud </h4> </a>
+                    <p>Sept 30, 2014 4:30pm EDT </p>
+
+                    <p class="lead">Join the second virtual visit to the MIT Media Lab, talk with current students and learn about our research. After a short welcome, we will break out into small group conversations where participants can ask questions and share ideas. Each conversation will be hosted by current MIT Media Lab students, who will talk about their research, the philosophy of their groups, and what goes on at the Lab in general. </p>
+                </div>
+
+            </div>
+
+            <div class="mini-event-box">
+                <div class="col-lg-5">
+                    <img src="/public/img/events/learning-aloud.png" class="img-responsive">
+                </div>
+
+                <div class="col-lg-7">
+                    <a href=" https://unhangout.media.mit.edu/event/learning-aloud" target="_blank"><h4>Learning Aloud </h4> </a>
+                    <p>Sept 30, 2014 4:30pm EDT </p>
+
+                    <p class="lead">Join the second virtual visit to the MIT Media Lab, talk with current students and learn about our research. After a short welcome, we will break out into small group conversations where participants can ask questions and share ideas. Each conversation will be hosted by current MIT Media Lab students, who will talk about their research, the philosophy of their groups, and what goes on at the Lab in general. </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-lg-5">
+            <a class="twitter-timeline" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         
+        </div>
+
+         
+
     </div>
-
-    <div class="col-md-3 event-box">
-        <a href="http://unhangout.media.mit.edu/event/lcl" target="_blank">
-            <img src="/public/img/events/lcl.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Learning Creative Learning </h4>
-            <p>March 18 - May 6, 2014 1:00pm EDT </p>
-        </a>
-    </div>
-
-    <div class="col-md-3 event-box">
-        <a href="https://unhangout.media.mit.edu/event/equity-and-learning-21st-century-classroom-unhangout" target="_blank">
-            <img src="/public/img/events/equity.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Equity and Learning in the 21st Century Classroom </h4>
-            <p>April 29, 2014 4:00pm EDT </p>
-        </a>
-    </div>
-
-    <div class="col-md-3 event-box">
-        <a href="https://unhangout.media.mit.edu/event/ideasinaction" target="_blank">
-            <img src="/public/img/events/ideasinaction.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Ideas in Action Virtual Conversations </h4>
-            <p>Feb 12, 2014 11:00am EDT </p>
-        </a>
-    </div>  
-
-    <div class="col-md-3 event-box">
-        <a href=" http://edcamponline.weebly.com/" target="_blank">
-            <img src="/public/img/events/edcamp.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Edcamp Online </h4>
-            <p>Oct 26, 2014 12:30pm EDT </p>
-        </a>
-    </div>  
-
-    <div class="col-md-3 event-box">
-        <a href=" https://unhangout.media.mit.edu/event/dataexplorer" target="_blank">
-            <img src="/public/img/events/dataexplorer.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Data Explorer Mission</h4>
-            <p>Oct 18, 2014 10:00am EDT </p>
-        </a>
-    </div> 
-
-    <div class="col-md-3 event-box">
-        <a href=" https://unhangout.media.mit.edu/event/learning-aloud" target="_blank">
-            <img src="/public/img/events/learning-aloud.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Learning Aloud </h4>
-            <p>Sept 30, 2014 4:30pm EDT </p>
-        </a>
-    </div> 
-
-    <div class="col-md-3 event-box">
-        <a href=" https://unhangout.media.mit.edu/event/1" target="_blank">
-            <img src="/public/img/events/nwp.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Writers at Work </h4>
-            <p>July 29, 2014 1:00pm EDT </p>
-        </a>
-    </div>  
 
 </div>
 
