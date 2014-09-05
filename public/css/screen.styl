@@ -1006,46 +1006,55 @@ hr.noshade {
 
 /*========================= EVENT PAGE STYLES ================================*/
 
+
 .event-container {
-  
+
+  .event-box {
+    height: 310px;
+    width: 360px;
+    margin-top: 20px;
+    margin-right: 20px;
+    box-shadow: 2px 2px 3px 2px #ddd;
+    padding: 5px;
+
+    h4 {
+        color: $navbar;
+        padding-left: 5px;
+    }
+
+    p {
+      padding-left: 5px;
+    }
+
+    a {
+        color: #333;
+        text-decoration: none;
+    }
+
+    img {
+
+    }
+  }
+
+  .event-box:hover {
+      -moz-box-shadow: 2px 2px 4px 4px #ddd;
+      -webkit-box-shadow: 2px 2px 4px 4px #ddd; 
+      box-shadow: 2px 2px 4px 4px #ddd; 
+  }
+
   h3 {
     margin-top: 20px;
-    margin-left: 10px;
     font-weight: 400;
     font-size: 28px;
     color: #444;
   }
 }
 
-.event-box {
-  height: 310px;
-  width: 350px;
-  margin: 15px;
-  box-shadow: 2px 2px 3px 2px #ddd;
-  padding: 10px;
-
- 
-  h4 {
-    color: $navbar;
-  }
-
-  a {
-    color: #333;
-    text-decoration: none;
-  }
-}
-
-.event-box:hover {
-  -moz-box-shadow: 2px 2px 4px 4px #ddd;
-  -webkit-box-shadow: 2px 2px 4px 4px #ddd; 
-  box-shadow: 2px 2px 4px 4px #ddd; 
-}
-
 .line-break {
   border: 2px solid #2e7daa; 
   margin-top: 0px; 
-  margin-left: -10px; 
-  margin-right: -10px;
+  margin-left: -5px; 
+  margin-right: -5px;
 }
 
 .profile-thumbnail {

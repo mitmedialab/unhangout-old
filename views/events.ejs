@@ -2,91 +2,13 @@
 <% include _navbar.ejs %>
 
 <div class="container event-container">
-    <div class="row">
 
-    <h3> Past Events </h3>
-
-    <div class="col-md-3 event-box">
-        <a href="http://unhangout.media.mit.edu/event/medialab" target="_blank">
-            <img src="/public/img/events/mlvisit.jpg" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Media Lab Virtual Visit </h4>
-            <p>Aug 28, 2014 11:00am EDT </p>
-        </a>
-    </div>
-
-    <div class="col-md-3 event-box">
-        <a href="http://unhangout.media.mit.edu/event/idc" target="_blank">
-            <img src="/public/img/events/idc.jpg" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>IDC 2014 Conference - Online Conference </h4>
-            <p>Jun 11, 2014 9:00am EDT </p>
-        </a>
-        
-    </div>
-
-    <div class="col-md-3 event-box">
-        <a href="http://unhangout.media.mit.edu/event/lcl" target="_blank">
-            <img src="/public/img/events/lcl.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Learning Creative Learning </h4>
-            <p>March 18 - May 6, 2014 1:00pm EDT </p>
-        </a>
-    </div>
-
-    <div class="col-md-3 event-box">
-        <a href="https://unhangout.media.mit.edu/event/equity-and-learning-21st-century-classroom-unhangout" target="_blank">
-            <img src="/public/img/events/equity.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Equity and Learning in the 21st Century Classroom </h4>
-            <p>April 29, 2014 4:00pm EDT </p>
-        </a>
-    </div>
-
-    <div class="col-md-3 event-box">
-        <a href="https://unhangout.media.mit.edu/event/ideasinaction" target="_blank">
-            <img src="/public/img/events/ideasinaction.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Ideas in Action Virtual Conversations </h4>
-            <p>Feb 12, 2014 11:00am EDT </p>
-        </a>
-    </div>  
-
-    <div class="col-md-3 event-box">
-        <a href=" http://edcamponline.weebly.com/" target="_blank">
-            <img src="/public/img/events/edcamp.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Edcamp Online </h4>
-            <p>Oct 26, 2014 12:30pm EDT </p>
-        </a>
-    </div>  
-
-    <div class="col-md-3 event-box">
-        <a href=" https://unhangout.media.mit.edu/event/dataexplorer" target="_blank">
-            <img src="/public/img/events/dataexplorer.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Data Explorer Mission</h4>
-            <p>Oct 18, 2014 10:00am EDT </p>
-        </a>
-    </div> 
-
-    <div class="col-md-3 event-box">
-        <a href=" https://unhangout.media.mit.edu/event/learning-aloud" target="_blank">
-            <img src="/public/img/events/learning-aloud.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Learning Aloud </h4>
-            <p>Sept 30, 2014 4:30pm EDT </p>
-        </a>
-    </div> 
-
-    <div class="col-md-3 event-box">
-        <a href=" https://unhangout.media.mit.edu/event/1" target="_blank">
-            <img src="/public/img/events/nwp.png" class="img-responsive" style="width:350px; height: 200px;">
-            <hr class="line-break">
-            <h4>Writers at Work </h4>
-            <p>July 29, 2014 1:00pm EDT </p>
-        </a>
-    </div>  
-
+    <div id="upcomingEvents"></div>
+    <div id="pastEvents"></div>
+    
 </div>
 
+<!-- Spreadsheet Importer JS Files -->
+<script src="/public/js/spreadsheetimporter/miso.ds.deps.min.0.4.0.js"></script>
+<script src="/public/js/spreadsheetimporter/dataset-template.js"></script>
+<script src="/public/js/spreadsheetimporter/dataset.js"></script>
