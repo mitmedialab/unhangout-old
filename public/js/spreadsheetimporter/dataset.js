@@ -21,19 +21,19 @@ $(function(){
 
   var $upcomingEvents = $("#upcomingEvents");
   var $pastEvents = $("#pastEvents");
+  var $homePageUpcomingEvents = $("#homePageUpcomingEvents");
 
   cakes.fetch().done(function() {
-
+    
     cakes.each(function(dataset) {
 
-      if(dataset['DateAndTime'] > moment()) {
+      if(moment(dataset['DateAndTime']) > moment()) {
          numUpcomingEvents++;
 
          $upcomingEvents.append(JST["templates/dataset.html"]({
            dataset : dataset,
            controls : workingColumns
          }));
-
       } else {
         numPastEvents++;
 
@@ -43,7 +43,6 @@ $(function(){
          }));
       }
     });
+
   });
-
-
 }());

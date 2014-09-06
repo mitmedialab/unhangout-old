@@ -11,17 +11,18 @@ this["JST"]["templates/dataset.html"] = function (obj) {
     }
 
     with(obj) {
+
         if(numUpcomingEvents == 1) {
-             __p += '<h3>Upcoming Events</h3>\n\n    ';
+            $(".upcomingEventsTitle").show();
         } 
 
         if(numPastEvents == 1) {
-            __p += '<h3>Past Events</h3>\n\n    ';
-        }
-        
+            $(".pastEventsTitle").show();
+        }   
+
         __p += '<div class="event-box col-md-3">\n\n    ';
 
-        if (dataset['Event Link']) { 
+        if (dataset['Event Link']) {;
             __p += '\n      <a href="' + 
             ((__t = ( dataset['Event Link'] )) == null ? '' : __t) + '" target="_blank">'
         };
@@ -48,7 +49,6 @@ this["JST"]["templates/dataset.html"] = function (obj) {
             ((__t = ( dataset['DateAndTime'] )) == null ? '' : __t) + 
             '</p></a></div>\n    ';
         }
-
     }
 
     return __p
