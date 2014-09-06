@@ -61,8 +61,33 @@ a.dropdown-toggle {
 
 .navbar-default .navbar-brand {
   color: white;
+  font-size: 20px;
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+.navbar-default .dropdown {
+  margin-top: -5px; 
 }
   
+.navbar-default .container {
+  height: 80px;
+} 
+
+.navbar-default .navbar-header {
+  margin-top: 15px;
+} 
+
+.navbar-default .container .navbar-collapse {
+  margin-top: 15px;
+} 
+
+.navbar-default .navbar-nav {
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-weight: 300;
+}
+
 .navbar-default .navbar-nav > li {
   color: white;
 }
@@ -82,6 +107,12 @@ a.dropdown-toggle {
 
 .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
   background-color: $navbar;
+}
+
+#user-menu-label {
+  font-size: 18px;
+  letter-spacing: 1px;
+  font-weight: 300;  
 }
 
 .container .event-navbar-header {
@@ -944,7 +975,7 @@ hr.noshade {
 /*========================= HOME PAGE STYLES ================================*/
 
 .home-page-container {
-  padding-top: 20px;
+  padding-top: 60px;
   padding-bottom: 20px;
   font-family: Helvetica Neue",Helvetica,Arial,sans-serif"
 
@@ -1062,7 +1093,7 @@ hr.noshade {
     padding-bottom: 100px;
 
     .pastEventsTitle {
-      margin-top: 30px;
+      margin-top: 50px;
     }
 
   .event-box {
@@ -1254,6 +1285,8 @@ hr.noshade {
 }
 
 .about-container {
+  padding-top: 30px;
+
   h1, h3 {
     color: #444;
   }
@@ -1265,11 +1298,14 @@ hr.noshade {
 
   h3 {
     font-weight: 400;
-    font-size: 20px;
+    font-size: 28px;
+    color: #444;
   }
 
   p, li {
-    color: #333;
+    font-size: 1.2em;
+    line-height: 1.6em;
+
     font-family: "open sans",arial,sans-serif;
 
     a {
