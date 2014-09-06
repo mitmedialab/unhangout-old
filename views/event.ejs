@@ -181,8 +181,7 @@
 
 <script type="text/template" id="video-embed-template">
     <div class='video-player row'></div>
-    <!--<div class='video-placeholder row'>Video</div>-->
-    <!--<div class='video-controls row'></div>-->
+    <div class='video-controls row'></div>
 </script>
 
 <script type='text/template' id="video-embed-controls-template">
@@ -197,32 +196,30 @@
                     <i class='fa fa-play'></i> Play for all
                 {{ } }}
                 <span class='button-time-indicator'></span>
-            </button>
-            <button class='btn btn-small pull-right remove-video'>
-                Remove <i class='fa fa-times'></i>
-            </button>
+            </button> 
         </div>
     {{ } }}
+
+
     <div class='inline-video-controls'>
-        <label>Set youtube video:</label>
-        <div class='input-prepend input-append'>
-            <span class='add-on'><i class='fa fa-youtube-play'></i></span>
-            <input type="text" name="youtube_id" value=""
-                   placeholder="https://youtube.com..." />
-            <div class='btn-group'>
-                <button class='btn btn-default set-video'
-                        type="button">Set video</button>
-                {{ if (previousVideoEmbeds.length > 0) { }}
-                    <button class='btn btn-default dropdown-toggle'
-                            data-toggle='dropdown'>
+
+        <div class="form-group col-lg-9 input-video">
+            <input class="form-control" type="text" name="youtube_id" value="" placeholder="https://youtube.com" />
+
+            {{ if (previousVideoEmbeds.length > 0) { }}
+               
+                    <button class='btn btn-default dropdown-toggle' data-toggle="dropdown"
+                            >
                         <i class='fa fa-list'></i>
                         <i class='fa fa-caret-down'></i>
                     </button>
-                    <ul class='dropdown-menu pull-right previous-videos'>
-                        <li><a class='restore-previous-video header'>Previous videos</a></li>
+
+
+                    <ul class='dropdown-menu role="menu" pull-right previous-videos'>
+                        <li role="presentation"><a class='restore-previous-video header'>Previous videos</a></li>
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
-                            <li>
-                                <a tabindex='-1' href='#' class='restore-previous-video'
+                            <li role="presentation">
+                                <a role="menuitem" href='#' class='restore-previous-video'
                                    data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
                             </li>
                         {{ }); }}
@@ -230,27 +227,50 @@
                             <i class='fa fa-trash-o'></i> Clear list
                         </a></li>
                     </ul>
-                {{ } }}
+               
+            {{ } }}
+        </div>
+
+        <div class="form-group col-lg-3">
+            <button class='btn btn-default set-video'
+            type="button">Set video</button>
+        </div>
+
+        <p class="alert text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
+
+        <div class="form-group">
+            <div class='col-lg-offset-5 col-lg-7'>
+                <label class="control-label">OR</label>
             </div>
         </div>
-        <p class="alert text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
-    </div>
 
-    <div class='button-group'>
-        {{ if (hoaParticipationLink) { }}
-            <div class='btn-group'>
+        <div class="form-group">
+            {{ if (hoaParticipationLink) { }}
+               
                 <a class='btn btn-default join-hoa' target='_blank'
                    href='{{= hoaParticipationLink }}'>
                     <i class='fa fa-users'></i> Join Hangout-on-Air
                 </a>
-                <button class='btn btn-warning remove-hoa' style='width: 15px; padding-left: 0px; padding-right: 0px;'><i class='fa fa-trash-o'></i></button>
-        {{ } else { }}
-            <a class='btn btn-default create-hoa' target='_blank'
-               href='/event/{{- id }}/create-hoa/'>
-                <i class='fa fa-users'></i> Create Hangout-on-Air
-            </a>
-        {{ } }}
+                <button class='btn btn-warning remove-hoa form-control' style='width: 15px; padding-left: 0px; padding-right: 0px;'><i class='fa fa-trash-o'></i></button>
+                
+            {{ } else { }}
+                
+                <a class='btn btn-default create-hoa' target='_blank'
+                   href='/event/{{- id }}/create-hoa/'>
+                    <i class='fa fa-users'></i> Create Hangout-on-Air
+                </a>
+               
+            {{ } }}
+        </div>
+
+        <div class="form-group">
+            <button class='btn btn-small remove-video'>
+                Remove Video Embed</i>
+            </button>
+        </div>
+
     </div>
+    
 </script>
 
 <script type='text/template' id="previous-video-details-template">

@@ -323,7 +323,7 @@ hr.noshade {
 }
 
 #session-list {
-  padding-top: 10px;
+  padding-top: 5px;
 
   width: 110%;
 
@@ -373,10 +373,10 @@ hr.noshade {
   width: 96%;   
 
   border-radius: 5px;
-  margin-top: 10px;
+  margin-top: 5px;
   margin-right: 30px;
   margin-left: -15px;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   
   overflow: hidden;
 
@@ -740,6 +740,19 @@ hr.noshade {
 
 #video-embed {
 
+  .current-video-controls {
+    /* Will change this position values later */
+    margin-top: -40px;
+    margin-left: -15px;
+
+    .btn {
+      width: 30%;
+      font-size: 1em;
+      letter-spacing: 0.06em;
+      font-weight: 300;
+    }
+  }
+
   .video-player {
     background-color: #eee;
     height: 45% vh;
@@ -751,8 +764,8 @@ hr.noshade {
   }
 
   .video-placeholder, & > .video-controls {
-    box-sizing: border-box;
-    padding: 1.5em;
+    padding-left: 1em;
+    padding-right: 1em;
   }
 
   .video-placeholder {
@@ -767,12 +780,54 @@ hr.noshade {
   }
 
   & > .video-controls {
-    margin-top: 0px;
-    padding-top: 0.2em;
-    background-color: #fca;
-    border: 3px dashed #f90;
-    border-top: none;
-    border-radius: 0px 0px 5px 5px;
+
+    background-color: #f0ad4e;   
+    width: 104%;   
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-left: -15px;
+  }
+
+  .input-video {
+    margin-left: -15px;
+  }
+
+  .create-hoa {
+    margin-top: 5px;
+    background-color: white;
+    width: 100%;
+    font-size: 1.2em;
+    letter-spacing: 0.06em;
+    line-height: 1.5em;
+    font-weight: 300;
+  }
+
+  .remove-video {
+    background-color: #eee;
+    width: 100%;
+    font-size: 1.2em;
+    letter-spacing: 0.06em;
+    line-height: 1.5em;
+    font-weight: 300;
+  }
+
+  .set-video {
+    width: 135%;
+  }
+
+  label {
+    color: white;
+    font-size: 1.6em;
+    font-weight: 400;
+  }
+
+  .dropdown-toggle {
+    width: 50px;
+
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background-color: #eee;
   }
 
   ul.previous-videos li {
