@@ -254,7 +254,7 @@ var EventAdminAdder = Backbone.View.extend({
         this.user = options.user;
     },
     render: function() {
-        this.$el.addClass("modal hide fade");
+        this.$el.addClass("modal fade");
         this.$el.html(this.template({
             user: this.user,
             events: events
