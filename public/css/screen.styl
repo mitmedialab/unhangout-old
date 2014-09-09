@@ -1017,6 +1017,7 @@ hr.noshade {
   padding-bottom: 20px;
   font-family: Helvetica,Arial,sans-serif;
 
+
   .videowrapper {
       position: relative;
       padding-bottom: 56.25%;
@@ -1045,6 +1046,43 @@ hr.noshade {
     font-size: 1.2em;
     line-height: 1.6em;
     margin-top: 20px;
+  }
+
+  .mini-event-box {
+    min-height: 200px;
+
+    img {
+      height: 165px;  
+      margin-left: -10px;
+      box-shadow: 1px 2px 2px 1px #ddd;
+    }
+
+    h4 {
+      color: $navbar;
+      margin-left: -10px;
+      margin-top: 0px;
+      font-size: 1.8em;
+      font-weight: 400;
+    }
+
+    .lead {
+      /*overflow : hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;   */
+    }
+
+    p {
+      margin-left: -10px;
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+
+    a {
+      color: #333;
+      text-decoration: none;
+    }
   }
 
   .line-break {
@@ -1077,7 +1115,6 @@ hr.noshade {
       color: white;
       padding: 20px;
       font-weight: 300;
-      letter-spacing: 0.1em;
     }
 
     .create-event-button {
@@ -1086,10 +1123,9 @@ hr.noshade {
       .btn-primary {
         background-color: white;
         color: $navbar;
-        width: 100%;
+        //width: 100%;
         height: 64px;
-        font-size: 1.8em;
-        letter-spacing: 0.06em;
+        font-size: 1.5em;
         font-weight: 300;
       }
     }
