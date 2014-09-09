@@ -26,7 +26,7 @@ body {
 }
 
 .long-titles {
-    max-width: 40vh;  
+    max-width: 50vh;
 }
 
 a.dropdown-toggle {
@@ -67,52 +67,53 @@ a.dropdown-toggle {
 
 /* ===================== Navbar Styles =================== */
 
-.navbar-default {
+/* Home Navbar Styles */
+.nav-index {
   background-color: #2E7DAA;
 }
 
-.navbar-default .navbar-brand {
+.nav-index .navbar-brand {
   color: white;
   font-size: 20px;
   letter-spacing: 1px;
   font-weight: 400;
 }
 
-.navbar-default .dropdown {
-  margin-top: -5px; 
+.nav-index .dropdown {
+  margin-top: -10px; 
 }
   
-.navbar-default .container {
+.nav-index .container {
   height: 80px;
 } 
 
-.navbar-default .navbar-header {
+.nav-index .navbar-header {
   margin-top: 15px;
 } 
 
-.navbar-default .container .navbar-collapse {
+.nav-index .container .navbar-collapse {
   margin-top: 15px;
 } 
 
-.navbar-default .navbar-nav {
+.nav-index .navbar-nav {
   font-size: 18px;
   letter-spacing: 1px;
   font-weight: 300;
 }
 
-.navbar-default .navbar-nav > li {
+.nav-index .navbar-nav > li {
   color: white;
 }
 
-.navbar-default .navbar-nav > li > a {
+.nav-index .navbar-nav > li > a {
   color: $navbar-li;
 }
 
-.navbar-default .navbar-nav > li > a:hover {
+.nav-index .navbar-nav > li > a:hover {
   color: white;
 }
 
-.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
+.nav-index .navbar-nav>.active>a, .nav-index .navbar-nav>.active>a:hover, .nav-index .navbar-nav>.active>a:focus {
   background-color: $navbar;
   color: white;
 } 
@@ -127,13 +128,66 @@ a.dropdown-toggle {
   font-weight: 300;  
 }
 
-.container .event-navbar-header {
-  margin-left: -25px;
- 
+/* Event Navbar Styles */ 
+.event-navbar {
+  background-color: #2E7DAA;
 }
 
-.event-navbar .container .navbar-brand {
-  margin-left: -15px;
+.event-navbar .navbar-brand {
+  color: white;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+.container .event-navbar-header {
+  margin-left: -25px; 
+}
+
+.event-navbar .container {
+  height: 40px;
+}
+
+.event-navbar #user-menu-label {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.event-navbar .admin-button {
+  font-size: 14px;
+}
+
+.event-navbar .navbar-nav {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.event-navbar .navbar-nav > li {
+  color: white;
+}
+
+.event-navbar .navbar-nav > li > a {
+  color: $navbar-li;
+}
+
+.event-navbar .navbar-nav > li > a:hover {
+  color: white;
+}
+
+.event-navbar .navbar-nav>.active>a, .event-navbar .navbar-nav>.active>a:hover, .event-navbar .navbar-nav>.active>a:focus {
+  background-color: $navbar;
+  color: white;
+} 
+
+.event-navbar .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
+  background-color: $navbar;
+}
+
+.event-navbar .username {
+  margin-top: 5px;
+}
+
+.event-navbar .admin-button {
+  margin-top: 15px;
 }
 
   
@@ -184,12 +238,12 @@ hr.noshade {
 }
 
 .event-page-container {
-  margin-top: 40px;
+  margin-top: 10px;
 }
 
 #top {
   position: absolute;
-  margin-top: 50px;
+  margin-top: 20px;
   background-color: white;
   box-shadow: 3px 3px 3px #aaa;
   border: 1px solid #aaa;
@@ -281,7 +335,6 @@ hr.noshade {
   display: block;
   font-size: 18px;
   font-weight: 300;
-  letter-spacing: 1px;
   color: $navbar-li;
   margin-top: 17px;
   margin-left: 20px;
@@ -962,7 +1015,7 @@ hr.noshade {
 .home-page-container {
   padding-top: 60px;
   padding-bottom: 20px;
-  font-family: Helvetica Neue",Helvetica,Arial,sans-serif"
+  font-family: Helvetica,Arial,sans-serif;
 
   .videowrapper {
       position: relative;
@@ -1190,7 +1243,7 @@ hr.noshade {
 /*-------------------------- STATIC EVENT PAGE ------------------------*/
 
 .event-static {
-  margin-top: 20px;
+  margin-top: -10px;
   padding: 1em;
   box-shadow: 0px 0px 5px #333;
 
