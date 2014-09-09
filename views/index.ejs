@@ -21,10 +21,11 @@
 
                 <div class="create-event-button">
                     <% if (!user) { %>
-                        <button id="login-first-button" class="btn btn-primary btn-lg" type="button">
+                            <button id="login-first-button" class="btn btn-primary btn-lg" type="button">
                             <i class="fa fa-edit fa-lg"></i>
                             Create an Unhangout
-                        </button>
+                            </button>
+
                     <% } else { %>
 
                         <% if(user && user.hasPerm("createEvents")) { %>
@@ -66,48 +67,134 @@
 
             </div>
 
-            <!--<div class="mini-event-box">
-                <div class="col-lg-5">
-                    <img src="/public/img/events/learning-aloud.png" class="img-responsive">
-                </div>
-
-                <div class="col-lg-7">
-                    <a href=" https://unhangout.media.mit.edu/event/learning-aloud" target="_blank"><h4>Learning Aloud </h4> </a>
-                    <p>Sept 30, 2014 4:30pm EDT </p>
-
-                    <p class="lead">Join the second virtual visit to the MIT Media Lab, talk with current students and learn about our research. After a short welcome, we will break out into small group conversations where participants can ask questions and share ideas. Each conversation will be hosted by current MIT Media Lab students, who will talk about their research, the philosophy of their groups, and what goes on at the Lab in general. </p>
-                </div>
-
-            </div>
-
-            <div class="mini-event-box">
-                <div class="col-lg-5">
-                    <img src="/public/img/events/learning-aloud.png" class="img-responsive">
-                </div>
-
-                <div class="col-lg-7">
-                    <a href=" https://unhangout.media.mit.edu/event/learning-aloud" target="_blank"><h4>Learning Aloud </h4> </a>
-                    <p>Sept 30, 2014 4:30pm EDT </p>
-
-                    <p class="lead">Join the second virtual visit to the MIT Media Lab, talk with current students and learn about our research. After a short welcome, we will break out into small group conversations where participants can ask questions and share ideas. Each conversation will be hosted by current MIT Media Lab students, who will talk about their research, the philosophy of their groups, and what goes on at the Lab in general. </p>
-                </div>
-            </div>-->
-
         </div>
 
         <div class="col-lg-5">
             <a class="twitter-timeline" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         
+        </div>   
+    </div>
+</div>
+
+<!-- MODAL DIALOGS -->
+
+<!-- subscribing to an event (not currently used) -->
+
+<div class="modal fade subscription-modal" role="dialog" aria-hidden="true" id="subscription-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Subscribed! </h4>
+            </div>
+
+            <div class="modal-body">
+                <p>You have been subscribed to this event.
+                We will send you an email reminder 24 hours
+                before the event and 5 minutes before it
+                starts.</p>           
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss=
+                "modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- prompt to log in first before creating event -->
+
+<div class="modal fade event-mini-form" role="dialog" aria-hidden="true" id="login-first-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Please log in! </h4>
+            </div>
+
+            <div class="modal-body">
+                <p>You need to be logged in to create an event or join one. It’s easy. You can use your Google account and it only takes 0.83 seconds.</p>        
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss=
+                "modal">Close</button>
+                <a href="/auth/google/" class="btn btn-primary">Login to create an Unhangout</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- form for non-admins wishing to create an event -->
+<div id="event-mini-form-modal" class="modal fade event-mini-form">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+          <div class="modal-header">
+              <h4 class="modal-title">Tell us about your event!</h4>
+          </div>
+
+          <div class="modal-body">
+
+              <form method="POST" id="contact-form" class="form-horizontal">
+
+                  <p>Currently only admin users can create new Unhangouts. We are a teeny tiny team, but if you let us know what you have in mind, we’ll see if we can help you make it happen.<br/><br/></p>
+
+                  <div class="form-group">
+                    <label class="control-label col-lg-3" for="title">Event Title</label>
+
+                    <div class="col-lg-9 event-title">
+                      <input type="text" class="form-control" name="title" id="title">
+                    </div>
+
+                  </div>
+
+                  <div class="form-group">
+                        <label class="control-label col-lg-3" for="description">Event Description</label>
+
+                        <div class="col-lg-9 event-description">
+                            <textarea class="form-control" name="description" id="description" rows="4"></textarea>
+                        </div>
+                   </div>
+
+                  <div class="modal-footer">
+                      <button class="btn btn-default" data-dismiss=
+                        "modal">Close</button>
+                      <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
+                  </div>
+
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- thank you for submitted non-admin form -->
+<div class="modal fade event-mini-form" role="dialog" aria-hidden="true" id="session-submission-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Thank you!!!</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>That’s all we need right now. We’ll be in touch very soon. </p>    
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+
         </div>
 
-         
-
     </div>
-
 </div>
 
 <% include _sponsorship.ejs %>
+<%- requireScripts("/public/js/index.js") %>
+<% include _analytics.ejs %>
 
 <!-- Spreadsheet Importer JS Files -->
 <script src="/public/js/spreadsheetimporter/miso.ds.deps.min.0.4.0.js"></script>
