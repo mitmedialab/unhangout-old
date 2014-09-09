@@ -30,7 +30,9 @@
                 <div id="main-left"></div> 
             </div>
 
-            <div id="main-right" class="col-lg-7"></div> 
+            <div class="col-lg-7">
+                <div id="main-right"></div>
+            </div> 
 
         </div> 
     </div>
@@ -144,11 +146,12 @@
 </script>
 
 <script type="text/template" id="chat-layout">
-    <div id="chat-container-region" class="col-lg-5">
+     <div id="chat-container-region" class="col-lg-5">
         <div id='welcome-message'></div>
         <div id='chat-messages'></div>
         <div id="chat-input-region"></div>
     </div>
+    
     <div id="presence-gutter" class="col-lg-2"></div>
 </script>
 
@@ -162,7 +165,7 @@
 </script>
 
 <script type="text/template" id="chat-input-template">
-    <form><input type="text" id="chat-input" autocomplete="off" placeholder='Type your message here'></input></form>
+    <form><input type="text" id="chat-input" class="form-control" autocomplete="off" placeholder='Type your message here'></input></form>
 </script>
 
 <script type="text/template" id="chat-template">
