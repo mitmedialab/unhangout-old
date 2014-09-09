@@ -11,7 +11,9 @@
         </div>
 
         <div class="col-lg-5">
-            <h3>About</h3>
+            <div class="col-lg-12 logo">
+                <img src="/public/img/unhangout-logo-blue-full.png">
+            </div>
 
             <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
 
@@ -23,7 +25,7 @@
                     <% if (!user) { %>
                             <button id="login-first-button" class="btn btn-primary btn-lg" type="button">
                             <i class="fa fa-edit fa-lg"></i>
-                            Create an Unhangout
+                            Request an Unhangout
                             </button>
 
                     <% } else { %>
@@ -40,7 +42,7 @@
                         <% } else { %>
                             <button id="create-event-button" class="btn btn-primary btn-lg" type="button">
                                 <i class="fa fa-edit fa-lg"></i>
-                                    Create an Unhangout
+                                    Request an Unhangout
                             </button>
 
                     <% } } %>
@@ -59,8 +61,8 @@
             <h3>Upcoming events</h3>
 
             <div class="mini-event-box">
-                <div class="col-lg-5">
-                    <img src="http://i.imgur.com/hpDRgwZ.png" class="img-responsive">
+                <div class="col-lg-5 event-thumbnail">
+                    <img src="http://i.imgur.com/hpDRgwZ.png">
                 </div>
 
                 <div class="col-lg-7">
