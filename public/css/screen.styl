@@ -77,6 +77,11 @@ a.dropdown-toggle {
   font-size: 20px;
   letter-spacing: 1px;
   font-weight: 400;
+
+  img {
+    margin-top: -15px;
+  }
+
 }
 
 .nav-index .dropdown {
@@ -101,16 +106,12 @@ a.dropdown-toggle {
   font-weight: 300;
 }
 
-.nav-index .navbar-nav > li {
-  color: white;
-}
-
 .nav-index .navbar-nav > li > a {
-  color: $navbar-li;
+  color: white;
 }
 
 .nav-index .navbar-nav > li > a:hover {
-  color: white;
+  color: $navbar-li;
 }
 
 .nav-index .navbar-nav>.active>a, .nav-index .navbar-nav>.active>a:hover, .nav-index .navbar-nav>.active>a:focus {
@@ -162,15 +163,15 @@ a.dropdown-toggle {
 }
 
 .event-navbar .navbar-nav > li {
-  color: white;
-}
-
-.event-navbar .navbar-nav > li > a {
   color: $navbar-li;
 }
 
-.event-navbar .navbar-nav > li > a:hover {
+.event-navbar .navbar-nav > li > a {
   color: white;
+}
+
+.event-navbar .navbar-nav > li > a:hover {
+  color: $navbar-li;
 }
 
 .event-navbar .navbar-nav>.active>a, .event-navbar .navbar-nav>.active>a:hover, .event-navbar .navbar-nav>.active>a:focus {
@@ -335,12 +336,12 @@ hr.noshade {
   display: block;
   font-size: 18px;
   font-weight: 300;
-  color: $navbar-li;
+  color: white;
   margin-top: 17px;
   margin-left: 20px;
 
   &:hover, &:active, &:visited {
-    color: white;
+    color: $navbar-li;
     text-decoration: none;
   }
 }
