@@ -186,8 +186,8 @@
 
 <script type='text/template' id="video-embed-controls-template">
     {{ if (youtubeEmbed) { }}
-        <div class='current-video-controls'>
-            <button class='btn btn-warning play-for-all'>
+        <div class='current-video-controls col-lg-12'>
+            <button class='btn btn-success play-for-all'>
                 {{ if (isPlayingForEveryone) { }}
                     <i class='fa fa-pause'></i> Pause for all
                 {{ } else if (isAwaitingStart) { }}
@@ -215,7 +215,7 @@
                     </button>
 
 
-                    <ul class='dropdown-menu role="menu" pull-right previous-videos'>
+                    <ul class="dropdown-menu previous-videos" role="menu">
                         <li role="presentation"><a class='restore-previous-video header'>Previous videos</a></li>
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
                             <li role="presentation">
@@ -247,26 +247,39 @@
         <div class="form-group">
             {{ if (hoaParticipationLink) { }}
                
-                <a class='btn btn-default join-hoa' target='_blank'
-                   href='{{= hoaParticipationLink }}'>
-                    <i class='fa fa-users'></i> Join Hangout-on-Air
-                </a>
-                <button class='btn btn-warning remove-hoa form-control' style='width: 15px; padding-left: 0px; padding-right: 0px;'><i class='fa fa-trash-o'></i></button>
+                <div class="col-lg-6">
+                    <a class='join-hoa' target='_blank'
+                        href='{{= hoaParticipationLink }}'>
+                        <button class="btn btn-default hoa">
+                            <i class='fa fa-users'></i> Join Hangout-on-Air
+                        </button>
+                    </a>
+                </div>
+
+                <div class="col-lg-6">
+                    <button class='btn btn-warning remove-hoa'>Remove Hangout-on-Air
+                    </button>
+                </div>
                 
             {{ } else { }}
                 
-                <a class='btn btn-default create-hoa' target='_blank'
-                   href='/event/{{- id }}/create-hoa/'>
+                <div class="col-lg-12">
+                    <a class='btn btn-default create-hoa hoa' target='_blank'
+                        href='/event/{{- id }}/create-hoa/'>
                     <i class='fa fa-users'></i> Create Hangout-on-Air
-                </a>
-               
+                    </a>
+                </div>
+
+            
             {{ } }}
         </div>
 
         <div class="form-group">
-            <button class='btn btn-small remove-video'>
-                Remove Video Embed</i>
-            </button>
+            <div class="col-lg-12">
+                <button class='btn btn-small remove-video'>
+                    Remove Video Embed</i>
+                </button>
+            </div>
         </div>
 
     </div>
