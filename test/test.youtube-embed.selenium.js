@@ -68,8 +68,9 @@ describe("YOUTUBE EMBEDS", function() {
                 // Wait for embed to finish..
                 browser.waitForSelector("iframe", 45000);
                 return browser.byCss("iframe").getAttribute("src").then(function(src) {
-                    var url = "http://www.youtube.com/embed/" + ytId + "?";
-                    expect(src.substring(0, url.length)).to.eql(url);
+                    // youtube seems to randomly throw https at us sometimes these days.
+                    var re = new RegExp("^https?://www.youtube.com/embed/" + ytId + "\?.*$");
+                    expect(re.test(src)).to.be(true);
                     expect(event.get("youtubeEmbed")).to.eql(ytId);
                 });
             } else {
