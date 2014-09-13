@@ -10,4 +10,5 @@ before_install:
  - cp conf.json.example conf.json
 before_script:
  - curl -L https://selenium.googlecode.com/files/selenium-server-standalone-2.39.0.jar > bin/selenium-server-standalone.jar
+ - java -jar bin/selenium-server-standalone.jar > /dev/null &
 script: "npm test"
