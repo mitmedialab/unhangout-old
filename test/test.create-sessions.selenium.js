@@ -134,14 +134,12 @@ describe("CREATE SESSIONS", function() {
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("wat");
         browser.byCss("#join_cap").getAttribute("value").then(function(val) {
-            // Some versions of firefox don't let you type non-numeric values
-            // into a number field.  Don't fail if we aren't one of those.
-            if (val === "wat") {
-                browser.byCss("#create-session").click();
-                browser.waitForSelector(".join-cap-error");
-                browser.executeScript("$('.join-cap-error').hide();");
-            }
+            expect(val).to.be("wat");
         });
+
+        browser.byCss("#create-session").click();
+        browser.waitForSelector(".join-cap-error");
+        browser.executeScript("$('.join-cap-error').hide();");
 
         // Error for too low
         browser.byCss("#join_cap").clear();
