@@ -190,7 +190,7 @@ exports.getSeleniumBrowser = function(callback) {
             opts.jvmArgs = ["-Dwebdriver.firefox.bin=" + conf.TESTING_FIREFOX_BIN];
         }
         seleniumServer = new SeleniumServer(seleniumPath, opts);
-        seleniumServer.start().then(function() {
+        seleniumServer.start(60000).then(function() {
             // Throwing in a timeout on speculation that this makes
             // intermittent timeouts in beforeAll hooks less common.
             setTimeout(function() {
