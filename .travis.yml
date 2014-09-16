@@ -11,5 +11,5 @@ before_install:
  - sh -e /etc/init.d/xvfb start
  - cp conf.json.example conf.json
 before_script:
- - curl -L https://selenium.googlecode.com/files/selenium-server-standalone-2.39.0.jar > bin/selenium-server-standalone.jar
+ - curl -L https://selenium-release.storage.googleapis.com/2.43/selenium-server-standalone-2.43.0.jar > bin/selenium-server-standalone.jar
 script: "npm test"
