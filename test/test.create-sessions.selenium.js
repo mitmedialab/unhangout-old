@@ -136,7 +136,6 @@ describe("CREATE SESSIONS", function() {
         browser.byCss("#join_cap").getAttribute("value").then(function(val) {
             expect(val).to.be("wat");
         });
-
         browser.byCss("#create-session").click();
         browser.waitForSelector(".join-cap-error");
         browser.executeScript("$('.join-cap-error').hide();");

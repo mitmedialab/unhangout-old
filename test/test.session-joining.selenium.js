@@ -22,12 +22,15 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     }
     this.timeout(60000); // Extra long timeout for selenium :(
 
-    before(function(done) {
+    before(function() {
         // Reduce joining timeout to speed up the test.
         ORIG_LEAVE_STOP_TIMEOUT = models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT;
         ORIG_JOINING_TIMEOUT = models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT;
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = TEST_LEAVE_STOP_TIMEOUT;
         models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = TEST_JOINING_TIMEOUT;
+    });
+
+    beforeEach(function(done) {
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
                 browser = theBrowser;
@@ -39,9 +42,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
     });
-    after(function(done) {
+    after(function() {
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = ORIG_LEAVE_STOP_TIMEOUT;
         models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = ORIG_JOINING_TIMEOUT;
+    });
+    afterEach(function(done) {
         browser.quit().then(function() {
             common.standardShutdown(done);
         });
