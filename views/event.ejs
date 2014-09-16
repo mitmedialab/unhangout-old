@@ -25,12 +25,12 @@
 
             <div id="top"></div> 
 
-            <div class="col-lg-5" id="left">
+            <div class="col-lg-5 col-xs-5 left">
                 <div id="top-left"></div>
                 <div id="main-left"></div> 
             </div>
 
-            <div class="col-lg-7">
+            <div class="col-lg-7 col-xs-5 right">
                 <div id="main-right"></div>
             </div> 
 
@@ -72,21 +72,36 @@
 </script>
 
 <script type="text/template" id="session-template">
-    <h3>{{- title }}</h3>
-    <div class="attend btn btn-info" data-toggle="button">
-        <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
-        <div class="attendance"></div>
+    <div class="col-lg-12 session-area">
+        <h3 class="col-lg-8 col-md-8 col-sm-8">{{- title }}</h3>
+        
+        {{ if (IS_ADMIN) { }}
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <button class="attend btn btn-success" data-toggle="button">
+                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
+                    <div class="attendance"></div>
+                </button>
+            </div>
+
+            <div class="col-lg-1 col-md-1 col-sm-1">   
+                <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
+            </div>
+        {{ } else { }}
+            <div class="col-lg-4 col-md-4 col-sm-4">
+                <button class="attend btn btn-success" data-toggle="button">
+                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
+                    <div class="attendance"></div>
+                </button>
+            </div>
+
+        {{ } }}
     </div>
 
-    {{ if (IS_ADMIN) { }}
-
-    <div class="admin-buttons">
-        <div class="delete btn btn-warning"><i class="fa fa-trash-o"></i></div>
+    
+    <div class="col-lg-12">
+        <ul class="hangout-users"></ul>
     </div>
 
-    {{ } }}
-
-    <ul class="hangout-users"></ul>
     <div class="hangout-offline">
         No one has joined this session yet.
     </div>
@@ -183,31 +198,42 @@
 </script>
 
 <script type="text/template" id="video-embed-template">
-    <div class='video-player row'></div>
+    <div class='video-player'></div>
     <div class='video-controls row'></div>
 </script>
 
 <script type='text/template' id="video-embed-controls-template">
     {{ if (youtubeEmbed) { }}
-        <div class='current-video-controls col-lg-12'>
-            <button class='btn btn-success play-for-all'>
-                {{ if (isPlayingForEveryone) { }}
-                    <i class='fa fa-pause'></i> Pause for all
-                {{ } else if (isAwaitingStart) { }}
-                    <i class='fa fa-clock-o'></i> Awaiting start
-                {{ } else { }}
-                    <i class='fa fa-play'></i> Play for all
-                {{ } }}
-                <span class='button-time-indicator'></span>
-            </button> 
+        <div class="row video-play-trash-row">
+            <div class='col-lg-6 col-xs-6 btn-play-pause'>
+                <div class='current-video-controls'>
+                    <button class='btn btn-success play-for-all'>
+                        {{ if (isPlayingForEveryone) { }}
+                            <i class='fa fa-pause'></i> Pause for All
+                        {{ } else if (isAwaitingStart) { }}
+                            <i class='fa fa-clock-o'></i> Awaiting Start
+                        {{ } else { }}
+                            <i class='fa fa-play'></i> Play for All
+                        {{ } }}
+                        <span class='button-time-indicator'></span>
+                    </button> 
+                </div>
+            </div>
+
+            <div class="col-lg-1 col-xs-1 btn-video-trash">
+                <button class='btn btn-danger remove-video' title="Remove video embed">
+                    <i class='fa fa-trash-o'></i>
+                </button>
+            </div>
+
         </div>
     {{ } }}
 
 
-    <div class='inline-video-controls'>
+    <div class='row youtube-video-controls'>
 
-        <div class="form-group col-lg-9 input-video">
-            <input class="form-control" type="text" name="youtube_id" value="" placeholder="https://youtube.com" />
+        <div class="col-lg-8 col-xs-8 input-video-field">
+            <input class="form-control" type="text" name="youtube_id" value="" placeholder="Paste Youtube URL Here" />
 
             {{ if (previousVideoEmbeds.length > 0) { }}
                
@@ -234,57 +260,45 @@
             {{ } }}
         </div>
 
-        <div class="form-group col-lg-3">
+        <div class="col-lg-3 col-xs-4 btn-video-embed">
             <button class='btn btn-default set-video'
-            type="button">Set video</button>
+            type="button">Embed for All</button>
         </div>
 
         <p class="alert text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
 
-        <div class="form-group">
-            <div class='col-lg-offset-5 col-lg-7'>
-                <label class="control-label">OR</label>
-            </div>
+        <div class="col-lg-12 col-xs-12 OR-field">
+            <p>OR</p>
         </div>
-
-        <div class="form-group">
-            {{ if (hoaParticipationLink) { }}
-               
-                <div class="col-lg-6">
-                    <a class='join-hoa' target='_blank'
-                        href='{{= hoaParticipationLink }}'>
-                        <button class="btn btn-default hoa">
-                            <i class='fa fa-users'></i> Join Hangout-on-Air
-                        </button>
-                    </a>
-                </div>
-
-                <div class="col-lg-6">
-                    <button class='btn btn-warning remove-hoa'>Remove Hangout-on-Air
+        
+      
+        {{ if (hoaParticipationLink) { }}
+           
+            <div class="col-lg-6 col-xs-6 btn-join-hoa">
+                <a class="join-hoa" target='_blank'
+                    href="{{= hoaParticipationLink }}">
+                    <button class="btn btn-default hoa">
+                        <i class="fa fa-users"></i> Join Hangout-on-Air
                     </button>
-                </div>
-                
-            {{ } else { }}
-                
-                <div class="col-lg-12">
-                    <a class='btn btn-default create-hoa hoa' target='_blank'
-                        href='/event/{{- id }}/create-hoa/'>
-                    <i class='fa fa-users'></i> Create Hangout-on-Air
-                    </a>
-                </div>
+                </a>
+            </div>
 
-            
-            {{ } }}
-        </div>
-
-        <div class="form-group">
-            <div class="col-lg-12">
-                <button class='btn btn-small remove-video'>
-                    Remove Video Embed</i>
+            <div class="col-lg-6 col-xs-6 btn-remove-hoa">
+                <button class='btn btn-danger remove-hoa'>Remove Hangout-on-Air
                 </button>
             </div>
-        </div>
-
+            
+        {{ } else { }}
+            
+            <div class="col-lg-8 col-xs-8 btn-hoa">
+                <a class="btn btn-default create-hoa hoa" target="_blank"
+                    href='/event/{{- id }}/create-hoa/'>
+                <i class='fa fa-users'></i> Create Hangout-on-Air
+                </a>
+            </div>
+        
+        {{ } }}
+      
     </div>
     
 </script>
