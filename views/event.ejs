@@ -368,6 +368,7 @@
         //Hide the youtube and webpage url form controls
         $(".youtube-url").hide();
         $(".webpage-url").hide();
+        $(".join-cap-error").hide();
 
     </script>
 
@@ -402,15 +403,23 @@
             <div class="form-group">
                 <label class="col-lg-3 control-label" for='join_cap'>Participant Limit</label>
 
-                <span class='help-block join-cap-error hide'>
+                <!--<span class='help-block join-cap-error hide'>
                    Please enter a number between 2 and 10.
-                </span>
+                </span>-->
+
 
                 <div class="col-lg-4">
                     <input class="form-control" type='number' min='2' max='10' step='1'
                        value='10' 
                        name='join_cap' id='join_cap' />
                     <span class='help-inline'>Minimum 2, maximum 10</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-offset-1 col-lg-10 alert alert-warning alert-dismissible join-cap-error" role="alert">
+                  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  Warning! Please enter a number between 2 and 10.
                 </div>
             </div>
 
@@ -472,7 +481,7 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-            <button type="button" class="btn btn-primary" data-dismiss="modal" id="create-session" value="Create Session">Create Session</button>
+            <button type="button" class="btn btn-primary" id="create-session" value="Create Session">Create Session</button>
           </div>
 
         </div>
