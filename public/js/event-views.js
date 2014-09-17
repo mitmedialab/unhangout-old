@@ -834,7 +834,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         jqevt.preventDefault();
         var youtubeInput = this.$("input[name='youtube_id']");
         var youtubeInputParent = youtubeInput.parent();
-        var youtubeInputError = this.$("p.text-warning");
+        var youtubeInputError = this.$(".text-warning");
         var ytId = video.extractYoutubeId(youtubeInput.val());
         if (ytId === null || ytId === undefined) {
             // Invalid youtube URL/embed code specified.

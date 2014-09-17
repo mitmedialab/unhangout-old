@@ -265,7 +265,12 @@
             type="button">Embed for All</button>
         </div>
 
-        <p class="alert text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
+        <!--<p class="alert text-warning">Unrecognized youtube URL.  Please use the URL for a single video.</p>-->
+
+        <div class="col-lg-12 col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
+        </div>
 
         <div class="col-lg-12 col-xs-12 OR-field">
             <p>OR</p>
@@ -369,6 +374,7 @@
         $(".youtube-url").hide();
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
+        $(".text-warning").hide();
 
     </script>
 
