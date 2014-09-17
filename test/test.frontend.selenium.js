@@ -31,9 +31,11 @@ describe("FRONT PAGE", function() {
 
     it("gets home page and nav links activate", function(done) {
         browser.get(common.URL);
-        browser.byCss("h1").getText().then(function(text) {
-            text.should.equal("Unhangouts");
-        });
+
+        //Commenting this out as we are now using logo for the home page
+        // browser.byCss("h1").getText().then(function(text) {
+        //     text.should.equal("Unhangouts");
+        // });
         browser.byLinkText("About").click().then(navLinkActive("/about/"));
         browser.byLinkText("How to Unhangout").click().then(navLinkActive('/how-to-unhangout/'));
         browser.byLinkText("Home").click().then(navLinkActive("/")).then(function() {
