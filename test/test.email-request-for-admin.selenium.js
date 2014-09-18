@@ -29,7 +29,7 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
 
     it("Is prompted to login when unauthenticated", function(done) {
         browser.get(common.URL);
-        browser.byCss(".create-event-button .btn-primary").click();
+        browser.byCss("#create-event-button").click();
         browser.waitForSelector("#login-first-modal h3");
         browser.byCss("#login-first-modal h3").getText().then(function(text) {
             expect(text).to.eql("Please log in!");
@@ -43,7 +43,7 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL);
-        browser.byCss("#create-event-button .btn-primary").click()
+        browser.byCss("#create-event-button").click()
         browser.getCurrentUrl().then(function(url) {
             expect(url).to.be(common.URL + "/admin/event/new");
             done();
@@ -53,7 +53,7 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular2");
         browser.get(common.URL);
-        browser.byCss(".create-event-button .btn-primary").click();
+        browser.byCss("#create-event-button").click();
         browser.waitForSelector("#event-mini-form-modal h3");
         browser.byCss("#event-mini-form-modal h3").getText().then(function(text) {
             expect(text).to.eql("Tell us about your event!");
