@@ -199,7 +199,8 @@
                    placeholder="https://youtube.com..." />
             <div class='btn-group'>
                 <button class='btn btn-default set-video'
-                        type="button">Set video</button>
+                        type="button">Set</button>
+                <button class='btn btn-default enqueue-video' type='button' style='font-size: 12px;'>Enqueue</button>
                 {{ if (previousVideoEmbeds.length > 0) { }}
                     <button class='btn btn-default dropdown-toggle'
                             data-toggle='dropdown'>
@@ -210,8 +211,12 @@
                         <li><a class='restore-previous-video header'>Previous videos</a></li>
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
                             <li>
-                                <a tabindex='-1' href='#' class='restore-previous-video'
-                                   data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
+                                <span>
+                                    <a tabindex='-1' href='#' class='restore-previous-video'
+                                       data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
+                                    <a tabindex='-1' href='#' class='remove-one-previous-video'
+                                       data-youtube-id='{{= vid.youtubeId }}'><i class='fa fa-trash'></i></a>
+                                </span>
                             </li>
                         {{ }); }}
                         <li><a class='clear-previous-videos'>
@@ -248,7 +253,7 @@
        data-youtube-id='{{= id }}'>
         <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
         <span class='title'>{{= title }}</span>
-        <span style='font-size: smaller; color: #999;'>
+        <span class='duration'>
             {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
         </span>
     </a>

@@ -401,6 +401,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
     }
     it("Reconnects session sockets on server restart", function(done) {
+        // TODO: This test is the most brittle and inconsistent in the suite.
+        // We ought to see if there's a more reliable way to test this.
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         var sock;
