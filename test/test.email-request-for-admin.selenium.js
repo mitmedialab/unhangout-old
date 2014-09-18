@@ -54,8 +54,8 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
         browser.mockAuthenticate("regular2");
         browser.get(common.URL);
         browser.byCss("#create-event-button").click();
-        browser.waitForSelector("#event-mini-form-modal h3");
-        browser.byCss("#event-mini-form-modal h3").getText().then(function(text) {
+        browser.waitForSelector("#event-mini-form-modal h4");
+        browser.byCss("#event-mini-form-modal h4").getText().then(function(text) {
             expect(text).to.eql("Tell us about your event!");
         });
 
