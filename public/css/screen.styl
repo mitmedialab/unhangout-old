@@ -339,9 +339,10 @@ hr.noshade {
     text-decoration: none;
   }
 }
+
 .user {
   margin-top: 5px;
-  margin-left: 10px;
+  margin-right: 5px;
   border: 1px solid $background;
   box-sizing: border-box;
   background-color: white;
@@ -351,61 +352,17 @@ hr.noshade {
   &.admin {
     border: 2px solid $background;
     border-color: orange;
-
-    i {
-      padding-left: 2px;
-    }
   }
 
   img {
-    width: 40px;
-    height: 40px;
-  }
-
-  i {
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
-    padding-left: 5px;
-
-    display: block;
+    width: 46px;
+    height: 46px;
   }
 
 }
 
 #session-list {
   padding-top: 5px;
-
-  /*.footer {
-    margin-top: 0px;
-    margin-left: auto;
-    margin-right: auto;
-    padding-left: 15px;
-    width: 200px;
-
-    clear: left;
-
-    div {
-      float: left;
-      color: black;
-      padding: 5px;
-
-      &:hover {
-        cursor: pointer;
-        background-color: #ddd;
-      }
-
-      &.active {
-        border: 1px solid #aaa;
-      }
-
-      &.page {
-        margin-left: 5px;
-        margin-right: 5px;
-      }
-    }
-  }*/
 }
 
 /*
@@ -489,6 +446,15 @@ hr.noshade {
         width: 37px;
         height: 37px;
       }
+
+      .user.focus.joining {
+
+        img {
+          width: 37px;
+          height: 37px;
+        }
+      }
+      
     }
 
     .empty {
@@ -499,7 +465,8 @@ hr.noshade {
     .user {
 
       img {
-        width: 40px;
+        width: 46px;
+        height: 46px;
       }
 
       &.admin {
@@ -508,6 +475,7 @@ hr.noshade {
 
       &.joining {
         opacity: 0.5;
+        margin: 0;
       }
 
       i {
@@ -532,7 +500,7 @@ hr.noshade {
   }
 
   .empty {
-    height: 40px;
+    height: 46px;
     text-align: center;
     color: #aaa;
     font-style: italic;
