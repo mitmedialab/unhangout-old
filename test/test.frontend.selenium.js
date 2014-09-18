@@ -37,10 +37,11 @@ describe("FRONT PAGE", function() {
         //     text.should.equal("Unhangouts");
         // });
         browser.byLinkText("About").click().then(navLinkActive("/about/"));
-        browser.byLinkText("How to Unhangout").click().then(navLinkActive('/how-to-unhangout/'));
-        browser.byLinkText("Home").click().then(navLinkActive("/")).then(function() {
-            done();
-        });
+        browser.byLinkText("Events").click().then(navLinkActive("/events/"));
+        // browser.byLinkText("How to Unhangout").click().then(navLinkActive('/how-to-unhangout/'));
+        // browser.byLinkText("Home").click().then(navLinkActive("/")).then(function() {
+        //     done();
+        // });
     });
 
     it("shows a static event page to unauthenticated users", function(done) {
