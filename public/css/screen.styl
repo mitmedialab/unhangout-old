@@ -876,6 +876,21 @@ hr.noshade {
   ul.previous-videos li {
     width: 380px;
   }
+  ul.previous-videos li > span {
+    padding: 1em 0.5em 1.4em 0.5em;
+  }
+  ul.previous-videos li > span:hover {
+    background-color: #0081c2;
+    background-image: linear-gradient(to bottom, #08C, #0077B3);
+    background-repeat: repeat-x;
+  }
+  ul.previous-videos li > span:hover a {
+    color: white;
+    text-decoration: none;
+  }
+  ul.previous-videos li > span > a.remove-one-previous-video:hover {
+    color: red;
+  }
   .restore-previous-video {
     &.header {
       text-align: center;
@@ -887,10 +902,16 @@ hr.noshade {
     .title {
       display: inline-block;
       vertical-align: middle;
-      width: 230px;
-      whites-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: normal;
+      width: 240px;
+      font-size: 12px;
+      line-height: 1em;
+    }
+    .duration {
+      font-size: smaller;
+      color: #999;
+      width: 30px;
+      display: inline-block;
     }
     
   }

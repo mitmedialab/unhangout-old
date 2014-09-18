@@ -22,34 +22,6 @@ describe("YOUTUBE EMBEDS", function() {
         });
     });
 
-    it("Clears the list of videos", function(done) {
-        var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        event.set("open", true);
-        event.set("previousVideoEmbeds", [
-            {youtubeId: "wd9OY0E8A98"},
-            {youtubeId: "gjPr7sfS5bs"},
-            {youtubeId: "4DUz4tzhv-w"},
-            {youtubeId: "2laB2BmSNn0"}
-        ]);
-        browser.get(common.URL);
-        browser.mockAuthenticate("superuser1");
-        browser.get(common.URL + event.getEventUrl());
-        browser.waitForEventReady(event, "superuser1");
-        browser.waitForSelector(".inline-video-controls .dropdown-toggle");
-        browser.byCss(".inline-video-controls .dropdown-toggle").click();
-        browser.waitForSelector(".clear-previous-videos");
-        browser.byCsss(".restore-previous-video:not(.header)").then(function(els) {
-            expect(els.length).to.be(event.get("previousVideoEmbeds").length);
-        });
-        browser.byCss(".clear-previous-videos").click();
-        browser.switchTo().alert().accept();
-        browser.wait(function() {
-            return event.get("previousVideoEmbeds").length === 0;
-        }).then(function() {
-            done();
-        });
-    });
-
     it("Tries a variety of YouTube urls", function (done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var ytId = "pco91kroVgQ";
