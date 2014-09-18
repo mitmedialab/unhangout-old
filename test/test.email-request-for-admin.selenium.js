@@ -29,9 +29,9 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
 
     it("Is prompted to login when unauthenticated", function(done) {
         browser.get(common.URL);
-        browser.byCss("#create-event-button").click();
-        browser.waitForSelector("#login-first-modal h3");
-        browser.byCss("#login-first-modal h3").getText().then(function(text) {
+        browser.byCss("#login-first-button").click();
+        browser.waitForSelector("#login-first-modal h4");
+        browser.byCss("#login-first-modal h4").getText().then(function(text) {
             expect(text).to.eql("Please log in!");
             done();
         });
