@@ -43,7 +43,7 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL);
-        browser.byCss(".create-event-button .btn-primary").click()
+        browser.byCss("#create-event-button .btn-primary").click()
         browser.getCurrentUrl().then(function(url) {
             expect(url).to.be(common.URL + "/admin/event/new");
             done();
