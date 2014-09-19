@@ -9,10 +9,19 @@ $event-links = $navbar;
 
 
 /* ----------------MAIN PAGE AND BOOTSTRAP OVERRIDES -------*/
+html {
+  height: 100%;
+}
 
 body {
     padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
-  }
+    height: 100%;
+}
+
+#app {
+  height: 100%;
+}
+
 
 .btn-primary {
   background: $navbar;
@@ -240,6 +249,7 @@ hr.noshade {
 
 .event-page-container {
   margin-top: 0px;
+  height: 100%;
 }
 
 @media(max-width: 992px) {
@@ -264,25 +274,29 @@ hr.noshade {
 }
 
 #main {
+  height: 100%;
 }
 
 .right {
   padding-left: 0px;
   padding-right: 0px;
+  height: 100%;
 }
 
 #main-right {
   z-index: 10;
   overflow: hidden;
+  height: 100%;
 }
 
 .left {
   padding-left: 0px;
-  padding-right: 5px;
+  padding-right: 0px;
+  height: 100%;
+  overflow-y: scroll;
 }
 
 #presence-gutter {
-  height: 95vh;
   padding: 0px;
   padding-left: 5px;
 
@@ -305,7 +319,6 @@ hr.noshade {
 
   #user-list-scroll-container {
     overflow-y: auto;
-    height: 90vh;
   }
 }
 
@@ -598,19 +611,12 @@ hr.noshade {
  */
 
 #chat-input-region {
-    position: absolute;
-    bottom: 20px;
     padding: 0px;
     background-color: #eee;
-    width: 94%;
-
-    input {
-      width: 100%;
-      height: 30px;
-    }
 }
 
 #chat {
+  height: 100%;
 
   #welcome-message {
     border-bottom: 1px solid #aaa;
@@ -636,12 +642,28 @@ hr.noshade {
   }
 
   #chat-container-region {
-    height: 93vh;
+    height: 100%;
     padding: 10px;
     border-radius: 2px;
     background-color: #eee;
 
-    overflow-y: auto;
+    //overflow-y: auto;
+
+    .panel {
+      height: 100%;
+      background-color: #eee;
+    }
+
+    .panel-body {
+      height: 82%;
+      overflow-y: scroll;
+    }
+
+    .panel-footer {
+      border-top: 0;
+      padding: 10px 0px;  
+      background-color: inherit;
+    }
 
     #chat-list-container {
       height: auto;

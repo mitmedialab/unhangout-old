@@ -162,9 +162,19 @@
 
 <script type="text/template" id="chat-layout">
      <div id="chat-container-region" class="col-lg-10 col-xs-10">
-        <div id='welcome-message'></div>
-        <div id='chat-messages'></div>
-        <div id="chat-input-region"></div>
+        <div class="panel">
+            <div class="panel-heading">
+                <div id='welcome-message'></div>
+            </div>
+
+            <div class="panel-body">
+                <div id='chat-messages'></div>
+            </div>
+
+            <div class="panel-footer">
+                <div id="chat-input-region"></div>
+            </div>
+        </div>
     </div>
     
     <div id="presence-gutter" class="col-lg-2 col-xs-2"></div>
