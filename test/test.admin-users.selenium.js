@@ -100,12 +100,12 @@ describe("ADMIN USERS SELENIUM", function() {
         });
 
         // Pull up the add event modal, and add an event.
-        browser.waitForSelector(addSelector);
+        browser.waitForSelector(addSelector);   
         browser.byCss(addSelector).click();
         // Wait for modal to fade in...
         browser.waitForSelector(".modal-body select");
         browser.selectOption(".modal-body select", event.get("title"));
-        browser.byLinkText("Add").click();
+        browser.byCss(".add").click();
         browser.wait(function() {
             return user.isAdminOf(event) === true;
         });
