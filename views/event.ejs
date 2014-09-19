@@ -570,13 +570,25 @@
             <a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
         </div>
     </div>
-    <div class="modal hide fade disconnected-modal" id="disconnected-modal">
-        <div class="modal-header"><h3>Warning!</h3></div>
-        <div class="modal-body">
-            <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
-            <a href="#" class="btn">Close</a>
+
+    <div class="modal fade disconnected-modal" id="disconnected-modal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Warning!</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+                </div>
+
+                <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
+            
     <div id="no-urls-warning" class="modal hide fade">
         <div class="modal-header"><h3>NO HANGOUT URLS AVAILABLE</h3></div>
         <div class="modal-body">
