@@ -8,7 +8,7 @@
     label.error {
         background-color: #fee;
     }
-    .icon-trash.remove-event {
+    .remove-event {
         cursor: pointer;
     }
 </style>
@@ -101,7 +101,7 @@
         {{ _.each(adminEvents, function(event) { }}
             <div>
                 <a href='/admin/event/{{- event.id }}'>{{- event.title }}</a>
-                <span class='icon icon-trash remove-event'
+                <span class='fa fa-trash remove-event'
                       title='Remove event'
                       rel='tooltip'
                       data-user-id='{{- id }}'
@@ -109,7 +109,7 @@
             </div>
         {{ }); }}
         <div>
-            <a href='#' class='add-event'><span class='icon icon-plus-sign'></span> Add event</a>
+            <a href='#' class='add-event'><span class='fa fa-plus'></span> Add event</a>
         </div>
     </td>
 </script>

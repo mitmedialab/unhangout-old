@@ -1,6 +1,6 @@
-// The views in this file define all the major pieces of the client-side event
-// UI.  We are using Backbone.Marionette for our views, which provides some
-// extra layers on top of the basic Backbone view objects.
+// The views in this file define all the major pieces of the client-side UI for
+// event pages.  We are using Backbone.Marionette for our views, which provides
+// some extra layers on top of the basic Backbone view objects.
 //
 // You can read more about Backbone.Marionette's objects here:
 // https://github.com/marionettejs/backbone.marionette/tree/master/docs
@@ -792,12 +792,13 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     },
     events: {
         'click .set-video': 'setVideo',
+        'click .enqueue-video': 'enqueueVideo',
         'click .remove-video': 'removeVideo',
         'click .restore-previous-video': 'restorePreviousVideo',
         'click .clear-previous-videos': 'clearPreviousVideos',
         'click .play-for-all': 'playForAll',
-        'click .remove-hoa': 'removeHoA'
-
+        'click .remove-hoa': 'removeHoA',
+        'click .remove-one-previous-video': 'removeOnePreviousVideo'
     },
 
     player: null,
@@ -831,6 +832,12 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         return context;
     },
     setVideo: function(jqevt) {
+        this._addVideo(jqevt, "embed");
+    },
+    enqueueVideo: function(jqevt) {
+        this._addVideo(jqevt, "enqueue");
+    },
+    _addVideo: function(jqevt, action) {
         jqevt.preventDefault();
         var youtubeInput = this.$("input[name='youtube_id']");
         var youtubeInputParent = youtubeInput.parent();
@@ -843,10 +850,11 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         } else {
             youtubeInputParent.removeClass("error");
             youtubeInputError.hide();
-            this.options.transport.send("embed", {
+            this.options.transport.send(action, {
                 ytId: ytId, roomId: this.model.getRoomId()
             });
         }
+
     },
     removeVideo: function(jqevt) {
         jqevt.preventDefault();
@@ -883,6 +891,13 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             });
         }
     },
+    removeOnePreviousVideo: function(jqevt) {
+        var ytId = $(jqevt.currentTarget).attr("data-youtube-id");
+        this.options.transport.send("remove-one-previous-video", {
+            ytId: ytId,
+            roomId: this.model.getRoomId()
+        });
+    },
     setPlayerVisibility: function(visible) {
         // Display player if it's visible.
         this.ui.player.toggle(visible);
@@ -911,7 +926,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         _.each(this.model.get("previousVideoEmbeds"), _.bind(function(embed) {
             video.getVideoDetails(embed.youtubeId, _.bind(function(data) {
                 if (data) {
-                    this.$("[data-youtube-id='" + data.id + "']").replaceWith(
+                    this.$(".restore-previous-video[data-youtube-id='" + data.id + "']").replaceWith(
                         this.previousVideoDetailsTemplate(data)
                     );
                 }

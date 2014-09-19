@@ -239,7 +239,6 @@
         </div>
     {{ } }}
 
-
     <div class='row youtube-video-controls'>
 
         <div class="col-lg-8 col-xs-8 input-video-field">
@@ -247,8 +246,7 @@
 
             {{ if (previousVideoEmbeds.length > 0) { }}
                
-                    <button class='btn btn-default dropdown-toggle' data-toggle="dropdown"
-                            >
+                    <button class='btn btn-default dropdown-toggle' data-toggle="dropdown">
                         <i class='fa fa-list'></i>
                         <i class='fa fa-caret-down'></i>
                     </button>
@@ -257,11 +255,18 @@
                     <ul class="dropdown-menu previous-videos" role="menu">
                         <li role="presentation"><a class='restore-previous-video header'>Previous videos</a></li>
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
+
                             <li role="presentation">
-                                <a role="menuitem" href='#' class='restore-previous-video'
-                                   data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
+                                <a role="menuitem" class='restore-previous-video'
+                                   data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}  
+                                </a>
+
+                                <!--<button class='btn btn-danger remove-one-previous-video'
+                                    data-youtube-id='{{= vid.youtubeId }}'><i class='fa fa-trash'></i></button>-->
+                                
                             </li>
                         {{ }); }}
+
                         <li><a class='clear-previous-videos'>
                             <i class='fa fa-trash-o'></i> Clear list
                         </a></li>
@@ -269,6 +274,11 @@
                
             {{ } }}
         </div>
+
+        <!--<div class="col-lg-3 col-xs-4 btn-video-embed">
+            <button class='btn btn-default enqueue-video'
+            type="button">Enqueue</button>
+        </div>-->
 
         <div class="col-lg-3 col-xs-4 btn-video-embed">
             <button class='btn btn-default set-video'
@@ -325,7 +335,7 @@
        data-youtube-id='{{= id }}'>
         <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
         <span class='title'>{{= title }}</span>
-        <span style='font-size: smaller; color: #999;'>
+        <span class='duration'>
             {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
         </span>
     </a>

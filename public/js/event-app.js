@@ -1,6 +1,6 @@
 // app.js
 //
-// This is the main hub of the client-side application. This never runs server-side.
+// This is the main client-side hub of the event page.
 //
 // It has two primary jobs:
 //    1. configure the main application object for the client (this is a Marionette-style Application)

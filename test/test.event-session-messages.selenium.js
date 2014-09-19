@@ -11,7 +11,7 @@ describe("EVENT SESSION MESSAGES", function() {
     }
     this.timeout(60000); // Extra long timeout for selenium :(
 
-    before(function(done) {
+    beforeEach(function(done) {
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -21,7 +21,7 @@ describe("EVENT SESSION MESSAGES", function() {
             });
         });
     });
-    after(function(done) {
+    afterEach(function(done) {
         browser.quit().then(function() {
             common.standardShutdown(done);
         });
