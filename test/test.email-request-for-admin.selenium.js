@@ -81,8 +81,8 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
         browser.byCss(description).sendKeys(longEnough);
         browser.byCss(submit).click();
 
-        browser.waitForSelector("#session-submission-modal h3");
-        browser.byCss("#session-submission-modal h3").getText().then(function(text) {
+        browser.waitForSelector("#session-submission-modal h4");
+        browser.byCss("#session-submission-modal h4").getText().then(function(text) {
             expect(text).to.eql("Thank you!!!");
             expect(common.outbox.length).to.be(1);
             var msg = common.outbox[0];
