@@ -139,7 +139,7 @@
 
 <script type="text/template" id="user-template">
     {{ if(!picture) { }}
-        <i class="icon-user icon-3x"></i>
+        <i class="fa fa-user"></i>
     {{ } else if (link) { }}
         <a href="{{- link }}" target="_new"><img src="{{- picture}}" alt='profile'></a>
     {{ } else { }}
@@ -149,7 +149,7 @@
 
 <script type="text/template" id="user-list-template">
     <div class="header">
-        <span class="contents">{{- numUsers}}</span><i class="icon-user"></i>
+        <span class="contents">{{- numUsers}}</span><i class="fa fa-user"></i>
     </div>
     <div id="user-list-scroll-container">
         <ul id="user-list-container"></ul>

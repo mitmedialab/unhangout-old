@@ -80,14 +80,14 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
         // Now we should have a user show up in the participant list.
-        browser.waitForSelector(participantList + " i.icon-user").then(function() {
+        browser.waitForSelector(participantList + " i.fa-user").then(function() {
             expect(session.getNumConnectedParticipants()).to.be(1);
             expect(session.getState()).to.be("no url");
             return sock.promiseClose();
         });
         // The participant list should clear when the socket closes.
         browser.waitWithTimeout(function() {
-            return browser.byCsss(participantList + " i.icon-user").then(function(els) {
+            return browser.byCsss(participantList + " i.fa-user").then(function(els) {
                 return els.length === 0;
             });
         }).then(function() {
@@ -124,7 +124,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
         // One socket should show up in the participant list.
-        browser.waitForSelector(participantList + " i.icon-user").then(function() {
+        browser.waitForSelector(participantList + " i.fa-user").then(function() {
             return sock1.promiseClose();
         });
         // Have the socket leave the event page, but not the participant list.
@@ -134,7 +134,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
         // Should still be in the participant list.
-        browser.byCsss(participantList + " i.icon-user").then(function(els) {
+        browser.byCsss(participantList + " i.fa-user").then(function(els) {
             expect(els.length).to.be(1);
             expect(session.getNumConnectedParticipants()).to.be(1);
             expect(session.getState()).to.be("no url");
@@ -144,7 +144,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         // Now noone should be left
         browser.waitWithTimeout(function() {
-            return browser.byCsss(participantList + " i.icon-user").then(function(els) {
+            return browser.byCsss(participantList + " i.fa-user").then(function(els) {
                 return els.length == 0;
             });
         }).then(function() {;

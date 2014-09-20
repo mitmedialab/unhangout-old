@@ -58,7 +58,7 @@ describe("EVENT SESSION MESSAGES", function() {
         });
         // Wait for the user to show up as a participant.
         browser.waitForSelector("#session-list .session[data-session-id='"
-                                + session.id + "'] li i.icon-user");
+                                + session.id + "'] li i.fa-user");
         // Send the message... sock's on("data, ...) handler will pick it up
         // and finish the test once we do.
         browser.byCss(".admin-button").click();
