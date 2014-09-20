@@ -1,37 +1,51 @@
 <% include _header.ejs %>
 <% include _permalink-navbar.ejs %>
 
-<div class="container">
+<div class="container permalink-hangout-page">
 
 <form action="/h/admin/<%=session.get("shortCode")%>" method="post" encoding="application/x-www-form-urlencoded">
     <% if(showAdmin) { %>
 
     <input name="creationKey" type="hidden" id="creationKey" value="<%= session.get("creationKey") %>">
 
-    <input id="title" name="title" type="text" class="large" placeholder="Title">
-    <textarea name="description" id="description" placeholder="Description"></textarea>
-    <input type='submit' class="btn btn-primary" id="session-update" value='SET TITLE AND DESCRIPTION'>
+    <label class="col-lg-12 control-label">Set title and description</label>
+  
+
+    <div class="col-lg-12 form-group">
+        <input id="title" name="title" type="text" class="form-control" placeholder="Title">
+    </div>
+
+    <div class="col-lg-12 form-group">
+        <textarea name="description" id="description" placeholder="Description" class="form-control"></textarea>
+    </div>
+
+    <div class="col-lg-12 form-group">
+        <button type='submit' class="btn btn-primary col-lg-1" id="session-update" value='Submit'>Submit</button>
+    </div>
+
     <% } else { %>
 
     <br/>
+    
+    <div class="col-lg-10 permalink-title-col">
+        <h1 class="permalink-title"><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></h1>
+    </div>
 
-    <span class="permalink-title"><%= session.get("title").length > 0 ? session.get("title") : session.get("shortCode") %></span>
-
-    <div class="hangout-status">
+    <div class="col-lg-2 hangout-status">
         <% if(session.getState() != "stopped") { %>
             <i class="icon-facetime-video"></i>
         <% } else { %>
             <i class="icon-remove-sign"></i>
         <% } %>
 
-        <span>
-        <%= session.getState() == "started" ? "LIVE" : "OFFLINE" %>
-        </span>
+        <h3>
+        <%= session.getState() == "started" ? "Live" : "Offline" %>
+        </h3>
     </div>
 
-    <br/><br/>
-
-    <p class="permalink-description"><%= session.get("description") %></p>
+    <div class="col-lg-12 permalink-desc-row">
+        <p class="permalink-description"><%= session.get("description") %></p>
+    </div>
 
     <% } %>
 </form>
@@ -40,7 +54,7 @@
 
 <% if(session.getState() == "started") { %>
 
-<span class="participants-header">Currently connected particpants</span>
+<h3 class="participants-header">Currently connected particpants</h3>
 <hr class='noshade' size=2 class="line">
 
 <br>
@@ -55,16 +69,21 @@
         </div>
     <% }); %>
 
-    <br/><br/><br/><br/>
 </div>
 
 <% } %>
 
-<a href="/session/<%= session.get("session-key") %>?nocache=<%= new Date().getTime() %>" class="btn btn-success btn-large" target="_new">JOIN HANGOUT</a>
+<div class="col-lg-2 btn-join-hangout">
+    <a href="/session/<%= session.get("session-key") %>?nocache=<%= new Date().getTime() %>" class="btn btn-success btn-large" target="_new">Join Hangout</a>
+</div>
 
 </div>
 
-<% include _sponsorship.ejs %>
+<div class='col-lg-12 footer'>
+    <div class="container">
+        This service is part of the <a href="/">Unhangout Project</a> from the MIT Media Lab and MacArthur Foundation. Source available at <a href="http://github.com/drewww/unhangout">Github</a>.
+    </div>
+</div>
 
 <% include _preload-facilitator.ejs %>
 <% include _footer.ejs %>

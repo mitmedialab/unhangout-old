@@ -1471,38 +1471,81 @@ hr.noshade {
   }
 }
 
-.permalink-title {
-  font-size: 34px;
-  color: #3c3c3c;
-}
+.permalink-hangout-page {
+  height: 90%;
 
-.permalink-description {
-  font-size: 18px;
-  color: #3c3c3c;
-}
+  .permalink-title-col {
+    padding: 0px;
 
-.participants-header {
-  font-size: 18px;
-  color: #63666a;
-}
-
-.hangout-status {
-  float: right;
-
-  .icon-facetime-video {
-    color: #57AF57;
-    font-size: 24px;
+    .permalink-title {
+      font-weight: 400;
+      font-size: 32px;
+      margin: 0px;
+    }
   }
 
-  .icon-remove-sign {
-    color: #D34F3E;
-    font-size: 24px;
+  .permalink-desc-row {
+    padding: 0px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+
+    p {
+      font-size: 1.2em;
+      line-height: 1.4em;
+    }
   }
 
-  span {
-    margin-left: 10px;
-    font-size: 20px;
-    color: #63666a;
+  .hangout-status {
+    float: right;
+    margin: 0px;
+
+    h3 {
+      font-weight: 400;
+      font-size: 20px;
+      margin: 0px;
+      text-align: right;
+    }
+  }
+
+  .btn-join-hangout {
+    margin: 0px;
+    padding: 0px;
+
+    a {
+      font-size: 20px;
+      margin-top: 30px;
+      width: 100%;
+    }
+  }
+
+  .participants-header {
+    font-size: 18px;
+  }
+
+  form {
+    margin: 0px;
+    padding: 0px;
+  }
+
+  .control-label {
+    padding: 0px;
+    margin-top: 20px;
+    width: 50%;
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .form-group {
+    padding: 0px;
+
+    input {
+      width: 50%;
+    }
+
+    textarea {
+      width: 50%;
+    }
   }
 }
 
@@ -1541,18 +1584,7 @@ hr.noshade {
       border-radius: 0px 0px 3px 3px;
     }
   }
-
-
 }
-
-#permalinks {
-  max-width: 685px;
-}
-
-td form {
-  margin: 0px;
-}
-
 
 // This forces webkit browsers to show scroll bars whenever possible.
 // per http://stackoverflow.com/questions/18317634/force-visible-scrollbar-in-firefox-on-mac-os-x
