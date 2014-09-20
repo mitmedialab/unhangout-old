@@ -200,6 +200,53 @@ a.dropdown-toggle {
   margin-top: 15px;
 }
 
+/* ------------------ PERMALINK NAVBAR STYLES ---------------------- */
+
+.permalink-navbar {
+  background-color: #2E7DAA;
+}
+
+.permalink-navbar .navbar-brand {
+  color: white;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+}
+
+.permalink-navbar .container {
+  height: 40px;
+}
+
+.permalink-navbar {
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.permalink-navbar .navbar-nav {
+  font-size: 14px;
+  font-weight: 300;
+}
+
+.permalink-navbar .navbar-nav > li {
+  color: $navbar-li;
+}
+
+.permalink-navbar .navbar-nav > li > a {
+  color: white;
+}
+
+.permalink-navbar .navbar-nav > li > a:hover {
+  color: $navbar-li;
+}
+
+.permalink-navbar .navbar-nav>.active>a, .permalink-navbar .navbar-nav>.active>a:hover, .permalink-navbar .navbar-nav>.active>a:focus {
+  background-color: $navbar;
+  color: white;
+} 
+
+.permalink-navbar .nav .open>a, .nav .open>a:hover, .nav .open>a:focus {
+  background-color: $navbar;
+}
+
   
 /* ----------------COMMON ELEMENTS AND UTILITIES------------*/
 
@@ -1272,12 +1319,6 @@ hr.noshade {
   }
 }
 
-#permalink-create {
-  label {
-    width: 250px;
-  }
-}
-
 .credits {
   position: fixed;
   bottom: 0px;
@@ -1383,21 +1424,38 @@ hr.noshade {
 /*-------------------------- PERMALINKS -------------------------------*/
 
 .permalink-container {
-  p {
-    color: #333;
-    font-family: "open sans",arial,sans-serif;
+  min-height: 90%;
 
-    a {
-      color: $event-links;
-      text-decoration:none;
-    }
-
-    a:hover,a:focus {
-      text-decoration:underline;
-    }
+  .control-label {
+    padding-left: 0px;
+    text-align: left;
+    padding-top: 3px;
+    font-size: 1.4em;
+    font-weight: 400;
+    margin-right: 10px;
   }
 
-  .footer {
+  h1, h3 {
+    color: #444;
+  }
+
+  h1 {
+    font-weight: 400;
+    font-size: 28px;
+  }
+
+  h3 {
+    font-weight: 400;
+    font-size: 28px;
+    color: #444;
+  }
+
+  p {
+    color: #333;
+    font-size: 1.2em;
+    line-height: 1.4em;
+    font-family: "open sans",arial,sans-serif;
+
     a {
       color: $event-links;
       text-decoration:none;
