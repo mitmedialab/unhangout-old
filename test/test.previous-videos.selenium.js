@@ -69,8 +69,8 @@ describe("PREVIOUS VIDEOS", function() {
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "superuser1");
-        browser.waitForSelector(".inline-video-controls .dropdown-toggle");
-        browser.byCss(".inline-video-controls .dropdown-toggle").click();
+        browser.waitForSelector("#video-embed .dropdown-toggle");
+        browser.byCss("#video-embed .dropdown-toggle").click();
         browser.waitForSelector(".clear-previous-videos");
         browser.byCsss(".restore-previous-video:not(.header)").then(function(els) {
             expect(els.length).to.be(event.get("previousVideoEmbeds").length);
