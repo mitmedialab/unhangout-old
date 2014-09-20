@@ -38,13 +38,13 @@ require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
             },
 
             highlight: function(element) {
-                $(element).closest('.control-group').removeClass('success').addClass('error');
+                $(element).closest('.form-group').removeClass('success').addClass('error');
             },
 
             success: function(element) {
                 element
                 .addClass('valid')
-                .closest('.control-group').removeClass('error').addClass('success');
+                .closest('.form-group').removeClass('error').addClass('success');
             },
             submitHandler: function(form) {
                 var eventTitle = $("#title").val();
