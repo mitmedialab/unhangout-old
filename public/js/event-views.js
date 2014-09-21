@@ -388,6 +388,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".yt-error, .url-error, .join-cap-error", scope).hide();
         $(".error", scope).removeClass(".error");
         scope.modal('hide');
+        $(".modal-backdrop").remove();
     },
 
     closeDisconnected: function() {
