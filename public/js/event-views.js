@@ -923,6 +923,9 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
 
         this.ui.controls.html(this.controlsTemplate(context));
 
+        // We reset the dropdowns because the the previous video embeds dropdown is recreated.
+        $('.dropdown-toggle').dropdown();
+
         // Make the video details pretty.
         _.each(this.model.get("previousVideoEmbeds"), _.bind(function(embed) {
             video.getVideoDetails(embed.youtubeId, _.bind(function(data) {
