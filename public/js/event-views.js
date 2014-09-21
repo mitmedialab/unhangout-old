@@ -720,7 +720,7 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
         };
     },
     onBeforeItemAdded: function() {
-        this.scroller = $("#chat-container-region");
+        this.scroller = $("#chat-container-region .panel-body");
         if (this.scroller.length > 0) {
             var limit = Math.max(this.scroller[0].scrollHeight - this.scroller.height() - 10, 0);
             this._isScrolled = this.scroller.scrollTop() < limit;
