@@ -48,7 +48,7 @@ describe("CREATE SESSIONS", function() {
         });
         browser.byCss("#title").sendKeys("This Will Work");
         browser.byCss("#description").sendKeys("And so will this");
-        browser.byCss("input[type=submit]").click().then(function() {
+        browser.byCss("#session-update").click().then(function() {
             expect(sess.get('title')).to.be("This Will Work");
             expect(sess.get('description')).to.be("And so will this");
             done();
