@@ -459,7 +459,7 @@ var BaseModalView = Backbone.View.extend({
         }, this));
     },
     render: function() {
-        this.$el.html(this.template()).addClass("modal hide fade");
+        this.$el.html(this.template()).addClass("modal fade");
         this.$el.modal('show');
     },
     validateAndGo: function(jqevt) {
