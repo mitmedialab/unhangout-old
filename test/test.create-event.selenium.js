@@ -43,7 +43,8 @@ describe("CREATE EVENT", function() {
 
         // Create a new event.
         browser.get(common.URL + "/admin/");
-        browser.byLinkText("new").click();
+        browser.byCss("a#admin-create-new-event").click();
+       // browser.byLinkText("new").click();
         browser.waitForSelector("[name='title']");
         browser.byCss("[name='title']").sendKeys("Test Title");
         browser.byCss("[name='shortName']").sendKeys("test-title");
