@@ -215,7 +215,7 @@
 <script type='text/template' id="video-embed-controls-template">
     {{ if (youtubeEmbed) { }}
         <div class="row video-play-trash-row">
-            <div class='col-lg-6 col-xs-6 btn-play-pause'>
+            <div class='col-lg-7 col-xs-7 btn-play-pause'>
                 <div class='current-video-controls'>
                     <button class='btn btn-success play-for-all'>
                         {{ if (isPlayingForEveryone) { }}
@@ -321,7 +321,7 @@
             
         {{ } else { }}
             
-            <div class="col-lg-8 col-xs-8 btn-hoa">
+            <div class="col-lg-12 col-xs-12 btn-hoa">
                 <a class="btn btn-default create-hoa hoa" target="_blank"
                     href='/event/{{- id }}/create-hoa/'>
                 <i class='fa fa-users'></i> Create Hangout-on-Air
@@ -398,7 +398,7 @@
             </li>
         </ul>
     </div>
-    
+
     <script type="text/javascript"> 
         //Hide the youtube and webpage url form controls
         $(".youtube-url").hide();
