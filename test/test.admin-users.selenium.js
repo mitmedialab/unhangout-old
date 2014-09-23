@@ -41,7 +41,8 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("admin1");
         browser.get(common.URL);
-        browser.byCss("a#user-menu-label").click();
+        browser.waitForSelector("#user-menu-label");
+        browser.byCss("#user-menu-label").click();
         browser.waitForSelector("[href='/logout']")
         browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {
@@ -53,7 +54,8 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL);
-        browser.byCss("a#user-menu-label").click();
+        browser.waitForSelector("#user-menu-label");
+        browser.byCss("#user-menu-label").click();
         browser.waitForSelector("[href='/logout']")
         browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {

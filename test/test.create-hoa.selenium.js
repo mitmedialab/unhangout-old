@@ -115,7 +115,7 @@ describe("CREATE HOA", function() {
                                 event.get("hoa").get("hangout-broadcast-id")) === 0
                 );
             });
-        });
+        }, 60000);
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
             expect(href).to.eql(event.get("hoa").getParticipationLink());
         });

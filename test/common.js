@@ -220,6 +220,7 @@ exports.server = null;
 
 exports.standardSetup = function(done, skipSeed) {
     exports.server = new unhangoutServer.UnhangoutServer();
+
     exports.server.on("inited", function() {
         exports.server.start()
     });
