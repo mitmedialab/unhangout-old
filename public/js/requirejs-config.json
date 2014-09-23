@@ -11,7 +11,7 @@
         "underscore": "../vendor/underscore",
         "backbone": "../vendor/backbone",
         "backbone.marionette": "../vendor/backbone.marionette",
-        "bootstrap": "../vendor/bootstrap/js/bootstrap.min",
+        "bootstrap": "../vendor/bootstrap-3.2.0-dist/js/bootstrap.min",
         "bootstrap-datetimepicker": "../vendor/bootstrap-datetimepicker.min",
         "summernote": "../vendor/summernote.min",
         "moment": "../vendor/moment.min",

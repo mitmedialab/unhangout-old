@@ -1,6 +1,7 @@
 // This code runs on the home page and does minor UI management.
 
 require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
+
     $(document).ready(function() {        
         $("#subscribe").click(function() {
 
