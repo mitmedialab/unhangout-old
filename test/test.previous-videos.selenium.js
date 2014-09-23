@@ -42,8 +42,8 @@ describe("PREVIOUS VIDEOS", function() {
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "superuser1");
-        browser.waitForSelector(".inline-video-controls .dropdown-toggle");
-        browser.byCss(".inline-video-controls .dropdown-toggle").click();
+        browser.waitForSelector("#video-embed .dropdown-toggle");
+        browser.byCss("#video-embed .dropdown-toggle").click();
         browser.byCss(".remove-one-previous-video[data-youtube-id='wd9OY0E8A98']").click();
         browser.wait(function() {
             return event.get("previousVideoEmbeds").length === PREVIOUS.length - 1;
@@ -53,8 +53,8 @@ describe("PREVIOUS VIDEOS", function() {
             newPrevious.shift();
             expect(event.get("previousVideoEmbeds")).to.eql(newPrevious);
         });
-        browser.waitForSelector(".inline-video-controls .dropdown-toggle");
-        browser.byCss(".inline-video-controls .dropdown-toggle").click();
+        browser.waitForSelector("#video-embed .dropdown-toggle");
+        browser.byCss("#video-embed .dropdown-toggle").click();
         browser.byCsss(".previous-videos li", function(lis) {
             expect(lis.length).to.be(PREVIOUS.length - 1);
         });
