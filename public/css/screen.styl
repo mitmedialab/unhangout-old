@@ -906,26 +906,26 @@ hr.noshade {
     background-color: #eee;
   }
 
-  /*ul.previous-videos li {
-    width: 380px;
+  /* ====================== PREVIOUS VIDEO UL ========================*/
+
+  ul.previous-videos {
+    width: 450px;
   }
 
-  ul.previous-videos li > span {
-    padding: 1em 0.5em 1.4em 0.5em;
+  .previous-video-item {
+    padding: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
   }
-  ul.previous-videos li > span:hover {
-    background-color: #0081c2;
-    background-image: linear-gradient(to bottom, #08C, #0077B3);
-    background-repeat: repeat-x;
-  }
-  ul.previous-videos li > span:hover a {
-    color: white;
-    text-decoration: none;
-  }
-  ul.previous-videos li > span > a.remove-one-previous-video:hover {
-    color: red;
-  }*/
 
+  .previous-video-item:hover {
+    background-color: #eee;
+  }
+
+  .previous-video-details {
+    padding: 0px;
+  }
+  
   .restore-previous-video {
 
     &.header {
@@ -934,22 +934,20 @@ hr.noshade {
       font-size: 1.0em; 
       font-weight: 400;
       letter-spacing: 0.04em;
-
-      &:hover {
-        background-color: white;
-        color: black;
-      }
     }
+
     .title {
       display: inline-block;
       vertical-align: middle;
-      margin-left: 10px;
-      whites-space: nowrap;
-      overflow: hidden;
       text-overflow: ellipsis;
-      width: 240px;
+      width: 100%;
+      margin: 10px 0px 0px 20px;
       font-size: 12px;
-      line-height: 1em;
+      line-height: 1.2em;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
     }
 
     .duration {
@@ -957,18 +955,23 @@ hr.noshade {
       color: #999;
       width: 30px;
       display: inline-block;
+      margin: 10px 0px 0px 10px;
     }
     
   }
 
-  .remove-one-previous-video {
-      z-index: 1000;
-      border-radius: 5px;
-      text-align: center;
-      border: 0px solid transparent;
-      border-radius: 2px;
-      font-size: 0.8em;
-      font-weight: 400;
+  .btn-del-previous-video {
+    padding: 0px;
+    margin-top: 10px;
+
+    .remove-one-previous-video {
+        border-radius: 5px;
+        text-align: center;
+        border: 0px solid transparent;
+        border-radius: 2px;
+        font-size: 0.8em;
+        font-weight: 400;
+    }
   }
 
   .clear-previous-videos {
@@ -979,10 +982,11 @@ hr.noshade {
     padding: 1em;
     font-size: 1.0em; 
     font-weight: 400;
-    letter-spacing: 0.04em;
-      
+    letter-spacing: 0.04em; 
   }
 }
+
+/*==============================================================*/
 
 .sync-indicator {
   display: inline-block;

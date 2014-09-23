@@ -251,18 +251,24 @@
                         <i class='fa fa-caret-down'></i>
                     </button>
 
-
                     <ul class="dropdown-menu previous-videos" role="menu">
-                        <li role="presentation"><a class='restore-previous-video header'>Previous videos</a></li>
+                        <li><a class='restore-previous-video header'>Previous videos</a></li>
+
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
 
                             <li role="presentation">
-                                <a role="menuitem" class='restore-previous-video'
-                                   data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}  
-                                </a>
+                                <div class="col-lg-12 previous-video-item">
+                                    <div class="col-lg-11 previous-video-details">
+                                        <a role="menuitem" class='restore-previous-video'
+                                        data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}  
+                                        </a>
+                                    </div>
 
-                                <!--<button class='btn btn-danger remove-one-previous-video'
-                                    data-youtube-id='{{= vid.youtubeId }}'><i class='fa fa-trash'></i></button>-->
+                                    <div class="col-lg-1 btn-del-previous-video">
+                                        <button class='btn btn-danger remove-one-previous-video'
+                                    data-youtube-id='{{= vid.youtubeId }}'><i class='fa fa-trash'></i></button>
+                                    </div>
+                                </div>
                                 
                             </li>
                         {{ }); }}
@@ -330,14 +336,22 @@
 
 <script type='text/template' id="previous-video-details-template">
     <a tabindex='-1' href='#' class='restore-previous-video'
-       style='text-align: left;'
        title='{{= title }}'
        data-youtube-id='{{= id }}'>
-        <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
-        <span class='title'>{{= title }}</span>
-        <span class='duration'>
-            {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
-        </span>
+        
+        <div class="col-lg-2">
+            <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
+        </div>
+
+        <div class="col-lg-8">
+            <p class='title'>{{= title }}</p>
+        </div>
+
+        <div class="col-lg-1">
+            <p class='duration'>
+                {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
+            </p>
+        </div>
     </a>
 </script>
 
