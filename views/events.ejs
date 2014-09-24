@@ -13,12 +13,14 @@
 <script type='text/template' id='event-listing'>
     <div class='event-box col-md-3'>
         <a href='{{= link }}'>
-            <img class='img-responsive event-image'>
+            <img class='img-responsive event-image' src='{{= image }}'/>
         </a>
         <hr class='line-break'>
         <h4><a href='{{= link }}'>{{= title }}</a></h4>
-        <span class='date'>{{= date.format("MMM D, YYYY, h:mm a Z")}}</span>
+        <span class='date'>{{= date.format("MMM D, YYYY, h:mm a zz")}}</span>
+        <!--
         <p>{{= description }}</p>
+        -->
     </div>
 </script>
 
