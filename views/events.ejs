@@ -1,7 +1,7 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-<div class="container event-container">
+<div class="container event-container" id='events-list' data-spreadsheet-key="<%= spreadsheetKey %>">
       <h3 class="col-lg-12 upcomingEventsTitle" style="display:none;">Upcoming Events</h3> 
       <div id="upcomingEvents"></div> 
  
@@ -10,7 +10,21 @@
 
 </div>
 
+<script type='text/template' id='event-listing'>
+    <div class='event-box col-md-3'>
+        <a href='{{= link }}'>
+            <img class='img-responsive event-image'>
+        </a>
+        <hr class='line-break'>
+        <h4><a href='{{= link }}'>{{= title }}</a></h4>
+        <span class='date'>{{= date.format("MMM D, YYYY, h:mm a Z")}}</span>
+        <p>{{= description }}</p>
+    </div>
+</script>
+
 <% include _sponsorship.ejs %>
+<%- requireScripts("/public/js/events-spreadsheet.js") %>
+<% include _analytics.ejs %>
 
 <!-- Spreadsheet Importer JS Files -->
 <!--
