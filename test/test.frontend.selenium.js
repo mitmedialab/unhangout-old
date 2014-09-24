@@ -34,6 +34,7 @@ describe("FRONT PAGE", function() {
 
         browser.byLinkText("About").click().then(navLinkActive("/about/"));
         browser.byLinkText("Events").click().then(navLinkActive("/events/"));
+        browser.byLinkText("Permalinks").click().then(navLinkActive("/h/"));
         
         browser.byCss(".navbar-brand").click().then(navLinkActive("/")).then(function() {
             done();
