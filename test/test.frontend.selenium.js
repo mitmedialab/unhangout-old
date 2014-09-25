@@ -34,7 +34,10 @@ describe("FRONT PAGE", function() {
 
         browser.byLinkText("About").click().then(navLinkActive("/about/"));
         browser.byLinkText("Events").click().then(navLinkActive("/events/"));
-        browser.then(function() {
+        // need to be logged in for /h/.
+        browser.mockAuthenticate("regular1");
+        browser.byLinkText("Permalinks").click().then(navLinkActive("/h/"));
+        browser.unMockAuthenticate().then(function() {
             done();
         });
         
