@@ -31,6 +31,7 @@ describe("CREATE SESSIONS", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/h/");
+        browser.waitForSelector("#permalink-title");
         browser.byCss("#permalink-title").sendKeys("This won't work");
         browser.byCss("#permalink-create-submit").click();
         browser.byCss(".help-block").getText().then(function(text) {
