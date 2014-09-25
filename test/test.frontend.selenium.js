@@ -23,7 +23,6 @@ describe("FRONT PAGE", function() {
         return function() {
             browser.waitWithTimeout(function() {
                 return browser.byCsss("li.active a[href='" + href + "']").then(function(els) {
-                    console.log(els);
                     return els.length == 1;
                 });
             });

@@ -1,108 +1,113 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-    <div class="container about-container" id="about">
-        
-        <h3>About</h3>
+<div class="container about-container" id="about">
+    
+    <h3>About</h3>
 
-        <p><strong>Unhangout</strong> is an open source
-        platform for running large scale online un-conferences.
-        We use Google Hangouts to create as many small sessions
-        as needed, and help users find others with shared
-        interests.</p>
+    <p><strong>Unhangout</strong> is an open source
+    platform for running large scale online un-conferences.
+    We use Google Hangouts to create as many small sessions
+    as needed, and help users find others with shared
+    interests.</p>
 
-        <div class="modal fade disconnected-modal" id="disconnected-modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Warning!</h4>
-                    </div>
+    <div class="modal fade disconnected-modal" id="disconnected-modal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Warning!</h4>
+                </div>
 
-                    <div class="modal-body">
-                        <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
-                    </div>
+                <div class="modal-body">
+                    <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+                </div>
 
-                    <div class="modal-footer">
-                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
+                <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
-
-        
-        <p>Think of it as a classroom with an infinite
-        number of breakout sessions. Each event has a landing
-        page, which we call the lobby. When participants
-        arrive, they can see who else is there and chat with
-        each other. The hosts can do a video welcome and
-        introduction that gets streamed into the lobby.
-        Participants then break out into smaller sessions (up
-        to 10 people per session) for in-depth conversations,
-        peer-to-peer learning, and collaboration on projects.
-        UnHangouts are community-based learning instead of
-        top-down information transfer.</p>
-
-        <h3>Open Source</h3>
-
-        <p><strong>Unhangout</strong> is an open source
-        project. You can find the code in <a href=
-        "https://github.com/drewww/unhangout">our repository on
-        GitHub</a>. Please let us know if you're interested in
-        hosting your own unhangout events - we would be happy
-        to help you get this set up on your own servers. In
-        some situations, we might be able to host your event on
-        our installation, too.</p>
-
-        <p></p>
-
-        <h3>The Team</h3>
-
-        <p>Our four person design and development team is
-        based at the MIT Media Lab in Cambridge, MA.</p>
-
-
-        <div class="participant-info">
-
-            <div class='participant'>
-                <a href="http://www.media.mit.edu/people/ps1" target="blank">
-                    <img src="/public/img/people/ps1_98x98.png" alt='Philipp Schmidt'>
-                </a>
-                <span class="overlay">Philipp Schmidt</span>
-            </div>
-
-            <div class='participant'>
-                <a href="http://web.media.mit.edu/~dharry" target="blank">
-                    <img src="/public/img/people/drew_98x98.jpg" alt='Drew Harry'>
-                </a>
-                <span class="overlay">Drew Harry</span>
-            </div>
-
-            <div class='participant'>
-                <a href="http://tirl.org/" target="blank">
-                <img src="/public/img/people/charlie_98x98.jpg" alt='Charlie DeTar'>
-                </a>
-                <span class="overlay">Charlie DeTar</span>
-            </div>
-
-            <div class='participant'>
-                <a href="http://srishtisethi.com" target="blank">
-                    <img src="/public/img/people/srishti_98x98.jpg" alt='Srishti Sethi'>
-                </a>
-                <span class="overlay">Srishti Sethi</span>
-            </div>
-
-            <br/><br/>
-        </div>
-
-        <h3>Acknowledgements</h3>
-
-        <p><strong>Unhangout</strong> is made possible by the
-        generous support of the <a href="http://www.macfound.org/">MacArthur Foundation</a> and the
-        <a href="http://media.mit.edu">MIT Media Lab.</a></p>
-
     </div>
 
-<% include _sponsorship.ejs %>
+    
+    <p>Think of it as a classroom with an infinite
+    number of breakout sessions. Each event has a landing
+    page, which we call the lobby. When participants
+    arrive, they can see who else is there and chat with
+    each other. The hosts can do a video welcome and
+    introduction that gets streamed into the lobby.
+    Participants then break out into smaller sessions (up
+    to 10 people per session) for in-depth conversations,
+    peer-to-peer learning, and collaboration on projects.
+    UnHangouts are community-based learning instead of
+    top-down information transfer.</p>
+
+    <h3>Open Source</h3>
+
+    <p><strong>Unhangout</strong> is an open source
+    project. You can find the code in <a href=
+    "https://github.com/drewww/unhangout">our repository on
+    GitHub</a>. Please let us know if you're interested in
+    hosting your own unhangout events - we would be happy
+    to help you get this set up on your own servers. In
+    some situations, we might be able to host your event on
+    our installation, too.</p>
+
+    <p></p>
+
+    <h3>The Team</h3>
+
+    <p>Our four person design and development team is
+    based at the MIT Media Lab in Cambridge, MA.</p>
+
+
+    <div class="participant-info">
+
+        <div class='participant'>
+            <a href="http://www.media.mit.edu/people/ps1" target="blank">
+                <img src="/public/img/people/ps1_98x98.png" alt='Philipp Schmidt'>
+            </a>
+            <span class="overlay">Philipp Schmidt</span>
+        </div>
+
+        <div class='participant'>
+            <a href="http://web.media.mit.edu/~dharry" target="blank">
+                <img src="/public/img/people/drew_98x98.jpg" alt='Drew Harry'>
+            </a>
+            <span class="overlay">Drew Harry</span>
+        </div>
+
+        <div class='participant'>
+            <a href="http://tirl.org/" target="blank">
+            <img src="/public/img/people/charlie_98x98.jpg" alt='Charlie DeTar'>
+            </a>
+            <span class="overlay">Charlie DeTar</span>
+        </div>
+
+        <div class='participant'>
+            <a href="http://srishtisethi.com" target="blank">
+                <img src="/public/img/people/srishti_98x98.jpg" alt='Srishti Sethi'>
+            </a>
+            <span class="overlay">Srishti Sethi</span>
+        </div>
+
+        <br/><br/>
+    </div>
+
+    <h3>Acknowledgements</h3>
+
+    <p><strong>Unhangout</strong> is made possible by the
+    generous support of the <a href="http://www.macfound.org/">MacArthur Foundation</a> and the
+    <a href="http://media.mit.edu">MIT Media Lab.</a></p>
+
+</div>
+
+<div class='col-lg-12 footer about-footer'>
+    <div class="container">
+        An MIT Media Lab project, in collaboration with the
+        MacArthur Foundation.
+    </div>
+</div>
 
 <%- requireScripts("/public/js/index.js") %>
 <% include _analytics.ejs %>

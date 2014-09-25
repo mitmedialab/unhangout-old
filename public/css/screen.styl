@@ -1210,8 +1210,12 @@ hr.noshade {
     padding-bottom: 50px;
     min-height: 1130px;
 
+    .upcomingEventsTitle {
+      margin-top: 45px;
+    }
+
     .pastEventsTitle {
-      margin-top: 50px;
+      margin-top: 30px;
     }
 
   .event-box {
@@ -1232,7 +1236,7 @@ hr.noshade {
     }
 
     a {
-        color: #333;
+        color: $navbar;
         text-decoration: none;
     }
   }
@@ -1421,13 +1425,27 @@ hr.noshade {
       text-decoration:underline;
     }
   }
+}
 
+.about-footer {
+  position: absolute;
+  bottom: 0px;
 }
 
 /*-------------------------- PERMALINKS -------------------------------*/
 
+.permalink-footer {
+  position: absolute; 
+  bottom: 0px;
+}
+
+.permalink-intro-footer {
+  position: absolute;
+  bottom: 0px;  
+}
+
 .permalink-container {
-  min-height: 90%;
+  margin-top: 30px;
 
   .control-label {
     padding-left: 0px;
@@ -1475,7 +1493,7 @@ hr.noshade {
 }
 
 .permalink-hangout-page {
-  height: 90%;
+  margin-top: 30px;
 
   .permalink-title-col {
     padding: 0px;
