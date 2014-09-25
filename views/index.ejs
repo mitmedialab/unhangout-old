@@ -58,22 +58,8 @@
      <div class="row">
 
         <div class="col-lg-7">
-            <h3>Upcoming events</h3>
-
-            <div class="mini-event-box">
-                <div class="col-lg-5 event-thumbnail">
-                    <img src="https://i.imgur.com/hpDRgwZ.png">
-                </div>
-
-                <div class="col-lg-7">
-                    <a href=" https://unhangout.media.mit.edu/event/edcamp-online" target="_blank"><h4>Edcamp Online </h4> </a>
-                    <p>Oct 25, 2014 12.30pm EDT </p>
-
-                    <p class="lead">Join us for the 2nd annual #EdcampOnline. Edcamp is a form of unconference designed specifically for teachers and their needs. </p>
-                </div>
-
-            </div>
-
+            <h3 class='upcomingEventsTitle'>Upcoming events</h3>
+            <div id='upcomingEvents'><!-- populated from spreadsheet script --></div>
         </div>
 
         <!--<div class="col-lg-7">
@@ -83,11 +69,8 @@
 
             <div class="form-group reminders">
                 <input class="form-control col-lg-12" id="email" type="email" placeholder="email address">
-
                 <button class="btn btn-primary btn-subscribe" id="subscribe" type="button">Subscribe</button>
-
             </div>
-
         </div> -->
 
         <div class="col-lg-5">
@@ -99,32 +82,7 @@
 
 <!-- MODAL DIALOGS -->
 
-<!-- subscribing to an event (not currently used) -->
-
-<div class="modal fade subscription-modal" role="dialog" aria-hidden="true" id="subscription-modal">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Subscribed! </h4>
-            </div>
-
-            <div class="modal-body">
-                <p>You have been subscribed to this event.
-                We will send you an email reminder 24 hours
-                before the event and 5 minutes before it
-                starts.</p>           
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-default" data-dismiss=
-                "modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- prompt to log in first before creating event -->
-
 <div class="modal fade event-mini-form" role="dialog" aria-hidden="true" id="login-first-modal">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -194,7 +152,6 @@
 <div class="modal fade event-mini-form" role="dialog" aria-hidden="true" id="session-submission-modal">
     <div class="modal-dialog">
         <div class="modal-content">
-
             <div class="modal-header">
                 <h4 class="modal-title">Thank you!!!</h4>
             </div>
@@ -206,11 +163,23 @@
             <div class="modal-footer">
                 <button class="btn btn-primary" data-dismiss="modal">Close</button>
             </div>
-
         </div>
-
     </div>
 </div>
+
+<!-- template for event listings on the front page -->
+<script type='text/template' id='frontpage-events' data-spreadsheet-key='<%= spreadsheetKey %>'>
+    <div class="mini-event-box">
+        <div class="col-lg-5 event-thumbnail">
+            <img src="{{= image }}">
+        </div>
+        <div class="col-lg-7">
+            <a href="{{= link }}" target="_blank"><h4>{{= title }}</h4> </a>
+            <p>{{= date.format("MMM D, YYYY, h:mm a [GMT]Z") }}</p>
+            <p class="lead">{{= description }}</p>
+        </div>
+    </div>
+</script>
 
 <% include _sponsorship.ejs %>
 <%- requireScripts("/public/js/index.js") %>

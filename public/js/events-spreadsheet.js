@@ -1,6 +1,4 @@
-require(["jquery", "underscore", "moment", "underscore-template-config"], function($, _, moment) {
-  var key = $("[data-spreadsheet-key]").attr("data-spreadsheet-key"); 
-  var template = _.template($("#event-listing").html());
+define(["jquery", "underscore", "moment", "underscore-template-config"], function($, _, moment) {
   var now = Date.now();
 
   var parseSpreadsheet = function(data) {
@@ -31,26 +29,30 @@ require(["jquery", "underscore", "moment", "underscore-template-config"], functi
     return rows;
   };
 
-  $.getJSON("https://spreadsheets.google.com/feeds/cells/" + key + "/default/public/basic?alt=json-in-script&callback=?", function(data) {
-    var rows = parseSpreadsheet(data);
-    var hasUpcoming, hasPast;
-    
-    _.each(rows, function(row) {
-      if (row.date && row.date.valueOf() > now) {
-        hasUpcoming = true;
-        $("#upcomingEvents").append(template(row));
-      } else {
-        hasPast = true;
-        var html = template(row);
-        console.log(html);
-        $("#pastEvents").append(template(row));
+  var displayEvents = function(spreadsheetKey, template) {
+    var url = "https://spreadsheets.google.com/feeds/cells/" + spreadsheetKey + "/default/public/basic?alt=json-in-script&callback=?";
+    $.getJSON(url, function(data) {
+      var rows = parseSpreadsheet(data);
+      var hasUpcoming, hasPast;
+      
+      _.each(rows, function(row) {
+        if (row.date && row.date.valueOf() > now) {
+          hasUpcoming = true;
+          $("#upcomingEvents").append(template(row));
+        } else {
+          hasPast = true;
+          var html = template(row);
+          $("#pastEvents").append(template(row));
+        }
+      });
+      if (hasUpcoming) {
+        $(".upcomingEventsTitle").show();
+      }
+      if (hasPast) {
+        $(".pastEventsTitle").show();
       }
     });
-    if (hasUpcoming) {
-      $(".upcomingEventsTitle").show();
-    }
-    if (hasPast) {
-      $(".pastEventsTitle").show();
-    }
-  });
+  };
+
+  return { displayEvents: displayEvents };
 });

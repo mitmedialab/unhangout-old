@@ -1,6 +1,10 @@
 // This code runs on the home page and does minor UI management.
 
-require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
+require(['jquery', 'events-spreadsheet', 'jquery.validate', 'bootstrap', "auth", "update-navbars"], function($, eventsSpreadsheet) {
+
+    var key = $("[data-spreadsheet-key]").attr("data-spreadsheet-key"); 
+    var template = _.template($("#frontpage-events").html());
+    eventsSpreadsheet.displayEvents(key, template);
 
     $(document).ready(function() {        
         $("#subscribe").click(function() {
@@ -65,14 +69,6 @@ require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
                 });
 
 
-            }
-        });
-        // Update navbars
-        $(".nav li").each(function(i, el) {
-            if ($(el).find("a").attr("href") == window.location.pathname) {
-                $(el).addClass("active");
-            } else {
-                $(el).removeClass("active");
             }
         });
     });

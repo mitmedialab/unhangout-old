@@ -35,6 +35,7 @@
     },
     "modules": {
         "index.js": { "include": "index" },
+        "events.js": { "include": "events" },
         "event-app.js": { "include": "event-app" },
         "admin.js": { "include": "admin" },
         "admin-users.js": { "include": "admin-users" },

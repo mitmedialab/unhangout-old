@@ -17,7 +17,7 @@
         </a>
         <hr class='line-break'>
         <h4><a href='{{= link }}'>{{= title }}</a></h4>
-        <span class='date'>{{= date.format("MMM D, YYYY, h:mm a zz")}}</span>
+        <span class='date'>{{= date.format("MMM D, YYYY, h:mm a [GMT]Z")}}</span>
         <!--
         <p>{{= description }}</p>
         -->
@@ -25,12 +25,5 @@
 </script>
 
 <% include _sponsorship.ejs %>
-<%- requireScripts("/public/js/events-spreadsheet.js") %>
+<%- requireScripts("/public/js/events.js") %>
 <% include _analytics.ejs %>
-
-<!-- Spreadsheet Importer JS Files -->
-<!--
-<script src="/public/js/spreadsheetimporter/miso.ds.deps.min.0.4.0.js"></script>
-<script src="/public/js/spreadsheetimporter/dataset-template.js"></script>
-<script src="/public/js/spreadsheetimporter/dataset.js"></script>
--->

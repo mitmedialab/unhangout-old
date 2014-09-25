@@ -22,7 +22,8 @@ describe("FRONT PAGE", function() {
     var navLinkActive = function(href) {
         return function() {
             browser.waitWithTimeout(function() {
-                return browser.byCsss("li a[href='" + href + "']").then(function(els) {
+                return browser.byCsss("li.active a[href='" + href + "']").then(function(els) {
+                    console.log(els);
                     return els.length == 1;
                 });
             });
@@ -34,10 +35,10 @@ describe("FRONT PAGE", function() {
 
         browser.byLinkText("About").click().then(navLinkActive("/about/"));
         browser.byLinkText("Events").click().then(navLinkActive("/events/"));
-        
-        browser.byCss(".navbar-brand").click().then(navLinkActive("/")).then(function() {
+        browser.then(function() {
             done();
         });
+        
     });
 
     it("shows a static event page to unauthenticated users", function(done) {
