@@ -1,4 +1,4 @@
-require(["jquery", "auth", "update-navbars"], function($) {
+require(["jquery", "bootstrap", "auth", "update-navbars"], function($) {
     $(document).ready(function() {
         $("#permalink-create-submit").click(function(e) {
             e.stopPropagation();
