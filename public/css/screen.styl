@@ -401,22 +401,43 @@ hr.noshade {
 }
 
 .user {
+  width: 47px;
+  height: 47px;
+
   margin-top: 5px;
-  margin-right: 5px;
+  margin-left: 5px;
+
   border: 1px solid $background;
   box-sizing: border-box;
+
   background-color: white;
   float: left;
+
   overflow: hidden;
 
   &.admin {
     border: 2px solid $background;
     border-color: orange;
+
+    img {
+     position: absolute;
+     width: 43px;
+    }
+
+    i {
+      font-size: 40px;
+      width: 40px;
+      height: 40px;
+      line-height: 40px;
+      padding-left: 5px;
+
+      display: block; 
+    }
   }
 
   img {
-    width: 46px;
-    height: 46px;
+    width: 45px;
+    position: absolute;
   }
 
 }
