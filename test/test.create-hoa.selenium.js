@@ -135,7 +135,7 @@ describe("CREATE HOA", function() {
                     "http://www.youtube.com/embed/" +
                     event.get("hoa").get("hangout-broadcast-id")) === 0;
             });
-        }, 45000);
+        }, 60000);
 
         browser.then(function() { done(); });
     });

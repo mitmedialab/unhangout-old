@@ -33,7 +33,7 @@ var buildBrowser = function(callback) {
         seleniumServer.address()
     ).withCapabilities(
         webdriver.Capabilities.firefox()
-    ).build()
+    ).build();
     // Convenience methods for shorter typing for css selectors.
     browser.byCss = function(selector) {
         return browser.findElement(webdriver.By.css(selector));
@@ -190,12 +190,18 @@ exports.getSeleniumBrowser = function(callback) {
             opts.jvmArgs = ["-Dwebdriver.firefox.bin=" + conf.TESTING_FIREFOX_BIN];
         }
         seleniumServer = new SeleniumServer(seleniumPath, opts);
+        var isStarted = false;
         seleniumServer.start(60000).then(function() {
-            // Throwing in a timeout on speculation that this makes
-            // intermittent timeouts in beforeAll hooks less common.
-            setTimeout(function() {
-                buildBrowser(callback);
-            }, 2000);
+            isStarted = true;
+            buildBrowser(callback);
+        }).then(null, function(err) {
+          if (!isStarted) {
+            console.log("Error starting selenium, retrying.  Err:", err);
+            seleniumServer = null;
+            exports.getSeleniumBrowser(callback);
+          } else {
+            console.log("Error thrown by buildBrowser.", err);
+          }
         });
     }
 };
