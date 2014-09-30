@@ -32,6 +32,10 @@ require(['jquery', 'events-spreadsheet', 'jquery.validate', 'bootstrap', "auth",
             $('#event-mini-form-modal').modal('show');
         });
 
+        $("#permalink-login").click(function() {
+            $('#permalink-login-modal').modal('show');
+        });
+
         $('#contact-form').validate({
             rules: {
                 title: {

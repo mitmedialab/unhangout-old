@@ -17,7 +17,13 @@
           <ul class="nav navbar-nav">
             <li><a href="/about/">About</a></li>
             <li><a href="/events/">Events</a></li>
-            <li><a href="/h/">Permalinks</a></li>   
+
+            <% if (user) { %>
+              <li><a href="/h/">Permalinks</a></li>
+            <% } else { %>
+              <li><a href="#" id="permalink-login">Permalinks</a></li>
+            <% } %>
+
             <li><a href="http://unhangout.tumblr.com" target="_blank">Blog</a></li>
 
             <% if(user && user.isSuperuser()) { %>
@@ -31,3 +37,27 @@
         </div><!--/.nav-collapse -->
     </div>
 </div>
+
+
+<div class="modal fade permalink-login-modal" id="permalink-login-modal" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Please log in!</h4>
+              </div>
+
+              <div class="modal-body">
+                  <p>You need to be logged in to use Unhangout permalinks. It’s easy. You can use your Google account and it only takes 0.83seconds. </p>
+              </div>
+
+              <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss=
+                "modal">Close</button>
+                <a href="/auth/google/" class="btn btn-primary">Login to create an Unhangout</a>
+            </div>
+            
+          </div>
+      </div>
+  </div>
+
+
