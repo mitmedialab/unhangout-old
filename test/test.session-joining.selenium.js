@@ -74,9 +74,9 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {
             // But then we connect a socket directly to the session.
-            common.authedSock("regular2", session.getRoomId(), function(theSock) {
+            var roomId = session.getRoomId();
+            common.authedSock("regular2", roomId, function(theSock) {
                 sock = theSock;
-                sock.on("data", function(message) {});
             });
         });
         // Now we should have a user show up in the participant list.
