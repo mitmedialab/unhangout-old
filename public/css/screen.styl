@@ -512,70 +512,39 @@ hr.noshade {
     padding: 0px;
   }
 
-  .hangout-users, .hangout-offline {
-      padding: 0px;
-
-    .user, .empty {
-      float: left;
-      width: 46px;
-      height: 46px;
-      list-style: none;
-    }
-
-    @media(max-width: 1199px) {
-      .user, .empty {
-        width: 37px;
-        height: 37px;
-      }
-
-      .user.focus.joining {
-
-        img {
-          width: 35px;
-          height: 35px;
-        }
-      }
-
-      .user.focus img {
-          width: 35px;
-          height: 35px;
-      }
-      
-    }
-
-    .empty {
+  .hangout-users {
+    padding: 0px;
+    li.user, li.empty {
       background-color: white;
       border: 1px solid #dfdfdf;
-    }
-
-    .user {
-
+      float: left;
+      width: 44px;
+      height: 44px;
+      list-style: none;
       img {
-        width: 44px;
-        height: 44px;
+        width: 42px;
+        height: 42px;
       }
-
-      &.admin {
-        border: 2px solid orange;
-      }
-
+      &.admin { border: 2px solid orange; }
       &.joining {
         opacity: 0.5;
         margin: 0;
-
-        img {
-          width: 44px;
-          height: 44px;
-        }
       }
-
-      &.focus {
-        margin: 0;
-      }
-
+      &.focus { margin: 0; }
       i {
-        font-size: 26px;
+        font-size: 27px;
         line-height: 30px;
+      }
+    }
+
+    @media(max-width: 1199px) {
+      li.user, li.empty {
+        width: 37px;
+        height: 37px;
+        img {
+          width: 35px;
+          height: 35px;
+        }
       }
     }
   }

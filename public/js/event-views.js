@@ -35,7 +35,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         start:'.start',
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
-        hangoutOffline: '.hangout-offline'
     },
 
     events: {
@@ -164,8 +163,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // Now add the fragment to the layout and display it
         this.ui.hangoutUsers.html(fragment);
         this.ui.hangoutUsers.show();
-
-        this.ui.hangoutOffline.hide();
 
         if (!this.options.event.get("sessionsOpen") || numAttendees >= this.model.get("joinCap")) {
             this.ui.attend.find(".lock").show();
