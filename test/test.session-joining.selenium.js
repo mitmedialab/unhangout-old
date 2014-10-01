@@ -259,6 +259,24 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         buttonTextIs("JOIN");
 
+
+        // Even if more than the join cap join, we only show the 2.
+        browser.then(function() {
+            session.addJoiningParticipant({id: "j1", displayName: "joining1"});
+            session.addJoiningParticipant({id: "j2", displayName: "joining2"});
+            session.setConnectedParticipants([
+                {id: "t1", displayName: "test1"},
+                {id: "t2", displayName: "test2"},
+                {id: "t3", displayName: "test3"}
+            ]);
+        });
+        var heads = ".session[data-session-id='" + session.id + "'] .hangout-users li";
+        browser.wait(function() {
+          return browser.byCsss(heads).then(function(els) {
+            return els.length === 2;
+          });
+        });
+
         browser.then(function() {
             // Clean up.
             event.set("sessionsOpen", false);
