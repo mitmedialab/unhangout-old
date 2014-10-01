@@ -21,12 +21,8 @@ describe("FRONT PAGE", function() {
 
     var navLinkActive = function(href) {
         return function() {
-            browser.waitWithTimeout(function() {
-                return browser.byCsss("li.active a[href='" + href + "']").then(function(els) {
-                    return els.length == 1;
-                });
-            });
-        };
+          browser.waitForSelector("li.active a[href='" + href + "']");
+        }
     };
 
     it("gets home page and nav links activate", function(done) {
@@ -36,6 +32,7 @@ describe("FRONT PAGE", function() {
         browser.byLinkText("Events").click().then(navLinkActive("/events/"));
         // need to be logged in for /h/.
         browser.mockAuthenticate("regular1");
+        browser.get(common.URL);
         browser.byLinkText("Permalinks").click().then(navLinkActive("/h/"));
         browser.unMockAuthenticate().then(function() {
             done();

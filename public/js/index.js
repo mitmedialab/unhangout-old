@@ -34,6 +34,7 @@ require(['jquery', 'events-spreadsheet', 'jquery.validate', 'bootstrap', "auth",
 
         $("#permalink-login").click(function() {
             $('#permalink-login-modal').modal('show');
+            return false;
         });
 
         $('#contact-form').validate({
