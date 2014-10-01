@@ -14,13 +14,14 @@
                 </button>   
                 
                 <% if(user) { %>
-                    <div class="col-lg-2">
-                    <a class="navbar-brand short-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a> 
+                    <div class="titles">
+                        <a class="navbar-brand short-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a> 
                     </div>
 
                 <% } else { %>  
-
-                    <a class="navbar-brand long-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
+                    <div class="titles">
+                        <a class="navbar-brand long-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
+                    </div>
 
                 <% } %>
 
