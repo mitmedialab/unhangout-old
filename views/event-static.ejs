@@ -9,21 +9,28 @@
     }
 </script>
     
-    <div class="container event-static">
-        <h2><%= title %></h2>
-        <h3>hosted by <%- event.get("organizer") %></h3>
-        <br/>
+<div class="container event-static">
+    <h2><%= title %></h2>
+    <h3>hosted by <%- event.get("organizer") %></h3>
+    <br/>
 
-        <h4>
-        <% if (event.get("dateAndTime")) { %>
-            <%= event.formatDate() %>
-        <% } %>
-        </h4>
+    <h4>
+    <% if (event.get("dateAndTime")) { %>
+        <%= event.formatDate() %>
+    <% } %>
+    </h4>
 
-        <br/> <br/>
-        <p><%- event.get("description") %></p>
-        <div style='clear: both;'></div>
+    <br/> <br/>
+    <p><%- event.get("description") %></p>
+    <div style='clear: both;'></div>
+</div>
+
+<div class='col-lg-12 footer event-static-footer'>
+    <div class="container">
+        An MIT Media Lab project, in collaboration with the
+        MacArthur Foundation.
     </div>
+</div>
 
 <%- requireScripts("/public/js/index.js") %>
 <% include _footer.ejs %>
