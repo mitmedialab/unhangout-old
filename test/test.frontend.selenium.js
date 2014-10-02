@@ -37,7 +37,6 @@ describe("FRONT PAGE", function() {
         browser.unMockAuthenticate().then(function() {
             done();
         });
-        
     });
 
     it("shows a static event page to unauthenticated users", function(done) {
