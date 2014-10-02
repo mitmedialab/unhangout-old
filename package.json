@@ -73,7 +73,7 @@
     "libxmljs": "*",
     "simplesmtp": "~0",
     "mailparser": "~0",
-    "sinon"     : "1.9.0"
+    "sinon"     : "1.10.3"
   },
   "license": "BSD",
   "engines": {

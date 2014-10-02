@@ -13,11 +13,7 @@ describe("CREATE HOA", function() {
     }
     this.timeout(60000); // Extra long timeout for selenium :(
     before(function(done) {
-        common.getSeleniumBrowser(function(theBrowser) {
-            browser = theBrowser;
-            common.standardSetup(done);
-        });
-
+        this.timeout(120000);
         //
         // Set up mocks for googleapis, so we can dance right past them.
         //
@@ -55,6 +51,11 @@ describe("CREATE HOA", function() {
                 }
             }
         };
+        common.getSeleniumBrowser(function(theBrowser) {
+            browser = theBrowser;
+            common.standardSetup(done);
+        });
+
     });
     after(function(done) {
         browser.quit().then(function() {

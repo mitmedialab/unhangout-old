@@ -1,7 +1,6 @@
 var server = require('../lib/unhangout-server'),
     expect = require('expect.js'),
     Promise = require("bluebird"),
-    sinon = require("sinon"),
     _ = require('underscore')._,
     request = require('superagent'),
     conf = require('../lib/options'),

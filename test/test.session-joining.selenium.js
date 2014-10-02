@@ -31,6 +31,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     beforeEach(function(done) {
+        this.timeout(120000);
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
                 browser = theBrowser;

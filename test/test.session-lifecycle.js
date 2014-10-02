@@ -29,7 +29,7 @@ describe('SESSION LIFECYCLE', function() {
             "hangout-url": "http://example.com"
         });
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         session.onRestart()
         clock.tick(session.RESTART_HANGOUT_URL_EXPIRATION_TIMEOUT + 1);
         expect(session.get("hangout-url")).to.be(null);
@@ -42,7 +42,7 @@ describe('SESSION LIFECYCLE', function() {
             "hangout-url": "http://example.com"
         });
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         session.onRestart();
         clock.tick(session.RESTART_HANGOUT_URL_EXPIRATION_TIMEOUT - 1);
         session.setConnectedParticipants(participants);
@@ -54,7 +54,7 @@ describe('SESSION LIFECYCLE', function() {
     it("Calculates total seconds active", function() {
         var session = new models.ServerSession();
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
 
         session.onHangoutStarted();
         clock.tick(10000);
@@ -76,7 +76,7 @@ describe('SESSION LIFECYCLE', function() {
     });
 
     it("Continues counting session elapsed after restart", function() {
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         var start = new Date().getTime();
         clock.tick(10000);
         var session = new models.ServerSession({
@@ -93,7 +93,7 @@ describe('SESSION LIFECYCLE', function() {
     });
 
     it("Stops with delay, event with stale connected participants", function() {
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         var session = new models.ServerSession({
             // Set isPermalinkSession so we don't look like a deleted event
             // session without a collection
@@ -113,7 +113,7 @@ describe('SESSION LIFECYCLE', function() {
         clock.restore();
     });
     it("Interrupts stops with delay if new participants join", function() {
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         var session = new models.ServerSession({
             // Set isPermalinkSession so we don't look like a deleted event
             // session without a collection
@@ -140,7 +140,7 @@ describe('SESSION LIFECYCLE', function() {
 
 
     it("Continues stopping timeout after restart", function() {
-        var clock  = sinon.useFakeTimers();
+        var clock  = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         var reqtime =  new Date().getTime() - models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT / 2;
         var session = new models.ServerSession({
             "hangout-url": "http://example.com",
@@ -157,7 +157,7 @@ describe('SESSION LIFECYCLE', function() {
     });
 
     it("Continues pending timeout after restart", function() {
-        var clock  = sinon.useFakeTimers();
+        var clock  = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         var time = new Date().getTime() - models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT / 2;
         var session = new models.ServerSession({
             "hangout-url": null,
@@ -245,7 +245,7 @@ describe('SESSION LIFECYCLE', function() {
             broadcasts.push(Array.prototype.slice.call(arguments, 0))
         });
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
 
         // Add a joining participant...
         session.addJoiningParticipant(u1);
@@ -292,7 +292,7 @@ describe('SESSION LIFECYCLE', function() {
             broadcasts.push(copy);
         });
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
 
         session.addJoiningParticipant(u0);
         session.addJoiningParticipant(u1);
@@ -343,7 +343,7 @@ describe('SESSION LIFECYCLE', function() {
         var session = new models.ServerSession({id: 1, joiningParticipants: participants});
         expect(_.size(session.joiningTimeouts)).to.be(0);
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         session.onRestart();
         expect(_.size(session.joiningTimeouts)).to.be(2);
         clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 1);
@@ -359,7 +359,7 @@ describe('SESSION LIFECYCLE', function() {
         });
         session.event = new models.ServerEvent();
         expect(session.isDeleted()).to.be(false);
-        var clock = sinon.useFakeTimers(new Date().getTime());
+        var clock = sinon.useFakeTimers(new Date().getTime(), "setTimeout", "clearTimeout", "Date");
         session.setConnectedParticipants([]);
         session.stopWithDelay();
         expect(session.get("hangout-stop-request-time")).to.be.a('number');
@@ -384,7 +384,7 @@ describe("Crash on removal", function() {
         var session = event.get("sessions").at(0);
         session.addJoiningParticipant(common.server.db.users.get(1));
 
-        var clock = sinon.useFakeTimers(new Date().getTime());
+        var clock = sinon.useFakeTimers(new Date().getTime(), "setTimeout", "clearTimeout", "Date");
         session.onRestart();
         session.destroy();
         event.get("sessions").remove(session);
@@ -421,7 +421,7 @@ describe("Crash on removal", function() {
     it("Doesn't crash on joining expiry for hoa without event", function() {
         var hoa = new models.ServerHoASession();
         hoa.event = common.server.db.events.at(0);
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         hoa.addJoiningParticipant({id: 1, displayName: "whatever"});
         hoa.event = null;
         clock.tick(models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT + 1);
