@@ -85,8 +85,8 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-event h3").getText().then(function(text) {
                 expect(text).to.be("hosted by unhangoutdev@gmail.com");
             });
-            browser.waitForSelector("#about-event .about-footer");
-            browser.byCss("#about-event .about-footer").getText().then(function(text) {
+            browser.waitForSelector("#about-event .event-status-footer");
+            browser.byCss("#about-event .event-status-footer").getText().then(function(text) {
                 expect(text.indexOf("has not yet started")).to.not.eql(-1);
             });
             chatIsEnabled(false);
@@ -112,7 +112,7 @@ describe("CREATE EVENT", function() {
             });
             // Make sure footer is not there.
             browser.executeScript(
-                "return $('#about-event .about-footer').is(':visible');"
+                "return $('#about-event .event-status-footer').is(':visible');"
             ).then(function(res) {
                 expect(res).to.be(false);
             });
