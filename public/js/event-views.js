@@ -34,7 +34,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         attend: '.attend',
         start:'.start',
         deleteButton: '.delete',        // delete is reserved word
-        hangoutUsers: '.hangout-users',
+        hangoutUsers: '.hangout-users'
     },
 
     events: {

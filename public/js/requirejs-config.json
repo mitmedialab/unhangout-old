@@ -12,7 +12,7 @@
         "backbone": "../vendor/backbone",
         "backbone.marionette": "../vendor/backbone.marionette",
         "bootstrap": "../vendor/bootstrap-3.2.0-dist/js/bootstrap.min",
-        "bootstrap-datetimepicker": "../vendor/bootstrap-datetimepicker.min",
+        "bootstrap-datetimepicker": "../vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min",
         "summernote": "../vendor/summernote.min",
         "moment": "../vendor/moment.min",
         "moment-timezone": "../vendor/moment-timezone.min",
