@@ -13,6 +13,7 @@
     <div class="col-lg-8 event-info-box">
         
         <div class="col-lg-12 event-info-box">
+           
             <h2 class="title"><%= title %></h2>
             <h3 class="host">hosted by <%- event.get("organizer") %></h3>
             <br/>
@@ -27,9 +28,62 @@
 
             <p class="description"><%- event.get("description") %></p>
             <div style='clear: both;'></div>
+
+            <div class="col-lg-12 col-md-12 social-media-icons">
+                <div class="col-lg-offset-6 col-lg-6 col-md-offset-6 col-md-6 col-sm-offset-6 col-sm-6 col-xs-12">
+                    <!-- Twitter Share a Link Button -->
+                    <div class="twitter-button col-lg-3 col-md-2 col-sm-2 col-xs-3">
+                      <a href="https://twitter.com/share" class="twitter-share-button" id="tweetLink">Tweet</a>
+
+                      <script>
+                        ! function(d, s, id) {
+                            var js, fjs = d.getElementsByTagName(s)[0],
+                                p = /^http:/.test(d.location) ? 'http' : 'https';
+                            if (!d.getElementById(id)) {
+                                js = d.createElement(s);
+                                js.id = id;
+                                js.src = p + '://platform.twitter.com/widgets.js';
+                                fjs.parentNode.insertBefore(js, fjs);
+                            }
+                        }(document, 'script', 'twitter-wjs');
+                    </script>
+
+                    </div>
+
+                    <!-- GPlus Share Button -->
+                   
+                    <!-- Place this tag in your head or just before your close body tag. -->
+                    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+                    <div class="g-plus col-lg-3 col-md-2 col-sm-2 col-xs-2" data-action="share" data-annotation="none"></div>
+
+                    <!-- Facebook Share a Link Button -->
+                    <div class="fb-button col-lg-5 col-md-4 col-sm-5 col-xs-5">
+                      <div id="fb-root"></div>
+                        <div id="fb-like" class="fb-like" data-href="http://unhangout.media.mit.edu/event/test"  data-layout="button_count" data-show-faces="false" data-share="true"></div>
+                    </div>
+
+                    <script>(function(d, s, id) {
+                        var dataTitle = "<%= title %>";
+                        var dataURL = "http://unhangout.media.mit.edu" + "<%= event.getEventUrl() %>";
+
+                        document.getElementById("fb-like").setAttribute("data-title",dataTitle);
+
+                        document.getElementById("fb-like").setAttribute("data-text",dataURL);
+
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&appId=832301356794452&version=v2.0";
+                        fjs.parentNode.insertBefore(js, fjs);
+                    }(document, 'script', 'facebook-jssdk'));</script>
+
+                </div>
+          </div>  
+
         </div>
 
-        <div class="col-lg-11 line-break"></div>
+        <div class="col-lg-11 col-md-12 line-break"></div>
 
         <div class="col-lg-12 guidelines">
             <h4 class="ready-for-event-title">To get ready for the event: </h4>
@@ -68,7 +122,7 @@
         <% } %>
      
         <div class="col-lg-12 twitter-box">
-            <a class="twitter-timeline" height="450" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
+            <a class="twitter-timeline" height="505" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         </div>
     </div> 
