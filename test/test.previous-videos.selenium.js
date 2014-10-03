@@ -11,6 +11,7 @@ describe("PREVIOUS VIDEOS", function() {
     this.timeout(80000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);

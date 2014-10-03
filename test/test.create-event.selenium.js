@@ -25,6 +25,7 @@ describe("CREATE EVENT", function() {
     }
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
