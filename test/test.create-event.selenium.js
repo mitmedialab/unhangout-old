@@ -104,13 +104,6 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-nav a").click();
             aboutIsVisible(true);
 
-            // Make sure scroll-up is there.
-            browser.waitWithTimeout(function() {
-                return browser.executeScript(
-                    "return $('#about-event').find('.scroll-up').length === 1;"
-                );
-            });
-            // Make sure footer is not there.
             browser.executeScript(
                 "return $('#about-event .event-status-footer').is(':visible');"
             ).then(function(res) {
@@ -126,10 +119,6 @@ describe("CREATE EVENT", function() {
             // Show about again, then hide via scroll-up button.
             browser.byCss("#about-nav a").click();
             aboutIsVisible(true);
-            browser.waitForSelector("#about-event .scroll-up");
-            browser.waitForSelector("#about-event .scroll-up");
-            browser.byCss("#about-event .scroll-up").click();
-            aboutIsVisible(false);
 
             // Edit the event
             browser.byCss(".admin-button").click();
