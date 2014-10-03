@@ -175,6 +175,7 @@ $(document).ready(function() {
         logger.log("Initialized app.");
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
+        $(".about-event-container").hide();
 
     }, app);
 
@@ -206,6 +207,7 @@ $(document).ready(function() {
             aboutShown = false;
             $("#about-nav").removeClass("active");
         } else {
+
             el.show().animate({"top":0}, {
                 // This is introspected by browser tests that need to know if
                 // we're done loading the about pane for the first time.
@@ -214,6 +216,7 @@ $(document).ready(function() {
             aboutShown = true;
 
             $("#about-nav").addClass("active");
+            $(".about-event-container").show();
         }
 
     }, app));
