@@ -8,10 +8,6 @@
         loginLinks[i].href = "<%= event.getEventUrl() + "/auth/" %>";
     }
 
-    function showTips() {
-       $("#tips-modal").modal("show");
-    }
-
 </script>
     
 <div class="container event-static">
@@ -91,16 +87,14 @@
         <div class="col-lg-11 col-md-12 line-break"></div>
 
         <div class="col-lg-12 guidelines">
-            <h4 class="ready-for-event-title">To get ready for the event: </h4>
+            <h4 class="ready-for-event-title">Get ready for the event: </h4>
             <p class="ready-for-event-desc">
-                <li>Click Login (top-right corner) if you're not already on. It will prompt you for a Google account.</li>
-                <li>Install Google Hangout plugin if you don't have it already (click here to download and install)</li>
-                <li>Watch this How to Unhangout video to get a sense about the event</li>
+                <li>You'll need a <a href="https://accounts.google.com/SignUp">Google Account</a> (if you don't have one) to login</li>
+                <li>Install the <a href="https://www.google.com/tools/dlpage/hangoutplugin">Google Hangout plugin</a> if you don't already have it</li>
+                <li>Learn more about Unhangout by watching the short video on the <a href="/">homepage</a></li>
             </p>
 
             <br/>
-
-            <button id="tips-and-tricks" onclick="showTips()" class="btn btn-primary col-lg-6 col-md-8 col-sm-8 col-xs-12 tips-and-tricks"><i class="fa fa-lightbulb-o"></i>Tips and tricks to participate in discussion</button>
         </div>
     </div>
 
@@ -128,33 +122,6 @@
 <div class='col-lg-12 footer event-static-footer'>
     <div class="container">
         Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
-    </div>
-</div>
-
-<!-- tips and tricks modal -->
-<div class="modal fade tips-and-tricks-modal" id="tips-modal" role="dialog" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Tips and tricks to participate in discussion! </h4>
-            </div>
-
-            <div class="modal-body">
-                <h4>To participate in the Unhangout discussion, we recommend you: </h4>
-
-                <p>
-                    <li>Find a quiet place to participate in the discussion</li>
-                    <li>Arrange a headset, if possible </li>
-                    <li> In the breakout group, mute your microphone when you are not talking - it makes it easier for everyone to hear </li>
-                    <li>If using a laptop, have a charger, as Unhangouts can drain computer batteries</li>
-                
-                </p>
-            </div>
-
-            <div class="modal-footer">
-                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div>
-        </div>
     </div>
 </div>
 
