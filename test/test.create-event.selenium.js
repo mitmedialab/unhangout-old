@@ -25,6 +25,7 @@ describe("CREATE EVENT", function() {
     }
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -43,7 +44,9 @@ describe("CREATE EVENT", function() {
 
         // Create a new event.
         browser.get(common.URL + "/admin/");
-        browser.byLinkText("new").click();
+        browser.waitForSelector("a#admin-create-new-event");
+        browser.byCss("a#admin-create-new-event").click();
+       // browser.byLinkText("new").click();
         browser.waitForSelector("[name='title']");
         browser.byCss("[name='title']").sendKeys("Test Title");
         browser.byCss("[name='shortName']").sendKeys("test-title");
@@ -77,11 +80,11 @@ describe("CREATE EVENT", function() {
             browser.getTitle().then(function(title) {
                 expect(title).to.be("Test Title — powered by unhangout");
             });
-            browser.waitForSelector("#about-event h3");
-            browser.byCss("#about-event h3").getText().then(function(text) {
+            browser.waitForSelector("#about-event h2");
+            browser.byCss("#about-event h2").getText().then(function(text) {
                 expect(text).to.be("Test Title");
             });
-            browser.byCss("#about-event h4").getText().then(function(text) {
+            browser.byCss("#about-event h3").getText().then(function(text) {
                 expect(text).to.be("hosted by unhangoutdev@gmail.com");
             });
             browser.waitForSelector("#about-event .about-footer");

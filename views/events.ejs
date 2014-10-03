@@ -1,0 +1,26 @@
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+
+<div class="container event-container" id='events-list' data-spreadsheet-key="<%= spreadsheetKey %>">
+      <h3 class="col-lg-12 upcomingEventsTitle" style="display:none;">Upcoming Events</h3> 
+      <div id="upcomingEvents"></div> 
+ 
+      <h3 class="col-lg-12 pastEventsTitle" style="display:none;">Past Events</h3> 
+      <div id="pastEvents"></div>
+
+</div>
+
+<script type='text/template' id='event-listing'>
+    <div class='event-box col-md-3'>
+        <a href='{{= link }}'>
+            <img class='img-responsive event-image' src='{{= image }}'/>
+        </a>
+        <hr class='line-break'>
+        <h4><a href='{{= link }}'>{{= title }}</a></h4>
+        <p class='date'>{{= date.format("MMM D, YYYY, h:mm a [GMT]Z")}}</p>
+    </div>
+</script>
+
+<% include _sponsorship.ejs %>
+<%- requireScripts("/public/js/events.js") %>
+<% include _analytics.ejs %>

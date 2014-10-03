@@ -12,6 +12,7 @@ describe("FACILITATOR EMBEDS", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -56,10 +57,12 @@ describe("FACILITATOR EMBEDS", function() {
             expect(src).to.eql(common.URL + "/public/html/test.html");
 
         });
+ 
         // Remove the embed.
         browser.byCss(".activity-settings").click();
         browser.waitForSelector(".remove-embed");
         browser.byCss(".remove-embed").click();
+
         // Ensure 'about' is displayed.
         browser.waitForSelector(".about-activity");
         browser.waitForScript("$");
@@ -67,17 +70,25 @@ describe("FACILITATOR EMBEDS", function() {
             expect(text.indexOf("helps the Unhangout Permalink service")).to.not.eql(-1);
             expect(session.get("activities")).to.eql([{'type': 'about'}]);
         });
+        
+        // Ensure modals have been removed and not just hidden.
+        browser.wait(function() {
+          return browser.byCsss(".add-activity-dialog").then(function(els) {
+            return els.length === 0;
+          });
+        });
+
         // Add a new activity.
         browser.byCss(".add-activity").click();
-        browser.waitForSelector(".modal-body input[type='text']");
+        browser.waitForSelector(".add-activity-dialog input[type='text']");
         // Doesn't allow blank URL's.
-        browser.byCss(".modal-body input[type='text']").sendKeys("   ");
-        browser.byCss(".modal input[type='submit']").click();
+        browser.byCss(".add-activity-dialog input[type='text']").sendKeys("   ");
+        browser.byCss(".add-activity-dialog [type='submit']").click();
         // Nothing should happen... the next call should fail if the modal is closed.
 
         // Allows non-blank URLs.
-        browser.byCss(".modal-body input[type='text']").sendKeys(common.URL + "/public/html/test.html");
-        browser.byCss(".modal input[type='submit']").click();
+        browser.byCss(".add-activity-dialog input[type='text']").sendKeys(common.URL + "/public/html/test.html");
+        browser.byCss(".add-activity-dialog [type='submit']").click();
         browser.waitForSelector("iframe");
         browser.byCss(".webpage-activity"); // throws error if it's not there
         browser.waitForScript("$");
@@ -92,10 +103,10 @@ describe("FACILITATOR EMBEDS", function() {
         // Can't seem to get around this hard-coded delay; get occasional
         // "Element is no longer attached to the DOM" errors without it.
         browser.waitTime(1000);
-        browser.waitForSelector(".modal-body input[type='text']");
-        browser.byCss(".modal-body input[type='text']").sendKeys(
+        browser.waitForSelector(".add-activity-dialog input[type='text']");
+        browser.byCss(".add-activity-dialog input[type='text']").sendKeys(
             "https://youtu.be/NIylUcGDi-Y")
-        browser.byCss(".modal input[type='submit']").click();
+        browser.byCss(".add-activity-dialog [type='submit']").click();
         browser.waitForSelector("iframe");
         browser.waitForScript("$");
         browser.executeScript("return $('iframe').attr('src');").then(function(src) {

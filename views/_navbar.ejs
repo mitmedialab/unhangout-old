@@ -1,26 +1,63 @@
-    <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <span class="brand">Unhangouts </span>
+<div class="navbar navbar-default navbar-fixed-top nav-index" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
 
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/about/">About</a></li>
-                        <li><a href="/how-to-unhangout/">How to Unhangout</a></li>
-                        <li><a href="http://unhangout.tumblr.com/" target="_blank">Blog</a></li>
-
-                        <% if(user && user.isSuperuser()) { %>
-                            <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
-                        <% } %>
-                    </ul>
-                    <% include _identity.ejs %>
-                </div><!--/.nav-collapse -->
-            </div>
+          <a href="/" class="navbar-brand">
+            <img src="/public/img/nav-bar-logo-full.png">
+          </a>
         </div>
+
+        <div class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/about/">About</a></li>
+            <li><a href="/events/">Events</a></li>
+
+            <% if (user) { %>
+              <li><a href="/h/">Permalinks</a></li>
+            <% } else { %>
+              <li><a href="/h/" id="permalink-login">Permalinks</a></li>
+            <% } %>
+
+            <li><a href="http://unhangout.tumblr.com" target="_blank">Blog</a></li>
+
+            <% if(user && user.isSuperuser()) { %>
+              <li id='admin-users-nav'><a href="/admin/users/">Users</a></li>
+            <% } %>
+
+          </ul>
+
+          <% include _identity.ejs %>
+          
+        </div><!--/.nav-collapse -->
     </div>
+</div>
+
+
+<div class="modal fade permalink-login-modal" id="permalink-login-modal" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Please log in!</h4>
+              </div>
+
+              <div class="modal-body">
+                  <p>You need to be logged in to use Unhangout permalinks. It’s easy. You can use your Google account and it only takes 0.83seconds. </p>
+              </div>
+
+              <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss=
+                "modal">Close</button>
+                <a href="/h/" class="btn btn-primary">Login for permalinks</a>
+            </div>
+            
+          </div>
+      </div>
+  </div>
+
+

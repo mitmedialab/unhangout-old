@@ -9,7 +9,7 @@ var fs = require("fs"),
     _ = require("underscore");
 
 describe("CHAT LOGGER", function() {
-    this.timeout(8000); // Give a little extra time in case travis is bogged down.
+    this.timeout(16000); // Give a little extra time in case travis is bogged down.
     var event, user;
     // Resolve expectedFile to look like we're coming from inside ../lib/
     // instead of inside ../test/, so we can compare it to the version that
@@ -91,7 +91,7 @@ describe("CHAT LOGGER", function() {
                 [expectedFile]);
 
             // Close the stream "eventually".
-            var clock = sinon.useFakeTimers();
+            var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
             chatLogger._queues.openStreams[expectedFile].closeEventually();
             clock.tick(10000 + 1);
             clock.restore();

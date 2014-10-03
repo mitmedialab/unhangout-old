@@ -28,21 +28,6 @@ $(document).ready(function(){
         todayBtn: true
     });
 
-    /*
-    $('.summernote').summernote({
-        toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['height', ['height']],
-            ['insert', ['picture', 'link']],
-            ['codeview', ['codeview']],
-        ],
-        height: 150
-    });
-    */
-
     // Append timezones to option box.
     var zones = _.map(moment.tz.zones(), function(z) { return z.displayName; });
     zones.sort(function(a, b) {

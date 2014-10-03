@@ -13,6 +13,17 @@ describe("HANGOUT REDIRECTS", function() {
     var session;
     var suffix;
 
+    // Sinon restore doesn't behave correctly with restoring clocks inside
+    // superagent request callbacks. Prep to manually restore timers.
+    var timers = _.clone(sinon.timers);
+
+    after(function() {
+      // Manually restore timers, in case sinon screwed it up.  Ideally, we
+      // will have restored them in the functions themselves, each time we've
+      // used them.
+      //_.extend(global, timers);
+    });
+
     beforeEach(function(done) {
         common.standardSetup(function() {
             // Grab a session to work with.
@@ -63,7 +74,9 @@ describe("HANGOUT REDIRECTS", function() {
         expect(session.get("hangout-pending").userId).to.eql(user.id);
         expect(session.isHangoutPending()).to.be(true);
 
-        var clock = sinon.useFakeTimers();
+        // Only capture setTimeout and setInterval to not mess with async,
+        // superagent, etc.
+        var clock = sinon.useFakeTimers(0, "setTimeout", "setInterval", "clearTimeout", "clearInterval");
         async.parallel([
             function(done) {
                 checkRedirect("http://example.com/hangy" + suffix("regular1"), "regular1", done);
@@ -120,10 +133,10 @@ describe("HANGOUT REDIRECTS", function() {
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
         var url = "https://plus.google.com/hangouts/_" + suffix("regular2");
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
 
         // u1 is the user with the pending hangout...
-        session.markHangoutPending(u1);
+        //session.markHangoutPending(u1);
         // Second user tries to connect...
         checkRedirect(url, u2.get("sock-key"), function() {
             expect(session.get("hangout-pending").userId).to.be(u2.id);
@@ -139,7 +152,7 @@ describe("HANGOUT REDIRECTS", function() {
         var user = common.server.db.users.findWhere({"sock-key": "regular1"});
         var url = "http://example.com/good-url";
 
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
 
         farming.reuseUrl(url, function(err) {
             expect(err).to.be(null);
@@ -155,7 +168,7 @@ describe("HANGOUT REDIRECTS", function() {
 
     it("Times-out a farmed url (without re-using it) after adding it to a session if no one joins", function(done) {
         var url = "http://example.com/poison-url";
-        var clock = sinon.useFakeTimers();
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
         expect(farming.getNumHangoutsAvailable()).to.be(0);
 
         farming.reuseUrl(url, function(err) {
@@ -169,6 +182,7 @@ describe("HANGOUT REDIRECTS", function() {
                     expect(err).to.be(null);
                     expect(url).to.be(null);
                     clock.restore();
+                    //_.extend(global, timers);
                     done();
                 });
             });
@@ -199,6 +213,7 @@ describe("HANGOUT REDIRECTS", function() {
                 done();
             });
     });
+
     describe("HoA REDIRECT", function() {
         var hoa;
         beforeEach(function() {
@@ -253,12 +268,15 @@ describe("HANGOUT REDIRECTS", function() {
                     done();
                 });
         });
+
         it("renders hangout-pending if it is", function(done) {
             var u = common.server.db.users.findWhere({"sock-key": "admin1"});
-            var clock = sinon.useFakeTimers();
+
+            var clock = sinon.useFakeTimers(0, "setTimeout", "setInterval");
             hoa.markHangoutPending(u);
 
             clock.tick(hoa.HANGOUT_CREATION_TIMEOUT / 2);
+            clock.restore();
 
             request.get(common.URL + hoa.getParticipationLink())
                 .set("x-mock-user", "superuser1")
@@ -277,11 +295,15 @@ describe("HANGOUT REDIRECTS", function() {
                             expect(res.status).to.be(200);
                             expect(res.text).to.contain("Create Hangout-on-air?");
                             clock.restore()
+                            // Sinon restore doesn't behave correctly with superagent
+                            // request callbacks. Manually restore timers.
+                            //_.extend(global, timers);
                             done();
                         });
                 });
 
         });
+
         it("renders create-hoa if there's no URL", function(done) {
             request.get(common.URL + hoa.getParticipationLink())
                 .set("x-mock-user", "superuser1")

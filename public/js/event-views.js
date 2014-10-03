@@ -34,8 +34,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         attend: '.attend',
         start:'.start',
         deleteButton: '.delete',        // delete is reserved word
-        hangoutUsers: '.hangout-users',
-        hangoutOffline: '.hangout-offline'
+        hangoutUsers: '.hangout-users'
     },
 
     events: {
@@ -164,8 +163,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // Now add the fragment to the layout and display it
         this.ui.hangoutUsers.html(fragment);
         this.ui.hangoutUsers.show();
-
-        this.ui.hangoutOffline.hide();
 
         if (!this.options.event.get("sessionsOpen") || numAttendees >= this.model.get("joinCap")) {
             this.ui.attend.find(".lock").show();
@@ -323,6 +320,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
     },
     changeSessionType: function() {
         var val = this.$("[name='session_type']:checked").val();
+
         switch (val) {
             case "simple":
                 this.$(".youtube-url, .webpage-url").hide();
@@ -718,7 +716,7 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
         };
     },
     onBeforeItemAdded: function() {
-        this.scroller = $("#chat-container-region");
+        this.scroller = $("#chat-container-region .panel-body");
         if (this.scroller.length > 0) {
             var limit = Math.max(this.scroller[0].scrollHeight - this.scroller.height() - 10, 0);
             this._isScrolled = this.scroller.scrollTop() < limit;
@@ -840,7 +838,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         jqevt.preventDefault();
         var youtubeInput = this.$("input[name='youtube_id']");
         var youtubeInputParent = youtubeInput.parent();
-        var youtubeInputError = this.$("p.text-warning");
+        var youtubeInputError = this.$(".text-warning");
         var ytId = video.extractYoutubeId(youtubeInput.val());
         if (ytId === null || ytId === undefined) {
             // Invalid youtube URL/embed code specified.
@@ -920,6 +918,9 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }
 
         this.ui.controls.html(this.controlsTemplate(context));
+
+        // We reset the dropdowns because the the previous video embeds dropdown is recreated.
+        $('.dropdown-toggle').dropdown();
 
         // Make the video details pretty.
         _.each(this.model.get("previousVideoEmbeds"), _.bind(function(embed) {

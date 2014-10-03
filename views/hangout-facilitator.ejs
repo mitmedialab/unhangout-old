@@ -42,20 +42,22 @@
 </script>
 
 <script type='text/template' id='event-message-view'>
-    <div class='modal-header'>
-        {{ if (dismissable) { }}
-             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        {{ } }}
-        <h3>Message from {{- sender }}</h3>
-    </div>
-    <div class='modal-body'>
-        <b>{{- sender }}</b>: {{- message }}
-    </div>
-    {{ if (dismissable) { }}
-        <div class='modal-footer' style='text-align: center;'>
-            <a href='#' class='btn' data-dismiss='modal'>Close</a>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message from {{- sender }}</h4>
+            </div>
+
+            <div class="modal-body">
+                <b>{{- sender }}</b>: {{- message }}
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+            
         </div>
-    {{ } }}
+    </div>
 </script>
 
 <script type='text/template' id='about-activity'>
@@ -73,7 +75,7 @@
     {{ if (activity.autoHide) { }}
         <p class='auto-hide'>
             We will auto-hide in: <span class='countdown'>15</span>
-            <a class='cancel-autohide btn'>Cancel auto-hide</a>
+            <button class='cancel-autohide btn btn-primary'>Cancel auto-hide</button>
         </p>
     {{ } }}
     <a href='#' class='add-activity btn btn-warning'>
@@ -95,32 +97,44 @@
 </script>
 
 <script type='text/template' id='add-activity-dialog'>
-    <form>
-        <div class="modal-header"><h3>Add webpage or video</h3></div>
-        <div class="modal-body">
-            <p>Paste the link to a YouTube video, etherpad, or other webpage
-               here to embed in the hangout:</p>
-            <input type='text' placeholder='https://...' />
-            <div class='ssl-error-message alert-error' style='display: none;'>
-                Sorry, but only secure pages (those starting with "https") can
-                be embedded in hangouts.
-            </div>
-            <div style='height: 1em;'>
-                <div class='valid-youtube small alert-success' style='display: none;'>
-                    Youtube video recognized.
+    <div class="modal-dialog">
+        <form>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add webpage or video</h4>
                 </div>
-                <div class='valid-webpage small alert-success' style='display: none;'>
-                    Recognized as a webpage.
+
+                <div class="modal-body">
+                    <p>Paste the link to a YouTube video, etherpad, or other webpage here to embed in the hangout:</p>
+                    <input type='text' class="form-control" placeholder='https://...' />
+
+                    <div class='ssl-error-message alert-error' style='display: none;'>
+                        Sorry, but only secure pages (those starting with "https") can be embedded in hangouts.
+                    </div>
+
+                    <div style='height: 1em;'>
+                        <div class='valid-youtube small alert-success' style='display: none;'>
+                            Youtube video recognized.
+                        </div>
+                        <div class='valid-webpage small alert-success' style='display: none;'>
+                            Recognized as a webpage.
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default close-and-remove">Close</button>
+
+                    <button type="button" class="btn btn-default remove-embed">Remove current embed</button>
+
+                    <button type="submit" class="btn btn-primary" value="Embed webpage or video">Embed webpage of video</button>
                 </div>
             </div>
-        </div>
-        <div class='modal-footer'>
-            <a href="#" class="btn pull-left" data-dismiss='modal' >Close</a>
-            <a href="#" class="remove-embed btn btn-warning pull-left">Remove current embed</a>
-            <input type='submit' class='btn btn-primary' value='Embed webpage or video' />
-        </div>
-    </form>
+        </form>
+    </div>
 </script>
+
 <script type='text/template' id='video-activity'></script>
 
 <script type='text/template' id='webpage-activity'>
@@ -134,17 +148,6 @@
                 <i class='icon icon-gear'></i> Change embedded page
             </a>
     </table>
-</script>
-
-<script type='text/template' id='remove-activity'>
-    <div class="modal-header"><h3>Remove this?</h3></div>
-    <div class="modal-body">
-        <p>Would you like to remove this for all participants?</p>
-    </div>
-    <div class='modal-footer'>
-        <a href="#" class="btn pull-left" data-dismiss='modal' >Cancel</a>
-        <input type='submit' class='btn btn-primary' value='Remove' />
-    </div>
 </script>
 
 <script type='text/template' id='switch-hangouts'>
@@ -165,11 +168,22 @@
 </script>
 
 <!-- Disconnection modal -->
-<div class="modal hide fade disconnected-modal" id="disconnected-modal">
-    <div class="modal-header"><h3>Warning!</h3></div>
-    <div class="modal-body">
-        <p>An unexpected error has occured. You have been disconnected from the server. Trying to reconnect...</p>
-        <a href="#" class="btn" data-dismiss='modal' >Close</a>
+<div class="modal fade disconnected-modal" id="disconnected-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h4 class="modal-title">Warning!</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>An unexpected error has occured. You have been disconnected from the server. Trying to reconnect...</p>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
 </div>
 

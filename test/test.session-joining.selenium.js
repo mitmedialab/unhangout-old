@@ -31,6 +31,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     beforeEach(function(done) {
+        this.timeout(120000);
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
                 browser = theBrowser;
@@ -74,20 +75,20 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         }).then(function() {
             // But then we connect a socket directly to the session.
-            common.authedSock("regular2", session.getRoomId(), function(theSock) {
+            var roomId = session.getRoomId();
+            common.authedSock("regular2", roomId, function(theSock) {
                 sock = theSock;
-                sock.on("data", function(message) {});
             });
         });
         // Now we should have a user show up in the participant list.
-        browser.waitForSelector(participantList + " i.icon-user").then(function() {
+        browser.waitForSelector(participantList + " i.fa-user").then(function() {
             expect(session.getNumConnectedParticipants()).to.be(1);
             expect(session.getState()).to.be("no url");
             return sock.promiseClose();
         });
         // The participant list should clear when the socket closes.
         browser.waitWithTimeout(function() {
-            return browser.byCsss(participantList + " i.icon-user").then(function(els) {
+            return browser.byCsss(participantList + " i.fa-user").then(function(els) {
                 return els.length === 0;
             });
         }).then(function() {
@@ -124,7 +125,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
         // One socket should show up in the participant list.
-        browser.waitForSelector(participantList + " i.icon-user").then(function() {
+        browser.waitForSelector(participantList + " i.fa-user").then(function() {
             return sock1.promiseClose();
         });
         // Have the socket leave the event page, but not the participant list.
@@ -134,7 +135,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
         // Should still be in the participant list.
-        browser.byCsss(participantList + " i.icon-user").then(function(els) {
+        browser.byCsss(participantList + " i.fa-user").then(function(els) {
             expect(els.length).to.be(1);
             expect(session.getNumConnectedParticipants()).to.be(1);
             expect(session.getState()).to.be("no url");
@@ -144,7 +145,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         // Now noone should be left
         browser.waitWithTimeout(function() {
-            return browser.byCsss(participantList + " i.icon-user").then(function(els) {
+            return browser.byCsss(participantList + " i.fa-user").then(function(els) {
                 return els.length == 0;
             });
         }).then(function() {;
@@ -258,6 +259,24 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             session.setConnectedParticipants([{id: "t1", displayName: "test1"}]);
         });
         buttonTextIs("JOIN");
+
+
+        // Even if more than the join cap join, we only show the 2.
+        browser.then(function() {
+            session.addJoiningParticipant({id: "j1", displayName: "joining1"});
+            session.addJoiningParticipant({id: "j2", displayName: "joining2"});
+            session.setConnectedParticipants([
+                {id: "t1", displayName: "test1"},
+                {id: "t2", displayName: "test2"},
+                {id: "t3", displayName: "test3"}
+            ]);
+        });
+        var heads = ".session[data-session-id='" + session.id + "'] .hangout-users li";
+        browser.wait(function() {
+          return browser.byCsss(heads).then(function(els) {
+            return els.length === 2;
+          });
+        });
 
         browser.then(function() {
             // Clean up.

@@ -21,24 +21,37 @@
 </div>
 
 <script type='text/template' id='user-table'>
-    <div class='span10 offset2'>
-        <h1>Users</h1>
-        <div>
-            <form class='form-inline'>
-                Filter:
-                <input class='filter-name' type='text' placeholder='Name or email' />
-                <label>Superusers: <input class='filter-superusers' type='checkbox' /></label>
-                <label>Admins: <input class='filter-admins' type='checkbox' /></label>
-                <nobr>
-                <select class='filter-perms'>
-                    <option value=''>Permission:</option>
-                    {{ _.each(permissions, function(perms) { }}
-                        <option value='{{- perms[0] }}'>{{- perms[1] }}</option>
-                    {{ }); }}
-                </select>
-                </nobr>
-            </form>
-        </div>
+    <div class='container users-container'>
+        <h3>Users</h3>
+        
+        <form class='form-horizontal'>
+            
+            <div class="form-group">
+                <label class="control-label col-lg-1" style="text-align: left;">Filter: </label>
+            
+                <div class="col-lg-3">
+                    <input class='filter-name form-control' type='text' placeholder='Name or email' />
+                </div>
+
+                <label class="checkbox col-lg-2">
+                    <input class="filter-superusers" type="checkbox"> Superusers
+                </label>
+
+                <label class="checkbox col-lg-1">
+                    <input class="filter-admins" type="checkbox"> Admins
+                </label>
+
+                <div class="col-lg-2">
+                    <select class="filter-perms form-control">
+                        <option value=''>Permission:</option>
+                        {{ _.each(permissions, function(perms) { }}
+                            <option value='{{- perms[0] }}'>{{- perms[1] }}</option>
+                        {{ }); }}
+                    </select>
+                </div>
+            </div>
+        </form>
+
         <table style='width: 100%;' class='user-table'>
             <thead>
                 <tr>
@@ -101,21 +114,32 @@
     </td>
 </script>
 <script type='text/template' id='event-admin-adder'>
-    <div class='modal-header'>
-         <button type="button" class="close cancel" aria-hidden="true">&times;</button>
-         <h3>Add admin</h3>
-    </div>
-    <div class='modal-body'>
-        Choose an event for {{- user.get("displayName") }} to administrate:
-        <select name='event'>
-            {{ events.each(function(event) { }}
-                <option value='{{- event.id }}'>{{- event.get("title") }}</option>
-            {{ }); }}
-        </select>
-    </div>
-    <div class='modal-footer'>
-        <a href='#' class='btn cancel'>Cancel</a>
-        <a href='#' class='btn btn-primary add'>Add</a>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add admin</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-group col-lg-8">
+                            Choose an event for {{- user.get("displayName") }} to administrate:
+                        </label>
+                        <div class="col-lg-4">
+                            <select name='event' class="form-control">
+                                {{ events.each(function(event) { }}
+                                    <option value='{{- event.id }}'>{{- event.get("title") }}</option>
+                                {{ }); }}
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class='modal-footer'>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary add" data-dismiss="modal">Add</button>
+            </div>
+        </div>  
     </div>
 </script>
 

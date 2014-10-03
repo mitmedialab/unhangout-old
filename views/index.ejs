@@ -1,396 +1,204 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-<div class="container">
-
-    <div class="jumbotron">
-        <h1><img class="" src="/public/img/unhangout-logo.png" style='width: 77px; height: 68px' alt='Logo'> Unhangouts </h1>
-
-        <h3>A platform for unconferences. On the web.</h3>
-
-        <div class="create-event-button">
-            <% if (!user) { %>
-                <button id="login-first-button" class="btn btn-primary">
-                    <i class="fa fa-edit fa-lg"></i>
-                    Create an Unhangout
-                </button>
-            <% } else { %>
-
-                <% if(user && user.hasPerm("createEvents")) { %>
-
-                <a href="/admin/event/new" class="btn btn-primary">
-                    <i class="fa fa-edit fa-lg"></i>
-                    Create an Unhangout
-                </a>
-
-                <% } else { %>
-                    <button id="create-event-button" class="btn btn-primary">
-                    <i class="fa fa-edit fa-lg"></i>
-                    Create an Unhangout
-                </button>
-
-            <% } } %>
+<div class="container home-page-container">
+    <div class="row">
+        <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
+            <div class="videowrapper well">
+                <iframe src="https://player.vimeo.com/video/90475288?title=0&amp;byline=0&amp;portrait=0" height="300" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe> 
+            </div>
+            <!--<hr class="line-break">-->
         </div>
+
+        <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+            <div class="col-lg-12 col-md-5 col-sm-6 col-xs-6 logo-item">
+                <div class="logo">
+                    <img src="/public/img/unhangout-logo-blue-full.png">
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 project-about">
+                <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 button-container-row">
+                <div class="button-container">
+
+                    <h3>Interested in running your own unhangout?</h3>
+
+                    <div class="create-event-button">
+                        <% if (!user) { %>
+                                <button id="login-first-button" class="btn btn-primary btn-lg" type="button">
+                                <i class="fa fa-edit fa-lg"></i>
+                                Request an Unhangout
+                                </button>
+
+                        <% } else { %>
+
+                            <% if(user && user.hasPerm("createEvents")) { %>
+
+                                <a href="/admin/event/new">
+                                    <button id="create-event-button" class="btn btn-primary btn-lg" type="button">
+                                        <i class="fa fa-edit fa-lg"></i>
+                                        Create an Unhangout
+                                    </button>
+                                </a>
+
+                            <% } else { %>
+                                <button id="create-event-button" class="btn btn-primary btn-lg" type="button">
+                                    <i class="fa fa-edit fa-lg"></i>
+                                        Request an Unhangout
+                                </button>
+
+                        <% } } %>
+                    </div>
+                </div>
+            </div>
+
+            <!--<hr class="line-break">-->
+
+        </div>  
     </div>
 
-    <div class="section" id="home">
-        <hr class='noshade'>
+     <div class="row updates">
 
-        <div class="row event-container">
-            <h3>Upcoming Events</h3>
+        <div class="col-lg-7 col-md-12 col-xs-12">
+            <h3 class='upcomingEventsTitle'>Upcoming events</h3>
+            <div id='upcomingEvents'><!-- populated from spreadsheet script --></div>
         </div>
 
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">August</div>
-                    <div class="number">28</div>
-                    <div class="time">11:00 AM EDT</div>
-                </div>
-
-                <div class="title"><a href="https://unhangout.media.mit.edu/event/medialab" target="_blank">Media Lab Virtual Visit</a>
-                </div>
-
-                <div class="description lead">
-                      Join the second virtual visit to the MIT Media Lab, talk with current students and learn about our research. After a short welcome, we will break out into small group conversations where participants can ask questions and share ideas. Each conversation will be hosted by current MIT Media Lab students, who will talk about their research, the philosophy of their groups, and what goes on at the Lab in general.
-                </div>
-            </div>
-        </div>
-
-        <div class="row event-container">
-            <h3>Past Events</h3>
-        </div>
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">June</div>
-                    <div class="number">11</div>
-                    <div class="time">9:00 AM EDT</div>
-                </div>
-
-                <div class="title"><a href="https://unhangout.media.mit.edu/event/idc14" target="_blank">IDC 2014 Conference - Online Pre-conference</a>
-                </div>
-
-                <div class="description lead">
-                      Join us for a live online conversation about the future of creative learning, hosted by the <a href="http://www.legofoundation.com/" target="_blank">LEGO Foundation</a> and the <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>’s <a href="llk.media.mit.edu" target="_blank">Lifelong Kindergarten</a> group. The conversation will take place on the 11th of June 2014 at 3-4pm (Denmark time), 9-10am (U.S. Eastern time). You’ll have the opportunity to connect with other IDC participants, learn more about the LEGO Foundation’s new initiatives, and share your stories about creative learning with digital tools. 
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">May</div>
-                    <div class="number">6</div>
-                    <div class="time">1:00 PM EDT</div>
-                </div>
-
-                <div class="title"><a href="https://unhangout.media.mit.edu/event/lcl" target="_blank">Learning Creative Learning - Live Sessions</a>
-                </div>
-
-                <div class="description lead">
-                     LCL started on March 18 with six weeks of discussions and activities, followed by a few weeks to work on projects, leading to a creative-learning exhibition in May. There will be online sessions on Tuesdays from 1:00-2:00pm Boston time. LCL will focus on key aspects of the Media Lab approach to learning: Projects, Peers, Passion, and Play. We invite you to apply these ideas to your own teaching and learning experiences. Together, we can reimagine and reinvent education. Find out more on: <a href="http://learn.media.mit.edu" target="_blank">http://learn.media.mit.edu</a>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">April</div>
-                    <div class="number">29</div>
-                    <div class="time">4:00 PM EDT</div>
-                </div>
-
-                <div class="title"><a href="https://unhangout.media.mit.edu/event/equity-and-learning-21st-century-classroom-unhangout" target="_blank">Equity and Learning in the 21st Century Classroom: an 'unHangout'</a>
-                </div>
-
-                <div class="description lead">
-                     Join authors and editors of <a href="http://dmlhub.net/publications/teaching-connected-learning-classroom" target="blank">'Teaching in the Connected Learning Classroom'</a> to explore what we've learned throughout our month-long connectedlearning.tv webinar series called Equity and Learning in the 21st Century Classroom. This event will be hosted by <a href="http://www.nwp.org/" target="_blank">National Writing Project</a> and <a href="http://connectedlearning.tv/" target="blank">Connected Learning TV.</a>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">March</div>
-                    <div class="number">28</div>
-                    <div class="time">11:00 AM EDT</div>
-                </div>
-
-                <div class="title"><a href="https://unhangout.media.mit.edu/event/medialab" target="_blank">Media Lab Virtual Visit</a>
-                </div>
-
-                <div class="description lead">
-                     Join ten Media Lab students to learn more about their work and the different research groups they are affiliated with. What happens on March 28th? After a short welcome, we will break out into small group conversations - where participants can ask questions and share ideas. Each conversation is hosted by a current MIT Media Lab student, who will talk about their research, the philosophy of the groups they are affiliated with, and what goes on at the Lab in general.
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">February</div>
-                    <div class="number">12</div>
-                    <div class="time">11:00 AM EDT</div>
-                </div>
-
-                <div class="title"><a href="https://unhangout.media.mit.edu/event/ideasinaction">Ideas in Action Virtual Conversations</a>
-                </div>
-
-                <div class="description lead">
-                    We want to experiment this year with a number of different ways to advance ideas, i.e. to put Ideas in Action. We have the opportunity to try an interesting new format - virtual conversations using the Unhangout Platform. We are inviting some of our speakers to be hosts of virtual discussion rooms on Feb 12. On the day of the event, there will be a kick-off webinar, after which people will proceed to the session they are interested in. In the individual discussion room, participants will hear from a speaker, view a TEDxBeaconStreet talk and discuss it. We hope this catalyzes interest, ideas, and the potential for follow-up to help advance the idea.
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">October</div>
-                    <div class="number">26</div>
-                    <div class="time">12:30 PM EDT</div>
-                </div>
-
-                <div class="title">Edcamp Online
-                </div>
-
-                <div class="description lead">
-                    October is Connected Educator Month and
-                    educators across the nation are teaming up via
-                    social media to improve learning for kids. To
-                    help educators debrief and reflect on that
-                    learning, we are organizing the first virtual
-                    Edcamp, hosted by
-                    <a href="http://edcamp.org/"
-                        style="font-style: italic"
-                        target="_blank">Edcamp Foundation</a> and
-                    <a href="http://www.nwp.org/"
-                        style="font-style: italic"
-                        target="_blank">National Writing Project.</a>
-                    <br/> <br/>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">October</div>
-                    <div class="number">18</div>
-
-                    <div class="time">10:00 AM EDT</div>
-                </div>
-
-                <div class="title">
-                    <a href=
-                    "http://unhangout.media.mit.edu/event/data-explorer"
-                    target="_blank">Data Explorer Mission</a>
-                </div>
-
-                <div class="description lead">
-                    Join us for a two-day online data explorer mission.
-                    <a href=
-                    "https://p2pu.org/en/schools/school-of-data/%20target="
-                    style="font-style: italic">School of Data</a> (P2PU and
-                    OKFN) and the International Labor Rights Forum, will
-                    bring data explorers from around the globe together, to
-                    answer some of the tough questions about the global
-                    garment industry.This event will be hosted by <a href=
-                    "http://okfn.org/" style="font-style: italic" target=
-                    "_blank">Open Knowledge Foundation</a> and <a href=
-                    "http://p2pu.org" style="font-style: italic" target=
-                    "_blank">Peer 2 Peer University.</a><br>
-                    <br>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row">
-            <div class="event">
-                <div class="date">
-                    <div class="day">September</div>
-                    <div class="number">30</div>
-                    <div class="time">4:30 PM EDT</div>
-                </div>
-
-                <div class="title">
-                    <a href=
-                    "http://unhangout.media.mit.edu/event/learning-aloud"
-                    target="_blank">Learning Aloud Geekout</a>
-                </div>
-
-                <div class="description lead">
-                    Join us to hear from maker experts talking
-                    about their favorite topics including
-                    Arduino, Scratch, Wearable Tech, 3D
-                    Printing, Minecraft, and more. Everyone
-                    will learn a little bit about all these
-                    topics, plus you'll get to pick one topic
-                    to get an in depth introduction from an
-                    expert in a small group environment. You'll
-                    meet other interested people in the maker
-                    movement, and learn about ways to go deeper
-                    on the topic that interests you most! This
-                    event will be hosted by <a href=
-                    "http://beta.homago.com/" style=
-                    "font-style: italic" target="_blank">HOMAGO
-                    Geekouts</a>, <a href=
-                    "http://hivelearningnetwork.org/" style=
-                    "font-style: italic" target="_blank">Hive
-                    Learning Networks</a> and the <a href=
-                    "http://www.nwp.org/" target=
-                    "_blank"><i>National Writing
-                    Project.</i><br>
-                    <br></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="event">
-
-                <div class="date">
-                    <div class="day">July</div>
-                    <div class="number">29</div>
-                    <div class="time">1:00 PM EDT</div>
-                </div>
-
-                <div class="title">
-                    <a href=
-                    "http://unhangout.media.mit.edu/event/1"
-                    target="_blank">National Writing
-                    Project</a>
-                </div>
-
-                <div class="description lead">
-                    Throughout July, NWP partnered with
-                    Connected Learning TV to host a webinar
-                    series called <a href=
-                    "http://connectedlearning.tv/writers-work-making-and-connected-learning"
-                    style="font-style: italic">Writers at Work:
-                    Making and Connected Learning.</a> As a
-                    wrap-up to our series we invite you to
-                    regroup here to debrief with us, test and
-                    tinker with this new unHangout tool, and
-                    continue the great conversations that have
-                    been started! We will start with a whole
-                    group kick-off and then split up into
-                    smaller group discussions, based on themes
-                    and topics raised by the seminar series.
-                    Please be aware that this is a “beta-test
-                    webinar” so your adventurous spirit is
-                    welcome.
-                </div>
-            </div>
-        </div>
-
-        <hr class='noshade'>
-
-        <div class="signup">
+        <!--<div class="col-lg-7">
             <h3>Reminders</h3>
 
-            <p class="lead">Interested in email notifications
-            for future Unhangout events? Leave your email below
-            and we'll send you notices for upcoming events
-            using the platform!</p>
+            <p>Interested in email notifications for future Unhangout events? Leave your email below and we'll send you notices for upcoming events using the platform!</p>
 
-            <div class="input-append offset2">
-                <input class="span6" id="email" type="email">
-                <button class="btn btn-primary" id="subscribe" type=
-                "button">Subscribe</button>
+            <div class="form-group reminders">
+                <input class="form-control col-lg-12" id="email" type="email" placeholder="email address">
+                <button class="btn btn-primary btn-subscribe" id="subscribe" type="button">Subscribe</button>
             </div>
+        </div> -->
 
-        </div>
-    </div> <!-- / #home -->
-</div> <!-- / .container -->
+        <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+            <a class="twitter-timeline" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>   
+    </div>
+</div>
+
+<div class='col-lg-12 footer home-footer'>
+    <div class="container">
+        An MIT Media Lab project, in collaboration with the
+        MacArthur Foundation.
+    </div>
+</div>
 
 <!-- MODAL DIALOGS -->
 
-<!-- subscribing to an event (not currently used) -->
-<div class="modal hide fade subscription-modal" id="subscription-modal">
-    <div class="modal-header"><h3>Subscribed!</h3></div>
-
-    <div class="modal-body">
-        <p>You have been subscribed to this event.
-        We will send you an email reminder 24 hours
-        before the event and 5 minutes before it
-        starts.</p>
-    </div>
-
-    <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss=
-        "modal">Close</button>
-    </div>
-</div>
-
 <!-- prompt to log in first before creating event -->
-<div id="login-first-modal" class="modal hide fade event-mini-form">
-  <div class="modal-header">
-      <h3>Please log in!</h3>
-  </div>
-  <div class="modal-body">
-    <p>You need to be logged in to create an event or join one. It’s easy. You can use your Google account and it only takes 0.83 seconds.</p>
+<div class="modal fade event-mini-form" role="dialog" aria-hidden="true" id="login-first-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Please log in! </h4>
+            </div>
 
-    <div class="modal-footer">
-      <img src="/public/img/unhangout-logo.png" style='width: 55px; height: 35px;' alt='Logo'>
-      <span class>Unhangouts</span>
-      <a href="/auth/google/" class="btn btn-primary pull-right">Login to create an Unhangout</a>
+            <div class="modal-body">
+                <p>You need to be logged in to create an event or join one. It’s easy. You can use your Google account and it only takes 0.83 seconds.</p>        
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss=
+                "modal">Close</button>
+                <a href="/auth/google/" class="btn btn-primary">Login to create an Unhangout</a>
+            </div>
+
+        </div>
     </div>
-  </div>
 </div>
 
 <!-- form for non-admins wishing to create an event -->
-<div id="event-mini-form-modal" class="modal hide fade event-mini-form">
-  <div class="modal-header">
-      <h3>Tell us about your event!</h3>
-  </div>
-  <form method="POST" id="contact-form" class="form-horizontal">
-    <div class="modal-body">
+<div id="event-mini-form-modal" class="modal fade event-mini-form">
+    <div class="modal-dialog">
+        <div class="modal-content">
 
-      <p>Currently only admin users can create new Unhangouts. We are a teeny tiny team, but if you let us know what you have in mind, we’ll see if we can help you make it happen.<br/><br/></p>
+          <div class="modal-header">
+              <h4 class="modal-title">Tell us about your event!</h4>
+          </div>
 
-      <div class="control-group event-title">
-        <label class="control-label pull-right" for="title">Event Title</label>
-        <div class="controls">
-          <input type="text" class="input-xlarge" name="title" id="title">
+          <div class="modal-body">
+
+              <form method="POST" id="contact-form" class="form-horizontal">
+
+                  <p>Currently only admin users can create new Unhangouts. We are a teeny tiny team, but if you let us know what you have in mind, we’ll see if we can help you make it happen.<br/><br/></p>
+
+                  <div class="form-group">
+                    <label class="control-label col-lg-3" for="title">Event Title</label>
+
+                    <div class="col-lg-9 event-title">
+                      <input type="text" class="form-control" name="title" id="title">
+                    </div>
+
+                  </div>
+
+                  <div class="form-group">
+                        <label class="control-label col-lg-3" for="description">Event Description</label>
+
+                        <div class="col-lg-9 event-description">
+                            <textarea class="form-control" name="description" id="description" rows="4"></textarea>
+                        </div>
+                   </div>
+
+                  <div class="modal-footer">
+                      <button class="btn btn-default" data-dismiss=
+                        "modal">Close</button>
+                      <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
+                  </div>
+
+              </form>
+            </div>
         </div>
-      </div>
-      <div class="control-group event-description">
-        <label class="control-label" for="description">Event Description</label>
-        <div class="controls">
-          <textarea class="input-xlarge" name="description" id="description" rows="4"></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-          <img src="/public/img/unhangout-logo.png" style='width: 55px; height: 35px' alt='logo'>
-          <span class>Unhangouts</span>
-          <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
-      </div>
     </div>
-  </form>
 </div>
 
 <!-- thank you for submitted non-admin form -->
-<div class="modal hide fade event-mini-form" id="session-submission-modal">
-    <div class="modal-header">
-        <h3>Thank you!!!</h3>
-    </div>
+<div class="modal fade event-mini-form" role="dialog" aria-hidden="true" id="session-submission-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Thank you!!!</h4>
+            </div>
 
-    <div class="modal-body">
-        <p>That’s all we need right now. We’ll be in touch very soon. </p>
+            <div class="modal-body">
+                <p>That’s all we need right now. We’ll be in touch very soon. </p>    
+            </div>
 
-        <div class="modal-footer">
-            <button class="btn btn-primary" data-dismiss="modal">Close</button>
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
         </div>
     </div>
 </div>
 
-<% include _sponsorship.ejs %>
+<!-- template for event listings on the front page -->
+<script type='text/template' id='frontpage-events' data-spreadsheet-key='<%= spreadsheetKey %>'>
+    <div class="mini-event-box">
+        <div class="col-lg-5 col-sm-5 col-md-4 col-xs-7 event-thumbnail">
+            <img src="{{= image }}">
+        </div>
+        <div class="col-lg-7 col-sm-7 col-md-8 col-xs-12">
+            <a href="{{= link }}" target="_blank"><h4>{{= title }}</h4> </a>
+            <p>{{= date.format("MMM D, YYYY, h:mm a [GMT]Z") }}</p>
+            <p class="lead">{{= description }}</p>
+        </div>
+    </div>
+</script>
+
 <%- requireScripts("/public/js/index.js") %>
 <% include _analytics.ejs %>
-<% include _footer.ejs %>
+
+<!-- Spreadsheet Importer JS Files -->
+<!--
+<script src="/public/js/spreadsheetimporter/miso.ds.deps.min.0.4.0.js"></script>
+<script src="/public/js/spreadsheetimporter/dataset-template.js"></script>
+<script src="/public/js/spreadsheetimporter/dataset.js"></script>
+-->

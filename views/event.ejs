@@ -11,6 +11,7 @@
         var CONNECTED_USERS = <%- JSON.stringify(event.get("connectedUsers").invoke("toClientJSON")) %>
         var RECENT_MESSAGES = <%- JSON.stringify(event.get("recentMessages")) %>;
     <% } %>
+
 </script>
 
 <div class="container event-page-container">
@@ -18,64 +19,87 @@
         <div class="row">
             <div id="global"></div>
             <div id="dialogs"></div>
-        </div>
+        </div> 
+
         <div class="row" id="main">
-            <div id="top"></div>
-            <div id="left" class="span6">
+
+            <div id="top"></div> 
+
+            <div class="col-lg-5 col-xs-5 left">
                 <div id="top-left"></div>
-                <div id="main-left"></div>
+                <div id="main-left"></div> 
             </div>
-            <div id="main-right" class="span6"></div>
-        </div>
+
+            <div class="col-lg-7 col-xs-5 right">
+                <div id="main-right"></div>
+            </div> 
+
+        </div> 
     </div>
-</div>
+
+</div> 
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-    <h3>{{- title }}</h3>
-    {{ if (organizer) { }}
-        <h4 style="color: #2E7DAA">hosted by {{= organizer }}</h4>
-    {{ } }}
-    <br/>
-    {{ if (formattedDate) { }}
-        {{- formattedDate }}
-    {{ } }}
-    <br/><br/>
-    {{= description }}
+        
+        <div class="container about-event-container">
+            <h2>{{- title }}</h2>
+            {{ if (organizer) { }}
+                <h3>hosted by {{= organizer }}</h4>
+            {{ } }}
+            <br/>
+            <h4>
+            {{ if (formattedDate) { }}
+                {{- formattedDate }}
+            {{ } }}
+            </h4>
 
-    {{ if (event.get("open")) { }}
+            <br/><br/>
 
-        <a class="scroll-up pull-right" href="#about-nav">
-            <i class="icon-chevron-up chevron"></i>
-        </a>
+            <p>{{= description }}</p>
 
+            {{ if (event.get("open")) { }}
+
+                <a class="scroll-up pull-right" href="#about-nav">
+                    <i class="fa fa-chevron-up chevron"></i>
+                </a>
+
+            {{ } else { }}
+                <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i></div>
+            {{ } }}
         </div>
-
-     {{ } else { }}
-        <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i>
-     {{ } }}
-
 
 </script>
 
 <script type="text/template" id="session-template">
-    <h3>{{- title }}</h3>
-    <div class="attend btn btn-info" data-toggle="button">
-        <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
-        <div class="attendance"></div>
+    <div class="col-lg-12 col-xs-12 session-area">
+        <h3 class="col-lg-8 col-xs-8">{{- title }}</h3>
+        
+        {{ if (IS_ADMIN) { }}
+            <div class="col-lg-3 col-xs-3 btn-admin-join-session">
+                <button class="attend btn btn-success" data-toggle="button">
+                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
+                    <div class="attendance"></div>
+                </button>
+            </div>
+
+            <div class="col-lg-1 col-xs-1 btn-admin-delete-session">   
+                <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
+            </div>
+        {{ } else { }}
+            <div class="col-lg-4 col-xs-4 btn-join-session">
+                <button class="attend btn btn-success" data-toggle="button">
+                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
+                    <div class="attendance"></div>
+                </button>
+            </div>
+
+        {{ } }}
     </div>
 
-    {{ if (IS_ADMIN) { }}
-
-    <div class="admin-buttons">
-        <div class="delete btn btn-warning"><i class="fa fa-trash-o"></i></div>
-    </div>
-
-    {{ } }}
-
-    <ul class="hangout-users"></ul>
-    <div class="hangout-offline">
-        No one has joined this session yet.
+    
+    <div class="col-lg-12 col-xs-12 session-spots">
+        <ul class="hangout-users"></ul>
     </div>
 </script>
 
@@ -111,7 +135,7 @@
 
 <script type="text/template" id="user-template">
     {{ if(!picture) { }}
-        <i class="icon-user icon-3x"></i>
+        <i class="fa fa-user"></i>
     {{ } else if (link) { }}
         <a href="{{- link }}" target="_new"><img src="{{- picture}}" alt='profile'></a>
     {{ } else { }}
@@ -121,7 +145,7 @@
 
 <script type="text/template" id="user-list-template">
     <div class="header">
-        <span class="contents">{{- numUsers}}</span><i class="icon-user"></i>
+        <span class="contents">{{- numUsers}}</span><i class="fa fa-user"></i>
     </div>
     <div id="user-list-scroll-container">
         <ul id="user-list-container"></ul>
@@ -133,12 +157,23 @@
 </script>
 
 <script type="text/template" id="chat-layout">
-    <div id="chat-container-region" class="span5">
-        <div id='welcome-message'></div>
-        <div id='chat-messages'></div>
+     <div id="chat-container-region" class="col-lg-10 col-xs-10">
+        <div class="panel">
+            <div class="panel-heading">
+                <div id='welcome-message'></div>
+            </div>
+
+            <div class="panel-body">
+                <div id='chat-messages'></div>
+            </div>
+
+            <div class="panel-footer">
+                <div id="chat-input-region"></div>
+            </div>
+        </div>
     </div>
-    <div id="chat-input-region"></div>
-    <div id="presence-gutter"></div>
+    
+    <div id="presence-gutter" class="col-lg-2 col-xs-2"></div>
 </script>
 
 <script type="text/template" id="welcome-message-template">
@@ -151,7 +186,7 @@
 </script>
 
 <script type="text/template" id="chat-input-template">
-    <form><input type="text" id="chat-input" autocomplete="off" placeholder='Chat'></input></form>
+    <form><input type="text" id="chat-input" class="form-control" autocomplete="off" placeholder='Type your message here'></input></form>
 </script>
 
 <script type="text/template" id="chat-template">
@@ -170,92 +205,149 @@
 
 <script type="text/template" id="video-embed-template">
     <div class='video-player'></div>
-    <div class='video-placeholder'>Video</div>
-    <div class='video-controls'></div>
+    <div class='video-controls row'></div>
 </script>
+
 <script type='text/template' id="video-embed-controls-template">
     {{ if (youtubeEmbed) { }}
-        <div class='current-video-controls'>
-            <button class='btn btn-warning play-for-all'>
-                {{ if (isPlayingForEveryone) { }}
-                    <i class='fa fa-pause'></i> Pause for all
-                {{ } else if (isAwaitingStart) { }}
-                    <i class='fa fa-clock-o'></i> Awaiting start
-                {{ } else { }}
-                    <i class='fa fa-play'></i> Play for all
-                {{ } }}
-                <span class='button-time-indicator'></span>
-            </button>
-            <button class='btn btn-small pull-right remove-video'>
-                Remove <i class='fa fa-times'></i>
-            </button>
+        <div class="row video-play-trash-row">
+            <div class='col-lg-7 col-xs-7 btn-play-pause'>
+                <div class='current-video-controls'>
+                    <button class='btn btn-success play-for-all'>
+                        {{ if (isPlayingForEveryone) { }}
+                            <i class='fa fa-pause'></i> Pause for All
+                        {{ } else if (isAwaitingStart) { }}
+                            <i class='fa fa-clock-o'></i> Awaiting Start
+                        {{ } else { }}
+                            <i class='fa fa-play'></i> Play for All
+                        {{ } }}
+                        <span class='button-time-indicator'></span>
+                    </button> 
+                </div>
+            </div>
+
+            <div class="col-lg-1 col-xs-1 btn-video-trash">
+                <button class='btn btn-danger remove-video' title="Remove video embed">
+                    <i class='fa fa-trash-o'></i>
+                </button>
+            </div>
+
         </div>
     {{ } }}
-    <div class='inline-video-controls'>
-        <label>Set youtube video:</label>
-        <div class='input-prepend input-append'>
-            <span class='add-on'><i class='fa fa-youtube-play'></i></span>
-            <input type="text" name="youtube_id" value=""
-                   placeholder="https://youtube.com..." />
-            <div class='btn-group'>
-                <button class='btn btn-default set-video'
-                        type="button">Set</button>
-                <button class='btn btn-default enqueue-video' type='button' style='font-size: 12px;'>Enqueue</button>
-                {{ if (previousVideoEmbeds.length > 0) { }}
-                    <button class='btn btn-default dropdown-toggle'
-                            data-toggle='dropdown'>
+
+    <div class='row youtube-video-controls'>
+
+        <div class="col-lg-7 col-xs-6 input-video-field">
+            <input class="form-control" type="text" name="youtube_id" value="" placeholder="Paste Youtube URL Here" />
+
+            {{ if (previousVideoEmbeds.length > 0) { }}
+               
+                    <button class='btn btn-default dropdown-toggle' data-toggle="dropdown">
                         <i class='fa fa-list'></i>
                         <i class='fa fa-caret-down'></i>
                     </button>
-                    <ul class='dropdown-menu pull-right previous-videos'>
+
+                    <ul class="dropdown-menu previous-videos" role="menu">
                         <li><a class='restore-previous-video header'>Previous videos</a></li>
+
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
-                            <li>
-                                <span>
-                                    <a tabindex='-1' href='#' class='restore-previous-video'
-                                       data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}</a>
-                                    <a tabindex='-1' href='#' class='remove-one-previous-video'
-                                       data-youtube-id='{{= vid.youtubeId }}'><i class='fa fa-trash'></i></a>
-                                </span>
+
+                            <li role="presentation">
+                                <div class="col-lg-12 previous-video-item">
+                                    <div class="col-lg-11 previous-video-details">
+                                        <a role="menuitem" class='restore-previous-video'
+                                        data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}  
+                                        </a>
+                                    </div>
+
+                                    <div class="col-lg-1 btn-del-previous-video">
+                                        <button class='btn btn-danger remove-one-previous-video'
+                                    data-youtube-id='{{= vid.youtubeId }}'><i class='fa fa-trash'></i></button>
+                                    </div>
+                                </div>
+                                
                             </li>
                         {{ }); }}
+
                         <li><a class='clear-previous-videos'>
                             <i class='fa fa-trash-o'></i> Clear list
                         </a></li>
                     </ul>
-                {{ } }}
-            </div>
+               
+            {{ } }}
         </div>
-        <p class="alert text-warning hide">Unrecognized youtube URL.  Please use the URL for a single video.</p>
-    </div>
 
-    <div class='button-group'>
+        <div class="col-lg-3 col-xs-4 btn-enqueue">
+            <button class='btn btn-default enqueue-video'
+            type="button">Add to List</button>
+        </div>
+
+        <div class="col-lg-2 col-xs-2 btn-video-embed">
+            <button class='btn btn-default set-video'
+            type="button">Embed</button>
+        </div>
+
+        <!--<p class="alert text-warning">Unrecognized youtube URL.  Please use the URL for a single video.</p>-->
+
+        <div class="col-lg-12 col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
+          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
+        </div>
+
+        <div class="col-lg-12 col-xs-12 OR-field">
+            <p>OR</p>
+        </div>
+        
+      
         {{ if (hoaParticipationLink) { }}
-            <div class='btn-group'>
-                <a class='btn btn-default join-hoa' target='_blank'
-                   href='{{= hoaParticipationLink }}'>
-                    <i class='fa fa-users'></i> Join Hangout-on-Air
+           
+            <div class="col-lg-6 col-xs-6 btn-join-hoa">
+                <a class="join-hoa" target='_blank'
+                    href="{{= hoaParticipationLink }}">
+                    <button class="btn btn-default hoa">
+                        <i class="fa fa-users"></i> Join Hangout-on-Air
+                    </button>
                 </a>
-                <button class='btn btn-warning remove-hoa' style='width: 15px; padding-left: 0px; padding-right: 0px;'><i class='fa fa-trash-o'></i></button>
+            </div>
+
+            <div class="col-lg-6 col-xs-6 btn-remove-hoa">
+                <button class='btn btn-danger remove-hoa'>Remove Hangout-on-Air
+                </button>
+            </div>
+            
         {{ } else { }}
-            <a class='btn btn-default create-hoa' target='_blank'
-               href='/event/{{- id }}/create-hoa/'>
+            
+            <div class="col-lg-12 col-xs-12 btn-hoa">
+                <a class="btn btn-default create-hoa hoa" target="_blank"
+                    href='/event/{{- id }}/create-hoa/'>
                 <i class='fa fa-users'></i> Create Hangout-on-Air
-            </a>
+                </a>
+            </div>
+        
         {{ } }}
+      
     </div>
+    
 </script>
 
 <script type='text/template' id="previous-video-details-template">
     <a tabindex='-1' href='#' class='restore-previous-video'
-       style='text-align: left;'
        title='{{= title }}'
        data-youtube-id='{{= id }}'>
-        <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
-        <span class='title'>{{= title }}</span>
-        <span class='duration'>
-            {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
-        </span>
+        
+        <div class="col-lg-2">
+            <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
+        </div>
+
+        <div class="col-lg-8">
+            <p class='title'>{{= title }}</p>
+        </div>
+
+        <div class="col-lg-1">
+            <p class='duration'>
+                {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
+            </p>
+        </div>
     </a>
 </script>
 
@@ -263,6 +355,7 @@
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
            id='event-settings-label'>Event Settings</a>
+
         <ul class="dropdown-menu" role="menu" aria-labelledby="event-settings-label">
             <li role="presentation">
                 {{ if (event.get("open")) { }}
@@ -276,7 +369,7 @@
                         Start event
                     </a>
                 {{ } }}
-                <a role="menuitem" href="#create-session-modal" role="button" data-toggle="modal" id="show-create-session-modal">
+                <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
                     <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
                 </a>
                 <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
@@ -294,101 +387,187 @@
                         Open Sessions
                     </a>
                 {{ } }}
-                <a role="menuitem" tabindex="-1" id="message-sessions" href='#'>
+                <a role="menuitem" id="message-sessions" href='#' data-toggle="modal">
                     <i class="fa fa-share fa-lg fa-fw"></i>
                     Send Message to Sessions
                 </a>
             </li>
         </ul>
     </div>
+
+    <script type="text/javascript"> 
+        //Hide the youtube and webpage url form controls
+        $(".youtube-url").hide();
+        $(".webpage-url").hide();
+        $(".join-cap-error").hide();
+
+    </script>
+
 </script>
 
 <script type="text/template" id="session-live-bar-template">
     <div>Your session is now live!</div>
     <a class="btn btn-success" target="_blank">Join Hangout!</a>
 </script>
+
 <script type="text/template" id="dialogs-template">
-    <div id="create-session-modal" class="modal hide fade">
-        <form>
+
+    <!-- Create Session Modal Dialog -->
+    <div id="create-session-modal" class="modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <form class="form-horizontal">
+        <div class="modal-content">
             <div class="modal-header">
-                <h3>CREATE SESSION</h3>
+                <h4 class="modal-title">Create Session</h4>
             </div>
-            <div class="modal-body">
-                <div class="control-group">
-                    <label for="session_name">SESSION NAME</label>
-                    <input type="text" name="session_name" value="" id="session_name">
+
+          <div class="modal-body">
+            
+            <div class="form-group">
+                <label class="col-lg-3 control-label" for="session_name">Session Name</label>
+
+                <div class="col-lg-9">
+                    <input class="form-control" type="text" name="session_name" value="" id="session_name">
                 </div>
-                <div class='control-group'>
-                    <label for='join_cap'>LIMIT JOINING TO</label>
-                    <span class='help-block join-cap-error hide'>
-                       Please enter a number between 2 and 10.
-                    </span>
-                    <input type='number' min='2' max='10' step='1'
-                           value='10' style='width: 40px' 
-                           name='join_cap' id='join_cap' />
-                     <span class='help-block'>Minimum 2, maximum 10</span>
+            </div>
+
+            <div class="form-group">
+                <label class="col-lg-3 control-label" for='join_cap'>Participant Limit</label>
+
+                <!--<span class='help-block join-cap-error hide'>
+                   Please enter a number between 2 and 10.
+                </span>-->
+
+
+                <div class="col-lg-4">
+                    <input class="form-control" type='number' min='2' max='10' step='1'
+                       value='10' 
+                       name='join_cap' id='join_cap' />
+                    <span class='help-inline'>Minimum 2, maximum 10</span>
                 </div>
-                <div class="control-group">
-                    <div class='pull-left'>
-                        <label>SESSION TYPE</label>
-                        <label><input type="radio" name="session_type" value="simple" checked='checked'/> Simple</label>
-                        <label><input type="radio" name="session_type" value="video" /> Youtube Video</label>
-                        <label><input type="radio" name="session_type" value="webpage" /> Webpage</label>
-                    </div>
-                    <div class='pull-left' style='margin-left: 1em;'>
-                        <div class='youtube-url hide control-group' style='margin-top: 1.5em;'>
-                            <p class="yt-error hide">
-                                Unrecognized youtube URL.  Please use the URL for a single video.
-                            </p>
-                            <label for="session_youtube_id">Youtube video URL</label>
-                            <input type="text" name="youtube_id" value=""
+            </div>
+
+            <div class="form-group">
+                <div class="col-lg-offset-1 col-lg-10 alert alert-warning alert-dismissible join-cap-error" role="alert">
+                  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  Warning! Please enter a number between 2 and 10.
+                </div>
+            </div>
+
+             <div class="form-group">
+                     
+                <label class="col-lg-3 control-label">
+                    Session Type
+                </label>
+
+                <div class="col-lg-9">
+                    <label class="radio-inline">
+                      <input type="radio" name="session_type" value="simple" checked="checked"/> Simple 
+                    </label>
+
+                    <label class="radio-inline">
+                      <input type="radio" name="session_type" value="video" /> Youtube Video
+                    </label>
+
+                    <label class="radio-inline">
+                      <input type="radio" name="session_type" value="webpage"  /> Webpage
+                    </label>
+                    
+                    <div class='form-group youtube-url'>
+                        <p class="yt-error hide">
+                            Unrecognized youtube URL.  Please use the URL for a single video.
+                        </p>
+
+                        <label class="col-lg-4 control-label" for="session_youtube_id">Youtube URL</label>
+                        
+                        <div class="col-lg-8">
+
+                            <input class="form-control" type="text" name="youtube_id" value=""
                                    id="session_youtube_id"
-                                   placeholder='https://youtube.com...'>
+                                   placeholder='https://youtube.com'>
+
                             <span class='help-block'>Paste the URL or embed code for a youtube video.</span>
+
                         </div>
-                        <div class='webpage-url control-group hide' style='margin-top: 3em;'>
-                            <label for='session_webpage'>Webpage URL</label>
-                            <input type='text' placeholder='https://example.com...' id='session_webpage'/>
+                    </div>
+
+                    <div class='form-group webpage-url'>
+                        <label class="col-lg-4 control-label" for='session_webpage'>Webpage URL</label>
+
+                        <div class="col-lg-8">
+
+                            <input class="form-control" type='text' placeholder='https://example.com' id='session_webpage'/>
+
                             <div class='url-error hide' style='display: none;'>
                                 Sorry, but only secure pages (those starting with "https")
                                 can be embedded in hangouts.
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <input type='submit' class="btn btn-primary" id="create-session" value="Create Session" />
-            </div>
-        </form>
+          </div> 
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+            <button type="button" class="btn btn-primary" id="create-session" value="Create Session">Create Session</button>
+          </div>
+
+        </div>
+      </div>
+      </form>
+
     </div>
-    <div id="message-sessions-modal" class="modal hide fade">
-        <div class="modal-header"><h3>Send Message to All Hangout Sessions</h3></div>
-        <div class="modal-body">
-            <p>Send a message to be displayed in every event session hangout.</p>
-            <div class='fifty-fifty clearfix'>
-                <div class='fifty'>
-                    <label for='session_message'>Message</label>
-                    <textarea id='session_message' rows=5 cols=30></textarea><br />
-                    <a class='add-url-to-message' style='cursor: pointer;'>
-                        Add URL to event page
-                        <i class='fa fa-level-up'></i>
-                    </a>
+
+    <!-- Send messages to session dialog -->
+    <div id="message-sessions-modal" class="modal fade" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="form-horizontal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Send Message to All Hangout Sessions</h4>
                 </div>
-                <div class='fifty'>
-                    Message will show up as:<br />
-                    <div class='faux-hangout-notice'>
-                        <div class='message'></div>
-                        <div class='close'>&times;</div>
+
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for='session_message' class="control-label col-lg-3">Message</label>
+
+                        <div class="col-lg-9">
+                            <textarea class="form-control" id='session_message' rows=5 cols=30></textarea>
+
+                            <a class='add-url-to-message' style='cursor: pointer;'>
+                                Add URL to event page
+                                <i class='fa fa-level-up'></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="control-label col-lg-3" for='session_message'>Message Preview</label>
+
+                        <div class="col-lg-9">
+                            <div class='faux-hangout-notice'>
+                                <div class='message'></div>
+                                <div class='close'>&times;</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
+                <div class='modal-footer'>
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="send-session-message" value="Send Message">Send Message</button>
+
+                </div>
             </div>
-        </div>
-        <div class='modal-footer'>
-            <a href='#' class='btn pull-left' data-dismiss='modal'>Cancel</a>
-            <a href='#' class='btn btn-primary' id='send-session-message'>Send Message</a>
+            </form>
         </div>
     </div>
+
     <div class="modal hide fade started-modal">
         <div class="modal-header"><h3></h3></div>
         <div class="modal-body">
@@ -396,13 +575,25 @@
             <a class="btn btn-success join-chosen-session" target="_blank">JOIN HANGOUT</a>
         </div>
     </div>
-    <div class="modal hide fade disconnected-modal" id="disconnected-modal">
-        <div class="modal-header"><h3>Warning!</h3></div>
-        <div class="modal-body">
-            <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
-            <a href="#" class="btn">Close</a>
+
+    <div class="modal fade disconnected-modal" id="disconnected-modal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Warning!</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+                </div>
+
+                <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
+            
     <div id="no-urls-warning" class="modal hide fade">
         <div class="modal-header"><h3>NO HANGOUT URLS AVAILABLE</h3></div>
         <div class="modal-body">
@@ -413,6 +604,8 @@
             <a href="#" class="btn btn-primary" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
         </div>
     </div>
+
+    
 </script>
 
 <% include _video-templates.ejs %>

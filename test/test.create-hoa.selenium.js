@@ -13,11 +13,7 @@ describe("CREATE HOA", function() {
     }
     this.timeout(60000); // Extra long timeout for selenium :(
     before(function(done) {
-        common.getSeleniumBrowser(function(theBrowser) {
-            browser = theBrowser;
-            common.standardSetup(done);
-        });
-
+        this.timeout(120000);
         //
         // Set up mocks for googleapis, so we can dance right past them.
         //
@@ -55,6 +51,11 @@ describe("CREATE HOA", function() {
                 }
             }
         };
+        common.getSeleniumBrowser(function(theBrowser) {
+            browser = theBrowser;
+            common.standardSetup(done);
+        });
+
     });
     after(function(done) {
         browser.quit().then(function() {
@@ -115,7 +116,7 @@ describe("CREATE HOA", function() {
                                 event.get("hoa").get("hangout-broadcast-id")) === 0
                 );
             });
-        });
+        }, 60000);
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
             expect(href).to.eql(event.get("hoa").getParticipationLink());
         });
@@ -135,7 +136,7 @@ describe("CREATE HOA", function() {
                     "http://www.youtube.com/embed/" +
                     event.get("hoa").get("hangout-broadcast-id")) === 0;
             });
-        }, 45000);
+        }, 60000);
 
         browser.then(function() { done(); });
     });

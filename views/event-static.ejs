@@ -8,17 +8,20 @@
         loginLinks[i].href = "<%= event.getEventUrl() + "/auth/" %>";
     }
 </script>
-
-    <div class='event-static'>
-        <h3><%= title %></h3>
-        <h4 style="color: #2E7DAA">hosted by <%- event.get("organizer") %></h4>
+    
+    <div class="container event-static">
+        <h2><%= title %></h2>
+        <h3>hosted by <%- event.get("organizer") %></h3>
         <br/>
+
+        <h4>
         <% if (event.get("dateAndTime")) { %>
             <%= event.formatDate() %>
         <% } %>
+        </h4>
 
         <br/> <br/>
-        <%- event.get("description") %>
+        <p><%- event.get("description") %></p>
         <div style='clear: both;'></div>
     </div>
 

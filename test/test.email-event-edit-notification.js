@@ -1,7 +1,6 @@
 var server = require('../lib/unhangout-server'),
     expect = require('expect.js'),
     Promise = require("bluebird"),
-    sinon = require("sinon"),
     _ = require('underscore')._,
     request = require('superagent'),
     conf = require('../lib/options'),
@@ -15,7 +14,7 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
     beforeEach(function(done) {
         common.standardSetup(function() {
             origDelay = common.server.options.EVENT_EDIT_NOTIFICATION_DELAY;
-            common.server.options.EVENT_EDIT_NOTIFICATION_DELAY = 5;
+            common.server.options.EVENT_EDIT_NOTIFICATION_DELAY = 100;
             common.startEmailServer(done);
         });
     });

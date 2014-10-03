@@ -1,8 +1,14 @@
 // This code runs on the home page and does minor UI management.
 
-require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
-    $(document).ready(function() {
+require(['jquery', 'events-spreadsheet', 'jquery.validate', 'bootstrap', "auth", "update-navbars"], function($, eventsSpreadsheet) {
+
+    var key = $("[data-spreadsheet-key]").attr("data-spreadsheet-key"); 
+    var template = _.template($("#frontpage-events").html());
+    eventsSpreadsheet.displayEvents(key, template);
+
+    $(document).ready(function() {        
         $("#subscribe").click(function() {
+
             var email = $("#email").val();
 
             $.ajax({
@@ -26,6 +32,11 @@ require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
             $('#event-mini-form-modal').modal('show');
         });
 
+        $("#permalink-login").click(function() {
+            $('#permalink-login-modal').modal('show');
+            return false;
+        });
+
         $('#contact-form').validate({
             rules: {
                 title: {
@@ -37,13 +48,13 @@ require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
             },
 
             highlight: function(element) {
-                $(element).closest('.control-group').removeClass('success').addClass('error');
+                $(element).closest('.form-group').removeClass('success').addClass('error');
             },
 
             success: function(element) {
                 element
                 .addClass('valid')
-                .closest('.control-group').removeClass('error').addClass('success');
+                .closest('.form-group').removeClass('error').addClass('success');
             },
             submitHandler: function(form) {
                 var eventTitle = $("#title").val();
@@ -63,14 +74,6 @@ require(['jquery', 'jquery.validate', 'bootstrap', "auth"], function($) {
                 });
 
 
-            }
-        });
-        // Update navbars
-        $(".nav li").each(function(i, el) {
-            if ($(el).find("a").attr("href") == window.location.pathname) {
-                $(el).addClass("active");
-            } else {
-                $(el).removeClass("active");
             }
         });
     });

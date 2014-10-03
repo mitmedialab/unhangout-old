@@ -12,6 +12,7 @@ describe("CREATE SESSIONS", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -31,6 +32,7 @@ describe("CREATE SESSIONS", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/h/");
+        browser.waitForSelector("#permalink-title");
         browser.byCss("#permalink-title").sendKeys("This won't work");
         browser.byCss("#permalink-create-submit").click();
         browser.byCss(".help-block").getText().then(function(text) {
@@ -48,7 +50,7 @@ describe("CREATE SESSIONS", function() {
         });
         browser.byCss("#title").sendKeys("This Will Work");
         browser.byCss("#description").sendKeys("And so will this");
-        browser.byCss("input[type=submit]").click().then(function() {
+        browser.byCss("#session-update").click().then(function() {
             expect(sess.get('title')).to.be("This Will Work");
             expect(sess.get('description')).to.be("And so will this");
             done();

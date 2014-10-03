@@ -11,6 +11,7 @@ describe("YOUTUBE EMBEDS", function() {
     this.timeout(80000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -33,8 +34,8 @@ describe("YOUTUBE EMBEDS", function() {
             });
             browser.get(common.URL + "/event/" + event.id);
             browser.waitForEventReady(event, "superuser1", 45000);
-            browser.waitForSelector(".inline-video-controls [name=youtube_id]", 45000);
-            browser.byCss(".inline-video-controls [name=youtube_id]").sendKeys(url);
+            browser.waitForSelector("#video-embed [name=youtube_id]", 45000);
+            browser.byCss("#video-embed [name=youtube_id]").sendKeys(url);
             browser.byCss(".set-video").click();
             if (success) {
                 // Wait for embed to finish..

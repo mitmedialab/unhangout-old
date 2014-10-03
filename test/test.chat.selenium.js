@@ -13,6 +13,7 @@ describe("CHAT", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         async.series([
             function(done) {
                 common.getSeleniumBrowser(function (theBrowser) {
@@ -46,7 +47,7 @@ describe("CHAT", function() {
     });
 
     function checkScroll(browser, isScrolledDown) {
-        return browser.executeScript("return [$('#chat-container-region').scrollTop(), $('#chat-container-region')[0].scrollHeight - $('#chat-container-region').height()];").then(function(scrolls) {
+        return browser.executeScript("return [$('#chat-container-region .panel-body').scrollTop(), $('#chat-container-region .panel-body')[0].scrollHeight - $('#chat-container-region .panel-body').height()];").then(function(scrolls) {
             var scrollTop = scrolls[0],
                 maxScroll = scrolls[1];
             if (isScrolledDown) {
@@ -73,11 +74,11 @@ describe("CHAT", function() {
             });
         });
         checkScroll(browser, true);
-        browser.executeScript('$("#chat-container-region").scrollTop(100)');
+        browser.executeScript('$("#chat-container-region .panel-body").scrollTop(100)');
         checkScroll(browser, false)
         browser.byCss("#chat-input").sendKeys("msg " + i + "\n");
         checkScroll(browser, true).then(function() { done(); });
-        browser.executeScript('$("#chat-container-region").scrollTop(100)').then(function() {;
+        browser.executeScript('$("#chat-container-region .panel-body").scrollTop(100)').then(function() {;
             // Send a message from another user.
             sock.write(JSON.stringify({
                 type: "chat", args: {text: "Other user message"}
@@ -97,7 +98,7 @@ describe("CHAT", function() {
 
 
         // Try a micro-scroll to ensure slop works.
-        var scrollFunc = 'var el = $("#chat-container-region"); ' +
+        var scrollFunc = 'var el = $("#chat-container-region .panel-body"); ' +
                          'el.scrollTop(el[0].scrollHeight - el.height() - 5); ' +
                          'return el.scrollTop();';
         browser.executeScript(scrollFunc).then(function() {

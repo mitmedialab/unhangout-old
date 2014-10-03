@@ -686,7 +686,7 @@ describe("ROOM MANAGER", function() {
     });
 
     it("Counts monotonically", function() {
-        var clock = sinon.useFakeTimers(0);
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         monotonic._resetCount();
 
         // Starts at time 0 with counter 1.

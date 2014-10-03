@@ -10,6 +10,7 @@ describe("ADMIN USERS SELENIUM", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -41,7 +42,8 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("admin1");
         browser.get(common.URL);
-        browser.byCss(".identity .dropdown > a").click();
+        browser.waitForSelector("#user-menu-label");
+        browser.byCss("#user-menu-label").click();
         browser.waitForSelector("[href='/logout']")
         browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {
@@ -53,7 +55,8 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL);
-        browser.byCss(".identity .dropdown > a").click();
+        browser.waitForSelector("#user-menu-label");
+        browser.byCss("#user-menu-label").click();
         browser.waitForSelector("[href='/logout']")
         browser.byCss("[href='/admin/']").click();
         browser.getCurrentUrl().then(function(url) {
@@ -100,12 +103,12 @@ describe("ADMIN USERS SELENIUM", function() {
         });
 
         // Pull up the add event modal, and add an event.
-        browser.waitForSelector(addSelector);
+        browser.waitForSelector(addSelector);   
         browser.byCss(addSelector).click();
         // Wait for modal to fade in...
         browser.waitForSelector(".modal-body select");
         browser.selectOption(".modal-body select", event.get("title"));
-        browser.byLinkText("Add").click();
+        browser.byCss(".add").click();
         browser.wait(function() {
             return user.isAdminOf(event) === true;
         });

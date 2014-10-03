@@ -448,18 +448,19 @@ var WebpageActivity = BaseActivityView.extend({
 
 var BaseModalView = Backbone.View.extend({
     events: {
-        'click input[type=submit]': 'validateAndGo'
+        'click [type=submit]': 'validateAndGo',
+        'click .close-and-remove': 'close'
     },
     initialize: function() {
         _.bindAll(this, "render", "validateAndGo", "validate", "close");
         $("body").append(this.el);
         this.render();
-        this.$el.on("hidden", _.bind(function() {
+        this.$el.on("hidden.bs.modal", _.bind(function() {
             this.trigger("close");
         }, this));
     },
     render: function() {
-        this.$el.html(this.template()).addClass("modal hide fade");
+        this.$el.html(this.template()).addClass("modal fade add-activity-dialog");
         this.$el.modal('show');
     },
     validateAndGo: function(jqevt) {
@@ -471,7 +472,7 @@ var BaseModalView = Backbone.View.extend({
         }
     },
     close: function() {
-        this.$el.on("hidden", _.bind(function() {
+        this.$el.on("hidden.bs.modal", _.bind(function() {
             this.trigger("close");
             this.remove();
         }, this));
@@ -482,8 +483,9 @@ var BaseModalView = Backbone.View.extend({
 var AddActivityDialog = BaseModalView.extend({
     template: _.template($("#add-activity-dialog").html()),
     events: {
-        'click input[type=submit]': 'validateAndGo',
-        'click a.remove-embed': 'removeEmbed',
+        'click [type=submit]': 'validateAndGo',
+        'click .close-and-remove': 'close',
+        'click .remove-embed': 'removeEmbed',
         'change input[type=text]': 'validate'
     },
     initialize: function(options) {

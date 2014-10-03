@@ -8,6 +8,7 @@ describe("FRONT PAGE", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -21,22 +22,20 @@ describe("FRONT PAGE", function() {
 
     var navLinkActive = function(href) {
         return function() {
-            browser.waitWithTimeout(function() {
-                return browser.byCsss("li.active a[href='" + href + "']").then(function(els) {
-                    return els.length == 1;
-                });
-            });
-        };
+          browser.waitForSelector("li.active a[href='" + href + "']");
+        }
     };
 
     it("gets home page and nav links activate", function(done) {
         browser.get(common.URL);
-        browser.byCss("h1").getText().then(function(text) {
-            text.should.equal("Unhangouts");
-        });
+
         browser.byLinkText("About").click().then(navLinkActive("/about/"));
-        browser.byLinkText("How to Unhangout").click().then(navLinkActive('/how-to-unhangout/'));
-        browser.byLinkText("Home").click().then(navLinkActive("/")).then(function() {
+        browser.byLinkText("Events").click().then(navLinkActive("/events/"));
+        // need to be logged in for /h/.
+        browser.mockAuthenticate("regular1");
+        browser.get(common.URL);
+        browser.byLinkText("Permalinks").click().then(navLinkActive("/h/"));
+        browser.unMockAuthenticate().then(function() {
             done();
         });
     });

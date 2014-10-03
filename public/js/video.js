@@ -46,7 +46,7 @@ video.getVideoDetails = function(id, callback) {
 video.extractYoutubeId = extractYoutubeId.extractYoutubeId;
 
 video.YoutubeVideo = Backbone.View.extend({
-    tagName: "table",
+    tagName: "div",
     template: _.template($("#youtube-video").html()),
     controlsTemplate: _.template($("#youtube-video-controls").html()),
     events: {

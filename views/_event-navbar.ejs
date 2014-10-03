@@ -1,42 +1,46 @@
-    <% if(user && user.isAdminOf(event)) {%>
-        <div class="admin-header">
-        </div>
-    <% } %>
-    <div class="navbar navbar-inverse navbar-fixed-top event-navbar">
-        <div class="navbar-inner">
-            <div class="container">
-                <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+<% if(user && user.isAdminOf(event)) {%>
+    <div class="admin-header">
+    </div>
+<% } %>
+
+    <div class="navbar navbar-default navbar-fixed-top event-navbar">
+        <div class="container">
+            <div class="navbar-header event-navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
-                </button>
+                </button>   
                 
                 <% if(user) { %>
+                    <div class="col-lg-2">
+                    <a class="navbar-brand short-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a> 
+                    </div>
 
-                    <a class="brand short-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
+                <% } else { %>  
 
-                <% } else { %>
-
-                    <a class="brand long-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
+                    <a class="navbar-brand long-titles" href="<%= event.getEventUrl() %>"><%= event.get("title") %></a>
 
                 <% } %>
 
-                <div class="nav-collapse collapse">
-                    <ul class="nav">
-                        <% if (user) { %>
-                            <li class="" id="about-nav">
-                            <a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
-                            </li>
-                        <% } %>
-                    </ul>
 
-                    <div class="nav pull-left">
-                        <div id="admin-region"></div>
-                    </div>
+            </div>
 
-                    <% include _identity.ejs %>
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <% if (user) { %>
+                        <li class="" id="about-nav">
+                        <a href="#about-nav">About<span class="updated circle hide">&nbsp;</span></a>
+                        </li>
+                    <% } %>
+                </ul>
 
-                </div><!--/.nav-collapse -->
+                <div class="nav pull-left">
+                    <div id="admin-region"></div>
+                </div>
+
+                <% include _identity.ejs %> 
             </div>
         </div>
     </div>
