@@ -162,6 +162,7 @@ a.dropdown-toggle {
 
 .event-navbar .container {
   padding: 0px;
+  padding-left: 10px;
 }
 
 .event-navbar #user-menu-label {
@@ -1280,10 +1281,8 @@ hr.noshade {
 }
 
 .line-break {
-  border: 2px solid #2e7daa; 
+  border: 1px solid #2e7daa; 
   margin-top: 0px; 
-  margin-left: -5px; 
-  margin-right: -5px;
 }
 
 .profile-thumbnail {
@@ -1383,37 +1382,98 @@ hr.noshade {
 
 .event-static {
   padding: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font: 13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif;
+  min-height: 650px;
 
-  h2 {
-    color: #444;
-    font-weight: 500;
-    font-size: 2.8em;
+  .event-info-box {
+    padding: 0px;
+
+    .title {
+      color: $navbar;
+      font-weight: normal;
+      font-size: 36px;
+    }
+
+    .host {
+      font-weight: normal;
+      font-size: 18px;
+      line-height: 0.4em;
+    }
+
+    .dateAndTime {
+      font-size: 22px;
+      line-height: 0.4em;
+      font-weight: normal;
+      color: #333;
+      letter-spacing: 0.08m;
+    }
+
+    .description {
+      font-size: 16px;
+      line-height: 22px;
+      color: #333;
+    }
   }
 
-  h3 {
-    font-weight: 400;
-    font-size: 1.6em;
-    color: #2E7DAA;
-    line-height: 0.4em;
+  .guidelines {
+    padding: 0px;
+    padding-top: 20px;
+
+    .ready-for-event-title {
+      font-weight: normal;
+      font-size: 22px;
+      line-height: 26px;
+      color: $navbar;
+    }
+
+    li {
+      font-size: 16px;
+      line-height: 24px;
+      color: #333;
+    }
+
+    .tips-and-tricks {
+      height: 50px;
+      margin-top: 20px;
+      font-size: 16px;
+      letter-spacing: 1px;
+      padding-left: 10px;
+      padding-right: 10px;
+  
+      i {
+        margin-right: 5px;
+        font-size: 20px;
+      }
+    
+    }
   }
 
-  h4 {
-    font-size: 1.4em;
-    line-height: 0.4em;
-    font-weight: 400;
-    color: #333;
-  }
+  .event-updates {
+    padding: 0px;
 
-  p {
-    font-size: 1.2em;
-    font-weight: 400;
-    line-height: 1.4em;
+    .alert {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .twitter-box {
+      padding: 0px;
+    }
   }
 }
 
 .event-static-footer {
   position: absolute;
-  bottom: 0px;
+
+  img {
+    height: 30px;
+  }
+
+  a {
+    color: $navbar;
+  }
 }
 
 /* ------------------------- ABOUT PAGE -------------------------------*/

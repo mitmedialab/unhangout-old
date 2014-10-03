@@ -10,25 +10,73 @@
 </script>
     
 <div class="container event-static">
-    <h2><%= title %></h2>
-    <h3>hosted by <%- event.get("organizer") %></h3>
-    <br/>
+    <div class="col-lg-8 event-info-box">
+        
+        <div class="col-lg-12 event-info-box">
+            <h2 class="title"><%= title %></h2>
+            <h3 class="host">hosted by <%- event.get("organizer") %></h3>
+            <br/>
 
-    <h4>
-    <% if (event.get("dateAndTime")) { %>
-        <%= event.formatDate() %>
-    <% } %>
-    </h4>
+            <h4 class="dateAndTime">
+            <% if (event.get("dateAndTime")) { %>
+                <%= event.formatDate() %>
+            <% } %>
+            </h4>
 
-    <br/> <br/>
-    <p><%- event.get("description") %></p>
-    <div style='clear: both;'></div>
+            <br/> 
+
+            <p class="description"><%- event.get("description") %></p>
+            <div style='clear: both;'></div>
+        </div>
+
+        <div class="col-lg-11 line-break"></div>
+
+        <div class="col-lg-12 guidelines">
+            <h4 class="ready-for-event-title">To get ready for the event: </h4>
+            <p class="ready-for-event-desc">
+                <li>Click Login (top-right corner) if you're not already on. It will prompt you for a Google account.</li>
+                <li>Install Google Hangout plugin if you don't have it already (click here to download and install)</li>
+                <li>Watch this How to Unhangout video to get a sense about the event</li>
+            </p>
+
+            <br/>
+
+            <button class="btn btn-primary col-lg-6 col-md-8 col-sm-8 col-xs-12 tips-and-tricks"><i class="fa fa-lightbulb-o"></i>Tips and tricks to participate in discussion</button>
+            
+            <!--<h4>To participate in the Unhangout discussion, we recommend you: </h4>
+            <p>
+            <li>Find a quiet place to participate in the discussion</li>
+            <li>Arrange a headset, if possible </li>
+            <li> In the breakout group, mute your microphone when you are not talking - it makes it easier for everyone to hear </li>
+            <li>If using a laptop, have a charger, as Unhangouts can drain computer batteries</li>
+            </p>-->
+        </div>
+    </div>
+
+    <div class="col-lg-4 event-updates">
+        <% if (event.get("open")) { %>
+            <div class="alert alert-success alert-dismissible col-lg-12 col-md-8 col-sm-8 col-xs-12" role="alert">
+              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              This event is now live! Login above to participate.
+            </div>
+
+        <% } else { %>
+            <div class="alert alert-warning alert-dismissible col-lg-12 col-md-8 col-sm-8 col-xs-12" role="alert">
+              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              This event has not yet started, come back at the posted start time and login to participate!
+            </div>
+        <% } %>
+     
+        <div class="col-lg-12 twitter-box">
+            <a class="twitter-timeline" height="450" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+    </div> 
 </div>
 
 <div class='col-lg-12 footer event-static-footer'>
     <div class="container">
-        An MIT Media Lab project, in collaboration with the
-        MacArthur Foundation.
+        Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
     </div>
 </div>
 
