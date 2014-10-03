@@ -334,7 +334,6 @@ hr.noshade {
   position: absolute;
   margin-top: 23px;
   z-index: 60;
-  height: 97%;
   background-color: white;
 }
 
@@ -1309,34 +1308,63 @@ hr.noshade {
 
 #about-event {
     margin-top: 30px;
+    font: 13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif;
 
   .about-event-container {
-    padding: 0px;
+    left: 0px;
+    z-index: 1000; 
+    float: right;
+    display: block;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
 
     h2 {
-      color: #444;
-      font-weight: 500;
-      font-size: 2.8em;
+      margin-left: 20px;
+      margin-left: 20px;
+      color: $navbar;
+      font-weight: normal;
+      font-size: 36px;
     }
 
     h3 {
-      font-weight: 400;
-      font-size: 1.6em;
-      color: #2E7DAA;
+      font-weight: normal;
+      font-size: 18px;
       line-height: 0.4em;
+      margin-left: 20px;
+      margin-left: 20px;
     }
 
     h4 {
-      font-size: 1.4em;
+      margin-left: 20px;
+      font-size: 22px;
       line-height: 0.4em;
-      font-weight: 400;
+      font-weight: normal;
       color: #333;
+      letter-spacing: 0.08m;
     }
 
     p {
-      font-size: 1.2em;
-      font-weight: 400;
-      line-height: 1.4em;
+      font-size: 16px;
+      line-height: 22px;
+      color: #333;
+      margin-left: 20px;
+      margin-right: 20px;
+    }
+
+    .alert {
+      margin-left: 20px;
+      font-size: 16px;
     }
   }
 

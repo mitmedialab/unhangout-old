@@ -41,36 +41,32 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-        
-        <div class="container about-event-container">
-            <h2>{{- title }}</h2>
-            {{ if (organizer) { }}
-                <h3>hosted by {{= organizer }}</h4>
-            {{ } }}
-            <br/>
-            <h4>
-            {{ if (formattedDate) { }}
-                {{- formattedDate }}
-            {{ } }}
-            </h4>
+    
+    <div class="container about-event-container">
+        <h2>{{- title }}</h2>
+        {{ if (organizer) { }}
+            <h3>hosted by {{= organizer }}</h4>
+        {{ } }}
+        <br/>
+        <h4>
+        {{ if (formattedDate) { }}
+            {{- formattedDate }}
+        {{ } }}
+        </h4>
 
-            <br/><br/>
+        <br/><br/>
 
-            <p>{{= description }}</p>
+        <p>{{= description }}</p>
 
-            {{ if (event.get("open")) { }}
+        {{ if (!event.get("open")) { }}
 
-                <a class="scroll-up pull-right" href="#about-nav">
-                    <i class="fa fa-chevron-up chevron"></i>
-                </a>
+            <div class="col-lg-6 alert alert-warning alert-dismissible event-status-footer" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            This event has not yet started, come back at the posted start time to participate!</div>
 
-            {{ } else { }}
-                <div class="col-lg-6 alert alert-info alert-dismissible event-status-footer" role="alert">
-                <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                This event has not yet started, come back at the posted start time to participate!</div>
-            {{ } }}
-        </div>
+        {{ } }}
 
+    </div>
 </script>
 
 <script type="text/template" id="session-template">
