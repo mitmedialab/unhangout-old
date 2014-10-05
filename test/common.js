@@ -27,6 +27,15 @@ exports.PORT = TEST_CONF.UNHANGOUT_PORT;
 
 TEST_CONF.UNHANGOUT_HANGOUT_ORIGIN_REGEX = TEST_CONF.baseUrl;
 
+// Get a reference to the native nodejs timers so we can work around resetting
+// problems with sinon.
+var nativeTimers = {
+  setTimeout: setTimeout, clearTimeout: clearTimeout, Date: Date
+};
+exports.restoreTimers = function() {
+  _.extend(global, nativeTimers);
+}
+
 var seleniumServer = null;
 var buildBrowser = function(callback) {
     var browser = new webdriver.Builder().usingServer(
@@ -86,7 +95,12 @@ var buildBrowser = function(callback) {
             }).then(null, function(err) {
                 return false;
             });
-        }, timeout);
+        }, timeout).then(null, function(err) {
+          if (/^Browser wait timeout of \d+ exceeded.$/.test(err.message)) {
+            throw new Error("Selector '" + selector + "' not found after " + timeout + "ms.");
+          }
+          throw err;
+        });
     };
     browser.waitForScript = function(exportName) {
         return browser.waitWithTimeout(function() {

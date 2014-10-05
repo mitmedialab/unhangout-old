@@ -41,6 +41,7 @@ describe("CHAT", function() {
     after(function(done) {
         browser.quit().then(function() {
             sock.promiseClose().then(function() {
+                common.restoreTimers();
                 common.standardShutdown(done);
             });
         });

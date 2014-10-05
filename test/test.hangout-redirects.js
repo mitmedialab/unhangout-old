@@ -13,15 +13,11 @@ describe("HANGOUT REDIRECTS", function() {
     var session;
     var suffix;
 
-    // Sinon restore doesn't behave correctly with restoring clocks inside
-    // superagent request callbacks. Prep to manually restore timers.
-    var timers = _.clone(sinon.timers);
-
     after(function() {
       // Manually restore timers, in case sinon screwed it up.  Ideally, we
       // will have restored them in the functions themselves, each time we've
       // used them.
-      //_.extend(global, timers);
+      common.restoreTimers();
     });
 
     beforeEach(function(done) {
@@ -74,9 +70,9 @@ describe("HANGOUT REDIRECTS", function() {
         expect(session.get("hangout-pending").userId).to.eql(user.id);
         expect(session.isHangoutPending()).to.be(true);
 
-        // Only capture setTimeout and setInterval to not mess with async,
+        // Only capture setTimeout to not mess with async,
         // superagent, etc.
-        var clock = sinon.useFakeTimers(0, "setTimeout", "setInterval", "clearTimeout", "clearInterval");
+        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
         async.parallel([
             function(done) {
                 checkRedirect("http://example.com/hangy" + suffix("regular1"), "regular1", done);
