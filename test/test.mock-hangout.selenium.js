@@ -13,7 +13,7 @@ describe("MOCK HANGOUT", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(80000);
+        this.timeout(120000);
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
                 browser = theBrowser;

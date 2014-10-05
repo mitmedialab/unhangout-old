@@ -91,7 +91,7 @@ describe("CHAT LOGGER", function() {
                 [expectedFile]);
 
             // Close the stream "eventually".
-            var clock = sinon.useFakeTimers();
+            var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
             chatLogger._queues.openStreams[expectedFile].closeEventually();
             clock.tick(10000 + 1);
             clock.restore();

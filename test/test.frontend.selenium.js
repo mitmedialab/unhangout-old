@@ -8,6 +8,7 @@ describe("FRONT PAGE", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -37,7 +38,6 @@ describe("FRONT PAGE", function() {
         browser.unMockAuthenticate().then(function() {
             done();
         });
-        
     });
 
     it("shows a static event page to unauthenticated users", function(done) {

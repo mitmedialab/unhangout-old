@@ -13,6 +13,7 @@ describe("CHAT", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
+        this.timeout(120000);
         async.series([
             function(done) {
                 common.getSeleniumBrowser(function (theBrowser) {
@@ -40,6 +41,7 @@ describe("CHAT", function() {
     after(function(done) {
         browser.quit().then(function() {
             sock.promiseClose().then(function() {
+                common.restoreTimers();
                 common.standardShutdown(done);
             });
         });
