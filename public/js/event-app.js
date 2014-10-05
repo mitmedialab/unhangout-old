@@ -207,7 +207,6 @@ $(document).ready(function() {
             aboutShown = false;
             $("#about-nav").removeClass("active");
         } else {
-
             el.show().animate({"top":0}, {
                 // This is introspected by browser tests that need to know if
                 // we're done loading the about pane for the first time.
