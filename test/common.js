@@ -135,19 +135,18 @@ var buildBrowser = function(callback) {
 
     browser.waitForEventReady = function(event, sockKey, timeout) {
         // Fulfill a promise when the event page has fully loaded -- socket
-        // connected, "about" pane animation settled, etc.  This is well after
-        // document.ready and often after selenium fulfills the "get" request
-        // for the event page.
+      // connected etc.  This is well after document.ready and often after
+      // selenium fulfills the "get" request for the event page.
         return browser.waitWithTimeout(function() {
             return browser.executeScript(
-                "return !!window.EVENT_ABOUT_INITIALIZED;"
-            ).then(function(aboutReady) {
-                if (aboutReady && event && sockKey) {
+                "return !!window._JOIN_INITIALIZED;"
+            ).then(function(joinReady) {
+                if (joinReady && event && sockKey) {
                     return !!event.get("connectedUsers").findWhere({"sock-key": sockKey});
-                } else if (aboutReady && event) {
+                } else if (joinReady && event) {
                     return event.get("connectedUsers").length >= 1;
                 } else {
-                    return aboutReady;
+                    return joinReady;
                 }
             });
         }, timeout);

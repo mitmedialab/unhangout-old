@@ -9,12 +9,11 @@
 
 require([
     "jquery", "underscore", "backbone", "logger", "client-models",
-    "event-views", "sockjs", "auth", "transport",
+    "event-views", "auth", "transport",
     // plugins
     "bootstrap", "backbone.marionette", "underscore-template-config"
-], function($, _, Backbone, logging, models, eventViews, SockJS, auth, transport) {
+], function($, _, Backbone, logging, models, eventViews, auth, transport) {
 
-var sock;
 var curEvent, messages;
 var app;
 var curSession = null;
@@ -58,6 +57,14 @@ $(document).ready(function() {
 
     curEvent.on("change:sessionsOpen", function() {
         app.sessionListView.render();
+    });
+    curEvent.on("change:open", function(model, open, options) {
+        console.log("change:open", arguments);
+        if (IS_ADMIN) {
+            app.chatView.chatInputView.onRender();
+        } else if (!open) {
+            window.location.reload();
+        }
     });
 
     trans.on("close", function(state) {
@@ -188,30 +195,14 @@ $(document).ready(function() {
 
         $(".updated").addClass("hide");
         if (hide) {
-            if(!curEvent.get("open")) {
-                // don't let people dismiss the about screen if the event isn't open.
-                return;
-            }
-
             el.animate({
                 "top": -1 * el.outerHeight() - 15
-            }, {
-                done: function() {
-                    el.hide();
-                    // This is introspected by browser tests that need to know
-                    // if we're done loading the about pane for the first time.
-                    window.EVENT_ABOUT_INITIALIZED = true;
-                }
             });
 
             aboutShown = false;
             $("#about-nav").removeClass("active");
         } else {
-            el.show().animate({"top":0}, {
-                // This is introspected by browser tests that need to know if
-                // we're done loading the about pane for the first time.
-                done: function() { window.EVENT_ABOUT_INITIALIZED = true; }
-            });
+            el.show().animate({"top":0});
             aboutShown = true;
 
             $("#about-nav").addClass("active");
@@ -221,19 +212,6 @@ $(document).ready(function() {
     }, app));
 
     app.start();
-
-    // if the event isn't open yet, force the about page to show.
-    if(!curEvent.get("open")) {
-        // Force about pane to show itself.
-        app.vent.trigger("about-nav", false);
-    } else {
-        // Make about pane hide itself.
-        app.vent.trigger("about-nav", true);
-    }
-    curEvent.on("change:open", function() {
-        app.vent.trigger("about-nav", curEvent.get("open"));
-        app.chatView.chatInputView.onRender();
-    });
 
     // Handles clicks on the nav bar links.
     $("#about-nav").click(function(jqevt) {

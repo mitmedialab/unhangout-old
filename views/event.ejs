@@ -349,7 +349,10 @@
 <script type="text/template" id="admin-button-template">
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
-           id='event-settings-label'>Event Settings</a>
+           id='event-settings-label'>
+            <i class='fa {{= event.get("open") ? "fa-play" : "fa-stop" }}'></i>
+            Event Settings <i class='fa fa-caret-down'></i>
+        </a>
 
         <ul class="dropdown-menu" role="menu" aria-labelledby="event-settings-label">
             <li role="presentation">

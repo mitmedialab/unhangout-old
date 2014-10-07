@@ -150,7 +150,7 @@ describe("CREATE EVENT", function() {
         });
     });
 
-    it("Hides the 'about' pane on event start", function(done) {
+    it("Refresh to show open event when it opens", function(done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         event.set("open", false);
 
@@ -177,14 +177,17 @@ describe("CREATE EVENT", function() {
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "regular1");
-        aboutIsVisible(true);
-        chatIsEnabled(false);
+        // We're showing event-static.
+        browser.waitForSelector(".event-static");
         startStop("start");
+        // Now the page should reload and show the event page.
+        browser.waitForEventReady(event, "regular1");
         aboutIsVisible(false);
         chatIsEnabled(true);
         startStop("stop");
-        aboutIsVisible(true);
-        chatIsEnabled(false);
+        // Now we reload again to show the event-static page.
+        browser.waitForEventReady(event, "regular1");
+        browser.waitForSelector(".event-static");
         browser.then(function() { done(); });
     });
 });

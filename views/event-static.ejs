@@ -7,7 +7,11 @@
     for (var i = 0; i < loginLinks.length; i++) {
         loginLinks[i].href = "<%= event.getEventUrl() + "/auth/" %>";
     }
-
+    // Event parameters for use by the socket connection that takes us to the
+    // live event when it opens.
+    <% if(!_.isUndefined(event)) { %>
+        var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+    <% } %>
 </script>
     
 <div class="container event-static">
@@ -130,5 +134,5 @@
     </div>
 </div>
 
-<%- requireScripts("/public/js/index.js") %>
+<%- requireScripts("/public/js/event-static.js") %>
 <% include _footer.ejs %>
