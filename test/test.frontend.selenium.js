@@ -41,6 +41,7 @@ describe("FRONT PAGE", function() {
     });
 
     it("shows a static event page to unauthenticated users", function(done) {
+        common.server.db.events.get(1).set({open: true});
         browser.get(common.URL + "/event/1");
         browser.waitForSelector(".event-static");
         browser.byLinkText("Login").click();
@@ -52,6 +53,7 @@ describe("FRONT PAGE", function() {
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/1");
         browser.waitForSelector("#app").then(function() {
+            common.server.db.events.get(1).set({open: false});
             done();
         });
     });
