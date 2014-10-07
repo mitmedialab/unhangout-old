@@ -89,6 +89,7 @@ var buildBrowser = function(callback) {
         });
     };
     browser.waitForSelector = function(selector, timeout) {
+        timeout = timeout || 30000;
         return browser.waitWithTimeout(function() {
             return browser.byCss(selector).then(function(el) {
                 return el.isDisplayed();

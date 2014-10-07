@@ -197,6 +197,10 @@ $(document).ready(function() {
         if (hide) {
             el.animate({
                 "top": -1 * el.outerHeight() - 15
+            }, {
+                done: function() {
+                    $(".about-event-container").hide();
+                }
             });
 
             aboutShown = false;

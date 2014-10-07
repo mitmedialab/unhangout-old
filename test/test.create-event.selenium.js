@@ -80,15 +80,19 @@ describe("CREATE EVENT", function() {
             browser.getTitle().then(function(title) {
                 expect(title).to.be("Test Title — powered by unhangout");
             });
-            browser.waitForSelector("#about-event h2");
+            chatIsEnabled(false);
+            
+            // Check out about.
+            browser.byCss("#about-nav a").click();
+            aboutIsVisible(true);
             browser.byCss("#about-event h2").getText().then(function(text) {
                 expect(text).to.be("Test Title");
             });
             browser.byCss("#about-event h3").getText().then(function(text) {
                 expect(text).to.be("hosted by unhangoutdev@gmail.com");
             });
-            
-            chatIsEnabled(false);
+            browser.byCss("#about-nav a").click();
+            aboutIsVisible(false);
 
             // Start the event.
             browser.get(common.URL + "/admin");
@@ -98,26 +102,11 @@ describe("CREATE EVENT", function() {
             browser.get(common.URL + "/event/" + eventId);
             browser.waitForEventReady(event, "superuser1");
             chatIsEnabled(true);
-
-            // Show the 'about' pane.
-            browser.byCss("#about-nav a").click();
-            aboutIsVisible(true);
-
-            browser.executeScript(
-                "return $('#about-event .event-status-footer').is(':visible');"
-            ).then(function(res) {
-                expect(res).to.be(false);
-            });
-
-            // Hide the 'about' div
-            browser.byCss("#about-nav a").click();
             aboutIsVisible(false);
+
             browser.byCss("#session-list").getText().then(function(text) {
                 expect(text.indexOf("Sessions will appear here")).to.not.eql(-1);
             });
-            // Show about again, then hide via scroll-up button.
-            browser.byCss("#about-nav a").click();
-            aboutIsVisible(true);
 
             // Edit the event
             browser.byCss(".admin-button").click();
