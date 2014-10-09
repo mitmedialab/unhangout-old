@@ -19,9 +19,14 @@ define(["jquery", "underscore", "moment", "underscore-template-config"], functio
         rows.push(entry);
       }
       entry[mapping[col]] = cell.content.$t;
-      // parse dates
       if (mapping[col] === 'date') {
+        // parse dates
         entry[mapping[col]] = moment(entry[mapping[col]]);
+      } else if (mapping[col] === 'link') {
+        // Force image URLs that we know work with SSL to SSL.
+        entry[mapping[col]] = entry[mapping[col]].replace(
+          "http://i.imgur.com", "https://i.imgur.com"
+        );
       }
     }
     // Drop the first row which has the headings.
