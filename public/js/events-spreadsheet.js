@@ -22,9 +22,9 @@ define(["jquery", "underscore", "moment", "underscore-template-config"], functio
       if (mapping[col] === 'date') {
         // parse dates
         entry[mapping[col]] = moment(entry[mapping[col]]);
-      } else if (mapping[col] === 'link') {
+      } else if (mapping[col] === 'image') {
         // Force image URLs that we know work with SSL to SSL.
-        entry[mapping[col]] = entry[mapping[col]].replace(
+        entry.image = entry.image.replace(
           "http://i.imgur.com", "https://i.imgur.com"
         );
       }
