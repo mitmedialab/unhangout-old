@@ -30,7 +30,8 @@
 
             <div class="collapse navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <% if ((user && event.get("open")) || (user.isAdminOf(event))) { %>
+                    <% if ((user && event.get("open")) || 
+                            (user && user.isAdminOf(event))) { %>
                         <li class="" id="about-nav">
                         <a href="#about-nav">About <i class="fa fa-caret-down"></i></a>
                         </li>
