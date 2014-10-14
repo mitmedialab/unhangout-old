@@ -350,12 +350,23 @@
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
            id='event-settings-label'>
-            <i class='fa {{= event.get("open") ? "fa-play" : "fa-stop" }}'></i>
             Event Settings <i class='fa fa-caret-down'></i>
         </a>
 
         <ul class="dropdown-menu" role="menu" aria-labelledby="event-settings-label">
             <li role="presentation">
+                {{ if (event.get("open")) { }}
+                    <p role="menuitem">
+                        This event is currently <font color="#5CB85C">OPEN</font>
+                        <hr/>
+                    </p>                    
+                {{ } else { }}
+                    <p role="menuitem">
+                        This event is currently <font color="#D9524F">CLOSED</font>
+                        <hr/>
+                    </p> 
+                {{ } }} 
+
                 {{ if (event.get("open")) { }}
                     <a role="menuitem" href="#" role="buton" id='admin-stop-event'>
                         <i class='fa fa-stop fa-lg fa-fw'></i>
