@@ -527,6 +527,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     id: 'chat',
 
     regions: {
+        whiteboard: '#chat-whiteboard',
         welcome: '#welcome-message',
         chat:'#chat-messages',
         presence: '#presence-gutter',
@@ -535,6 +536,10 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
     initialize: function(options) {
         Backbone.Marionette.View.prototype.initialize.call(this, options);
+        this.whiteboardView = new views.WhiteboardView({
+            model: this.options.event,
+            transport: this.options.transport
+        });
         this.welcomeView = new views.WelcomeView({
             messages: this.options.messages,
             model: this.options.event
@@ -554,10 +559,46 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     },
 
     onRender: function() {
+        this.whiteboard.show(this.whiteboardView);
         this.welcome.show(this.welcomeView);
         this.chat.show(this.chatView);
         this.presence.show(this.userListView);
         this.chatInput.show(this.chatInputView);
+    }
+});
+
+// Whiteboard for displaying persistent lobby messages
+views.WhiteboardView = Backbone.Marionette.ItemView.extend({
+    template: '#chat-whiteboard-template',
+
+    events: {
+        'click .edit-whiteboard': 'toggleForm',
+        'click .cancel-whiteboard': 'toggleForm',
+        'click .update-whiteboard': 'sendForm'
+    },
+
+    initialize: function(options){
+        Backbone.Marionette.ItemView.prototype.initialize.call(this,options);
+        console.log(options);
+    },
+
+    // Function to send the data from the form
+    sendForm: function() {
+        console.log('sending form');
+
+        this._toggleForm();
+    },
+
+    // Function to toggle the view of the form
+    toggleForm: function(){
+        $('#whiteboard-form').toggle();
+        $('#whiteboard-buttons').toggle();
+        $('#whiteboard-message').toggle();
+
+        if($('#whiteboard-form').is(':visible')){
+            console.log('showed form');
+            $('#whiteboard-form input').focus();
+        }
     }
 });
 

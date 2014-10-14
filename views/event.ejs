@@ -160,6 +160,7 @@
      <div id="chat-container-region" class="col-lg-10 col-xs-10">
         <div class="panel">
             <div class="panel-heading">
+                <div id='chat-whiteboard'></div>
                 <div id='welcome-message'></div>
             </div>
 
@@ -174,6 +175,27 @@
     </div>
     
     <div id="presence-gutter" class="col-lg-2 col-xs-2"></div>
+</script>
+
+<script type="text/template" id="chat-whiteboard-template">
+    <div id="whiteboard-message">
+        {{ if(whiteboard && whiteboard.message) { }}
+            {{= whiteboard.message}}
+        {{ } else { }}
+            No whiteboard message :(
+        {{ } }}
+    </div>
+
+    {{ if(IS_ADMIN) { }}
+        <div id="whiteboard-form">
+            <input type="text" placeholder="whiteboard message here...">
+            <button class='save-whiteboard btn btn-success'>Update</button>
+            <a href='#' class='cancel-whiteboard'>Cancel</a>
+        </div>
+        <div id="whiteboard-buttons">
+            <button class='edit-whiteboard btn btn-success'>Edit Whiteboard</button>
+        </div>
+    {{ } }}
 </script>
 
 <script type="text/template" id="welcome-message-template">
