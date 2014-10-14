@@ -103,21 +103,15 @@
     </div>
 
     <div class="col-lg-4 event-updates">
-        <% if (event.get("open") && !user) { %>
-            <div class="alert alert-info alert-dismissible col-lg-12 col-md-8 col-sm-8 col-xs-12" role="alert">
-              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-              This event is now live! Login above to participate.
-            </div>
-
-        <% } else if (!event.get("open") && !user) { %>
+        <% if (!user) { %>
             <div class="alert alert-warning alert-dismissible col-lg-12 col-md-8 col-sm-8 col-xs-12" role="alert">
               <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-              This event has not yet started, come back at the posted start time and login to participate!
+              Please log-in above, and you will be automatically connected when the event starts.
             </div>
         <% } else if (user) { %>
              <div class="alert alert-success alert-dismissible col-lg-12 col-md-8 col-sm-8 col-xs-12" role="alert">
               <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-              Thanks for logging in! This event has not yet started. Come back at the posted start time to participate!
+              Thanks for logging in. Come back at the posted start time to participate!
             </div>
         <% } %> 
      
