@@ -574,30 +574,44 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
     events: {
         'click .edit-whiteboard': 'toggleForm',
         'click .cancel-whiteboard': 'toggleForm',
-        'click .update-whiteboard': 'sendForm'
+        'click .update-whiteboard': 'sendForm',
+        'click #whiteboard-message': 'toggleForm'
+    },
+
+    ui: {
+        form: '#whiteboard-form',
+        formInput: '#whiteboard-form input',
+        buttons: '#whiteboard-buttons',
+        message: '#whiteboard-message'
     },
 
     initialize: function(options){
         Backbone.Marionette.ItemView.prototype.initialize.call(this,options);
-        console.log(options);
+
+        this.listenTo(this.model, 'change:whiteboard', this.render, this);
     },
 
     // Function to send the data from the form
     sendForm: function() {
-        console.log('sending form');
+        var message = this.ui.formInput.val();
+        console.log('sending message: ' + message);
 
-        this._toggleForm();
+        // Sending the whiteboard message
+        this.options.transport.send("edit-whiteboard", {
+            newMessage: message,
+            roomId: this.options.model.getRoomId()
+        });
     },
 
     // Function to toggle the view of the form
     toggleForm: function(){
-        $('#whiteboard-form').toggle();
-        $('#whiteboard-buttons').toggle();
-        $('#whiteboard-message').toggle();
+        this.ui.form.toggle();
+        this.ui.buttons.toggle();
+        this.ui.message.toggle();
 
-        if($('#whiteboard-form').is(':visible')){
-            console.log('showed form');
-            $('#whiteboard-form input').focus();
+        if(this.ui.form.is(':visible')){
+            this.ui.formInput.val(this.model.attributes.whiteboard.message);
+            this.ui.formInput.focus();
         }
     }
 });

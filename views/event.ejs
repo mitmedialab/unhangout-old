@@ -179,7 +179,7 @@
 
 <script type="text/template" id="chat-whiteboard-template">
     <div id="whiteboard-message">
-        {{ if(whiteboard && whiteboard.message) { }}
+        {{ if(whiteboard && whiteboard.message && whiteboard.message.length > 0) { }}
             {{= whiteboard.message}}
         {{ } else { }}
             No whiteboard message :(
@@ -189,7 +189,7 @@
     {{ if(IS_ADMIN) { }}
         <div id="whiteboard-form">
             <input type="text" placeholder="whiteboard message here...">
-            <button class='save-whiteboard btn btn-success'>Update</button>
+            <button class='update-whiteboard btn btn-success'>Update</button>
             <a href='#' class='cancel-whiteboard'>Cancel</a>
         </div>
         <div id="whiteboard-buttons">
