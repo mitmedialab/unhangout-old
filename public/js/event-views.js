@@ -265,7 +265,7 @@ views.UserView = Backbone.Marionette.ItemView.extend({
         }
 
         this.$el.find("img, i").attr("title", this.model.get("displayName"));
-        this.$el.find("img, i").tooltip();
+        this.$el.find("img, i").tooltip({'placement':'top'});
     }
 });
 
