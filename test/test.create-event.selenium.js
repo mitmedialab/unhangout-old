@@ -94,16 +94,6 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-nav a").click();
             aboutIsVisible(false);
 
-            // Not start the event.
-            // browser.get(common.URL + "/admin/");
-            // browser.byCss(".start-event[data-event='" + eventId + "']").click();
-
-            // View the started event
-            // browser.get(common.URL + "/event/" + eventId);
-            // browser.waitForEventReady(event, "superuser1");
-            // chatIsEnabled(true);
-            // aboutIsVisible(false);
-
             browser.byCss("#session-list").getText().then(function(text) {
                 expect(text.indexOf("Sessions will appear here")).to.not.eql(-1);
             });
