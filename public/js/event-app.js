@@ -184,6 +184,8 @@ $(document).ready(function() {
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
 
+        $(".contact-info-modal").modal('show');
+
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {
