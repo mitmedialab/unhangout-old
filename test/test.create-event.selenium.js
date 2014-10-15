@@ -43,7 +43,7 @@ describe("CREATE EVENT", function() {
         browser.mockAuthenticate("superuser1");
 
         // Create a new event.
-        browser.get(common.URL + "/admin/");
+        browser.get(common.URL + "/myevents/");
         browser.waitForSelector("a#admin-create-new-event");
         browser.byCss("a#admin-create-new-event").click();
        // browser.byLinkText("new").click();
@@ -67,7 +67,7 @@ describe("CREATE EVENT", function() {
             eventId = common.server.db.events.findWhere({shortName: "test-title"}).id
         }).then(function() {
             var event = common.server.db.events.get(eventId);
-            browser.get(common.URL + "/admin/")
+            browser.get(common.URL + "/myevents/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
                     expect(text).to.be("Test Title");
@@ -94,15 +94,15 @@ describe("CREATE EVENT", function() {
             browser.byCss("#about-nav a").click();
             aboutIsVisible(false);
 
-            // Start the event.
-            browser.get(common.URL + "/admin");
-            browser.byCss(".start-event[data-event='" + eventId + "']").click();
+            // Not start the event.
+            // browser.get(common.URL + "/admin/");
+            // browser.byCss(".start-event[data-event='" + eventId + "']").click();
 
             // View the started event
-            browser.get(common.URL + "/event/" + eventId);
-            browser.waitForEventReady(event, "superuser1");
-            chatIsEnabled(true);
-            aboutIsVisible(false);
+            // browser.get(common.URL + "/event/" + eventId);
+            // browser.waitForEventReady(event, "superuser1");
+            // chatIsEnabled(true);
+            // aboutIsVisible(false);
 
             browser.byCss("#session-list").getText().then(function(text) {
                 expect(text.indexOf("Sessions will appear here")).to.not.eql(-1);
