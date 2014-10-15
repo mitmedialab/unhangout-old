@@ -2,15 +2,12 @@
 <% include _navbar.ejs %>
 <% var sessions; %>
 
-<div class='container-fluid'>
-    <div class='row-fluid'>
-        <div class='span12'>
-            <h1>Admin</h1>
-        </div>
-    </div>
-    <div class='row-fluid'>
-        <div class='span6' id='events'>
-            <h3>Events <a href="/admin/event/new" class="btn btn-primary" id="admin-create-new-event">new</a></h3>
+<div class='container admin-container'>
+    
+    <h3>My Events</h3>
+       
+    <div class="row">
+        <div id="events">
             <% events.forEach(function(event) { %>
                 <div class='admin-event-row'>
                     <div class='title'>
@@ -19,7 +16,8 @@
                                 <%= event.get("title").trim() || "[untitled]" %>
                             </a>
                         </h4>
-                        <% var date = event.get("start") || event.get("dateAndTime"); %>
+
+                        <% var date = event.get("dateAndTime"); %>
                         <% if (date) { %>
 
                             <span class='date'>
@@ -28,67 +26,27 @@
                         <% } %>
                     </diV>
 
-
-                    <% if(event.get("open")) { %>
-                        <form action="/admin/event/<%=event.id%>/stop" method="post">
-                            <button type="submit" class="btn btn-warning btn-small stop-event"
-                                    data-event='<%= event.id %>'>stop</button>
-                        </form>
-                    <% } else { %>
-                        <form action="/admin/event/<%=event.id%>/start" method="post">
-                            <button type="submit" class="btn btn btn-small start-event"
-                                    data-event='<%= event.id %>'>start</button>
-                        </form>
-                    <% } %>
-                    <a href="/admin/event/<%=event.id%>" class="btn btn-small">
-                        <i class='icon-pencil' title='Edit'></i> edit
-                    </a>
-                    <span class='small-green'><%= baseUrl + event.getEventUrl() %></span>
-
-                    <% if (event.get("hoa")) { %>
-                        <% var hoa = event.get("hoa"); %>
-                        <table class='table table-bordered table-condensed'>
-                            <tr>
-                                <th>Hangout-on-air:</th>
-                                <td><%- hoa.getNumConnectedParticipants() %> connected</td>
-                                <td>
-                                    <% if (hoa.get("hangout-url")) { %>
-                                        <a href='<%- hoa.getParticipationLink() %>'
-                                           target='_blank'>Join broadcast</a>
-                                        <% if (hoa.getNumConnectedParticipants() === 0) { %>
-                                            (may have ended)
-                                        <% } %>
-                                    <% } %>
-                                </td>
-                                <td>
-                                    <% if (hoa.get("hangout-broadcast-id")) { %>
-                                        <a href='https://www.youtube.com/watch?v=<%- hoa.get("hangout-broadcast-id") %>' target='_blank'>
-                                            Youtube Link
-                                        </a>
-                                    <% } %>
-                                </td>
-                            </tr>
-                        </table>
-                    <% } %>
-
-                    <% sessions = event.get("sessions").models; %>
-                    <div style='clear: both;'></div>
-                    <% if (sessions.length > 0) { %>
-                        <div>
-                            <% include _admin_session_table.ejs %>
-                        </div>
-                    <% } %>
                 </div>
             <% }); %>
-          </div>
+        </div>
+
+        <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="admin-create-new-event">Create an Unhangout</a></h3>
+
+        <br/>
+        
         <% if (permalinkSessions) { %>
-          <div class='span6'>
+          <div>
             <h3>Permalink Sessions</h3>
             <% sessions = permalinkSessions; %>
-            <% include _admin_session_table.ejs %>
+            <% include _permalink_session_table.ejs %>
           </div>
+
+          <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="admin-create-new-event">Create a Permalink</a></h3>
+
         <% } %>
+
     </div>
 </div>
+
 <%- requireScripts("/public/js/admin.js") %>
 <% include _footer.ejs %>

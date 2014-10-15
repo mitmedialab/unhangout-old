@@ -1077,30 +1077,64 @@ hr.noshade {
 
 /*---------------------------- ADMIN STYLES ---------------------------*/
 
+.admin-container {
+  padding-top: 30px;
+  padding-bottom: 30px; 
+
+  .row {
+    margin: 0px;
+  }
+
+  h1, h3 {
+    color: #444;
+  }
+
+  h1 {
+    font-weight: 400;
+    font-size: 26px;
+  }
+
+  h3 {
+    font-weight: 400;
+    font-size: 28px;
+    color: #444;
+  }
+
+  h4 {
+    display: inline;
+  }
+
+  .btn-primary {
+    background-color: $navbar;
+    color: white;
+    border-radius: 5px;
+  }
+
+  a {
+    color: $navbar;
+    text-decoration: none;
+  }
+
+  .permalink-session-link {
+    font-size: 18px;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.4em;
+  }
+}
+
 .admin-event-row {
-  border-top: 1px solid #eee;
-  padding: 0.5em 0em;
-  padding-left: 2px;
-  form {
-    display: inline-block;
-    margin: 0;
-  }
-  &:hover {
-    box-shadow: 0px 0px 2px #09f;
-  }
   margin-bottom: 3px;
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 20px;
+
   .date {
     color: #999;
     font-size: smaller;
   }
 }
-.admin-event-row:nth-child(odd) {
-  background-color: #fafafa;
-}
-.small-green {
-  font-size: smaller;
-  color: #090;
-}
+
 /*======================== HOME PAGE STYLES ============================*/
 
 .home-page-container {
