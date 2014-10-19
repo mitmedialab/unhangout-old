@@ -156,10 +156,6 @@ a.dropdown-toggle {
   letter-spacing: 0.5px;
 }
 
-/*.container .event-navbar-header {
-  margin-left: -25px; 
-}*/
-
 .event-navbar .container {
   padding: 0px;
   padding-left: 10px;
@@ -315,22 +311,8 @@ hr.noshade {
   }
 }
 
-.scroll-up {
-    margin-left: 720px;
-    padding: 15px 20px;
-    background: #2e7daa;
-    color: #fff;
-    border-radius: 50%;
-    box-shadow: 0px 5px 0px rgba(50, 50, 50, 0.5);
-
-    .chevron  {
-    color: white;
-    text-decoration: none;
-  }
-}
-
 .event-page-container {
-  margin-top: 0px;  
+  margin-top: 0px;
   height: 100%;
 }
 
@@ -1076,54 +1058,41 @@ hr.noshade {
 
 
 /*---------------------------- ADMIN STYLES ---------------------------*/
-
-.admin-container {
-  padding-top: 30px;
-  padding-bottom: 30px; 
-
-  .row {
-    margin: 0px;
+.admin-event-row {
+  border-top: 1px solid #eee;
+  padding: 0.5em 0em;
+  padding-left: 2px;
+  form {
+    display: inline-block;
+    margin: 0;
   }
 
-  h1, h3 {
-    color: #444;
+  &:hover {
+    box-shadow: 0px 0px 2px #09f;
   }
 
-  h1 {
-    font-weight: 400;
-    font-size: 26px;
-  }
-
-  h3 {
-    font-weight: 400;
-    font-size: 28px;
-    color: #444;
-  }
-
-  h4 {
-    display: inline;
-  }
-
-  .btn-primary {
-    background-color: $navbar;
-    color: white;
-    border-radius: 5px;
-  }
-
-  a {
-    color: $navbar;
-    text-decoration: none;
-  }
-
-  .permalink-session-link {
-    font-size: 18px;
-    font-family: inherit;
-    font-weight: 500;
-    line-height: 1.4em;
+  margin-bottom: 3px;
+  .date {
+    color: #999;
+    font-size: smaller;
   }
 }
 
-.admin-event-row {
+.small-green {
+  font-size: smaller;
+  color: #090;
+}
+
+.admin-event-row:nth-child(odd) {
+  background-color: #fafafa;
+}
+
+.myevents-container {
+  padding-top: 30px;
+  padding-bottom: 30px; 
+}
+
+.myevents-event-row {
   margin-bottom: 3px;
   background-color: #eee;
   border-radius: 5px;

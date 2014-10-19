@@ -743,10 +743,6 @@ views.AboutEventView = Backbone.Marionette.ItemView.extend({
     template: "#about-event-template",
     id: "about-event",
 
-    events: {
-        'click .scroll-up': 'scrollUp'
-    },
-
     initialize: function() {
         this.listenTo(this.model, 'change:description', _.bind(function() {
             $(".updated").removeClass("hide");
@@ -757,14 +753,6 @@ views.AboutEventView = Backbone.Marionette.ItemView.extend({
         var context = this.model.toJSON();
         context.event = this.model;
         return context;
-    },
-    scrollUp: function(jqevt) {
-        if (jqevt) { jqevt.preventDefault(); }
-        if (this.model.get("open") && $("#about-event").is(":visible")) {
-            // Delegate click to #about-nav, assuming it will handle the
-            // scroll-up.  Slightly ugly but works.
-            $("#about-nav").click();
-        }
     },
 
     onRender: function() {

@@ -39,6 +39,7 @@
         "admin.js": { "include": "admin" },
         "admin-users.js": { "include": "admin-users" },
         "admin-event.js": { "include": "admin-event" },
+        "myevents.js": { "include": "myevents" },
         "permalink-intro.js": { "include": "permalink-intro" },
         "facilitator.js": { "include": "facilitator" }
     }
