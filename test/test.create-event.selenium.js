@@ -43,7 +43,7 @@ describe("CREATE EVENT", function() {
         browser.mockAuthenticate("superuser1");
 
         // Create a new event.
-        browser.get(common.URL + "/admin/");
+        browser.get(common.URL + "/myevents/");
         browser.waitForSelector("a#admin-create-new-event");
         browser.byCss("a#admin-create-new-event").click();
        // browser.byLinkText("new").click();
@@ -67,7 +67,7 @@ describe("CREATE EVENT", function() {
             eventId = common.server.db.events.findWhere({shortName: "test-title"}).id
         }).then(function() {
             var event = common.server.db.events.get(eventId);
-            browser.get(common.URL + "/admin/")
+            browser.get(common.URL + "/myevents/")
             browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
                     expect(text).to.be("Test Title");
@@ -80,58 +80,23 @@ describe("CREATE EVENT", function() {
             browser.getTitle().then(function(title) {
                 expect(title).to.be("Test Title — powered by unhangout");
             });
-            browser.waitForSelector("#about-event h2");
+            chatIsEnabled(false);
+            
+            // Check out about.
+            browser.byCss("#about-nav a").click();
+            aboutIsVisible(true);
             browser.byCss("#about-event h2").getText().then(function(text) {
                 expect(text).to.be("Test Title");
             });
             browser.byCss("#about-event h3").getText().then(function(text) {
                 expect(text).to.be("hosted by unhangoutdev@gmail.com");
             });
-            browser.waitForSelector("#about-event .about-footer");
-            browser.byCss("#about-event .about-footer").getText().then(function(text) {
-                expect(text.indexOf("has not yet started")).to.not.eql(-1);
-            });
-            chatIsEnabled(false);
-
-            // Start the event.
-            browser.get(common.URL + "/admin");
-            browser.byCss(".start-event[data-event='" + eventId + "']").click();
-
-            // View the started event
-            browser.get(common.URL + "/event/" + eventId);
-            browser.waitForEventReady(event, "superuser1");
-            chatIsEnabled(true);
-
-            // Show the 'about' pane.
-            browser.byCss("#about-nav a").click();
-            aboutIsVisible(true);
-
-            // Make sure scroll-up is there.
-            browser.waitWithTimeout(function() {
-                return browser.executeScript(
-                    "return $('#about-event').find('.scroll-up').length === 1;"
-                );
-            });
-            // Make sure footer is not there.
-            browser.executeScript(
-                "return $('#about-event .about-footer').is(':visible');"
-            ).then(function(res) {
-                expect(res).to.be(false);
-            });
-
-            // Hide the 'about' div
             browser.byCss("#about-nav a").click();
             aboutIsVisible(false);
+
             browser.byCss("#session-list").getText().then(function(text) {
                 expect(text.indexOf("Sessions will appear here")).to.not.eql(-1);
             });
-            // Show about again, then hide via scroll-up button.
-            browser.byCss("#about-nav a").click();
-            aboutIsVisible(true);
-            browser.waitForSelector("#about-event .scroll-up");
-            browser.waitForSelector("#about-event .scroll-up");
-            browser.byCss("#about-event .scroll-up").click();
-            aboutIsVisible(false);
 
             // Edit the event
             browser.byCss(".admin-button").click();
@@ -164,7 +129,7 @@ describe("CREATE EVENT", function() {
         });
     });
 
-    it("Hides the 'about' pane on event start", function(done) {
+    it("Refresh to show open event when it opens", function(done) {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         event.set("open", false);
 
@@ -191,14 +156,17 @@ describe("CREATE EVENT", function() {
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "regular1");
-        aboutIsVisible(true);
-        chatIsEnabled(false);
+        // We're showing event-static.
+        browser.waitForSelector(".event-static");
         startStop("start");
+        // Now the page should reload and show the event page.
+        browser.waitForEventReady(event, "regular1");
         aboutIsVisible(false);
         chatIsEnabled(true);
         startStop("stop");
-        aboutIsVisible(true);
-        chatIsEnabled(false);
+        // Now we reload again to show the event-static page.
+        browser.waitForEventReady(event, "regular1");
+        browser.waitForSelector(".event-static");
         browser.then(function() { done(); });
     });
 });

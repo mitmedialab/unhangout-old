@@ -1,8 +1,6 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-<link href="/public/vendor/font-awesome-3.2.1/css/font-awesome.css" rel="stylesheet">
-
 <div class="container create-unhangout-container">
     <h2>Create an Unhangout <small>It's free and always will be.</small></h2>
 
@@ -78,9 +76,9 @@
                    name="dateAndTime" id="dateAndTime" readonly>
 
             
-                <span class="form-control col-lg-1 add-on add-icon"><i class="icon-remove"></i></span>
+                <span class="form-control col-lg-1 add-on add-icon"><i class="icon-remove fa fa-remove"></i></span>
                
-                <span class="form-control col-lg-1 add-on remove-icon"><i class="icon-th"></i></span>
+                <span class="form-control col-lg-1 add-on remove-icon"><i class="icon-th fa fa-th"></i></span>
 
                 <% if (errors.dateAndTime) { %>
                     <span class='help-inline'><%= errors.dateAndTime %></span>

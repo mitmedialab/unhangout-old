@@ -1,7 +1,7 @@
 <ul class="navbar-nav nav pull-right identity">
     <li>
     <% if(!user) {%>
-        <a href="/auth/google">Login</a>
+        <a href="/auth/google" class="login-link"><button class="btn btn-primary login-button">Login</button></a>
     <% } else { %>
         <div class="dropdown">
             <a class="dropdown-toggle username" data-toggle="dropdown" id='user-menu-label'>
@@ -13,7 +13,7 @@
             <ul class="dropdown-menu" role="menu" aria-labelledby="user-menu-label">
                 <% if (user.isSuperuser() || user.isAdminOfSomeEvent()) { %>
                     <li role="presentation">
-                        <a role="menuitem" tabindex="-1" href="/admin/">My Events</a>
+                        <a role="menuitem" tabindex="-1" href="/myevents/">My Events</a>
                     </li>
                 <% } %>
 

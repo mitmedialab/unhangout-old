@@ -41,34 +41,24 @@
 
 <!-- event templates -->
 <script type="text/template" id="about-event-template">
-        
-        <div class="container about-event-container">
-            <h2>{{- title }}</h2>
-            {{ if (organizer) { }}
-                <h3>hosted by {{= organizer }}</h4>
-            {{ } }}
-            <br/>
-            <h4>
-            {{ if (formattedDate) { }}
-                {{- formattedDate }}
-            {{ } }}
-            </h4>
+    
+    <div class="container about-event-container">
+        <h2>{{- title }}</h2>
+        {{ if (organizer) { }}
+            <h3>hosted by {{= organizer }}</h4>
+        {{ } }}
+        <br/>
+        <h4>
+        {{ if (formattedDate) { }}
+            {{- formattedDate }}
+        {{ } }}
+        </h4>
 
-            <br/><br/>
+        <br/><br/>
 
-            <p>{{= description }}</p>
+        <p>{{= description }}</p>
 
-            {{ if (event.get("open")) { }}
-
-                <a class="scroll-up pull-right" href="#about-nav">
-                    <i class="fa fa-chevron-up chevron"></i>
-                </a>
-
-            {{ } else { }}
-                <div class="about-footer"><i>This event has not yet started, come back at the posted start time to participate!</i></div>
-            {{ } }}
-        </div>
-
+    </div>
 </script>
 
 <script type="text/template" id="session-template">
@@ -101,11 +91,14 @@
     <div class="col-lg-12 col-xs-12 session-spots">
         <ul class="hangout-users"></ul>
     </div>
+
 </script>
 
 <script type="text/template" id="session-list-template">
     <div id="session-list-container" class="full-size-container">
-        <div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
+        <div class="credits">
+            Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
+        </div>
     </div>
     <div style='clear: both;'></div>
 </script>
@@ -113,7 +106,9 @@
 <script type="text/template" id="session-list-empty-template">
     <div id="session-list-container" class="full-size-container">
         <div class="empty-notice">Sessions will appear here when they are created by an admin.</div>
-        <div class="credits">powered by <a href="https://unhangout.media.mit.edu/">unhangout</a> from the <a href="http://media.mit.edu/">MIT Media Lab</a></div>
+        <div class="credits">
+            Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
+        </div>
     </div>
     <div style='clear: both;'></div>
 </script>
@@ -354,10 +349,24 @@
 <script type="text/template" id="admin-button-template">
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
-           id='event-settings-label'>Event Settings</a>
+           id='event-settings-label'>
+            Event Settings <i class='fa fa-caret-down'></i>
+        </a>
 
         <ul class="dropdown-menu" role="menu" aria-labelledby="event-settings-label">
             <li role="presentation">
+                {{ if (event.get("open")) { }}
+                    <p role="menuitem">
+                        This event is currently <font color="#5CB85C">OPEN</font>
+                        <hr/>
+                    </p>                    
+                {{ } else { }}
+                    <p role="menuitem">
+                        This event is currently <font color="#D9524F">CLOSED</font>
+                        <hr/>
+                    </p> 
+                {{ } }} 
+
                 {{ if (event.get("open")) { }}
                     <a role="menuitem" href="#" role="buton" id='admin-stop-event'>
                         <i class='fa fa-stop fa-lg fa-fw'></i>

@@ -92,6 +92,11 @@ _.extend(Transport.prototype, Backbone.Events, {
     _setState: function(state) {
         this.state = state;
         this.trigger("status", this.state);
+        // Utility for testing; tests introspect the EVENT_JOIN_INITIALIZED value
+        // to know that we have connected.
+        if (state === "JOINED") {
+            window._JOIN_INITIALIZED = true;
+        }
     },
     registerModel: function(name, model) {
         this.stateModels[name] = model;

@@ -7,23 +7,126 @@
     for (var i = 0; i < loginLinks.length; i++) {
         loginLinks[i].href = "<%= event.getEventUrl() + "/auth/" %>";
     }
+    // Event parameters for use by the socket connection that takes us to the
+    // live event when it opens.
+    <% if(!_.isUndefined(event)) { %>
+        var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+    <% } %>
 </script>
     
-    <div class="container event-static">
-        <h2><%= title %></h2>
-        <h3>hosted by <%- event.get("organizer") %></h3>
-        <br/>
+<div class="container event-static">
+    <div class="col-lg-8 event-info-box">
+        
+        <div class="col-lg-12 event-info-box">
+           
+            <h2 class="title"><%= title %></h2>
+            <h3 class="host">hosted by <%- event.get("organizer") %></h3>
+            <br/>
 
-        <h4>
-        <% if (event.get("dateAndTime")) { %>
-            <%= event.formatDate() %>
-        <% } %>
-        </h4>
+            <h4 class="dateAndTime">
+            <% if (event.get("dateAndTime")) { %>
+                <%= event.formatDate() %>
+            <% } %>
+            </h4>
 
-        <br/> <br/>
-        <p><%- event.get("description") %></p>
-        <div style='clear: both;'></div>
+            <br/> 
+
+            <p class="description"><%- event.get("description") %></p>
+            <div style='clear: both;'></div>
+
+            <div class="col-lg-12 col-md-12 social-media-icons">
+                <div class="col-lg-offset-6 col-lg-6 col-md-offset-6 col-md-6 col-sm-offset-6 col-sm-6 col-xs-12">
+                    <!-- Twitter Share a Link Button -->
+                    <div class="twitter-button col-lg-3 col-md-2 col-sm-2 col-xs-3">
+                      <a href="https://twitter.com/share" class="twitter-share-button" id="tweetLink">Tweet</a>
+
+                      <script>
+                        ! function(d, s, id) {
+                            var js, fjs = d.getElementsByTagName(s)[0],
+                                p = /^http:/.test(d.location) ? 'http' : 'https';
+                            if (!d.getElementById(id)) {
+                                js = d.createElement(s);
+                                js.id = id;
+                                js.src = p + '://platform.twitter.com/widgets.js';
+                                fjs.parentNode.insertBefore(js, fjs);
+                            }
+                        }(document, 'script', 'twitter-wjs');
+                    </script>
+
+                    </div>
+
+                    <!-- GPlus Share Button -->
+                   
+                    <!-- Place this tag in your head or just before your close body tag. -->
+                    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
+                    <div class="g-plus col-lg-3 col-md-2 col-sm-2 col-xs-2" data-action="share" data-annotation="none"></div>
+
+                    <!-- Facebook Share a Link Button -->
+                    <div class="fb-button col-lg-5 col-md-4 col-sm-5 col-xs-5">
+                      <div id="fb-root"></div>
+                        <div id="fb-like" class="fb-like" data-layout="button_count" data-show-faces="false" data-share="true"></div>
+                    </div>
+
+                    <script>(function(d, s, id) {
+                        var dataTitle = "<%= title %>";
+                        var dataURL = "https://unhangout.media.mit.edu" + "<%= event.getEventUrl() %>";
+
+                        document.getElementById("fb-like").setAttribute("data-title",dataTitle);
+
+                        document.getElementById("fb-like").setAttribute("data-text",dataURL);
+
+                        var js, fjs = d.getElementsByTagName(s)[0];
+                        if (d.getElementById(id)) return;
+                        js = d.createElement(s); js.id = id;
+                        js.src = "https://connect.facebook.net/en_US/sdk.js#xfbml=1&appId=832301356794452&version=v2.0";
+                        fjs.parentNode.insertBefore(js, fjs);
+                    }(document, 'script', 'facebook-jssdk'));</script>
+
+                </div>
+          </div>  
+
+        </div>
+
+        <div class="col-lg-11 col-md-12 line-break"></div>
+
+        <div class="col-lg-12 guidelines">
+            <h4 class="ready-for-event-title">Get ready for the event: </h4>
+            <p class="ready-for-event-desc">
+                <li>You'll need a <a href="https://accounts.google.com/SignUp">Google Account</a> (if you don't have one) to login</li>
+                <li>Install the <a href="https://www.google.com/tools/dlpage/hangoutplugin">Google Hangout plugin</a> if you don't already have it</li>
+                <li>Learn more about Unhangout by watching the short video on the <a href="/">homepage</a></li>
+            </p>
+
+            <br/>
+        </div>
     </div>
 
-<%- requireScripts("/public/js/index.js") %>
+    <div class="col-lg-4 event-updates">
+        <% if (!user) { %>
+            <div class="alert alert-warning alert-dismissible col-lg-12 col-md-8 col-sm-8 col-xs-12" role="alert">
+              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              Please log-in above, and you will be automatically connected when the event starts.
+            </div>
+        <% } else if (user) { %>
+             <div class="alert alert-success alert-dismissible col-lg-12 col-md-8 col-sm-8 col-xs-12" role="alert">
+              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              Thanks for logging in. Come back at the posted start time to participate!
+            </div>
+        <% } %> 
+     
+        <div class="col-lg-12 twitter-box">
+            <a class="twitter-timeline" height="505" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
+            <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+        </div>
+    </div> 
+</div>
+
+<div class='col-lg-12 footer event-static-footer'>
+    <div class="container">
+        Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
+    </div>
+</div>
+
+<%- requireScripts("/public/js/event-static.js") %>
 <% include _footer.ejs %>
