@@ -695,30 +695,38 @@ hr.noshade {
     border-radius: 2px;
     background-color: #eee;
 
-    //overflow-y: auto;
-
     .panel {
+      position: relative;
+      display: table
       height: 100%;
+      width: 100%;
       background-color: #eee;
     }
-
+    .panel-row {
+      display: table-row
+      height: auto
+    }
+    .panel-heading {
+      display: table-cell;
+    }
     .panel-body {
-      height: 82%;
-      overflow-y: scroll;
+      display: table-cell;
+      height: 100%;
       padding: 0 15px;
       margin-right: -10px;
+      #chat-messages, {
+        overflow-y: auto;
+        height: 100%;
+      }
     }
-
     .panel-footer {
+      display: table-cell;
       border-top: 0;
       padding: 10px 0px;  
       background-color: inherit;
     }
 
     #chat-list-container {
-      height: auto;
-      width: auto;
-
       .chat-message {
         word-wrap: break-word;
         list-style-type: none;
