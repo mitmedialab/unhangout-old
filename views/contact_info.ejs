@@ -16,6 +16,7 @@
             We'll automatically send you an email with the interesting people you talked with today, and let them know that they talked with you. <br/> <br/>
 
             We'll never share your contact information with people outside the event.
+
             </p>
         </div>  
 
@@ -44,7 +45,8 @@
 
 
                     <div class="col-lg-9 col-md-9 col-sm-9 col-xs-8">
-                        <input class="form-control" type="text" name="session_name" value="" id="session_name">
+                        <input class="form-control" type="text" name="session_name" value="" id="session_name" placeholder="<%= user.get("emails")[0].value %>">
+                        
                     </div>
                 </div>
 
