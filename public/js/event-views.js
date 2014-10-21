@@ -17,9 +17,9 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "logger", "models", "auth",
+   "underscore", "backbone", "video", "logger", "models", "auth", "client-utils",
    "backbone.marionette", "underscore-template-config"
-], function(_, Backbone, video, logging, models, auth) {
+], function(_, Backbone, video, logging, models, auth, utils) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -574,13 +574,12 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
     events: {
         'click .edit-whiteboard': 'toggleForm',
         'click .cancel-whiteboard': 'toggleForm',
-        'click .update-whiteboard': 'sendForm',
-        'click #whiteboard-message': 'toggleForm'
+        'click .update-whiteboard': 'sendForm'
     },
 
     ui: {
         form: '#whiteboard-form',
-        formInput: '#whiteboard-form input',
+        formInput: '#whiteboard-form textarea',
         buttons: '#whiteboard-buttons',
         message: '#whiteboard-message'
     },
@@ -594,7 +593,9 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
     // Function to send the data from the form
     sendForm: function() {
         var message = this.ui.formInput.val();
-        console.log('sending message: ' + message);
+
+        // We escape the input so that we avoid html injection
+        message = _.escape(message)
 
         // Sending the whiteboard message
         this.options.transport.send("edit-whiteboard", {
@@ -603,15 +604,29 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
         });
     },
 
-    // Function to toggle the view of the form
+    // Function to toggle the view of the form only if the user is an admin
     toggleForm: function(){
-        this.ui.form.toggle();
-        this.ui.buttons.toggle();
-        this.ui.message.toggle();
+        if(IS_ADMIN){
+            this.ui.form.toggle();
+            this.ui.buttons.toggle();
+            this.ui.message.toggle();
 
-        if(this.ui.form.is(':visible')){
-            this.ui.formInput.val(this.model.attributes.whiteboard.message);
-            this.ui.formInput.focus();
+            if(this.ui.form.is(':visible')){
+                this.ui.formInput.html(this.model.attributes.whiteboard.message);
+                this.ui.formInput.focus();
+            }
+        }
+    },
+
+    onRender: function(){
+        var message = this.ui.message.html();
+        var whiteboard = this.model.attributes.whiteboard;
+
+        if(whiteboard && whiteboard.message && whiteboard.message.length > 0){
+            // If there is a whiteboard message we will linkify it.
+            this.ui.message.html(utils.linkify(whiteboard.message));
+        } else {
+            this.ui.message.html('No whiteboard message :(')
         }
     }
 });
@@ -685,27 +700,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
     initialize: function() {
         Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments);
-        this.model.set("text", this.linkify(this.model.get("text")));
-    },
-
-    // Finds and replaces valid urls with links to that url. Client-side only
-    // of course; all messages are sanitized on the server for malicious content.
-    linkify: function(msg) {
-        var replacedText, replacePattern1, replacePattern2, replacePattern3, replacePattern4;
-
-        //URLs starting with http://, https://, or ftp://
-         replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-         replacedText = msg.replace(replacePattern1, "<a href='$1' target='_blank'>$1</a>");
-
-         //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-         replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-         replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_blank'>$2</a>");
-
-         //Change email addresses to mailto:: links.
-         replacePattern3 = /(([a-zA-Z0-9\-?\.?]+)@(([a-zA-Z0-9\-_]+\.)+)([a-z]{2,3}))+$/;
-        replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
-
-        return replacedText;
+        this.model.set("text", utils.linkify(this.model.get("text")));
     },
 
     // We want to use shortNames so we intercept this process to make the short

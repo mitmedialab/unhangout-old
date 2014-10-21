@@ -669,7 +669,7 @@ hr.noshade {
   #chat-whiteboard{
     margin:10px 0;
 
-    #whiteboard-message, #whiteboard-form input{
+    #whiteboard-message, #whiteboard-form textarea{
       border: 1px solid silver;
       padding: 15px;
       margin-bottom: 10px;
@@ -682,8 +682,13 @@ hr.noshade {
       display: none;
     }
 
-    #whiteboard-form input{
+    #whiteboard-form textarea{
       border: 1px dashed silver;
+      resize: none;
+    }
+
+    #whiteboard-message {
+      white-space: pre-wrap;
     }
 
   }
