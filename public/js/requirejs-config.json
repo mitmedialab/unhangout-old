@@ -7,6 +7,7 @@
     "paths": {
         "jquery": "../vendor/jquery-2.0.0",
         "jquery.validate": "../vendor/jquery.validate.min",
+        "jquery.autosize": "../vendor/jquery.autosize.min",
         "jquery-ui": "../vendor/jquery-ui-1.10.3.custom.min",
         "underscore": "../vendor/underscore",
         "backbone": "../vendor/backbone",
@@ -23,6 +24,7 @@
         "jquery": { "exports": "jQuery" },
         "jquery-ui": { "deps": ["jquery"], "exports": "jQuery.fn.ui" },
         "jquery.validate": { "deps": ["jquery"], "exports": "jQuery.fn.validate" },
+        "jquery.autosize": { "deps": ["jquery"], "exports": "jQuery.fn.autosize" },
         "underscore": { "exports": "_" },
         "backbone": { "deps": ["jquery", "underscore"], "exports": "Backbone" },
         "backbone.marionette": { "deps": ["backbone"], "exports": "Backbone.Marionette" },

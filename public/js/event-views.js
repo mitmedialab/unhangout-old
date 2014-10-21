@@ -18,7 +18,7 @@
 
 define([
    "underscore", "backbone", "video", "logger", "models", "auth", "client-utils",
-   "backbone.marionette", "underscore-template-config"
+   "backbone.marionette", "underscore-template-config", "jquery.autosize"
 ], function(_, Backbone, video, logging, models, auth, utils) {
 
 var views = {};
@@ -597,11 +597,16 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
         // We escape the input so that we avoid html injection
         message = _.escape(message)
 
-        // Sending the whiteboard message
-        this.options.transport.send("edit-whiteboard", {
-            newMessage: message,
-            roomId: this.options.model.getRoomId()
-        });
+        // If the message is the same as the one from what is in the database
+        if(message == this.model.attributes.whiteboard.message){
+            this.toggleForm();
+        } else {
+            // Sending the whiteboard message
+            this.options.transport.send("edit-whiteboard", {
+                newMessage: message,
+                roomId: this.options.model.getRoomId()
+            });
+        }
     },
 
     // Function to toggle the view of the form only if the user is an admin
@@ -612,8 +617,11 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
             this.ui.message.toggle();
 
             if(this.ui.form.is(':visible')){
-                this.ui.formInput.html(this.model.attributes.whiteboard.message);
+                this.ui.formInput.val(this.model.attributes.whiteboard.message);
                 this.ui.formInput.focus();
+
+                // We autosize the form input so that it follows the user
+                $(this.ui.formInput).autosize();
             }
         }
     },
