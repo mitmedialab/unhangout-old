@@ -1,0 +1,52 @@
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+<% var sessions; %>
+
+<div class='container myevents-container'>
+    
+    <h3>My Events</h3>
+       
+    <div class="row">
+        <div id="events">
+            <% events.forEach(function(event) { %>
+                <div class='myevents-event-row'>
+                    <div class='title'>
+                        <h4 style='display: inline;'>
+                            <a href="/event/<%= event.id %>">
+                                <%= event.get("title").trim() || "[untitled]" %>
+                            </a>
+                        </h4>
+
+                        <% var date = event.get("dateAndTime"); %>
+                        <% if (date) { %>
+
+                            <span class='date'>
+                                <%= moment(date).format("D MMM YYYY") %>
+                            </span>
+                        <% } %>
+                    </diV>
+
+                </div>
+            <% }); %>
+        </div>
+
+        <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="myevents-create-new-event">Create an Unhangout</a></h3>
+
+        <br/>
+        
+        <% if (permalinkSessions) { %>
+          <div>
+            <h3>Permalink Sessions</h3>
+            <% sessions = permalinkSessions; %>
+            <% include _permalink_session_table.ejs %>
+          </div>
+
+          <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="admin-create-new-event">Create a Permalink</a></h3>
+
+        <% } %>
+
+    </div>
+</div>
+
+<%- requireScripts("/public/js/myevents.js") %>
+<% include _footer.ejs %>

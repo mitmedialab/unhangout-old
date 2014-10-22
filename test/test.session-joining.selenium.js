@@ -37,7 +37,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 browser = theBrowser;
                 common.standardSetup(function() {
                     event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                    event.set("open", true);
+                    event.save({open: true});
                     done();
                 });
             });
@@ -46,6 +46,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     after(function() {
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = ORIG_LEAVE_STOP_TIMEOUT;
         models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = ORIG_JOINING_TIMEOUT;
+        event.save({open: false});
     });
     afterEach(function(done) {
         browser.quit().then(function() {

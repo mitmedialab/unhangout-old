@@ -45,9 +45,9 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.waitForSelector("#user-menu-label");
         browser.byCss("#user-menu-label").click();
         browser.waitForSelector("[href='/logout']")
-        browser.byCss("[href='/admin/']").click();
+        browser.byCss("[href='/myevents/']").click();
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql(common.URL + "/admin/");
+            expect(url).to.eql(common.URL + "/myevents/");
             done();
         });
     });
@@ -58,9 +58,9 @@ describe("ADMIN USERS SELENIUM", function() {
         browser.waitForSelector("#user-menu-label");
         browser.byCss("#user-menu-label").click();
         browser.waitForSelector("[href='/logout']")
-        browser.byCss("[href='/admin/']").click();
+        browser.byCss("[href='/myevents/']").click();
         browser.getCurrentUrl().then(function(url) {
-            expect(url).to.eql(common.URL + "/admin/");
+            expect(url).to.eql(common.URL + "/myevents/");
             done();
         });
     });

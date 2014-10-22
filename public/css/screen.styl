@@ -27,15 +27,22 @@ body {
   background: $navbar;
 }
 
+.titles {
+  padding: 0px;  
+}
+
 .short-titles {
-    max-width: 40vh;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+  max-width: 350px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .long-titles {
-    max-width: 50vh;
+  max-width: 350px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 a.dropdown-toggle {
@@ -149,12 +156,9 @@ a.dropdown-toggle {
   letter-spacing: 0.5px;
 }
 
-.container .event-navbar-header {
-  margin-left: -25px; 
-}
-
 .event-navbar .container {
-  height: 40px;
+  padding: 0px;
+  padding-left: 10px;
 }
 
 .event-navbar #user-menu-label {
@@ -256,9 +260,25 @@ hr.noshade {
 }
 
 .identity {
+  padding: 0px;
+
+  .login-link {
+    padding: 0px;
+    padding-top: 8px;
+    padding-right: 10px;
+  }
 
   .admin-button:hover, .admin-button:visited, .admin-button:active {
     color: orange;
+  }
+
+  .login-button {
+    padding: 0px;
+    font-size: 18px;
+    width: 70px;
+    height: 35px;
+    background-color: white;
+    color: $navbar;
   }
 }
 
@@ -278,19 +298,16 @@ hr.noshade {
 
 #admin-region {
   margin-top: 4px;  
-}
 
-.scroll-up {
-    margin-left: 720px;
-    padding: 15px 20px;
-    background: #2e7daa;
-    color: #fff;
-    border-radius: 50%;
-    box-shadow: 0px 5px 0px rgba(50, 50, 50, 0.5);
+  p {
+    margin-left: 20px;
+    margin-top: 5px;
+    padding: 0px;
+    font-size: 15px;
+  }
 
-    .chevron  {
-    color: white;
-    text-decoration: none;
+  hr {
+    margin: 0px;
   }
 }
 
@@ -308,13 +325,9 @@ hr.noshade {
 
 #top {
   position: absolute;
-  margin-top: 20px;
-  background-color: white;
-  box-shadow: 3px 3px 3px #aaa;
-  border: 1px solid #aaa;
-  box-sizing: border-box;
+  margin-top: 23px;
   z-index: 60;
-  padding: 10px;
+  background-color: white;
 }
 
 #top-left {
@@ -1053,31 +1066,67 @@ hr.noshade {
 
 
 /*---------------------------- ADMIN STYLES ---------------------------*/
-
 .admin-event-row {
   border-top: 1px solid #eee;
   padding: 0.5em 0em;
   padding-left: 2px;
+  
   form {
     display: inline-block;
     margin: 0;
   }
-  &:hover {
-    box-shadow: 0px 0px 2px #09f;
-  }
+  
   margin-bottom: 3px;
   .date {
     color: #999;
     font-size: smaller;
   }
 }
-.admin-event-row:nth-child(odd) {
-  background-color: #fafafa;
-}
+
 .small-green {
   font-size: smaller;
   color: #090;
 }
+
+.admin-event-row:nth-child(odd) {
+  background-color: #fafafa;
+}
+
+.admin-container {
+  padding-top: 30px;
+  padding-bottom: 30px; 
+}
+
+.myevents-container {
+  padding-top: 30px;
+  padding-bottom: 30px; 
+
+  .row {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .admin-event-row {
+    margin-bottom: 3px;
+    background-color: #eee;
+    border-radius: 5px;
+    padding: 10px;
+    padding-left: 20px;
+  }
+}
+
+.myevents-event-row {
+  margin-bottom: 3px;
+  background-color: #eee;
+  border-radius: 5px;
+  padding: 20px;
+
+  .date {
+    color: #999;
+    font-size: smaller;
+  }
+}
+
 /*======================== HOME PAGE STYLES ============================*/
 
 .home-page-container {
@@ -1284,10 +1333,8 @@ hr.noshade {
 }
 
 .line-break {
-  border: 2px solid #2e7daa; 
+  border: 1px solid #2e7daa; 
   margin-top: 0px; 
-  margin-left: -5px; 
-  margin-right: -5px;
 }
 
 .profile-thumbnail {
@@ -1298,34 +1345,68 @@ hr.noshade {
 
 #about-event {
     margin-top: 30px;
+    font: 13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif;
 
   .about-event-container {
+    left: 0px;
+    z-index: 1000; 
+    float: right;
+    display: block;
+    padding: 5px 0;
+    margin: 2px 0 0;
+    font-size: 14px;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
 
     h2 {
-      color: #444;
-      font-weight: 500;
-      font-size: 2.8em;
+      margin-left: 20px;
+      margin-left: 20px;
+      color: $navbar;
+      font-weight: normal;
+      font-size: 36px;
     }
 
     h3 {
-      font-weight: 400;
-      font-size: 1.6em;
-      color: #2E7DAA;
+      font-weight: normal;
+      font-size: 18px;
       line-height: 0.4em;
+      margin-left: 20px;
+      margin-left: 20px;
     }
 
     h4 {
-      font-size: 1.4em;
+      margin-left: 20px;
+      font-size: 22px;
       line-height: 0.4em;
-      font-weight: 400;
+      font-weight: normal;
       color: #333;
+      letter-spacing: 0.08m;
     }
 
     p {
-      font-size: 1.2em;
-      font-weight: 400;
-      line-height: 1.4em;
+      font-size: 16px;
+      line-height: 22px;
+      color: #333;
+      margin-left: 20px;
+      margin-right: 20px;
     }
+
+    .alert {
+      margin-left: 20px;
+      font-size: 16px;
+    }
+  }
+
+  .event-status-footer {
+    margin-top: 10px;
   }
 }
 
@@ -1357,12 +1438,21 @@ hr.noshade {
 
 .credits {
   position: fixed;
-  bottom: 0px;
+  bottom: 10px;
   z-index: 100000;
   background-color: white;
-  width: 459px;
   text-align: center;
-  font-size: 12px;
+  font-size: 16px;
+  color: #333;
+  padding: 0px;
+
+  img {
+    height: 25px;
+  }
+
+  a {
+    color: $navbar;
+  }
 }
 
 #session-list-container {
@@ -1381,36 +1471,114 @@ hr.noshade {
 /*-------------------------- STATIC EVENT PAGE ------------------------*/
 
 .event-static {
-  margin-top: -10px;
-  padding: 1em;
-  box-shadow: 0px 0px 5px #333;
+  padding: 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font: 13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif;
+  min-height: 650px;
 
-  h2 {
-    color: #444;
-    font-weight: 500;
-    font-size: 2.8em;
+  .event-info-box {
+    padding: 0px;
+
+    .title {
+      color: $navbar;
+      font-weight: bold;
+      font-size: 38px;
+    }
+
+    a {
+      color: $navbar;
+    }
+
+
+    .host {
+      font-weight: normal;
+      font-size: 18px;
+      line-height: 0.4em;
+    }
+
+    .dateAndTime {
+      font-size: 22px;
+      line-height: 0.4em;
+      font-weight: normal;
+      color: #333;
+      letter-spacing: 0.08m;
+    }
+
+    .description {
+      font-size: 16px;
+      line-height: 22px;
+      color: #333;
+    }
+
+    .social-media-icons {
+      padding: 0px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+
+      .fb-button {
+        margin-left: 5px;
+      }
+    }
   }
 
-  h3 {
-    font-weight: 400;
-    font-size: 1.6em;
-    color: #2E7DAA;
-    line-height: 0.4em;
+  .guidelines {
+    padding: 0px;
+    padding-top: 20px;
+
+    .ready-for-event-title {
+      font-weight: normal;
+      font-size: 22px;
+      line-height: 26px;
+      color: $navbar;
+    }
+
+    li {
+      font-size: 18px;
+      line-height: 28px;
+      color: #333;
+    }
+
+    .tips-and-tricks {
+      height: 50px;
+      margin-top: 20px;
+      font-size: 16px;
+      letter-spacing: 1px;
+      padding-left: 10px;
+      padding-right: 10px;
+  
+      i {
+        margin-right: 5px;
+        font-size: 20px;
+      }
+    
+    }
   }
 
-  h4 {
-    font-size: 1.4em;
-    line-height: 0.4em;
-    font-weight: 400;
-    color: #333;
+  .event-updates {
+    padding: 0px;
+
+    .alert {
+      margin-top: 20px;
+      font-size: 16px;
+    }
+
+    .twitter-box {
+      padding: 0px;
+    }
+  }
+}
+
+.event-static-footer {
+  position: absolute;
+
+  img {
+    height: 30px;
   }
 
-  p {
-    font-size: 1.2em;
-    font-weight: 400;
-    line-height: 1.4em;
+  a {
+    color: $navbar;
   }
-
 }
 
 /* ------------------------- ABOUT PAGE -------------------------------*/
