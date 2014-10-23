@@ -708,30 +708,37 @@ hr.noshade {
     border-radius: 2px;
     background-color: #eee;
 
-    //overflow-y: auto;
+    chat-input-height = 3em
 
     .panel {
+      display: flex
+      flex-flow: column nowrap
       height: 100%;
+      width: 100%;
       background-color: #eee;
     }
-
+    .panel-heading {
+      width: 100%
+      max-height: 50%
+      overflow: auto
+    }
     .panel-body {
-      height: 82%;
-      overflow-y: scroll;
+      flex: 2
+      height: 100%
+      width: 100%
       padding: 0 15px;
       margin-right: -10px;
+      overflow: auto
     }
-
     .panel-footer {
+      height: chat-input-height
+      width: 100%
       border-top: 0;
       padding: 10px 0px;  
       background-color: inherit;
     }
 
     #chat-list-container {
-      height: auto;
-      width: auto;
-
       .chat-message {
         word-wrap: break-word;
         list-style-type: none;
