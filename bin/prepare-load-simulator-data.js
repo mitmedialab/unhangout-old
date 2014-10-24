@@ -81,8 +81,7 @@ function create(callback) {
                     title: "Load Test Event"
                 });
             }
-            event.start();
-            event.save({}, {
+            event.save({open: true}, {
                 success: function() { done(null, event); },
                 error: function() { done(err); }
             });

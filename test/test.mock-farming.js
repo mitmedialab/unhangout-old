@@ -137,7 +137,7 @@ describe("FARMING", function() {
     });
     it("farms URL with GET to hangout-callback", function(done) {
         LINK_COUNTER = 0;
-        request.get(CALLBACK_URL)
+        request.get(CALLBACK_URL + "?code=blah")
             .set("x-mock-user", "regular1")
             .end(function(res) {
                 expect(res.status).to.be(200);
@@ -149,38 +149,37 @@ describe("FARMING", function() {
     });
     it("displays error on token error", function(done) {
         TOKEN_ERROR = "error";
-        request.get(CALLBACK_URL)
+        request.get(CALLBACK_URL + "?code=blah")
             .set("x-mock-user", "regular1")
             .end(function(res) {
                 TOKEN_ERROR = null; // reset global error state before any test failure
                 expect(res.status).to.be(500);
-                expect(res.text).to.eql("Error getting token.");
+                expect(res.text).to.contain("Error");
                 expect(farming.getNumHangoutsAvailable()).to.be(0);
                 checkFarmingDb([], done);
             });
     });
     it("displays error on calender error", function(done) {
         CALENDAR_ERROR = {message: "error"};
-        request.get(CALLBACK_URL)
+        request.get(CALLBACK_URL + "?code=blah")
             .set("x-mock-user", "regular1")
             .end(function(res) {
                 CALENDAR_ERROR = null; // reset global error state before any test failure
-                expect(res.status).to.be(200); // 200 status because it's not really our fault (?)
-                expect(res.text).to.eql('There was an error creating a new calendar event on your calendar! <br>[object Object]; error; {"message":"error"}');
+                expect(res.status).to.be(500);
+                expect(res.text).to.contain('Error');
                 expect(farming.getNumHangoutsAvailable()).to.be(0);
                 checkFarmingDb([], done);
             });
     });
     it("displays an error on non-existing hangout link in event", function(done) {
         RETURN_CALENDAR_EVENT = false;
-        request.get(CALLBACK_URL)
+        request.get(CALLBACK_URL + "?code=blah")
             .set("x-mock-user", "regular1")
             .end(function(res) {
                 RETURN_CALENDAR_EVENT = true; // reset global error state before any test failure
-                expect(res.status).to.be(200); // 200 status because it's not really our fault (?)
-                expect(
-                    res.text.indexOf("account doesn't seem to have the 'create video calls")
-                ).to.not.eql(-1);
+                expect(res.status).to.be(500);
+                expect(res.text).to.contain(
+                    "account doesn't seem to have the 'create video calls")
                 expect(farming.getNumHangoutsAvailable()).to.be(0);
                 checkFarmingDb([], done);
             });
@@ -189,7 +188,7 @@ describe("FARMING", function() {
         LINK_COUNTER = 0;
         var reqs = [1,2,3,4,5,6,7,8,9,10];
         async.mapSeries(reqs, function(count, done) {
-            request.get(CALLBACK_URL)
+            request.get(CALLBACK_URL + "?code=blah")
                 .set("x-mock-user", "superuser1")
                 .end(function(res) {
                     expect(res.status).to.be(200);
@@ -209,7 +208,7 @@ describe("FARMING", function() {
         LINK_COUNTER = 0;
         var reqs = [1,2];
         async.mapSeries(reqs, function(count, done) {
-            request.get(CALLBACK_URL).set("x-mock-user", "superuser1").end(function(res) { done(); });
+            request.get(CALLBACK_URL + "?code=blah").set("x-mock-user", "superuser1").end(function(res) { done(); });
         }, function() {
             expect(farming.getNumHangoutsAvailable()).to.be(reqs.length);
             farming.getNextHangoutUrl(function(err, url) {

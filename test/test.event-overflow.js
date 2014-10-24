@@ -7,11 +7,12 @@ var server = require('../lib/unhangout-server'),
 
 var event;
 
-describe('HTTP ADMIN EVENTS API', function() {
+describe('EVENT OVERFLOW', function() {
     afterEach(common.standardShutdown);
     beforeEach(function(done) {
         common.standardSetup(function() {
             event = common.server.db.events.get(1);
+            event.set({open: true});
             done();
         });
     });
@@ -22,10 +23,11 @@ describe('HTTP ADMIN EVENTS API', function() {
             .redirects(0)
             .end(function(res) {
                 expect(res.status).to.be(200);
-                expect(
-                    res.text.indexOf("<title>" + event.get("title") +
-                                     titleSuffix + " &mdash; powered by unhangout</title>")
-                ).to.not.eql(-1);
+                var re = /<title>([^<]+)<\/title>/gm;
+                var match = re.exec(res.text);
+                expect(match[1]).to.eql(event.get("title") + titleSuffix +
+                  " &mdash; powered by unhangout"
+                );
                 done();
             });
     }

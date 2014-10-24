@@ -37,9 +37,11 @@
         "index.js": { "include": "index" },
         "events.js": { "include": "events" },
         "event-app.js": { "include": "event-app" },
+        "event-static.js": { "include": "event-static" },
         "admin.js": { "include": "admin" },
         "admin-users.js": { "include": "admin-users" },
         "admin-event.js": { "include": "admin-event" },
+        "myevents.js": { "include": "myevents" },
         "permalink-intro.js": { "include": "permalink-intro" },
         "facilitator.js": { "include": "facilitator" }
     }
