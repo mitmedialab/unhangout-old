@@ -12,7 +12,7 @@
             <script type='text/javascript'>
                 var MOCK_DATA = {
                     startTime: new Date().getTime(),
-                    users: '<%- JSON.stringify(mockUsers) %>',
+                    users: <%- JSON.stringify(mockUsers) %>,
                     hangoutUrl: "<%= mockHangoutUrl %>",
                     appData: "<%= mockAppData %>",
                     isHoA: "<%= isHoA %>"
@@ -120,10 +120,12 @@
                 // Periodically tell inner frame our paricipants once we've
                 // acked.
                 var tellParticipants = setInterval(function() {
-                    iframe.contentWindow.postMessage({
-                        type: "participants",
-                        args: { participants: gapi.hangout.getParticipants() }
-                    }, "<%= unhangoutBaseUrl %>");
+                    if (gapi.hangout.getParticipants().length) {
+                        iframe.contentWindow.postMessage({
+                            type: "participants",
+                            args: { participants: gapi.hangout.getParticipants() }
+                        }, "<%= unhangoutBaseUrl %>");
+                    }
                 }, 5000);
 
                 // Cancel after a while if we've gotten no ack -- but warn.
