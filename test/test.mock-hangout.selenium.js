@@ -65,10 +65,6 @@ describe("MOCK HANGOUT", function() {
         var u4 = common.server.db.users.at(3);
         var baseUrl = common.URL + "/test/hangout/" + session.id + "/";
         var queryUrl = baseUrl + "?mockUserIds=" + [u1.id, u2.id, u3.id].join(",");
-        // Set the hangout URL because connectedParticipants will be refused if
-        // it doesn't match the URL we get (which in the mock hangout will
-        // include ?mockUserIds=...).
-        session.set("hangout-url", queryUrl);
         
         browser.get(common.URL);
         browser.mockAuthenticate(u1.get("sock-key"));
