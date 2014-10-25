@@ -205,17 +205,17 @@ exports.getSeleniumBrowser = function(callback) {
         }
         seleniumServer = new SeleniumServer(seleniumPath, opts);
         var isStarted = false;
-        seleniumServer.start(60000).then(function() {
+        seleniumServer.start(29000).then(function() {
             isStarted = true;
             buildBrowser(callback);
         }).then(null, function(err) {
           if (!isStarted) {
-            console.log("Error starting selenium, retrying.  Err:", err);
+            console.log("Error starting selenium, retrying.  ", err);
             seleniumServer = null;
-            exports.getSeleniumBrowser(callback);
           } else {
-            console.log("Error thrown by buildBrowser.", err);
+            console.log("Error thrown by buildBrowser; retrying.", err);
           }
+          exports.getSeleniumBrowser(callback);
         });
     }
 };
