@@ -23,6 +23,7 @@ var TEST_CONF = _.extend({}, conf, {
 });
 
 exports.URL = TEST_CONF.baseUrl;
+exports.FAST_URL = TEST_CONF.baseUrl + "/public/html/test.html"
 exports.PORT = TEST_CONF.UNHANGOUT_PORT;
 
 TEST_CONF.UNHANGOUT_HANGOUT_ORIGIN_REGEX = TEST_CONF.baseUrl;
@@ -70,9 +71,11 @@ var buildBrowser = function(callback) {
             "})();"].join(""));
     };
     browser.mockAuthenticate = function(user) {
+        browser.get(exports.FAST_URL);
         return browser.executeScript("document.cookie = 'mock_user=" + user + "; path=/';");
     };
     browser.unMockAuthenticate = function(user) {
+        browser.get(exports.FAST_URL);
         return browser.executeScript("document.cookie = 'mock_user=; path=/';");
     };
     // This is sugar to wrap selenium's `wait` with a default timeout.  We want
@@ -205,7 +208,10 @@ exports.getSeleniumBrowser = function(callback) {
         }
         seleniumServer = new SeleniumServer(seleniumPath, opts);
         var isStarted = false;
-        seleniumServer.start(29000).then(function() {
+        // Set the timeout to something less than a multiple of the timeout set
+        // in test startups, so we get as many start up retries as we can
+        // before a timeout.
+        seleniumServer.start(59000).then(function() {
             isStarted = true;
             buildBrowser(callback);
         }).then(null, function(err) {

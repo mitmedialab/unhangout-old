@@ -13,7 +13,7 @@ describe("CREATE HOA", function() {
     }
     this.timeout(60000); // Extra long timeout for selenium :(
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         //
         // Set up mocks for googleapis, so we can dance right past them.
         //
@@ -71,7 +71,6 @@ describe("CREATE HOA", function() {
 
         var windowHandle;
 
-        browser.get(common.URL);
         browser.mockAuthenticate(user.get("sock-key"));
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, user.get("sock-key"));
@@ -136,7 +135,7 @@ describe("CREATE HOA", function() {
                     "http://www.youtube.com/embed/" +
                     event.get("hoa").get("hangout-broadcast-id")) === 0;
             });
-        }, 60000);
+        }, 60000)
 
         browser.then(function() { done(); });
     });
@@ -146,7 +145,6 @@ describe("CREATE HOA", function() {
         event.set("hoa", null);
         event.set("open", true);
         var hoa;
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
  
         // Get the page once -- the rest are live updates triggered by model
