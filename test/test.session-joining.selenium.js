@@ -6,6 +6,11 @@ var expect = require('expect.js'),
     requests = require("superagent");
 
 describe("SESSION JOINING PARTICIPANT LISTS", function() {
+    if (process.env.SKIP_SELENIUM_TESTS) {
+        return;
+    }
+    this.timeout(60000); // Extra long timeout for selenium :(
+
     var browser = null,
         event = null;
 
@@ -17,20 +22,12 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     var ORIG_JOINING_TIMEOUT;
     var TEST_JOINING_TIMEOUT = 3000;
 
-    if (process.env.SKIP_SELENIUM_TESTS) {
-        return;
-    }
-    this.timeout(60000); // Extra long timeout for selenium :(
-
-    before(function() {
+    before(function(done) {
         // Reduce joining timeout to speed up the test.
         ORIG_LEAVE_STOP_TIMEOUT = models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT;
         ORIG_JOINING_TIMEOUT = models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT;
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = TEST_LEAVE_STOP_TIMEOUT;
         models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = TEST_JOINING_TIMEOUT;
-    });
-
-    beforeEach(function(done) {
         this.timeout(240000);
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
@@ -43,12 +40,10 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
     });
-    after(function() {
+    after(function(done) {
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = ORIG_LEAVE_STOP_TIMEOUT;
         models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = ORIG_JOINING_TIMEOUT;
         event.save({open: false});
-    });
-    afterEach(function(done) {
         browser.quit().then(function() {
             common.standardShutdown(done);
         });
