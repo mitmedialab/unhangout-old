@@ -183,6 +183,18 @@ var buildBrowser = function(callback) {
     browser.manage().window().setSize(1024, 768).then(function() {
         callback(browser);
     });
+
+    browser.saveScreenshot = function(suffix) {
+      return browser.takeScreenshot().then(function(image, err) {
+        var name = "logs/" + Date.now() + suffix + ".png";
+        require('fs').writeFile(name, image, 'base64', function(err) {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+        });
+      });
+    }
 };
 
 exports.getSeleniumBrowser = function(callback) {

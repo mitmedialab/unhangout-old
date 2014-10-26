@@ -111,11 +111,11 @@ describe("CREATE HOA", function() {
             return browser.executeScript(embedSrcScript).then(function(src) {
                 return (
                     src && event.get("hoa") && 
-                    src.indexOf("http://www.youtube.com/embed/" +
-                                event.get("hoa").get("hangout-broadcast-id")) === 0
+                    new RegExp("^https?:\/\/www.youtube.com\/embed\/" +
+                               event.get("hoa").get("hangout-broadcast-id")).test(src)
                 );
             });
-        }, 60000);
+        });
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
             expect(href).to.eql(event.get("hoa").getParticipationLink());
         });

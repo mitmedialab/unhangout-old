@@ -292,7 +292,21 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             return session.getState() === "stopping";
         });
         browser.waitForEventReady(event, "admin1");
-        browser.byCss("[data-session-id='" + session.id + "'] .delete").click();
+        function deleteSession() {
+          browser.byCss(
+            "[data-session-id='" + session.id + "'] .delete"
+          ).click().then(null, function(err) {
+            // About 1 in 20 times this runs, we get this error. Just repeat
+            // the call if so.
+            if (JSON.stringify(err).indexOf("Uncaught StaleElementReferenceError: Element is no longer attached to the DOM") != -1) {
+              console.log("Catching delete button error; retrying");
+              deleteSession();
+            } else {
+              throw err;
+            }
+          });
+        }
+        deleteSession();
         browser.then(function() {
             setTimeout(function() {
                 // We're left untouched, as a 'save' would throw an error.
@@ -394,17 +408,19 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     function framedDisconnectionModalShowing(isShowing) {
         return browser.waitWithTimeout(function() {
             return browser.executeScript(
-                // Three frames deep. [[INCEPTION]]
-                "var val;" +
-                "try { val = !!(" +
-                    "document.getElementsByTagName('iframe')[0].contentWindow" +
-                    ".document.getElementsByTagName('iframe')[0].contentWindow" +
-                    ".document.getElementById('disconnected-modal')" +
-                "); } catch(e) { val = false; } ; return val;"
+              // Three frames deep. [[INCEPTION]]
+              "var f1 = document.getElementsByTagName('iframe'); " +
+              "if (f1.length) { " +
+              "  var f2 = f1[0].contentWindow.document.getElementsByTagName('iframe'); " +
+              "  if (f2.length) { " +
+              "    var $ = f2[0].contentWindow.$; " +
+              "    return $ && $('#disconnected-modal').attr('aria-hidden') === 'false';" +
+              "  } " +
+              "} " +
+              "return false;"
             ).then(function(result) {
+                //console.log(result, isShowing, result == isShowing);
                 return result == isShowing;
-            }).then(null, function(err) {
-                return false;
             });
         });
     }
