@@ -312,15 +312,10 @@ hr.noshade {
 }
 
 .event-page-container {
-  margin-top: 0px;
-  height: 100%;
-}
-
-@media(max-width: 992px) {
-  .event-page-container {
-    width: 970px;
-    max-width: none !important;
-  }
+  padding-right: 1.5em
+  padding-left: 1.5em
+  height: 100%
+  min-width: 960px
 }
 
 #top {
@@ -357,6 +352,8 @@ hr.noshade {
 }
 
 #presence-gutter {
+  height: 100%
+  overflow-y: auto
   padding: 0px;
   height: 100%;
   overflow-y: auto;
@@ -837,10 +834,9 @@ user-admin-border-size = 2px
   }
 
   & > .video-controls {
-
     background-color: #f3bd71;   
     border-radius: 0px 0px 5px 5px;
-    padding: 10px;
+    padding: 10px 5px;
     margin: 0px;
     border-left: 3px dashed #f90;
     border-right: 3px dashed #f90;
@@ -862,11 +858,6 @@ user-admin-border-size = 2px
 
     .youtube-video-controls {
       margin: 0;
-
-      .set-video {
-        width: 100%;
-      }
-
     }
 
     .input-video-field {
@@ -877,10 +868,6 @@ user-admin-border-size = 2px
       margin-top: 5px;
       margin-bottom: 0px;
       display: none;
-    }
-
-    .btn-video-embed {
-      padding: 0px;
     }
 
     .btn-hoa {
