@@ -12,7 +12,7 @@ describe("CREATE SESSIONS", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -29,7 +29,6 @@ describe("CREATE SESSIONS", function() {
 
     it("Creates a permalink session", function(done) {
         var sess;
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/h/");
         browser.waitForSelector("#permalink-title");
@@ -62,7 +61,6 @@ describe("CREATE SESSIONS", function() {
         // Start with no sessions.
         event.get("sessions").reset();
         event.set("open", true);
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id)
         browser.waitForEventReady(event, "superuser1");
@@ -91,7 +89,6 @@ describe("CREATE SESSIONS", function() {
     it("Creates an event session with youtube", function(done) {
         event.get("sessions").reset();
         event.set("open", true);
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "superuser1");
@@ -124,7 +121,6 @@ describe("CREATE SESSIONS", function() {
     it("Creates an event session with joinCap", function(done) {
         event.get("sessions").reset();
         event.set("open", true);
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "superuser1");

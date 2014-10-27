@@ -25,7 +25,7 @@ describe("CREATE EVENT", function() {
     }
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -39,7 +39,6 @@ describe("CREATE EVENT", function() {
 
     it("Creates an event via admin page", function(done) {
         // Authenticate
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
 
         // Create a new event.
