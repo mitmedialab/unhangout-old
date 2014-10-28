@@ -459,7 +459,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     it("Warns you when you're in the wrong hangout", function(done) {
-      this.timeout(180000);
         var session = event.get("sessions").at(0);
         browser.mockAuthenticate("regular1").then(function() {
             session.set("hangout-url", "http://example.com/");
@@ -478,7 +477,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
               "} " +
               "return false;"
             );
-        }, 180000);
+        });
         var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementById('wrong-hangout-url')"
