@@ -154,12 +154,14 @@ models.Event = models.BaseModel.extend({
         }, this));
     },
 
+    getStartDate: function() {
+      return moment(this.get("dateAndTime")).tz(this.get("timeZoneValue"));
+    },
+
     formatDate: function() {
-        if (this.get("dateAndTime") && this.get("timeZoneValue")) {
-            var date = moment(this.get("dateAndTime")).tz(this.get("timeZoneValue"));
-            if (date.isValid()) {
-                return date.format(this.DATE_DISPLAY_FORMAT) + " " + date.zoneName();
-            }
+        var date = this.getStartDate();
+        if (date && date.isValid()) {
+            return date.format(this.DATE_DISPLAY_FORMAT) + " " + date.zoneName();
         }
         return "";
     },

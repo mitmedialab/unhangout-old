@@ -86,15 +86,14 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         var available = [];
         var joinCap = this.model.get("joinCap") || this.model.MAX_ATTENDEES;
         for (var i = 0; i < this.model.MAX_ATTENDEES; i++) {
+            // Delete the slot if the user isn't here anymore, or if the
+            // slot is greater than the joinCap.
             if (this.userSlots[i]) {
-                // Delete the slot if the user isn't here anymore, or if the
-                // slot is greater than the joinCap.
                 if (!_.contains(connectedAndJoining, this.userSlots[i].id) ||
                       i >= this.model.get("joinCap")) {
                     delete this.userSlots[i];
                 }
-            }
-            if (i < joinCap) {
+            } else if (i < joinCap) {
                 available.push(i);
             }
         }
