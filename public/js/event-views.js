@@ -594,9 +594,6 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
     sendForm: function() {
         var message = this.ui.formInput.val();
 
-        // We escape the input so that we avoid html injection
-        message = _.escape(message)
-
         // If the message is the same as the one from what is in the database
         if(message == this.model.attributes.whiteboard.message){
             this.toggleForm();
@@ -632,9 +629,15 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
 
         if(whiteboard && whiteboard.message && whiteboard.message.length > 0){
             // If there is a whiteboard message we will linkify it.
-            this.ui.message.html(utils.linkify(whiteboard.message));
+            this.ui.message.html(utils.linkify(_.escape(whiteboard.message)));
         } else {
-            this.ui.message.html('No whiteboard message :(')
+            // If not an admin, we hide the whole whiteboard, else we show an empty whiteboard for admins
+            if(IS_ADMIN){
+                this.ui.message.html('')
+            } else {
+                this.ui.message.hide();
+            }
+
         }
     }
 });
