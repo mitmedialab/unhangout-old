@@ -12,7 +12,7 @@ describe("FACILITATOR EMBEDS", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -31,7 +31,6 @@ describe("FACILITATOR EMBEDS", function() {
 
     it("Gets an about page with auto-hide for new sessions", function(done) {
         var session = event.get("sessions").at(0);
-        browser.get(common.URL)
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/facilitator/" + session.id + "/");
         browser.waitForSelector(".cancel-autohide");
@@ -45,7 +44,6 @@ describe("FACILITATOR EMBEDS", function() {
     });
     it("Displays, removes, and changes embedded webpages", function(done) {
         var session = event.get("sessions").at(0);
-        browser.get(common.URL)
         browser.mockAuthenticate("regular1");
 
         // Load a session page with a webpage activity.

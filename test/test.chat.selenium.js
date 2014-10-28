@@ -13,7 +13,7 @@ describe("CHAT", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         async.series([
             function(done) {
                 common.getSeleniumBrowser(function (theBrowser) {
@@ -60,7 +60,6 @@ describe("CHAT", function() {
     }
 
     it("scrolls chat window", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + evt.id);
         browser.waitForEventReady(evt, "regular1");

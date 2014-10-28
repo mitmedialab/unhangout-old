@@ -10,7 +10,7 @@ describe("ADMIN USERS SELENIUM", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -30,7 +30,6 @@ describe("ADMIN USERS SELENIUM", function() {
         });
     });
     it("Can't access user page as non-superuser", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
         browser.get(common.URL + "/admin/users/")
         browser.getPageSource().then(function(source) {
@@ -39,7 +38,6 @@ describe("ADMIN USERS SELENIUM", function() {
         });
     });
     it("Shows admin link for admins", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
         browser.get(common.URL);
         browser.waitForSelector("#user-menu-label");
@@ -52,7 +50,6 @@ describe("ADMIN USERS SELENIUM", function() {
         });
     });
     it("Shows admin link for superusers", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL);
         browser.waitForSelector("#user-menu-label");
@@ -66,7 +63,6 @@ describe("ADMIN USERS SELENIUM", function() {
     });
     it("Manages superusers", function(done) {
         var user = common.server.db.users.findWhere({superuser: false});
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/admin/users/")
         browser.getCurrentUrl().then(function(url) {
@@ -95,7 +91,6 @@ describe("ADMIN USERS SELENIUM", function() {
         var addSelector = "tr[data-user-id='" + user.id + "'] .add-event";
         var removeSelector = "[data-event-id='" + event.id + "'].remove-event";
 
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/admin/users/")
         browser.getCurrentUrl().then(function(url) {
@@ -144,7 +139,6 @@ describe("ADMIN USERS SELENIUM", function() {
                            " input.perm[data-perm='createEvents']";
 
         expect(user.hasPerm("createEvents")).to.be(false);
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/admin/users/");
         browser.waitForSelector(permSelector);
@@ -172,7 +166,6 @@ describe("ADMIN USERS SELENIUM", function() {
 
     });
     it("Filters users", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/admin/users/");
         browser.waitForSelector("input.filter-name");

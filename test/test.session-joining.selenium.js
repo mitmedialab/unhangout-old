@@ -6,6 +6,11 @@ var expect = require('expect.js'),
     requests = require("superagent");
 
 describe("SESSION JOINING PARTICIPANT LISTS", function() {
+    if (process.env.SKIP_SELENIUM_TESTS) {
+        return;
+    }
+    this.timeout(60000); // Extra long timeout for selenium :(
+
     var browser = null,
         event = null;
 
@@ -17,21 +22,13 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     var ORIG_JOINING_TIMEOUT;
     var TEST_JOINING_TIMEOUT = 3000;
 
-    if (process.env.SKIP_SELENIUM_TESTS) {
-        return;
-    }
-    this.timeout(60000); // Extra long timeout for selenium :(
-
-    before(function() {
+    before(function(done) {
         // Reduce joining timeout to speed up the test.
         ORIG_LEAVE_STOP_TIMEOUT = models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT;
         ORIG_JOINING_TIMEOUT = models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT;
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = TEST_LEAVE_STOP_TIMEOUT;
         models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = TEST_JOINING_TIMEOUT;
-    });
-
-    beforeEach(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
                 browser = theBrowser;
@@ -43,12 +40,10 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
     });
-    after(function() {
+    after(function(done) {
         models.ServerSession.prototype.HANGOUT_LEAVE_STOP_TIMEOUT = ORIG_LEAVE_STOP_TIMEOUT;
         models.ServerSession.prototype.JOINING_EXPIRATION_TIMEOUT = ORIG_JOINING_TIMEOUT;
         event.save({open: false});
-    });
-    afterEach(function(done) {
         browser.quit().then(function() {
             common.standardShutdown(done);
         });
@@ -59,7 +54,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock;
         var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         var ready = false;
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "regular1");
@@ -104,7 +98,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var sock1, sock2;
         var session = event.get("sessions").at(0);
         var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         // Connect the browser to the event page, then connect a socket
         // belonging to the same user to both event and session rooms.
@@ -164,7 +157,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
         var u3 = common.server.db.users.findWhere({"sock-key": "admin1"});
         var observer = common.server.db.users.findWhere({"sock-key": "admin2"});
-        browser.get(common.URL);
         browser.mockAuthenticate(observer.get("sock-key"));
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, observer.get("sock-key"));
@@ -222,7 +214,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var session = event.get("sessions").at(0);
         var joinButtonText = "[data-session-id='" + session.id + "'] .attend .text";
         session.set("joinCap", 2);
-        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
         browser.get(common.URL + event.getEventUrl());
 
@@ -291,7 +282,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Handles stop conditions when session has been deleted", function(done) {
         var session = event.get("sessions").at(0);
-        browser.get(common.URL);
         browser.mockAuthenticate("admin1");
         // Visit the session to "start" it.
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
@@ -302,7 +292,21 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             return session.getState() === "stopping";
         });
         browser.waitForEventReady(event, "admin1");
-        browser.byCss("[data-session-id='" + session.id + "'] .delete").click();
+        function deleteSession() {
+          browser.byCss(
+            "[data-session-id='" + session.id + "'] .delete"
+          ).click().then(null, function(err) {
+            // About 1 in 20 times this runs, we get this error. Just repeat
+            // the call if so.
+            if (JSON.stringify(err).indexOf("Uncaught StaleElementReferenceError: Element is no longer attached to the DOM") != -1) {
+              console.log("Catching delete button error; retrying");
+              deleteSession();
+            } else {
+              throw err;
+            }
+          });
+        }
+        deleteSession();
         browser.then(function() {
             setTimeout(function() {
                 // We're left untouched, as a 'save' would throw an error.
@@ -322,12 +326,11 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         common.server.db.permalinkSessions.add(session);
         session.save({}, {
             success: function() {
-                browser.get(common.URL);
                 browser.mockAuthenticate("regular1");
                 browser.get(common.URL + "/test/hangout/" + session.id + "/");
                 browser.waitForHangoutReady(session, "regular1");
                 // leave..
-                browser.get(common.URL).then(function() {
+                browser.get(common.FAST_URL).then(function() {
                     expect(session.getState()).to.eql("stopping");
                     setTimeout(function() {
                         expect(session.getState()).to.eql("stopped");
@@ -352,7 +355,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     }
 
     it("Auto-reconnects event sockets on server restart", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         var sock;
 
@@ -406,24 +408,25 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     function framedDisconnectionModalShowing(isShowing) {
         return browser.waitWithTimeout(function() {
             return browser.executeScript(
-                // Three frames deep. [[INCEPTION]]
-                "var val;" +
-                "try { val = !!(" +
-                    "document.getElementsByTagName('iframe')[0].contentWindow" +
-                    ".document.getElementsByTagName('iframe')[0].contentWindow" +
-                    ".document.getElementById('disconnected-modal')" +
-                "); } catch(e) { val = false; } ; return val;"
+              // Three frames deep. [[INCEPTION]]
+              "var f1 = document.getElementsByTagName('iframe'); " +
+              "if (f1.length) { " +
+              "  var f2 = f1[0].contentWindow.document.getElementsByTagName('iframe'); " +
+              "  if (f2.length) { " +
+              "    var $ = f2[0].contentWindow.$; " +
+              "    return $ && $('#disconnected-modal').attr('aria-hidden') === 'false';" +
+              "  } " +
+              "} " +
+              "return false;"
             ).then(function(result) {
+                //console.log(result, isShowing, result == isShowing);
                 return result == isShowing;
-            }).then(null, function(err) {
-                return false;
             });
         });
     }
     it("Reconnects session sockets on server restart", function(done) {
         // TODO: This test is the most brittle and inconsistent in the suite.
         // We ought to see if there's a more reliable way to test this.
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         var sock;
         var session = event.get("sessions").at(0);
@@ -460,7 +463,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementById('wrong-hangout-url')"
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1").then(function() {
             session.set("hangout-url", "http://example.com/");
         });
@@ -476,7 +478,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             expect(href).to.be("http://example.com/");
         });
         // Go to a different URL that won't throw a modal dialog up.
-        browser.get(common.URL).then(function() {
+        browser.get(common.FAST_URL).then(function() {
             done();
         });
     });
@@ -555,7 +557,6 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
 
-        browser.get(common.URL);
         browser.mockAuthenticate(u1.getSockKey());
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, u1.getSockKey());

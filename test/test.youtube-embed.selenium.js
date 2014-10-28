@@ -11,7 +11,7 @@ describe("YOUTUBE EMBEDS", function() {
     this.timeout(80000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -29,7 +29,7 @@ describe("YOUTUBE EMBEDS", function() {
         event.set("open", true);
 
         function tryEmbed(url, success) {
-            browser.get(common.URL).then(function() {
+            browser.get(common.FAST_URL).then(function() {
                 event.set("youtubeEmbed", "");
             });
             browser.get(common.URL + "/event/" + event.id);
@@ -57,12 +57,11 @@ describe("YOUTUBE EMBEDS", function() {
                 });
             }
         }
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         tryEmbed(ytId, true);
         tryEmbed("foo", false);
         tryEmbed("https://www.youtube.com/watch?v=" + ytId, true);
-        browser.get(common.URL);
+        browser.get(common.FAST_URL);
         browser.then(function() {
             done();
         });
