@@ -8,6 +8,7 @@ var server = require("../lib/unhangout-server"),
 describe("EVENT HISTORY", function() {
     beforeEach(common.standardSetup);
     afterEach(common.standardShutdown);
+    after(common.restoreTimers);
 
     it("Starts with empty history", function() {
         var event = new models.ServerEvent();
@@ -53,13 +54,14 @@ describe("EVENT HISTORY", function() {
         expect(event.get("history")).to.eql(hist);
 
         clock.tick(1002);
+        
+        // On close, history stops again.
         event.set("open", false);
         hist.event["1"] = {total: 1002, start: null};
         hist.sessions[session.id]["1"] = hist.event["1"];
         expect(event.get("history")).to.eql(hist);
 
         clock.restore();
-        // On close, history stops again.
     });
 
     it("Starts session history on join, if they have an ID.", function() {
