@@ -422,7 +422,11 @@ models.User = Backbone.Model.extend({
             superuser: false,
             displayName: "[unknown]",
             link: null,
-            emails: []
+            emails: [],
+            preferredContact: {
+                type: "email", // or "facebook", "email", ...
+                identifier: "" // or "cfd@media.mit.edu", etc.
+            }
         };
     },
 
