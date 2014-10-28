@@ -543,6 +543,7 @@ var SwitchHangoutsDialog = BaseModalView.extend({
     initialize: function(options) {
         this.correctUrl = options.correctUrl;
         BaseModalView.prototype.initialize.apply(this, []);
+        this.$el.addClass("switch-hangouts");
     },
     render: function() {
         this.$el.html(this.template({url: this.correctUrl})).addClass("modal");

@@ -459,21 +459,29 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     });
 
     it("Warns you when you're in the wrong hangout", function(done) {
+      this.timeout(180000);
         var session = event.get("sessions").at(0);
-        var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
-                     ".document.getElementsByTagName('iframe')[0].contentWindow" +
-                     ".document.getElementById('wrong-hangout-url')"
         browser.mockAuthenticate("regular1").then(function() {
             session.set("hangout-url", "http://example.com/");
         });
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
+        // Wait for the switch-hangouts modal to show.
         browser.waitWithTimeout(function() {
             return browser.executeScript(
-                "return !!" + button + ";"
-            ).then(null, function(err) {
-                return false;
-            });
-        });
+              "var f1 = document.getElementsByTagName('iframe'); " +
+              "if (f1.length) { " +
+              "  var f2 = f1[0].contentWindow.document.getElementsByTagName('iframe'); " +
+              "  if (f2.length) { " +
+              "    var $ = f2[0].contentWindow.$; " +
+              "    return $ && $('.modal.switch-hangouts').attr('aria-hidden') === 'false';" +
+              "  } " +
+              "} " +
+              "return false;"
+            );
+        }, 180000);
+        var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
+                     ".document.getElementsByTagName('iframe')[0].contentWindow" +
+                     ".document.getElementById('wrong-hangout-url')"
         browser.executeScript("return " + button + ".href").then(function(href) {
             expect(href).to.be("http://example.com/");
         });
