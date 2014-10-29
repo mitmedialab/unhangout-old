@@ -208,5 +208,30 @@ describe("CHAT", function() {
             done();
         });
     });
+
+    it("Escapes html, but linkifies urls", function(done) {
+        browser.mockAuthenticate("regular1");
+        browser.get(common.URL + "/event/" + evt.id);
+        browser.waitForSelector("#chat-input");
+        browser.byCss("#chat-input").sendKeys("<b>Escape 'this\"</b> and http://google.com\n");
+        browser.wait(function() {
+            var lastMessage = "return $('.chat-message:last').html();";
+            return browser.executeScript(lastMessage).then(function(html) {
+                if (html) {
+                    expect(html.trim()).to.be(
+                        '<span class="from">Regular1 M</span>' +
+                       "&lt;b&gt;Escape 'this\"&lt;/b&gt; and " +
+                       "<a href=\"http://google.com\" " +
+                           "target=\"_blank\">http://google.com</a>"
+                    );
+                    return true;
+                }
+                return false;
+            });
+        }).then(function() {
+            done();
+        });
+
+    });
 });
 
