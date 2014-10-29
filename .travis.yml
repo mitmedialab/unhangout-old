@@ -2,7 +2,7 @@ language: node_js
 node_js:
  - 0.10
 addons:
-  firefox: "24.5.0esr"
+  firefox: "31.2.0esr"
 env: DISPLAY=:99.0
 services:
  - redis-server

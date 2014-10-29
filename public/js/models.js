@@ -561,7 +561,8 @@ models.ChatMessage = Backbone.Model.extend({
             text: "This is my awesome chat message.",
             time: new Date().getTime(),
             user: null,
-            past: false
+            past: false,
+            postAsAdmin: false
         };
     },
 
