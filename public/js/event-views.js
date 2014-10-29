@@ -17,9 +17,9 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "logger", "models", "auth",
-   "backbone.marionette", "underscore-template-config"
-], function(_, Backbone, video, logging, models, auth) {
+   "underscore", "backbone", "video", "logger", "models", "auth", "client-utils",
+   "backbone.marionette", "underscore-template-config", "jquery.autosize"
+], function(_, Backbone, video, logging, models, auth, utils) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -519,6 +519,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     id: 'chat',
 
     regions: {
+        whiteboard: '#chat-whiteboard',
         welcome: '#welcome-message',
         chat:'#chat-messages',
         presence: '#presence-gutter',
@@ -527,6 +528,10 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
     initialize: function(options) {
         Backbone.Marionette.View.prototype.initialize.call(this, options);
+        this.whiteboardView = new views.WhiteboardView({
+            model: this.options.event,
+            transport: this.options.transport
+        });
         this.welcomeView = new views.WelcomeView({
             messages: this.options.messages,
             model: this.options.event
@@ -547,10 +552,86 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     },
 
     onRender: function() {
+        this.whiteboard.show(this.whiteboardView);
         this.welcome.show(this.welcomeView);
         this.chat.show(this.chatView);
         this.presence.show(this.userListView);
         this.chatInput.show(this.chatInputView);
+    }
+});
+
+// Whiteboard for displaying persistent lobby messages
+views.WhiteboardView = Backbone.Marionette.ItemView.extend({
+    template: '#chat-whiteboard-template',
+
+    events: {
+        'click .edit-whiteboard': 'toggleForm',
+        'click .cancel-whiteboard': 'toggleForm',
+        'click .update-whiteboard': 'sendForm'
+    },
+
+    ui: {
+        form: '#whiteboard-form',
+        formInput: '#whiteboard-form textarea',
+        buttons: '#whiteboard-buttons',
+        message: '#whiteboard-message'
+    },
+
+    initialize: function(options){
+        Backbone.Marionette.ItemView.prototype.initialize.call(this,options);
+
+        this.listenTo(this.model, 'change:whiteboard', this.render, this);
+    },
+
+    // Function to send the data from the form
+    sendForm: function() {
+        var message = this.ui.formInput.val();
+
+        // If the message is the same as the one from what is in the database
+        if(message == this.model.attributes.whiteboard.message){
+            this.toggleForm();
+        } else {
+            // Sending the whiteboard message
+            this.options.transport.send("edit-whiteboard", {
+                newMessage: message,
+                roomId: this.options.model.getRoomId()
+            });
+        }
+    },
+
+    // Function to toggle the view of the form only if the user is an admin
+    toggleForm: function(){
+        if(IS_ADMIN){
+            this.ui.form.toggle();
+            this.ui.buttons.toggle();
+            this.ui.message.toggle();
+
+            if(this.ui.form.is(':visible')){
+                this.ui.formInput.val(this.model.attributes.whiteboard.message);
+                this.ui.formInput.focus();
+
+                // We autosize the form input so that it follows the user
+                $(this.ui.formInput).autosize();
+            }
+        }
+    },
+
+    onRender: function(){
+        var message = this.ui.message.html();
+        var whiteboard = this.model.attributes.whiteboard;
+
+        if(whiteboard && whiteboard.message && whiteboard.message.length > 0){
+            // If there is a whiteboard message we will linkify it.
+            this.ui.message.html(utils.linkify(_.escape(whiteboard.message)));
+        } else {
+            // If not an admin, we hide the whole whiteboard, else we show an empty whiteboard for admins
+            if(IS_ADMIN){
+                this.ui.message.html('')
+            } else {
+                this.ui.message.hide();
+            }
+
+        }
     }
 });
 
@@ -630,7 +711,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     initialize: function() {
         Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments);
         var msg = _.escape(this.model.get("text"));
-        msg = this.linkify(msg);
+        msg = utils.linkify(msg);
         msg = this.atify(msg);
         this.model.set("text", msg);
     },
@@ -693,26 +774,6 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         }
       }, this));
       return msg;
-    },
-
-    // Finds and replaces valid urls with links to that url. Client-side only
-    // of course; all messages are sanitized on the server for malicious content.
-    linkify: function(msg) {
-        var replacedText, replacePattern1, replacePattern2, replacePattern3, replacePattern4;
-
-        //URLs starting with http://, https://, or ftp://
-         replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-         replacedText = msg.replace(replacePattern1, "<a href='$1' target='_blank'>$1</a>");
-
-         //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-         replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-         replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_blank'>$2</a>");
-
-         //Change email addresses to mailto:: links.
-         replacePattern3 = /(([a-zA-Z0-9\-?\.?]+)@(([a-zA-Z0-9\-_]+\.)+)([a-z]{2,3}))+$/;
-        replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
-
-        return replacedText;
     },
 
     // We want to use shortNames so we intercept this process to make the short
