@@ -136,7 +136,7 @@ gapi = {
         },
         hideApp: function() {
             if (_APP_IS_VISIBLE) {
-                alert("Hangout got 'hideApp' call; app is now 'invisible'.");
+                console.error("Hangout got 'hideApp' call; app is now 'invisible'.");
                 _APP_IS_VISIBLE = false;
             }
         },

@@ -13,7 +13,7 @@ describe("MOCK HANGOUT", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.stopSeleniumServer().then(function() {
             common.getSeleniumBrowser(function (theBrowser) {
                 browser = theBrowser;
@@ -41,7 +41,6 @@ describe("MOCK HANGOUT", function() {
 
     it("Communicates the hangout's URL on connction.", function(done) {
         var u1 = common.server.db.users.at(0);
-        browser.get(common.URL);
         browser.mockAuthenticate(u1.get("sock-key"));
         // At first, there's no hangout url..
         expect(session.get("hangout-url")).to.be(null);
@@ -65,12 +64,7 @@ describe("MOCK HANGOUT", function() {
         var u4 = common.server.db.users.at(3);
         var baseUrl = common.URL + "/test/hangout/" + session.id + "/";
         var queryUrl = baseUrl + "?mockUserIds=" + [u1.id, u2.id, u3.id].join(",");
-        // Set the hangout URL because connectedParticipants will be refused if
-        // it doesn't match the URL we get (which in the mock hangout will
-        // include ?mockUserIds=...).
-        session.set("hangout-url", queryUrl);
         
-        browser.get(common.URL);
         browser.mockAuthenticate(u1.get("sock-key"));
         // First, load the hangout without extra users.
         browser.get(queryUrl);
@@ -121,9 +115,8 @@ describe("MOCK HANGOUT", function() {
     it("Shows an auth error when not authenticated.", function(done) {
         // Clear any latent auth
         session.set("connectedParticipants", []);
-        browser.get(common.URL);
         browser.unMockAuthenticate();
-        browser.get(common.URL);
+        browser.get(common.FAST_URL);
         browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
 
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
@@ -172,7 +165,6 @@ describe("MOCK HANGOUT", function() {
         session.set("hangout-url", null);
 
         // Make sure we're logged out.
-        browser.get(common.URL);
         browser.unMockAuthenticate();
         browser.executeScript("return localStorage.removeItem('UNHANGOUT_AUTH');");
 

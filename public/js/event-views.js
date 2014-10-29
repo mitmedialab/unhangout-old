@@ -71,16 +71,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.ui.attend.removeClass("active");
         this.ui.attend.addClass("btn-success");
 
-        // don't show the x of 10 when it's live (at least until we have live data for that)
-        this.$el.find(".start").show();
-
         var numAttendees = this.model.getNumConnectedParticipants() + this.model.get("joiningParticipants").length;
-
-        this.$el.find(".attendance").css("width", ((numAttendees / this.model.MAX_ATTENDEES)*100) + "%");
-
-        // now check and see if the hangout is communicating properly with the server. if it is, show
-        // the hangout-users div, and populate it with users.
-        this.$el.addClass("hangout-connected");
 
         // 
         // Build the list of user views.
@@ -93,14 +84,18 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         var connectedAndJoining = _.pluck(this.model.get("connectedParticipants"), "id")
             .concat(_.pluck(this.model.get("joiningParticipants"), "id"));
         var available = [];
+        var joinCap = this.model.get("joinCap") || this.model.MAX_ATTENDEES;
         for (var i = 0; i < this.model.MAX_ATTENDEES; i++) {
+            // Delete the slot if the user isn't here anymore, or if the
+            // slot is greater than the joinCap.
             if (this.userSlots[i]) {
-                if (_.contains(connectedAndJoining, this.userSlots[i].id)) {
-                    continue;
+                if (!_.contains(connectedAndJoining, this.userSlots[i].id) ||
+                      i >= this.model.get("joinCap")) {
+                    delete this.userSlots[i];
                 }
-                delete this.userSlots[i];
+            } else if (i < joinCap) {
+                available.push(i);
             }
-            available.push(i);
         }
 
         var drawUser = _.bind(function (udata, joining) {
@@ -148,9 +143,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // ... and joining users
         _.each(this.model.get("joiningParticipants"), function(udata) { drawUser(udata, true); });
         var emptyli;
-        var numSlots = Math.max(this.model.get("joinCap"),
-                                this.model.getNumConnectedParticipants());
-        for (var i = 0; i < numSlots; i++) {
+        for (var i = 0; i < joinCap; i++) {
             if (this.userSlots[i]) {
                 fragment.appendChild(this.userSlots[i].el);
             } else {
@@ -166,11 +159,10 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         if (!this.options.event.get("sessionsOpen") || numAttendees >= this.model.get("joinCap")) {
             this.ui.attend.find(".lock").show();
-
             this.ui.attend.attr("disabled", true);
             this.ui.attend.addClass("disabled");
 
-            if (numAttendees >= this.model.get("joinCap")) {
+            if (numAttendees >= joinCap) {
                 this.ui.attend.find(".text").text("FULL");
             } else {
                 this.ui.attend.find(".text").text("LOCKED");

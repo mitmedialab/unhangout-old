@@ -13,14 +13,8 @@ models.ClientSessionList = models.SessionList.extend({
     },
 
     comparator: function(a, b) {
-        // sort by activity first, then alpha
-        if(a.getNumConnectedParticipants() < b.getNumConnectedParticipants()) {
-            return 1;
-        } else if(b.getNumConnectedParticipants() < a.getNumConnectedParticipants()) {
-            return -1;
-        } else {
-            return a.get("title").localeCompare(b.get("title"));
-        }
+        // Sort by id (effectively, by order created); oldest on top.
+        return a.id > b.id ? 1 : a.id < b.id ? -1 : 0;
     }
 });
 

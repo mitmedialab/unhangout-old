@@ -12,7 +12,7 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -41,7 +41,6 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
     it("Is redirected to add-event when has permission to do so", function(done) {
         var user = common.server.db.users.findWhere({"sock-key": "regular1"});
         user.setPerm("createEvents", true);
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL);
         browser.waitForSelector("#create-event-button");
@@ -52,7 +51,6 @@ describe("EMAIL REQUEST FOR ADMIN (BROWSER)", function() {
         });
     });
     it("Has a functioning request form when authenticated", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("regular2");
         browser.get(common.URL);
         browser.waitForSelector("#create-event-button");

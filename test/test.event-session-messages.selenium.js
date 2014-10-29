@@ -12,7 +12,7 @@ describe("EVENT SESSION MESSAGES", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     beforeEach(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(function() {
@@ -34,7 +34,6 @@ describe("EVENT SESSION MESSAGES", function() {
         // event's session rooms.
         var sock;
         var session = event.get("sessions").at(0);
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         // Admin goes to the event page.  Connect a socket to a session.
         browser.get(common.URL + "/event/" + event.id)
@@ -75,7 +74,6 @@ describe("EVENT SESSION MESSAGES", function() {
         var sock;
         var session = event.get("sessions").at(0);
 
-        browser.get(common.URL);
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
         browser.waitForHangoutReady(session, "regular1");
@@ -107,7 +105,6 @@ describe("EVENT SESSION MESSAGES", function() {
     });
 
     it("Adds event url to message", function(done) {
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "superuser1");
@@ -125,7 +122,6 @@ describe("EVENT SESSION MESSAGES", function() {
 
     it("Replaces entities with unicode", function(done) {
         var session = event.get("sessions").at(1);
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
         browser.waitForHangoutReady(session, "superuser1");

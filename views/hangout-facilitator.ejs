@@ -147,23 +147,28 @@
             <a href='#' class='activity-settings btn btn-warning'>
                 <i class='icon icon-gear'></i> Change embedded page
             </a>
+        </td></tr>
     </table>
 </script>
 
 <script type='text/template' id='switch-hangouts'>
-    <div class="modal-header"><h3>This is the wrong hangout</h3></div>
-    <div class="modal-body">
-        <p>
-            Sorry about that.  You ended up in the wrong hangout somehow &mdash;
-            probably two people created it at once.  The hangout for your session
-            is over here:
-        </p>
-        <p style='text-align: center;'>
-            <a class='btn btn-large btn-danger'
-               href='{{- url }}' target="_top" id='wrong-hangout-url'>
-                Click to Join the Correct Hangout
-            </a>
-        </p>
+    <div class='modal-dialog'>
+        <div class='modal-content'>
+            <div class="modal-header"><h3>This is the wrong hangout</h3></div>
+            <div class="modal-body">
+                <p>
+                    Sorry about that.  You ended up in the wrong hangout somehow &mdash;
+                    probably two people created it at once.  The hangout for your session
+                    is over here:
+                </p>
+                <p style='text-align: center;'>
+                    <a class='btn btn-large btn-danger'
+                       href='{{- url }}' target="_top" id='wrong-hangout-url'>
+                        Click to Join the Correct Hangout
+                    </a>
+                </p>
+            </div>
+        </div>
     </div>
 </script>
 

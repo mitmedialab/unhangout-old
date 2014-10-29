@@ -11,7 +11,7 @@ describe("PREVIOUS VIDEOS", function() {
     this.timeout(80000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(120000);
+        this.timeout(240000);
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -39,7 +39,6 @@ describe("PREVIOUS VIDEOS", function() {
 
     it("Removes individual videos", function(done) {
         var event = prepEvent();
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "superuser1");
@@ -66,7 +65,6 @@ describe("PREVIOUS VIDEOS", function() {
 
     it("Clears the list of videos", function(done) {
         var event = prepEvent();
-        browser.get(common.URL);
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + event.getEventUrl());
         browser.waitForEventReady(event, "superuser1");

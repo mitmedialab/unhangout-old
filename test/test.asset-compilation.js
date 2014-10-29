@@ -1,6 +1,6 @@
 describe("ASSET COMPILATION", function() {
     this.timeout(120000); // Extra-long timeout for compilation. :(
-    if (process.env.SKIP_SELENIUM_TESTS) {
+    if (process.env.SKIP_SELENIUM_TESTS || process.env.SKIP_ASSET_COMPILATION) {
         // Even though we don't use selenium here, act as though we do because
         // we're so slow.
         return;

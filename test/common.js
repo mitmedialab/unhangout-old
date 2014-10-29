@@ -23,6 +23,7 @@ var TEST_CONF = _.extend({}, conf, {
 });
 
 exports.URL = TEST_CONF.baseUrl;
+exports.FAST_URL = TEST_CONF.baseUrl + "/public/html/test.html"
 exports.PORT = TEST_CONF.UNHANGOUT_PORT;
 
 TEST_CONF.UNHANGOUT_HANGOUT_ORIGIN_REGEX = TEST_CONF.baseUrl;
@@ -70,9 +71,11 @@ var buildBrowser = function(callback) {
             "})();"].join(""));
     };
     browser.mockAuthenticate = function(user) {
+        browser.get(exports.FAST_URL);
         return browser.executeScript("document.cookie = 'mock_user=" + user + "; path=/';");
     };
     browser.unMockAuthenticate = function(user) {
+        browser.get(exports.FAST_URL);
         return browser.executeScript("document.cookie = 'mock_user=; path=/';");
     };
     // This is sugar to wrap selenium's `wait` with a default timeout.  We want
@@ -180,6 +183,18 @@ var buildBrowser = function(callback) {
     browser.manage().window().setSize(1024, 768).then(function() {
         callback(browser);
     });
+
+    browser.saveScreenshot = function(suffix) {
+      return browser.takeScreenshot().then(function(image, err) {
+        var name = "logs/" + Date.now() + suffix + ".png";
+        require('fs').writeFile(name, image, 'base64', function(err) {
+          if (err) {
+            console.log(err);
+            throw err;
+          }
+        });
+      });
+    }
 };
 
 exports.getSeleniumBrowser = function(callback) {
@@ -205,17 +220,20 @@ exports.getSeleniumBrowser = function(callback) {
         }
         seleniumServer = new SeleniumServer(seleniumPath, opts);
         var isStarted = false;
-        seleniumServer.start(60000).then(function() {
+        // Set the timeout to something less than a multiple of the timeout set
+        // in test startups, so we get as many start up retries as we can
+        // before a timeout.
+        seleniumServer.start(59000).then(function() {
             isStarted = true;
             buildBrowser(callback);
         }).then(null, function(err) {
           if (!isStarted) {
-            console.log("Error starting selenium, retrying.  Err:", err);
+            console.log("Error starting selenium, retrying.  ", err);
             seleniumServer = null;
-            exports.getSeleniumBrowser(callback);
           } else {
-            console.log("Error thrown by buildBrowser.", err);
+            console.log("Error thrown by buildBrowser; retrying.", err);
           }
+          exports.getSeleniumBrowser(callback);
         });
     }
 };
