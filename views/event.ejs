@@ -148,8 +148,16 @@
 </script>
 
 <script type="text/template" id="chat-message-template">
-    <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
+    <span class='from' data-toggle='popover' 
+    data-placement='top'
+    data-trigger='hover'
+    data-container='body'
+    title='{{- user.displayName }}'
+    data-content='&lt;img src=&quot;{{- user.picture }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt;'>
+    {{- user.shortDisplayName}}
+    </span>{{= text}}
 </script>
+
 <script type="text/template" id="chat-atname-template">
     {{ if (isMe) { }}
         <span class='atname me'
