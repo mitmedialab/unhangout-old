@@ -25,12 +25,12 @@
 
             <div id="top"></div> 
 
-            <div class="col-lg-5 col-xs-5 left">
+            <div class="col-lg-5 col-xs-5 event-column-left">
                 <div id="top-left"></div>
                 <div id="main-left"></div> 
             </div>
 
-            <div class="col-lg-7 col-xs-5 right">
+            <div class="col-lg-7 col-xs-5 event-column-right">
                 <div id="main-right"></div>
             </div> 
 
@@ -150,6 +150,25 @@
 <script type="text/template" id="chat-message-template">
     <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
 </script>
+<script type="text/template" id="chat-atname-template">
+    {{ if (isMe) { }}
+        <b class='atname me'
+           data-toggle='popover'
+           data-placement='top'
+           data-trigger='hover'
+           data-container='body'
+           title='{{- displayName }}'
+           data-content="That's you!">$1</b>
+    {{ } else { }}
+        <b class='atname'
+           data-toggle='popover'
+           data-placement='top'
+           data-trigger='hover'
+           data-container='body'
+           title='{{- user.get("displayName") }}'
+           data-content="&lt;img src=&quot;{{- user.get("picture") }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt;">$1</b>
+    {{ } }}
+</script>
 
 <script type="text/template" id="chat-layout">
      <div id="chat-container-region" class="col-lg-10 col-xs-10">
@@ -179,7 +198,18 @@
 </script>
 
 <script type="text/template" id="chat-input-template">
-    <form><input type="text" id="chat-input" class="form-control" autocomplete="off" placeholder='Type your message here'></input></form>
+    <form>
+        <input type="text" id="chat-input" class="form-control" autocomplete="off" placeholder='Type your message here'></input>
+        {{ if (IS_ADMIN) { }}
+            <label class='admin'
+                   title='Check to highlight your message.'
+                   data-role='tooltip'
+                   data-placement='top'>
+                <input type='checkbox' name='chat-as-admin'>
+                Highlight
+            </label>
+        {{ } }}
+    </form>
 </script>
 
 <script type="text/template" id="chat-template">

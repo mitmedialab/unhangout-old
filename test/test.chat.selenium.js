@@ -29,7 +29,7 @@ describe("CHAT", function() {
                 });
             },
             function(done) {
-                common.authedSock("regular2", evt.id, function(theSock) {
+                common.authedSock("regular2", evt.getRoomId(), function(theSock) {
                     sock = theSock;
                     done();
                 });
@@ -81,7 +81,8 @@ describe("CHAT", function() {
         browser.executeScript('$("#chat-container-region .panel-body").scrollTop(100)').then(function() {;
             // Send a message from another user.
             sock.write(JSON.stringify({
-                type: "chat", args: {text: "Other user message"}
+                type: "chat", args: {text: "Other user message",
+                                     roomId: evt.getRoomId()}
             }));
         });
 
@@ -118,7 +119,7 @@ describe("CHAT", function() {
 
     });
 
-    it("displays admin chat messages with a different color", function(done) {
+    it("optionally highlights admin chat messages", function(done) {
         var event = common.server.db.events.get(1);
         var regular = common.server.db.users.findWhere({"sock-key": "regular1"});
         var admin = common.server.db.users.findWhere({"sock-key": "admin1"})
@@ -134,23 +135,46 @@ describe("CHAT", function() {
         browser.get(common.URL + "/event/" + event.id);
 
         var counter = 0;
+        function waitForMsg(text) {
+          browser.wait(function() {
+              var lastMessage = "return $('.chat-message:last').text();";
+              return browser.executeScript(lastMessage).then(function(msg) {
+                  return msg.indexOf(text.trim()) !== -1;
+              });
+          });
+        }
+        function lastMsgIsAdmin(isAdmin) {
+            var isAdminMessage = "return $('.chat-message:last .from').hasClass('admin');"
+            browser.executeScript(isAdminMessage).then(function(msgIsAdmin) {
+                expect(msgIsAdmin).to.be(isAdmin);
+            });
+        }
         function checkFromAdmin(sockkey, isAdmin) {
             var text = "admin check " + (counter++) + "\n";
             browser.mockAuthenticate(sockkey);
             browser.get(common.URL + "/event/" + event.id)
             browser.waitForEventReady(event, sockkey);
             browser.waitForSelector("#chat-input");
-            browser.byCss("#chat-input").sendKeys(text);
-            browser.wait(function() {
-                var lastMessage = "return $('.chat-message:last').text();";
-                return browser.executeScript(lastMessage).then(function(msg) {
-                    return msg.indexOf(text.trim()) !== -1;
+            // Send a message as an admin.
+            if (isAdmin) {
+                browser.byCss("[name='chat-as-admin']").click();
+            } else {
+                browser.byCsss("[name='chat-as-admin']").then(function(els) {
+                    expect(els.length).to.be(0);
                 });
-            });
-            var isAdminMessage = "return $('.chat-message:last .from').hasClass('admin');"
-            browser.executeScript(isAdminMessage).then(function(msgIsAdmin) {
-                expect(msgIsAdmin).to.be(isAdmin);
-            });
+            }
+            browser.byCss("#chat-input").sendKeys(text);
+            waitForMsg(text);
+            lastMsgIsAdmin(isAdmin);
+            if (isAdmin) {
+                text = "admin check " + (counter++) + "\n";
+                // Send message as non-admin.
+                browser.byCss("[name='chat-as-admin']").click();
+                browser.byCss("#chat-input").sendKeys(text);
+                waitForMsg(text);
+                var isAdminMessage = "return $('.chat-message:last .from').hasClass('admin');"
+                lastMsgIsAdmin(false);
+            }
         }
 
         checkFromAdmin(regular.getSockKey(), false);
@@ -159,6 +183,54 @@ describe("CHAT", function() {
         checkFromAdmin(admin.getSockKey(), true);
 
         browser.then(function() { done(); });
+    });
+
+    it("Detects @usernames in chat", function(done) {
+        browser.mockAuthenticate("regular1");
+        browser.get(common.URL + "/event/" + evt.id);
+        browser.waitForSelector("#chat-input");
+        browser.byCss("#chat-input").sendKeys("Hello, @Regular2\n");
+        browser.waitForSelector("b.atname");
+        browser.byCss("b.atname").getAttribute("data-original-title").then(function(title) {
+            expect(title).to.be("Regular2 Mock");
+        });
+        browser.then(function() {
+            sock.write(JSON.stringify({
+                type: "chat",
+                args: {text: "Well hi, @regular1mock\n", roomId: evt.getRoomId()},
+            }));
+        });
+        browser.waitForSelector("b.atname.me");
+        browser.byCss("b.atname.me").getAttribute("data-original-title").then(function(title) {
+            expect(title).to.be("Regular1 Mock");
+        });
+        browser.then(function() {
+            done();
+        });
+    });
+
+    it("Escapes html, but linkifies urls", function(done) {
+        browser.mockAuthenticate("regular1");
+        browser.get(common.URL + "/event/" + evt.id);
+        browser.waitForSelector("#chat-input");
+        browser.byCss("#chat-input").sendKeys("<b>Escape 'this\"</b> and http://google.com\n");
+        browser.wait(function() {
+            var lastMessage = "return $('.chat-message:last').html();";
+            return browser.executeScript(lastMessage).then(function(html) {
+                if (html) {
+                    expect(html.trim()).to.be(
+                        '<span class="from">Regular1 M</span>' +
+                       "&lt;b&gt;Escape 'this\"&lt;/b&gt; and " +
+                       "<a href=\"http://google.com\" " +
+                           "target=\"_blank\">http://google.com</a>"
+                    );
+                    return true;
+                }
+                return false;
+            });
+        }).then(function() {
+            done();
+        });
 
     });
 });
