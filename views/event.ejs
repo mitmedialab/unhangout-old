@@ -152,21 +152,21 @@
 </script>
 <script type="text/template" id="chat-atname-template">
     {{ if (isMe) { }}
-        <b class='atname me'
+        <span class='atname me'
            data-toggle='popover'
            data-placement='top'
            data-trigger='hover'
            data-container='body'
            title='{{- displayName }}'
-           data-content="That's you!">$1</b>
+           data-content="That's you!">$1</span>
     {{ } else { }}
-        <b class='atname'
+        <span class='atname'
            data-toggle='popover'
            data-placement='top'
            data-trigger='hover'
            data-container='body'
            title='{{- user.get("displayName") }}'
-           data-content="&lt;img src=&quot;{{- user.get("picture") }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt;">$1</b>
+           data-content="&lt;img src=&quot;{{- user.get("picture") }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt;">$1</span>
     {{ } }}
 </script>
 
