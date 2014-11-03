@@ -152,7 +152,9 @@
     data-placement='top'
     data-trigger='manual'
     data-container='body'
-    data-content='&lt;img src=&quot;{{- user.picture }}&quot; style=&quot;max-width: 58px; max-height: 58px;&quot; /&gt; {{- user.displayName }} <button class="btn btn-default btn-primary">Add to Conversation Network</button>'>
+    data-title='&lt;img src=&quot;{{- user.picture }}&quot; style=&quot;max-width: 50px; max-height: 50px; border-radius:5px; &quot; /&gt; <h5 class="popover-name">{{- user.displayName }}</h5> '
+    data-content='<button class="btn btn-primary"><i class="fa fa-users"></i>
+Add to Conversation Network</button>'>
     {{- user.shortDisplayName}}
     </span></a>{{= text}}
 </script>
