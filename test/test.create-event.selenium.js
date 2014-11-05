@@ -50,7 +50,6 @@ describe("CREATE EVENT", function() {
         browser.byCss("[name='title']").sendKeys("Test Title");
         browser.byCss("[name='shortName']").sendKeys("test-title");
         browser.byCss("[name='organizer']").sendKeys("unhangoutdev@gmail.com");
-        browser.byCss("[name='welcomeMessage']").sendKeys("Welcome!");
         browser.byCss("[name='description']").sendKeys("<b>Fun event!</b>");
 
         /* Disabled until we can figure out sanitization issues.
@@ -109,7 +108,6 @@ describe("CREATE EVENT", function() {
                                   " shortName: $('#inputShortName').val(), " +
                                   " dateAndTime: $('#dateAndTime').val(), " +
                                   " timeZoneValue: $('#timeZoneValue').val(), " +
-                                  " welcomeMessage: $('#inputWelcomeMessage').val(), " +
                                   " description: $('[name=description]').val()};")
             .then(function(attrs) {
                 var event = common.server.db.events.get(eventId);
@@ -120,7 +118,6 @@ describe("CREATE EVENT", function() {
                     shortName: att.shortName,
                     dateAndTime: moment(att.dateAndTime).format(event.DATE_DISPLAY_FORMAT),
                     timeZoneValue: att.timeZoneValue,
-                    welcomeMessage: att.welcomeMessage,
                     description: att.description
                 });
                 done();

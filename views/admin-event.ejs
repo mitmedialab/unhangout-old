@@ -105,20 +105,6 @@
 
         </div>
 
-        <div class="form-group<%= errors.welcomeMessage ? " error" : "" %>">
-            <label class="col-lg-2 control-label" for="inputWelcomeMessage">Welcome Message</label>
-            
-            <div class="col-lg-9">
-                <textarea class="form-control" rows=1 cols=40 type="text" id="inputWelcomeMessage"
-                          name="welcomeMessage" placeholder="Welcome Message for Participants"
-                    ><%= event.get("welcomeMessage") || "" %></textarea>
-                <% if (errors.welcomeMessage) { %>
-                    <span class='help-inline'><%= errors.welcomeMessage %></span>
-                <% } %>
-            </div>
-           
-        </div>
-
         <div class="form-group<%= errors.description ? " error" : "" %>">
             <label class="col-lg-2 control-label" for="inputDescription">Event Description </label>
            
