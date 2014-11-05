@@ -148,25 +148,22 @@
 </script>
 
 <script type="text/template" id="chat-message-template">
-    <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
+    <a class="showAt"><span class='from from-popover' data-toggle='popover' 
+    data-placement='top'
+    data-trigger='manual'
+    data-container='body'
+    data-title='&lt;img src=&quot;{{- user.picture }}&quot; style=&quot;max-width: 50px; max-height: 50px; border-radius:5px; &quot; /&gt; <h5 class="popover-name">{{- user.displayName }}</h5> '
+    data-content='<button class="btn btn-primary"><i class="fa fa-users"></i>
+Add to Conversation Network</button>'>
+    {{- user.shortDisplayName}}
+    </span></a>{{= text}}
 </script>
+
 <script type="text/template" id="chat-atname-template">
     {{ if (isMe) { }}
-        <b class='atname me'
-           data-toggle='popover'
-           data-placement='top'
-           data-trigger='hover'
-           data-container='body'
-           title='{{- displayName }}'
-           data-content="That's you!">$1</b>
+        <span class='atname me'>$1</span>
     {{ } else { }}
-        <b class='atname'
-           data-toggle='popover'
-           data-placement='top'
-           data-trigger='hover'
-           data-container='body'
-           title='{{- user.get("displayName") }}'
-           data-content="&lt;img src=&quot;{{- user.get("picture") }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt;">$1</b>
+        <span class='atname'>$1</span>
     {{ } }}
 </script>
 
@@ -661,8 +658,6 @@
             <a href="#" class="btn btn-primary" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
         </div>
     </div>
-
-    
 </script>
 
 <% include _video-templates.ejs %>

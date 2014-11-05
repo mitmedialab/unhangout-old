@@ -800,6 +800,10 @@ user-admin-border-size = 2px
         padding-left: 40px;
         padding-right: 10px;
 
+        a {
+          color: #333;
+        }
+
         &.past {
           opacity: 0.3;
         }
@@ -817,6 +821,7 @@ user-admin-border-size = 2px
           margin-bottom: 20px;
 
           border-bottom: 1px solid #aaa;
+
           .from {
             display: none;
           }
@@ -834,16 +839,33 @@ user-admin-border-size = 2px
             color: orange;
           }
         }
+        
+        span.from:hover {
+          cursor: pointer;
+          text-decoration: underline;
+        }
       }
     }
   }
   .atname {
-    border-bottom: 1px dotted green
-    cursor: pointer
+    cursor: pointer;
+    color: #2e7daa;
+
     &.me {
-      background-color: yellow
+      color: black;
+      background-color: #c0d8e6;
     }
   }
+
+  .atname:hover {
+    text-decoration: underline;
+  }
+}
+
+.popover-name {
+    position: absolute;
+    top: 0px;
+    left: 75px;
 }
 
 #global {

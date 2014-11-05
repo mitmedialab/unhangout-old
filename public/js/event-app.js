@@ -225,6 +225,35 @@ $(document).ready(function() {
 
     logger.log("Setup regions.");
 
+    //Allows popover to stay on hover
+    var $fromPopover = $('.from-popover');
+    $fromPopover.data('state', 'hover');
+
+    var enterShow = function () {
+        if ($fromPopover.data('state') === 'hover') {
+            $fromPopover.popover('show');
+        }
+    };
+    var exitHide = function () {
+        if ($fromPopover.data('state') === 'hover') {
+            $fromPopover.popover('hide');
+        }
+    };
+
+    var clickToggle = function () {
+        if ($fromPopover.data('state') === 'hover') {
+            $fromPopover.data('state', 'pinned');
+        } else {
+            $fromPopover.data('state', 'hover')
+            $fromPopover.popover('hover');
+        }
+    };
+
+    $fromPopover.popover({trigger: 'manual'})
+        .on('mouseenter', enterShow)
+        .on('mouseleave', exitHide)
+        .on('click', clickToggle);
+
 });
 
 });

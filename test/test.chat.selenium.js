@@ -190,8 +190,8 @@ describe("CHAT", function() {
         browser.get(common.URL + "/event/" + evt.id);
         browser.waitForSelector("#chat-input");
         browser.byCss("#chat-input").sendKeys("Hello, @Regular2\n");
-        browser.waitForSelector("b.atname");
-        browser.byCss("b.atname").getAttribute("data-original-title").then(function(title) {
+        browser.waitForSelector("span.atname");
+        browser.byCss("span.atname").getAttribute("data-original-title").then(function(title) {
             expect(title).to.be("Regular2 Mock");
         });
         browser.then(function() {
@@ -200,8 +200,8 @@ describe("CHAT", function() {
                 args: {text: "Well hi, @regular1mock\n", roomId: evt.getRoomId()},
             }));
         });
-        browser.waitForSelector("b.atname.me");
-        browser.byCss("b.atname.me").getAttribute("data-original-title").then(function(title) {
+        browser.waitForSelector("span.atname.me");
+        browser.byCss("span.atname.me").getAttribute("data-original-title").then(function(title) {
             expect(title).to.be("Regular1 Mock");
         });
         browser.then(function() {
