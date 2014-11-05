@@ -76,6 +76,7 @@ describe("CREATE HOA", function() {
         browser.waitForEventReady(event, user.get("sock-key"));
         browser.waitForSelector(".create-hoa");
         browser.byCss(".create-hoa").click();
+        browser.waitTime(1000);
         // Switch to the hangout creation window.
         // Seems that browser.getWindowHandles is not implemented.  Doing it raw.
         browser.schedule(

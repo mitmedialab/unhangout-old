@@ -337,23 +337,24 @@ hr.noshade {
   height: 100%;
 }
 
-.right {
+.event-column-right {
   padding-left: 0px;
   padding-right: 0px;
   height: 100%;
 }
+
+.event-column-left {
+  padding-left: 0px;
+  padding-right: 0px;
+  height: 100%;
+  overflow-y: scroll;
+}
+
 
 #main-right {
   z-index: 10;
   overflow: hidden;
   height: 100%;
-}
-
-.left {
-  padding-left: 0px;
-  padding-right: 0px;
-  height: 100%;
-  overflow-y: scroll;
 }
 
 #presence-gutter {
@@ -676,12 +677,61 @@ user-admin-border-size = 2px
  */
 
 #chat-input-region {
-    padding: 0px;
-    background-color: #eee;
+  padding: 0px
+  background-color: #eee
+
+  & > div {
+    display: table
+    width: 100%
+  }
+
+  form {
+    display: table-row
+    width: 100%
+  }
+
+  label.admin {
+    display: table-cell
+    color: orange
+  }
+
+  #chat-input {
+    display: table-cell
+    width: 100%
+  }
+
+
 }
 
 #chat {
   height: 100%;
+
+  #chat-whiteboard{
+    margin:10px 0;
+
+    #whiteboard-message, #whiteboard-form textarea{
+      border: 1px solid silver;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      background: white;
+      width: 100%;
+    }
+
+    #whiteboard-form{
+      display: none;
+    }
+
+    #whiteboard-form textarea{
+      border: 1px dashed silver;
+      resize: none;
+    }
+
+    #whiteboard-message {
+      white-space: pre-wrap;
+    }
+
+  }
 
   #welcome-message {
     border-bottom: 1px solid #aaa;
@@ -785,6 +835,13 @@ user-admin-border-size = 2px
           }
         }
       }
+    }
+  }
+  .atname {
+    border-bottom: 1px dotted green
+    cursor: pointer
+    &.me {
+      background-color: yellow
     }
   }
 }

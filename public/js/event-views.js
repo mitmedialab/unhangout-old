@@ -17,9 +17,9 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "logger", "models", "auth",
-   "backbone.marionette", "underscore-template-config"
-], function(_, Backbone, video, logging, models, auth) {
+   "underscore", "backbone", "video", "logger", "models", "auth", "client-utils",
+   "backbone.marionette", "underscore-template-config", "jquery.autosize"
+], function(_, Backbone, video, logging, models, auth, utils) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -519,6 +519,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     id: 'chat',
 
     regions: {
+        whiteboard: '#chat-whiteboard',
         welcome: '#welcome-message',
         chat:'#chat-messages',
         presence: '#presence-gutter',
@@ -527,12 +528,17 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
     initialize: function(options) {
         Backbone.Marionette.View.prototype.initialize.call(this, options);
+        this.whiteboardView = new views.WhiteboardView({
+            model: this.options.event,
+            transport: this.options.transport
+        });
         this.welcomeView = new views.WelcomeView({
             messages: this.options.messages,
             model: this.options.event
         });
         this.chatView = new views.ChatView({
             collection: this.options.messages,
+            users: this.options.users,
             event: this.options.event
         });
         this.userListView = new views.UserListView({
@@ -546,10 +552,86 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     },
 
     onRender: function() {
+        this.whiteboard.show(this.whiteboardView);
         this.welcome.show(this.welcomeView);
         this.chat.show(this.chatView);
         this.presence.show(this.userListView);
         this.chatInput.show(this.chatInputView);
+    }
+});
+
+// Whiteboard for displaying persistent lobby messages
+views.WhiteboardView = Backbone.Marionette.ItemView.extend({
+    template: '#chat-whiteboard-template',
+
+    events: {
+        'click .edit-whiteboard': 'toggleForm',
+        'click .cancel-whiteboard': 'toggleForm',
+        'click .update-whiteboard': 'sendForm'
+    },
+
+    ui: {
+        form: '#whiteboard-form',
+        formInput: '#whiteboard-form textarea',
+        buttons: '#whiteboard-buttons',
+        message: '#whiteboard-message'
+    },
+
+    initialize: function(options){
+        Backbone.Marionette.ItemView.prototype.initialize.call(this,options);
+
+        this.listenTo(this.model, 'change:whiteboard', this.render, this);
+    },
+
+    // Function to send the data from the form
+    sendForm: function() {
+        var message = this.ui.formInput.val();
+
+        // If the message is the same as the one from what is in the database
+        if(message == this.model.attributes.whiteboard.message){
+            this.toggleForm();
+        } else {
+            // Sending the whiteboard message
+            this.options.transport.send("edit-whiteboard", {
+                newMessage: message,
+                roomId: this.options.model.getRoomId()
+            });
+        }
+    },
+
+    // Function to toggle the view of the form only if the user is an admin
+    toggleForm: function(){
+        if(IS_ADMIN){
+            this.ui.form.toggle();
+            this.ui.buttons.toggle();
+            this.ui.message.toggle();
+
+            if(this.ui.form.is(':visible')){
+                this.ui.formInput.val(this.model.attributes.whiteboard.message);
+                this.ui.formInput.focus();
+
+                // We autosize the form input so that it follows the user
+                $(this.ui.formInput).autosize();
+            }
+        }
+    },
+
+    onRender: function(){
+        var message = this.ui.message.html();
+        var whiteboard = this.model.attributes.whiteboard;
+
+        if(whiteboard && whiteboard.message && whiteboard.message.length > 0){
+            // If there is a whiteboard message we will linkify it.
+            this.ui.message.html(utils.linkify(_.escape(whiteboard.message)));
+        } else {
+            // If not an admin, we hide the whole whiteboard, else we show an empty whiteboard for admins
+            if(IS_ADMIN){
+                this.ui.message.html('')
+            } else {
+                this.ui.message.hide();
+            }
+
+        }
     }
 });
 
@@ -582,7 +664,8 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
     },
 
     ui: {
-        chatInput: "#chat-input"
+        chatInput: "#chat-input",
+        asAdmin: "[name='chat-as-admin']"
     },
 
     initialize: function(options) {
@@ -591,10 +674,13 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
 
     chat: function(e) {
         var msg = this.ui.chatInput.val();
+        var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
             this.options.transport.send("chat", {
-                text: msg, roomId: this.options.event.getRoomId()
+                text: msg,
+                postAsAdmin: postAsAdmin,
+                roomId: this.options.event.getRoomId()
             });
             this.ui.chatInput.val("");
         }
@@ -611,38 +697,83 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
             this.$el.find("#chat-input").removeAttr("disabled");
             this.$el.find("#chat-input").removeClass("disabled");
         }
+        this.$("[data-role='tooltip']").tooltip();
     }
 });
 
 // The view for an individual chat message.
 views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     template: '#chat-message-template',
+    atnameTemplate: _.template($("#chat-atname-template").html()),
     className: 'chat-message',
     tagName: 'li',
 
     initialize: function() {
         Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments);
-        this.model.set("text", this.linkify(this.model.get("text")));
+        var msg = _.escape(this.model.get("text"));
+        msg = utils.linkify(msg);
+        msg = this.atify(msg);
+        this.model.set("text", msg);
     },
+    atify: function(msg) {
+      function matchAll(regex, string) {
+        if (!regex.global) {
+          throw new Error("RegEx must have global flag to use matchAll");
+        }
+        var match = null;
+        var matches = [];
+        while (match = regex.exec(string)) {
+          matches.push(match);
+        }
+        return matches;
+      };
+      function normalize(name) {
+        return name.replace(/\s/g, "").toLowerCase();
+      };
+      function quoteRegExp(pattern) {
+        return pattern.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
+      };
+      function replaceAtName(msg, atname, replacement) {
+        return msg.replace(new RegExp("(" + quoteRegExp(atname) + ")", "gi"),
+                           replacement);
+      };
 
-    // Finds and replaces valid urls with links to that url. Client-side only
-    // of course; all messages are sanitized on the server for malicious content.
-    linkify: function(msg) {
-        var replacedText, replacePattern1, replacePattern2, replacePattern3, replacePattern4;
-
-        //URLs starting with http://, https://, or ftp://
-         replacePattern1 = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-         replacedText = msg.replace(replacePattern1, "<a href='$1' target='_blank'>$1</a>");
-
-         //URLs starting with "www." (without // before it, or it'd re-link the ones done above).
-         replacePattern2 = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-         replacedText = replacedText.replace(replacePattern2, "$1<a href='http://$2' target='_blank'>$2</a>");
-
-         //Change email addresses to mailto:: links.
-         replacePattern3 = /(([a-zA-Z0-9\-?\.?]+)@(([a-zA-Z0-9\-_]+\.)+)([a-z]{2,3}))+$/;
-        replacedText = replacedText.replace(replacePattern3, "<a href='mailto:$1'>$1</a>");
-
-        return replacedText;
+      var matches = matchAll(/@([a-zA-Z0-9]+)/g, msg);
+      var selfName = normalize(auth.USER_NAME);
+      var users = this.options.users;
+      _.each(matches, _.bind(function(match) {
+        // Is it referring to ourselves?
+        var atname = normalize(match[1]);
+        if (selfName.indexOf(atname) !== -1) {
+          msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
+            isMe: true,
+            displayName: auth.USER_NAME
+          })));
+          var text = "✉ Message! ";
+          var interval = setInterval(function() {
+            if (document.title.indexOf(text) === 0) {
+              document.title = document.title.replace(text, "");
+            } else {
+              document.title = text + document.title;
+            }
+          }, 500);
+          setTimeout(function() {
+            document.title = document.title.replace(text, "");
+            clearTimeout(interval);
+          }, 5000);
+        } else {
+          var user = users.find(function(user) {
+            return normalize(user.get("displayName")).indexOf(atname) !== -1;
+          });
+          if (user) {
+            msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
+              isMe: false,
+              user: user
+            })));
+          }
+        }
+      }, this));
+      return msg;
     },
 
     // We want to use shortNames so we intercept this process to make the short
@@ -670,13 +801,15 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             // mark this chat message as a system message, so we can
             // display it differently.
             this.$el.addClass("system");
-        } else if (this.options.isAdmin) {
+        } else if (this.options.isAdmin && this.model.get("postAsAdmin")) {
             this.$el.find(".from").addClass("admin");
         }
 
         if (this.model.get("past")) {
             this.$el.addClass("past");
         }
+        this.$el.find("[data-toggle='popover']").popover({html: true});
+        console.log
     }
 });
 
@@ -704,7 +837,8 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
     itemViewOptions: function(model, index) {
         return {
             model: model,
-            isAdmin: new models.User(model.get("user")).isAdminOf(this.options.event)
+            isAdmin: new models.User(model.get("user")).isAdminOf(this.options.event),
+            users: this.options.users
         };
     },
     onBeforeItemAdded: function() {
