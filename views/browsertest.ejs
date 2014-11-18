@@ -1,0 +1,91 @@
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+
+<div class="container browser-test">
+    <h1>Unhangout Browser Test</h1>
+    <p>
+        Use this page to check your configuration to make sure that your web
+        browser and Google account are ready to unhangout.
+    </p>
+    <div class='<%= isAuthenticated ? "success": "fail" %> step'>
+         1. <i class='fa <%= isAuthenticated ? "fa-check" : "fa-times" %>'></i>
+        <% if (!isAuthenticated) { %>
+            First things first: you need to be <a href='/browsertest/login/'>Logged
+            In</a> using your Google account in order to join unhangout events.
+            Please <a href='/browsertest/login/' class='btn btn-primary'>log in now</a>.
+        <% } else { %>
+            Logged in as <%= user.get("emails")[0].value %>
+        <% } %>
+    </div>
+    <div class='<%= hasGooglePlus ? "success": "fail" %> step'>
+        2. <i class='fa <%= hasGooglePlus ? "fa-check" : "fa-times" %>'></i>
+        <% if (!isAuthenticated || hasGooglePlus) { %>
+            Google Plus account
+        <% } else { %>
+            It looks like you haven't connected your Google account to Google
+            Plus.  When you join a hangout, you will be prompted to do so.
+        <% } %>
+    </div>
+    <div class='step'>
+        3. Get your headphones and microphone ready and join.
+            <% if (isAuthenticated) { %>
+                <a class='btn btn-primary btn-lg'
+                   href='/session/<%= session.get("session-key") %>'
+                   target='_blank'>Join Test Hangout</a>
+            <% } else { %>
+                <button disabled="disabled" class='btn btn-default btn-lg'>
+                    Join Test Hangout
+                </button>
+            <% } %>
+    </div>
+    <% if (isAuthenticated) { %>
+      <div class='step'>
+          Problems joining the hangout?  Please
+          <button class='btn btn-default' data-toggle='modal' data-target='#browsertest-contact-form'>Contact Us</button>
+          <div class='modal fade' id='browsertest-contact-form'>
+            <div class='modal-dialog'>
+              <div class='modal-content'>
+                <form method='post' action=''>
+                  <div class='modal-header'>
+                    <button type='button' class='close' data-dismiss='modal'>
+                      <span aria-hidden='true'>&times;</span>
+                      <span class='sr-only'>Close</span>
+                    </button>
+                    <h4 class='modal-title'>Report problem joining hangout</h4>
+                  </div>
+                  <div class='modal-body'>
+                    <div class='form-group'>
+                      <label for='problem'>Please describe the problem you experienced.</label>
+                      <textarea id='problem' class='form-control' name='problem'></textarea>
+                    </div>
+                    <div class='form-group'>
+                      <label for='browser'>What browser and operating system do you use?</label>
+                      <textarea id='browser' class='form-control' name='browser'></textarea>
+                      <span class='help-block'>Please provide as much detail as you can.</span>
+                    </div>
+                    <div class='form-group'>
+                      <label for='googleacct'>
+                        Is your google login from an organizational or
+                        institutional account, or does it use a custom domain?
+                        If so, please describe.
+                      </label>
+                      <textarea id='googleacct' class='form-control' name='googleacct'></textarea>
+                    </div>
+                  </div>
+                  <div class='modal-footer'>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                      Close
+                    </button>
+                    <button type='submit' class='btn btn-primary'>
+                      Send Report
+                    </button>
+                  </div>
+                </form>
+            </div>
+          </div>
+      </div>
+    <% } %>
+</div>
+
+<%- requireScripts("/public/js/browsertest.js") %>
+<% include _analytics.ejs %>
