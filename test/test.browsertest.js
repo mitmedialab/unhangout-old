@@ -6,7 +6,7 @@ var server = require('../lib/unhangout-server'),
 
 var session;
 
-describe("HTTP ADMIN USERS API", function() {
+describe("BROWSER TEST", function() {
     beforeEach(function(done) {
         common.standardSetup(function() {
             common.startEmailServer(done);
@@ -84,7 +84,7 @@ describe("HTTP ADMIN USERS API", function() {
                 common.await(function() {
                     return common.outbox.length == 1;
                 }).then(function() {
-                    var msg = common.outbox[0];
+                    var msg = common.outbox.pop();
                     expect(msg.text).to.contain(data.problem);
                     expect(msg.text).to.contain(data.browser);
                     expect(msg.text).to.contain(data.googleacct);
