@@ -148,7 +148,8 @@
 </script>
 
 <script type="text/template" id="chat-message-template">
-    <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
+    <span class="chat-message-author">{{- user.shortDisplayName}} </span>
+    <span class="chat-message-text">{{= text}}</span>
 </script>
 <script type="text/template" id="chat-atname-template">
     {{ if (isMe) { }}

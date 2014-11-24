@@ -793,11 +793,11 @@ user-admin-border-size = 2px
     }
 
     #chat-list-container {
+      padding-left: 10px;
+
       .chat-message {
         word-wrap: break-word;
         list-style-type: none;
-
-        padding-left: 40px;
         padding-right: 10px;
 
         &.past {
@@ -822,17 +822,17 @@ user-admin-border-size = 2px
           }
         }
 
-        span.from {
-          float: left;
-          display: block;
+        span.chat-message-author {
           font-weight: bold;
-          width: 140px;
-          text-align: right;
-          margin-left: -145px;
 
           &.admin {
             color: orange;
           }
+        }
+
+        span.chat-message-text {
+          display: inline;
+          word-break: break-all;
         }
       }
     }

@@ -808,7 +808,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             // display it differently.
             this.$el.addClass("system");
         } else if (this.options.isAdmin && this.model.get("postAsAdmin")) {
-            this.$el.find(".from").addClass("admin");
+            this.$el.find(".chat-message-author").addClass("admin");
         }
 
         if (this.model.get("past")) {
