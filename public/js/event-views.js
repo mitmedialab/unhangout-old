@@ -333,9 +333,15 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var title = $("[name=session_name]", scope).val();
         var joinCap = parseInt($.trim($("[name=join_cap]", scope).val()));
         var type = $("[name='session_type']:checked", scope).val();
+        var MAX_TITLE = 100;
 
         if (isNaN(joinCap) || joinCap < 2 || joinCap > 10) {
             $(".join-cap-error", scope).show();
+            return;
+        }
+
+        if(title.length > MAX_TITLE) {
+            $(".title-length-error", scope).show();
             return;
         }
 
