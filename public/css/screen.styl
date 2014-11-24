@@ -712,7 +712,6 @@ user-admin-border-size = 2px
     #whiteboard-message, #whiteboard-form textarea{
       border: 1px solid silver;
       padding: 15px;
-      margin-bottom: 10px;
       border-radius: 5px;
       background: white;
       width: 100%;
@@ -732,8 +731,26 @@ user-admin-border-size = 2px
     }
 
     .chat-archive-link {
-      margin-top: -10px;
       text-align: right;
+    }
+
+    #whiteboard-buttons button, #whiteboard-form button {
+      padding-top: 0;
+      padding-bottom: 0;
+      margin-bottom: -5px;
+    }
+
+    #whiteboard-buttons, #whiteboard-form {
+      margin-bottom: -12px;
+    }
+
+    .edit-whiteboard {
+      background-color: #f3bd71;
+      border-color: #f90;
+    }
+
+    .edit-whiteboard:hover {
+      background-color: #f90;
     }
 
   }
