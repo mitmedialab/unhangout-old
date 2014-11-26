@@ -60,6 +60,7 @@
     "bluebird"  :  "1.1.1",
     "cheerio"   :  "0.13.1",
     "amdefine"  :  "0.1.0",
+    "mandrill-api": "1.0.41",
     "requirejs-middleware": "git://github.com/yourcelf/requirejs-middleware.git#master"
   },
   "analyze": false,
