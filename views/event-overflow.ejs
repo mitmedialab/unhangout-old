@@ -16,13 +16,17 @@
                 ></iframe>
         </div>
     <% } %>
-    <% if (event.get("description")) { %>
+    <% if (event.get("description") || event.get("whiteboard")) { %>
         <div class='overflow-about'>
             <% if (event.get("description")) { %>
                     <h2>About</h2>
                     <%- event.get("description") %>
             <% } %>
             <div style='clear: both;'></div>
+            <% if (event.get("whiteboard") && event.get("whiteboard").message) { %>
+                <h3>Event welcome message</h3>
+                <div><%- event.get("whiteboard").message %></div>
+            <% } %>
         </div>
     <% } %>
     <div style='clear: both;'></div>

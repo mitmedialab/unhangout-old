@@ -331,7 +331,6 @@ describe('HTTP ADMIN EVENTS API', function() {
             shortName: "my-shortName",
             dateAndTime: "Tuesday, Nov 11, 2014 11:32pm",
             timeZoneValue: "America/Denver",
-            welcomeMessage: "Wilkommen",
             description: "My description",
             overflowMessage: "Oh noes we's overfloes"
         }
@@ -349,7 +348,6 @@ describe('HTTP ADMIN EVENTS API', function() {
                 expect(att.shortName).to.eql("my-shortName");
                 expect(att.dateAndTime).to.eql("2014-11-12T06:32:00+00:00");
                 expect(att.timeZoneValue).to.eql("America/Denver");
-                expect(att.welcomeMessage).to.eql("Wilkommen");
                 expect(att.description).to.eql("My description");
                 expect(att.overflowMessage).to.eql("Oh noes we's overfloes");
                 //
@@ -362,7 +360,6 @@ describe('HTTP ADMIN EVENTS API', function() {
                         organizer: "",
                         shortName: "",
                         dateAndTime: "",
-                        welcomeMessage: "",
                         description: "My description",
                         overflowMessage: ""
                     })
@@ -374,7 +371,6 @@ describe('HTTP ADMIN EVENTS API', function() {
                         expect(att.organizer).to.eql("");
                         expect(att.shortName).to.eql(null);
                         expect(att.dateAndTime).to.eql(null);
-                        expect(att.welcomeMessage).to.eql("");
                         expect(att.description).to.eql("My description");
                         expect(att.overflowMessage).to.eql("");
                         done();
