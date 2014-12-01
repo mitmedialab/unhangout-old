@@ -4,6 +4,8 @@
 <script>
     // Initial data
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
+    var IS_SUPERUSER = <%= event && user.isSuperuser() %>;
+
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
         var SESSION_ATTRS = <%- JSON.stringify(event.get("sessions").invoke("toClientJSON")) %>;
@@ -401,10 +403,14 @@
                     Send Message to Sessions
                 </a>
 
+                {{ if (IS_SUPERUSER) { }}
+
                 <a role="menuitem" id="send-followup-email" href='#' data-toggle="modal">
                     <i class="fa fa-envelope fa-lg fa-fw"></i>
                     Send Followup Email
                 </a>
+
+                {{ } }}
             </li>
         </ul>
     </div>
