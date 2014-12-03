@@ -285,7 +285,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click .add-url-to-message': 'addUrlToSessionMessage',
         'change #session_message': 'updateSessionMessage',
         'keydown #session_message': 'updateSessionMessage',
-        'keyup #session_message': 'updateSessionMessage'
+        'keyup #session_message': 'updateSessionMessage',
+        'click #send-email-button': 'sendFollowupEmail'
+
     },
     addUrlToSessionMessage: function(event) {
         event.preventDefault();
@@ -379,6 +381,18 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         scope.modal('hide');
     },
 
+    sendFollowupEmail: function(jqevt) {
+        jqevt.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: "/followup/"
+        }).fail(function(err) {
+            logger.error(err);
+            alert("Server error!");
+        });
+    },
+
     closeDisconnected: function() {
         $("#disconnected-modal").modal('hide');
     }
@@ -397,7 +411,8 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #close-sessions':'closeSessions',
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
-        'click #admin-start-event': 'startEvent'
+        'click #admin-start-event': 'startEvent',
+        'click #send-followup-email': 'invokeEmailModal'
     },
 
     openSessions: function(jqevt) {
@@ -435,14 +450,18 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     messageSessions: function(jqevt) {
         jqevt.preventDefault();
         $("#message-sessions-modal").modal('show');
+    },
 
+    invokeEmailModal: function(jqevt) {
+        jqevt.preventDefault();
+        $("#send-email-modal").modal('show');
     },
 
     serializeData: function() {
         return {
             event: this.options.event,
         };
-    }
+    },
 });
 
 // The UserColumn is the gutter on the right that shows who's connected to the

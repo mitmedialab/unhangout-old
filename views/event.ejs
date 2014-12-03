@@ -4,6 +4,8 @@
 <script>
     // Initial data
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
+    var IS_SUPERUSER = <%= event && user.isSuperuser() %>;
+
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
         var SESSION_ATTRS = <%- JSON.stringify(event.get("sessions").invoke("toClientJSON")) %>;
@@ -448,6 +450,15 @@
                     <i class="fa fa-share fa-lg fa-fw"></i>
                     Send Message to Sessions
                 </a>
+
+                {{ if (IS_SUPERUSER) { }}
+
+                <a role="menuitem" id="send-followup-email" href='#' data-toggle="modal">
+                    <i class="fa fa-envelope fa-lg fa-fw"></i>
+                    Send Followup Email
+                </a>
+
+                {{ } }}
             </li>
         </ul>
     </div>
@@ -647,6 +658,34 @@
                 <div class="modal-footer">
                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade send-email-modal" id="send-email-modal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Send Followup Email!</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>After you hit the "Send Email" button, we'll send emails to all the partcipants of this event highlighting who did they talked to in a breakout room. Feel free to modify any information before you hit send email button. </p> 
+
+                    <br/>
+
+                    <p>Your email will appear as shown below: </p>
+
+                    <img src="/public/img/dummy_email.png" ></>
+
+                    </textarea>
+                </div>
+
+                <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     <button type="button" id="send-email-button" class="btn btn-primary default" data-dismiss="modal">Send Email</button>
+                </div>
+
             </div>
         </div>
     </div>
