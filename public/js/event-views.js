@@ -386,7 +386,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         $.ajax({
             type: 'POST',
-            url: "/followup/"
+            url: "/followup/event/" + this.options.event.id + "/"
         }).fail(function(err) {
             logger.error(err);
             alert("Server error!");
