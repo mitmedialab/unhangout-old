@@ -182,6 +182,7 @@ $(document).ready(function() {
         logger.log("Initialized app.");
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
+        $("#superuser-page-for-followupemail").attr("href", "/followup/event/" + curEvent.id);
         $(".about-event-container").hide();
 
     }, app);

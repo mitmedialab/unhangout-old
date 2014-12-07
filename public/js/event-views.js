@@ -414,8 +414,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #close-sessions':'closeSessions',
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
-        'click #admin-start-event': 'startEvent',
-        'click #send-followup-email': 'invokeEmailModal'
+        'click #admin-start-event': 'startEvent'
     },
 
     openSessions: function(jqevt) {
@@ -453,11 +452,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     messageSessions: function(jqevt) {
         jqevt.preventDefault();
         $("#message-sessions-modal").modal('show');
-    },
-
-    invokeEmailModal: function(jqevt) {
-        jqevt.preventDefault();
-        $("#send-email-modal").modal('show');
     },
 
     serializeData: function() {
