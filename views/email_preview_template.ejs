@@ -1,0 +1,163 @@
+<% include _header.ejs %>
+
+<div class="container">
+    <div class="col-lg-2"></div>
+
+    <div class="col-lg-8 email-preview-container">
+        
+        <!-- EMAIL PREVIEW TEMPLATE STARTS  -->
+
+        <div class="col-lg-12">
+            <h3 class="email-preview-title">EMail Preview Mode</h3>
+        </div>
+
+        <div class="col-lg-12 email-preview-fields-container">
+
+            <div class="form-group">
+                <label class="control-label col-lg-2" for="email-to">To</label>
+
+                <div class="col-lg-10 email-to">
+                  <label class="control-label field-input" for="email-to">unhangout.developer@gmail.com</label>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-lg-2" for="email-from">From</label>
+
+                <div class="col-lg-10 email-from">
+                   <label class="control-label field-input" for="email-from">srishti.@media.mit.edu</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-lg-2" for="email-sub">Subject</label>
+
+                <div class="col-lg-10 email-sub">
+                   <label class="control-label field-input" for="email-sub">Unhangout: Event Followup</label>
+                </div>
+            </div>
+
+            <table border="0" cellpadding="0" cellspacing="0">
+            <tr>
+
+            <td align="left" valign="top" style="border: 30px solid #f2f2f2" >
+
+            <div style="padding-top: 10px; padding-left: 10px; padding-right: 10px; padding-bottom: 10px;"> 
+
+            <div class="email-header">
+
+                <h1 style="margin: 0px; font-size:24px;"><%= eventTitle %></h1>
+
+                <h2 style="font-size:18px">
+                Dear Learner,
+                <br />
+                </h2>
+
+                <p style="font-size:14px">You recently participated in the <b><%= eventTitle %></b>
+                Unhangout along with 90 other people from all around the world! <br />
+                <br />
+                Say hello to people you interacted with in the event on their favored method of contact.<br />
+                <br />
+                People who you <strong>chatted with</strong> in the <strong>breakout</strong>:<br />
+
+            </div>
+
+            <div class="breakout-info">
+
+                <table border="0" cellpadding="0" cellspacing="0" width="122">
+                    <tr>
+
+                    <% _.each(otherUsers, function(user) { %>
+                    
+                    <td align="left" valign="top" style="border: 1px solid #cfcfcf">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center" valign="top">
+                                        <img align="none" height="122" src='<%= user.get("picture") %>' style="width: 124px; height: 122px; margin: 0px;"/> 
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left" valign="top" style="color: black; background-color: #f2f2f2; font-size:16px; padding-top: 10px; padding-left: 5px; padding-right: 5px; text-align:left;">
+                                        <%= user.get("displayName") %>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td align="left" valign="top" style="color: black; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
+                                        <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; width: 23px; margin: 0px; padding-right: 5px;" width="23" /> 
+
+                                        <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="21" /> 
+
+                                        <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="23" /> 
+                                    </td>
+                                </tr>
+
+                            </table>
+
+                        </td>
+
+                <% }); %>
+
+                    </tr>
+
+                </table>
+            </div>
+
+            <div class="email-footer">
+                We look forward to your participation in our upcoming events!<br />
+                <br />
+                </span></p>
+
+                <em style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">Copyright &copy; 2014 MIT Media Lab, All rights reserved.</em><span style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">&nbsp;</span><br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 10.9090909957886px; line-height: 13.75px;" />
+                <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 10.9090909957886px; line-height: 13.75px;" />
+                <span style="color:rgb(96, 96, 96); font-family:helvetica; font-size:10.9090909957886px; line-height:13.75px">You are receiving this email, because you either signed up or participated in the Media Lab Unhangout events.&nbsp;</span><br style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.7272720336914px; line-height: normal;" />
+                <br style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.7272720336914px; line-height: normal;" />
+                <strong style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">Our mailing address is:</strong><span style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">&nbsp;</span>
+                <div style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.7272720336914px; line-height: normal;">MIT Media Lab
+                <div>
+                <div>77 Mass. Ave.</div>
+
+                <div>E14-445</div>
+                Cambridge,&nbsp;MA&nbsp;<a href="tel:02139-4307" style="color: rgb(17, 85, 204); word-wrap: break-word;" target="_blank" value="+4921394307">02139-4307</a><br />
+                &nbsp;</div>
+                </div>
+                <a class="utilityLink" href="*|UNSUB|*">unsubscribe from this list</a>&nbsp;&nbsp;&nbsp; <a class="utilityLink" href="*|UPDATE_PROFILE|*">update subscription preferences</a>&nbsp;
+
+            </div>
+
+        </div>
+        </td>
+        </tr>
+        </table>
+    </div>
+
+    <!-- EMAIL PREVIEW TEMPLATE ENDS-->
+
+    <div class="col-lg-12 nav-button-row">
+
+        <div class="col-lg-5 col-md-8 col-xs-8 col-sm-8">
+            <button class="btn btn-primary">Send Email to All</button>
+        </div>
+
+        <div class="col-lg-offset-5 col-lg-1 col-md-3 col-xs-4 col-sm-4">
+            <button class="btn btn-default previous">
+            <i class="fa fa-chevron-left"></i>
+            </button>
+        </div>
+
+        <div class="col-lg-1 col-md-3 col-xs-4 col-sm-4">
+            <button class="btn btn-default next">
+            <i class="fa fa-chevron-right"></i>
+            </button>
+        </div>
+        
+    </div>
+
+    </div>
+
+    <div class="col-lg-2"></div>
+</div>
+
+
