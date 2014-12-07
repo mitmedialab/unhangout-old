@@ -138,7 +138,7 @@
     <div class="col-lg-12 nav-button-row">
 
         <div class="col-lg-5 col-md-8 col-xs-8 col-sm-8">
-            <button class="btn btn-primary">Send Email to All</button>
+            <button id="send-email" class="btn btn-primary">Send Email to All</button>
         </div>
 
         <div class="col-lg-offset-5 col-lg-1 col-md-3 col-xs-4 col-sm-4">
@@ -160,4 +160,8 @@
     <div class="col-lg-2"></div>
 </div>
 
+<script>
+    var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+</script>
 
+<%- requireScripts("/public/js/email_preview.js") %>
