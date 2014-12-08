@@ -135,11 +135,10 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
                 expected
             );
         };
-        var fields = ["organizer", "description", "welcomeMessage", "overflowMessage"];
+        var fields = ["organizer", "description", "overflowMessage"];
         checkWarnings({
             organizer: "test",
             description: "test",
-            welcomeMessage: "test",
             overflowMessage: "test"
         }, {});
 
@@ -204,8 +203,7 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
         // Multiple warnings
         var props = {
             "organizer": "<style>body{color:pink}</style>",
-            "description": "<span class='login'>oh my</span>",
-            "welcomeMessage": "<img src='http://i.imgur.com/E4p6tht.jpg'>",
+            "description": "<span class='login'>oh my</span><img src='http://i.imgur.com/E4p6tht.jpg'>",
             "overflowMessage": "<span style='font-family: ugly;'>oy</span>"
         };
         var errors = {
@@ -217,7 +215,7 @@ describe("EMAIL EVENT EDIT NOTIFICATION", function() {
                 change: "changed", tagName: "span", attribName: "class",
                 oldValue: "login", newValue: "userhtml-login"
             }]},
-            "mixed content": {welcomeMessage: [{
+            "mixed content": {description: [{
                 change: "removed", tagName: "img", attribName: "src",
                 oldValue: "http://i.imgur.com/E4p6tht.jpg", newValue: null
             }]},
