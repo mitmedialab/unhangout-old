@@ -177,7 +177,6 @@
         <div class="panel">
             <div class="panel-heading">
                 <div id='chat-whiteboard'></div>
-                <div id='welcome-message'></div>
             </div>
             <div class="panel-body">
                 <div id='chat-messages'></div>
@@ -205,13 +204,11 @@
             </button>
         </div>
         <div id="whiteboard-buttons">
-            <button class='edit-whiteboard btn btn-primary'>Edit Whiteboard</button>
+            <button class='edit-whiteboard btn btn-primary'>
+                <i class = "fa fa-pencil"></i>
+            </button>
         </div>
     {{ } }}
-</script>
-
-<script type="text/template" id="welcome-message-template">
-    {{= welcomeMessage }}
     {{ if (chatArchiveUrl) { }}
         <div class='chat-archive-link'>
             <a href='{{= chatArchiveUrl }}' target='_blank'>Chat Archive</a>

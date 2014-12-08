@@ -887,12 +887,11 @@ user-admin-border-size = 2px
   height: 100%;
 
   #chat-whiteboard{
-    margin:10px 0;
+    border-bottom: 1px solid silver;
 
     #whiteboard-message, #whiteboard-form textarea{
       border: 1px solid silver;
       padding: 15px;
-      margin-bottom: 10px;
       border-radius: 5px;
       background: white;
       width: 100%;
@@ -909,18 +908,34 @@ user-admin-border-size = 2px
 
     #whiteboard-message {
       white-space: pre-wrap;
+      word-wrap: break-word;
     }
 
-  }
+    .chat-archive-link {
+      text-align: right;
+    }
 
-  #welcome-message {
-    border-bottom: 1px solid #aaa;
-    margin-bottom: 10px;
-  }
+    #whiteboard-buttons button, #whiteboard-form button {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
 
-  .chat-archive-link {
-    text-align: right;
-    margin-bottom: 5px;
+    #whiteboard-buttons button {
+      margin-top: 3px;
+    }
+    #whiteboard-buttons, #whiteboard-form {
+      margin-bottom: -12px;
+    }
+
+    .edit-whiteboard {
+      background-color: #f3bd71;
+      border-color: #f90;
+    }
+
+    .edit-whiteboard:hover {
+      background-color: #f90;
+    }
+    
   }
 
   .over-capacity-warning {

@@ -110,11 +110,9 @@ describe("CREATE HOA", function() {
         var embedSrcScript = "return $('.video-player iframe').attr('src');";
         browser.waitWithTimeout(function() {
             return browser.executeScript(embedSrcScript).then(function(src) {
-                return (
-                    src && event.get("hoa") && 
-                    new RegExp("^https?:\/\/www.youtube.com\/embed\/" +
-                               event.get("hoa").get("hangout-broadcast-id")).test(src)
-                );
+                var re = "^https?:\/\/www.youtube.com\/embed\/" +
+                    event.get("hoa").get("hangout-broadcast-id")
+                return src && event.get("hoa") && new RegExp(re).test(src);
             });
         });
         browser.executeScript("return $('.join-hoa').attr('href');").then(function(href) {
@@ -125,16 +123,16 @@ describe("CREATE HOA", function() {
         // not see the "join current hangout" link.
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + event.id);
-        browser.waitForEventReady(event, "regular1");
         browser.byCsss(".join-hoa").then(function(els) {
             expect(els.length).to.be(0);
         });
+        browser.waitForEventReady(event, "regular1");
         browser.waitForSelector("iframe");
         browser.waitWithTimeout(function() {
             return browser.executeScript(embedSrcScript).then(function(src) {
-                return src !== null && src.indexOf(
-                    "http://www.youtube.com/embed/" +
-                    event.get("hoa").get("hangout-broadcast-id")) === 0;
+                var re = "^https?:\/\/www.youtube.com\/embed\/" +
+                    event.get("hoa").get("hangout-broadcast-id")
+                return src && new RegExp(re).test(src);
             });
         }, 60000)
 

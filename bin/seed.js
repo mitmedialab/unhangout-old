@@ -38,7 +38,6 @@ exports.run = function(dbId, redis, callback) {
                     description: "Throughout July, NWP partnered with Connected Learning TV to host a webinar series called Writers at Work: Making and Connected Learning. As a wrap-up to our series we invite you to regroup here to debrief with us, test and tinker with this new unHangout tool, and continue the great conversations that have been started! We will start with a whole group kick-off and then split up into smaller group discussions, based on themes and topics raised by the seminar series. Please be aware that this is a “beta-test webinar” so your adventurous spirit is welcome!",
                     start: new Date().getTime(),
                     end: new Date().getTime()+60*60*2*1000,
-                    welcomeMessage: "Welcome to the Writers at Work session, hosted by the National Writing Project!",
                     admins: [{email: "admin1@example.com"}]
                 }));
 
@@ -82,7 +81,6 @@ exports.run = function(dbId, redis, callback) {
                     description: "Test description",
                     start: new Date().getTime(),
                     end: new Date().getTime() + 60 * 60 * 2 * 1000,
-                    welcomeMessage: "Welcome to test",
                     admins: [{email: "admin2@example.com"}]
                 }))
 

@@ -536,7 +536,6 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
     regions: {
         whiteboard: '#chat-whiteboard',
-        welcome: '#welcome-message',
         chat:'#chat-messages',
         presence: '#presence-gutter',
         chatInput: '#chat-input-region'
@@ -546,11 +545,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
         Backbone.Marionette.View.prototype.initialize.call(this, options);
         this.whiteboardView = new views.WhiteboardView({
             model: this.options.event,
-            transport: this.options.transport
-        });
-        this.welcomeView = new views.WelcomeView({
-            messages: this.options.messages,
-            model: this.options.event
+            transport: this.options.transport,
+            messages: this.options.messages
         });
         this.chatView = new views.ChatView({
             collection: this.options.messages,
@@ -569,7 +565,6 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
     onRender: function() {
         this.whiteboard.show(this.whiteboardView);
-        this.welcome.show(this.welcomeView);
         this.chat.show(this.chatView);
         this.presence.show(this.userListView);
         this.chatInput.show(this.chatInputView);
@@ -648,17 +643,8 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
             }
 
         }
-    }
-});
-
-views.WelcomeView = Backbone.Marionette.ItemView.extend({
-    template: '#welcome-message-template',
-    initialize: function(options) {
-        Backbone.Marionette.ItemView.prototype.initialize.call(this, options);
-        if (options.messages.length === 0) {
-            options.messages.once("add", this.render);
-        }
     },
+
     serializeData: function() {
         var chatArchiveUrl = null;
         if (this.options.messages.length > 0) {
@@ -669,7 +655,6 @@ views.WelcomeView = Backbone.Marionette.ItemView.extend({
         });
     }
 });
-
 
 // The input form for sending chat messages.
 views.ChatInputView = Backbone.Marionette.ItemView.extend({
