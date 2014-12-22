@@ -286,9 +286,11 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'change #session_message': 'updateSessionMessage',
         'keydown #session_message': 'updateSessionMessage',
         'keyup #session_message': 'updateSessionMessage',
-        'click #send-email-button': 'sendFollowupEmail'
+        'click #send-email-button': 'sendFollowupEmail',
+        'click #submit-contact-info': 'submitContactInfo'
 
     },
+
     addUrlToSessionMessage: function(event) {
         event.preventDefault();
         var el = $("#message-sessions-modal textarea");
@@ -329,6 +331,26 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 break;
         }
     },
+
+    submitContactInfo: function(event) {
+        event.preventDefault(); 
+        var scope = $("#my-contact-info-modal");
+        var emailInfo = $("[name=email_info]", scope).val();
+        var twitterHandle = $("[name=twitter_handle]", scope).val();
+        var linkedinURL = $("[name=linkedin_url]", scope).val();
+
+        if(emailInfo == "" && twitterHandle == "" && linkedinURL == "") {
+            $(".empty-contact-info-error", scope).show();
+            scope.modal('show');
+            return;
+        }
+
+        $("input[type=text]", scope).val("");
+        $(".empty-contact-info-error", scope).removeClass(".error");
+        $(".empty-contact-info-error", scope).hide();
+        scope.modal('hide');
+    },
+
     createSession: function(event) {
         event.preventDefault();
         var scope = $("#create-session-modal");

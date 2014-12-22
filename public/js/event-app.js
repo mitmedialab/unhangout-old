@@ -218,10 +218,6 @@ $(document).ready(function() {
 
     app.start();
 
-    $("#my-contact-info").click(function() {
-        $('#my-contact-info-modal').modal('show');
-    });
-
     // Handles clicks on the nav bar links.
     $("#about-nav").click(function(jqevt) {
         jqevt.preventDefault();
