@@ -96,4 +96,67 @@ describe("EVENT HISTORY", function() {
         clock.restore();
     });
 
+    it("Inits history correctly", function() {
+      var event = new models.ServerEvent({
+        history: {
+          sessions: {
+            "oneMember": {
+              "1": {total: 1000, start: null},
+            },
+            "twoMembers": {
+              "1": {total: 1000, start: null},
+              "2": {total: 1000, start: null}
+            },
+            "threeMembers": {
+              "2": {total: 1000, start: null},
+              "3": {total: 2000, start: null},
+              "4": {total: 2000, start: null},
+            },
+            "lonesome": {
+              "5": {total: 1234, start: null}
+            }
+          }
+        }
+      });
+      var history = event.get("history");
+      expect(history.sessions.oneMember["1"].total).to.be(1000);
+      expect(history.sessions.twoMembers["1"].total).to.be(1000);
+      expect(history.sessions.twoMembers["2"].total).to.be(1000);
+      expect(history.sessions.threeMembers["2"].total).to.be(1000);
+      expect(history.sessions.threeMembers["3"].total).to.be(2000);
+      expect(history.sessions.threeMembers["4"].total).to.be(2000);
+      expect(history.sessions.lonesome["5"].total).to.be(1234);
+    });
+
+    it("gets userids sharing sessions with given userid", function() {
+      var event = new models.ServerEvent({
+        history: {
+          sessions: {
+            "oneMember": {
+              "1": {total: 1000, start: null},
+            },
+            "twoMembers": {
+              "1": {total: 1000, start: null},
+              "2": {total: 1000, start: null}
+            },
+            "threeMembers": {
+              "2": {total: 1000, start: null},
+              "3": {total: 2000, start: null},
+              "4": {total: 2000, start: null},
+            },
+            "lonesome": {
+              "5": {total: 1234, start: null}
+            }
+          }
+        }
+    });
+
+    expect(event.getUserIdsSharingSessionsWith("1")).to.eql(["2"]);
+    expect(event.getUserIdsSharingSessionsWith("2")).to.eql(["1", "3", "4"]);
+    expect(event.getUserIdsSharingSessionsWith("3")).to.eql(["2", "4"]);
+    expect(event.getUserIdsSharingSessionsWith("4")).to.eql(["2", "3"]);
+    expect(event.getUserIdsSharingSessionsWith("5")).to.eql([]);
+    expect(event.getUserIdsSharingSessionsWith("4", 1000)).to.eql(["3"]);
+  });
+
 });
