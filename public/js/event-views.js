@@ -334,21 +334,36 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     submitContactInfo: function(event) {
         event.preventDefault(); 
+        var preferredContact = [];
+        var noShareVal = false;
         var scope = $("#my-contact-info-modal");
         var emailInfo = $("[name=email_info]", scope).val();
         var twitterHandle = $("[name=twitter_handle]", scope).val();
         var linkedinURL = $("[name=linkedin_url]", scope).val();
+        var noShareChkBox = $("[name=no-share]", scope).is(':checked');
 
-        if(emailInfo == "" && twitterHandle == "" && linkedinURL == "") {
+        if((emailInfo == "" && twitterHandle == "" && linkedinURL == "") && 
+            noShareChkBox == false) {
             $(".empty-contact-info-error", scope).show();
             scope.modal('show');
             return;
         }
 
+        noShareVal = noShareChkBox;
+        preferredContact.push({type: "email", identifier: emailInfo}, 
+            {type: "twitter", identifier: twitterHandle}, 
+            {type: "linkedin", identifier: linkedinURL});
+
         $("input[type=text]", scope).val("");
         $(".empty-contact-info-error", scope).removeClass(".error");
         $(".empty-contact-info-error", scope).hide();
         scope.modal('hide');
+
+        this.options.transport.send("store-contact", {
+            preferredContact: preferredContact,
+            noShareVal: noShareVal,
+            roomId: this.options.event.getRoomId()
+        });
     },
 
     createSession: function(event) {

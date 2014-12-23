@@ -428,7 +428,8 @@ models.User = Backbone.Model.extend({
             preferredContact: {
                 type: "email", // or "facebook", "email", ...
                 identifier: "" // or "cfd@media.mit.edu", etc.
-            }
+            },
+            noShare: true
         };
     },
 
