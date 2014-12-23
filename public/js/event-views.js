@@ -344,10 +344,21 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var linkedinURL = $("[name=linkedin_url]", scope).val();
         var noShareChkBox = $("[name=no-share]", scope).is(':checked');
 
-        if((emailInfo == "" && twitterHandle == "" && linkedinURL == "") && 
-            noShareChkBox == false) {
+        if((emailInfo === "" && twitterHandle === "" && linkedinURL === "") && 
+            noShareChkBox === false) {
             $(".empty-contact-info-error", scope).show();
             scope.modal('show');
+            return;
+        }
+
+        //Regular expression test for email input
+        var emailRegX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+        var isEmailValid = emailInfo.match(emailRegX);
+        
+        if(isEmailValid === null) {
+            $('#email_info', scope).attr('style', "border-radius: 5px; border:#A94442 1px solid;");
+            scope.modal('show');
+            $(".email-validate-error").show();
             return;
         }
 
@@ -360,6 +371,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $("input[type=text]", scope).val("");
         $(".empty-contact-info-error", scope).removeClass(".error");
         $(".empty-contact-info-error", scope).hide();
+        $(".email-validate-error").hide();
 
         scope.modal('hide');
 
@@ -368,6 +380,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             noShareVal: noShareVal,
             roomId: this.options.event.getRoomId()
         });
+
     },
 
     createSession: function(event) {
@@ -416,6 +429,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             joinCap: joinCap,
             roomId: this.options.event.getRoomId()
         });
+
         $("input[type=text]", scope).val("");
         $(".yt-error, .url-error, .join-cap-error", scope).hide();
         $(".error", scope).removeClass(".error");

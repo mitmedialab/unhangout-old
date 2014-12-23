@@ -468,6 +468,7 @@
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
         $(".empty-contact-info-error").hide();
+        $(".email-validate-error").hide();
 
     </script>
 
@@ -736,10 +737,17 @@
 
                         <div class="form-group">
                             
-                            <div class="col-lg-offset-1 col-lg-10 alert alert-warning alert-dismissible empty-contact-info-error" role="alert">
+                            <div class="col-lg-10 alert alert-danger alert-dismissible empty-contact-info-error" role="alert">
 
                               <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                               Warning! Please enter information for atleast one contact type. If you do not wish to share your info, please select the check box below.
+
+                            </div>
+
+                            <div class="col-lg-9 alert alert-danger alert-dismissible email-validate-error" role="alert">
+
+                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                              Please enter a valid email address. 
 
                             </div>
                         </div>
