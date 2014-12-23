@@ -334,7 +334,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     submitContactInfo: function(event) {
         event.preventDefault(); 
-        var preferredContact = [];
+        
+        var preferredContact = {}; //Making an object for preferred contact 
+
         var noShareVal = false;
         var scope = $("#my-contact-info-modal");
         var emailInfo = $("[name=email_info]", scope).val();
@@ -349,14 +351,16 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             return;
         }
 
-        noShareVal = noShareChkBox;
-        preferredContact.push({type: "email", identifier: emailInfo}, 
-            {type: "twitter", identifier: twitterHandle}, 
-            {type: "linkedin", identifier: linkedinURL});
+        noShareVal = noShareChkBox; 
+
+        preferredContact.emailInfo = emailInfo;
+        preferredContact.twitterHandle = twitterHandle;
+        preferredContact.linkedinURL = linkedinURL;
 
         $("input[type=text]", scope).val("");
         $(".empty-contact-info-error", scope).removeClass(".error");
         $(".empty-contact-info-error", scope).hide();
+
         scope.modal('hide');
 
         this.options.transport.send("store-contact", {
