@@ -344,6 +344,12 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var linkedinURL = $("[name=linkedin_url]", scope).val();
         var noShareChkBox = $("[name=no-share]", scope).is(':checked');
 
+        //Hiding the error classes
+        $(".empty-contact-info-error", scope).removeClass(".error");
+        $(".empty-contact-info-error", scope).hide();
+        $(".email-validate-error").hide();
+        $('#email_info', scope).removeClass('email_info_error');
+
         if((emailInfo === "" && twitterHandle === "" && linkedinURL === "") && 
             noShareChkBox === false) {
             $(".empty-contact-info-error", scope).show();
@@ -356,7 +362,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var isEmailValid = emailInfo.match(emailRegX);
         
         if(isEmailValid === null) {
-            $('#email_info', scope).attr('style', "border-radius: 5px; border:#A94442 1px solid;");
+            $('#email_info', scope).addClass('error');
+            $('#email_info', scope).addClass('email_info_error');
+            //$('#email_info', scope).attr('style', "border-radius: 5px; border:#A94442 1px solid;");
             scope.modal('show');
             $(".email-validate-error").show();
             return;
@@ -369,10 +377,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         preferredContact.linkedinURL = linkedinURL;
 
         $("input[type=text]", scope).val("");
-        $(".empty-contact-info-error", scope).removeClass(".error");
-        $(".empty-contact-info-error", scope).hide();
-        $(".email-validate-error").hide();
-
         scope.modal('hide');
 
         this.options.transport.send("store-contact", {
