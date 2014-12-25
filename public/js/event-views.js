@@ -348,7 +348,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".empty-contact-info-error", scope).removeClass(".error");
         $(".empty-contact-info-error", scope).hide();
         $(".email-validate-error").hide();
-        $('#email_info', scope).removeClass('email_info_error');
+        $(".twitter-validate-error").hide();
+        $('#email_info', scope).removeClass('contact_invalid_error');
 
         if((emailInfo === "" && twitterHandle === "" && linkedinURL === "") && 
             noShareChkBox === false) {
@@ -359,15 +360,32 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         //Regular expression test for email input
         var emailRegX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        var isEmailValid = emailInfo.match(emailRegX);
         
-        if(isEmailValid === null) {
-            $('#email_info', scope).addClass('error');
-            $('#email_info', scope).addClass('email_info_error');
-            //$('#email_info', scope).attr('style', "border-radius: 5px; border:#A94442 1px solid;");
-            scope.modal('show');
-            $(".email-validate-error").show();
-            return;
+        if(emailInfo) {
+
+            var isEmailValid = emailInfo.match(emailRegX);
+        
+            if(isEmailValid === null) {
+                $('#email_info', scope).addClass('contact_invalid_error');
+                scope.modal('show');
+                $(".email-validate-error").show();
+                return;
+            }
+        }
+
+        //Regular expression test for twitter input 
+        var twitterRegex = /^@?(\w+)$/;
+
+        if(twitterHandle) {
+
+            var isTwitterValid = twitterHandle.match(twitterRegex);
+
+            if(isTwitterValid === null) {
+                $('#twitter_handle', scope).addClass('contact_invalid_error');
+                scope.modal('show');
+                $(".twitter-validate-error").show();
+                return;
+            }
         }
 
         noShareVal = noShareChkBox; 
