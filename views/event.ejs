@@ -470,6 +470,7 @@
         $(".empty-contact-info-error").hide();
         $(".email-validate-error").hide();
         $(".twitter-validate-error").hide();
+        $(".linkedin-validate-error").hide();
 
     </script>
 
@@ -731,7 +732,7 @@
                             </div>
 
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" name="linkedin_url" value="" id="linkedin_url" placeholder="URL of LinkedIn profile">
+                                <input class="form-control" type="text" name="linkedin_url" value="" id="linkedin_url" placeholder="LinkedIn Profile URL">
                                 
                             </div>
                         </div>
@@ -756,6 +757,13 @@
 
                               <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                               Please enter a valid twitter handle. 
+
+                            </div>
+
+                            <div class="col-lg-9 alert alert-danger alert-dismissible linkedin-validate-error validate-error" role="alert">
+
+                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                              Please enter valid LinkedIn Profile URL. 
 
                             </div>
                         </div>

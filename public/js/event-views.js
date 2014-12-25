@@ -345,11 +345,15 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var noShareChkBox = $("[name=no-share]", scope).is(':checked');
 
         //Hiding the error classes
-        $(".empty-contact-info-error", scope).removeClass(".error");
         $(".empty-contact-info-error", scope).hide();
+
         $(".email-validate-error").hide();
         $(".twitter-validate-error").hide();
+        $(".linkedin-validate-error").hide();
+
         $('#email_info', scope).removeClass('contact_invalid_error');
+        $('#twitter_handle', scope).removeClass('contact_invalid_error');
+        $('#linkedin_url', scope).removeClass('contact_invalid_error');
 
         if((emailInfo === "" && twitterHandle === "" && linkedinURL === "") && 
             noShareChkBox === false) {
@@ -384,6 +388,21 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 $('#twitter_handle', scope).addClass('contact_invalid_error');
                 scope.modal('show');
                 $(".twitter-validate-error").show();
+                return;
+            }
+        }
+
+        //Regular expression test for linkedin input 
+        var linkedinRegex = /^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/.+/gm;
+
+        if(linkedinURL) {
+
+            var isLinkedinValid = linkedinURL.match(linkedinRegex);
+
+            if(isLinkedinValid === null) {
+                $('#linkedin_url', scope).addClass('contact_invalid_error');
+                scope.modal('show');
+                $(".linkedin-validate-error").show();
                 return;
             }
         }
