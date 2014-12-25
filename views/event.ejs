@@ -704,9 +704,9 @@
                             </div>
 
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" name="email_info" value="" id="email_info" placeholder="<%= user.get("emails")[0].value %>">
+                                <input class="form-control" type="text" name="email_info" value="<%= user.get("preferredContact").emailInfo ? user.get("preferredContact").emailInfo : user.get("emails")[0].value %>" id="email_info" placeholder="<%= user.get("preferredContact").emailInfo ? user.get("preferredContact").emailInfo : user.get("emails")[0].value %>">
                                 
-                            </div>
+                            </div> 
                         </div>
 
                         <div class="form-group">
@@ -718,7 +718,7 @@
                             </div>
 
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" name="twitter_handle" value="" id="twitter_handle" placeholder="@TwitterHandle">
+                                <input class="form-control" type="text" name="twitter_handle" value="<%= user.get("preferredContact").twitterHandle ? user.get("preferredContact").twitterHandle : '' %>" id="twitter_handle" placeholder="@TwitterHandle">
                                 
                             </div>
                         </div>
@@ -732,7 +732,7 @@
                             </div>
 
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" name="linkedin_url" value="" id="linkedin_url" placeholder="LinkedIn Profile URL">
+                                <input class="form-control" type="text" name="linkedin_url" value="<%= user.get("preferredContact").linkedinURL ? user.get("preferredContact").linkedinURL : '' %>" id="linkedin_url" placeholder="LinkedIn Profile URL">
                                 
                             </div>
                         </div>
