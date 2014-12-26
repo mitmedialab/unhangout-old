@@ -773,7 +773,7 @@
 
                                 <div class="checkbox">
                                     <label>
-                                      <input type="checkbox" name="no-share"> I'd not prefer to share my info
+                                      <input type="checkbox" name="no-share" checked="<%= user.get("noShare") ? 'true' : 'false' %>"> I'd not prefer to share my info <%= user.get("noShare") %>
                                     </label>
                                 </div>
 

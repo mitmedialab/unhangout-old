@@ -413,7 +413,11 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         preferredContact.twitterHandle = twitterHandle;
         preferredContact.linkedinURL = linkedinURL;
 
-        $("input[type=text]", scope).val("");
+        $("#email_info", scope).val(emailInfo); 
+        $("#twitter_handle", scope).val(twitterHandle); 
+        $("#linkedin_url", scope).val(linkedinURL);
+        $("input[type=checkbox]", scope).prop("checked", noShareVal);
+        
         scope.modal('hide');
 
         this.options.transport.send("store-contact", {
