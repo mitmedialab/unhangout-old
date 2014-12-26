@@ -672,15 +672,14 @@
             <div class="modal-content">
                 
                 <div class="modal-header">
-                    <h4 class="modal-title">Share your contact information</h4>
+                    <h4 class="modal-title">My contact information</h4>
                 </div>
 
                 <div class="modal-body">
                     
-                    <p><strong>Keep the conversation going, and build up your peer learning network! </strong> <br/><br/>
-                    We'll automatically send you an email with the interesting people you talked with today, and let them know that they talked with you. <br/> <br/>
+                    <p><strong>What is this for? </strong> After the event, we will send you an email with the names and contact information of the people you interacted with (we will send a similar email to each participants). That way you can follow up and continue the conversations you started today. <br/><br/> 
 
-                    We'll never share your contact information with people outside the event.
+                    We care about privacy and will never share your contact information with people outside of the event. <br/>
 
                     </p>
 
@@ -689,7 +688,7 @@
                         
                             <div class="col-lg-12">
                                 <label class="control-label contact-label">
-                                Tell us your preferred method of contact:
+                                What is the best way to get in touch with you?
                                  </label>
                             </div>
 
@@ -773,7 +772,7 @@
 
                                 <div class="checkbox">
                                     <label>
-                                      <input type="checkbox" name="no-share" checked="<%= user.get("noShare") ? 'true' : 'false' %>"> I'd not prefer to share my info <%= user.get("noShare") %>
+                                      <input type="checkbox" name="no-share" checked="<%= user.get("noShare") ? 'true' : 'false' %>"> I'd rather not prefer to share my info <%= user.get("noShare") %>
                                     </label>
                                 </div>
 
