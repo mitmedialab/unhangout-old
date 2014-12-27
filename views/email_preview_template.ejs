@@ -17,7 +17,7 @@
                 <label class="control-label col-lg-2" for="email-to">To</label>
 
                 <div class="col-lg-10 email-to">
-                  <label class="control-label field-input" for="email-to">unhangout.developer@gmail.com</label>
+                  <label class="control-label field-input" for="email-to"> <%= allUserIds[0].user.get("emails")[0].value %> </label>
                 </div>
 
             </div>
@@ -26,7 +26,7 @@
                 <label class="control-label col-lg-2" for="email-from">From</label>
 
                 <div class="col-lg-10 email-from">
-                   <label class="control-label field-input" for="email-from">srishti.@media.mit.edu</label>
+                   <label class="control-label field-input" for="email-from">srishti@media.mit.edu</label>
                 </div>
             </div>
 
@@ -68,29 +68,46 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="122">
                     <tr>
 
-                    <% _.each(otherUsers, function(user) { %>
+                     <% for(var i=0; i < allUserIds[0].users.length; i++) { %>
                     
-                    <td align="left" valign="top" style="border: 1px solid #cfcfcf">
+                        <td align="left" valign="top" style="border: 1px solid #cfcfcf">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td align="center" valign="top">
-                                        <img align="none" height="122" src='<%= user.get("picture") %>' style="width: 124px; height: 122px; margin: 0px;"/> 
+                                        <img align="none" height="122" src='<%= allUserIds[0].users[i].get("picture") %>' style="width: 124px; height: 122px; margin: 0px;"/> 
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td align="left" valign="top" style="color: black; background-color: #f2f2f2; font-size:16px; padding-top: 10px; padding-left: 5px; padding-right: 5px; text-align:left;">
-                                        <%= user.get("displayName") %>
+                                        <%= allUserIds[0].users[i].get("displayName") %>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td align="left" valign="top" style="color: black; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
-                                        <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; width: 23px; margin: 0px; padding-right: 5px;" width="23" /> 
 
-                                        <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="21" /> 
+                                        <% if(allUserIds[0].users[i].get("preferredContact")) {  %>
 
-                                        <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="23" /> 
+                                            <% if(allUserIds[0].users[i].get("preferredContact").twitterHandle) {  %>
+                                                
+                                                <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; width: 23px; margin: 0px; padding-right: 5px;" width="23" /> 
+
+                                            <% } %>
+
+                                            <% if(allUserIds[0].users[i].get("preferredContact").emailInfo) {  %>
+
+                                                <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="21" /> 
+                                            <% } %>
+
+                                            <% if(allUserIds[0].users[i].get("preferredContact").emailInfo) {  %>
+
+                                                <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="23" />
+
+                                            <% } %>
+
+                                       <% } %>
+
                                     </td>
                                 </tr>
 
@@ -98,7 +115,7 @@
 
                         </td>
 
-                <% }); %>
+                 <% } %>
 
                     </tr>
 
