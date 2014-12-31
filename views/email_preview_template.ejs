@@ -93,18 +93,24 @@
 
                                             <% if(allUserIds[0].users[i].get("preferredContact").twitterHandle) {  %>
                                                 
+                                                <a href="http://twitter.com/<%= allUserIds[0].users[i].get("preferredContact").twitterHandle %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; width: 23px; margin: 0px; padding-right: 5px;" width="23" /> 
+                                                </a>
 
                                             <% } %>
 
                                             <% if(allUserIds[0].users[i].get("preferredContact").emailInfo) {  %>
 
+                                                <a href="mailto:<%= allUserIds[0].users[i].get("preferredContact").emailInfo %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="21" /> 
+                                                </a>
                                             <% } %>
 
-                                            <% if(allUserIds[0].users[i].get("preferredContact").emailInfo) {  %>
+                                            <% if(allUserIds[0].users[i].get("preferredContact").linkedinURL) {  %>
 
+                                                <a href="<%= allUserIds[0].users[i].get("preferredContact").linkedinURL %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="23" />
+                                                </a>
 
                                             <% } %>
 
