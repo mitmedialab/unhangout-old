@@ -185,6 +185,18 @@ $(document).ready(function() {
         $("#superuser-page-for-followupemail").attr("href", "/followup/event/" + curEvent.id);
         $(".about-event-container").hide();
 
+        //Hide the error controls 
+        $(".empty-contact-info-error").hide();
+        $(".email-validate-error").hide();
+        $(".twitter-validate-error").hide();
+        $(".linkedin-validate-error").hide();
+
+        //Populating contact fields        
+        $("#email_info").val(emailInfo);
+        $("#twitter_handle").val(twitterHandle);
+        $("#linkedin_url").val(linkedinURL);
+        $("#noShareChkBox").prop("checked", noShare);
+
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {

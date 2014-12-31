@@ -14,6 +14,21 @@
         var RECENT_MESSAGES = <%- JSON.stringify(event.get("recentMessages")) %>;
     <% } %>
 
+    var noShare = <%= user.get("noShare") %>;
+
+    var emailInfo = <%- JSON.stringify(user.get("emails")[0].value) %>;
+    var twitterHandle, linkedinURL; 
+
+    <% if(user.get("preferredContact")) { %>
+
+        emailInfo = <%- JSON.stringify(user.get("preferredContact").emailInfo) %>;
+
+        twitterHandle = <%- JSON.stringify(user.get("preferredContact").twitterHandle) %>;  
+
+        linkedinURL = <%- JSON.stringify(user.get("preferredContact").linkedinURL) %>;
+
+    <% } %>
+
 </script>
 
 <div class="container event-page-container">
@@ -467,10 +482,6 @@
         $(".youtube-url").hide();
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
-        $(".empty-contact-info-error").hide();
-        $(".email-validate-error").hide();
-        $(".twitter-validate-error").hide();
-        $(".linkedin-validate-error").hide();
 
     </script>
 
@@ -698,15 +709,15 @@
                         
                             <div class="col-lg-2">
                                 <label class="col-lg-2 col-md-2 col-sm-2 col-xs-4">
-                                 Email
+                                 Email 
                                 </label>
                             </div>
 
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" name="email_info" value="<%= user.get("preferredContact").emailInfo ? user.get("preferredContact").emailInfo : user.get("emails")[0].value %>" id="email_info" placeholder="<%= user.get("preferredContact").emailInfo ? user.get("preferredContact").emailInfo : user.get("emails")[0].value %>">
-                                
+                                <input class="form-control" type="text" name="email_info" id="email_info" placeholder="Email Address"> 
                             </div> 
                         </div>
+
 
                         <div class="form-group">
                         
@@ -717,7 +728,7 @@
                             </div>
 
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" name="twitter_handle" value="<%= user.get("preferredContact").twitterHandle ? user.get("preferredContact").twitterHandle : '' %>" id="twitter_handle" placeholder="@TwitterHandle">
+                                <input class="form-control" type="text" name="twitter_handle" id="twitter_handle" placeholder="@TwitterHandle">
                                 
                             </div>
                         </div>
@@ -731,7 +742,7 @@
                             </div>
 
                             <div class="col-lg-8">
-                                <input class="form-control" type="text" name="linkedin_url" value="<%= user.get("preferredContact").linkedinURL ? user.get("preferredContact").linkedinURL : '' %>" id="linkedin_url" placeholder="LinkedIn Profile URL">
+                                <input class="form-control" type="text" name="linkedin_url" id="linkedin_url" placeholder="LinkedIn Profile URL">
                                 
                             </div>
                         </div>
@@ -772,7 +783,7 @@
 
                                 <div class="checkbox">
                                     <label>
-                                      <input type="checkbox" name="no-share" checked="<%= user.get("noShare") ? 'true' : 'false' %>"> I'd rather not prefer to share my info <%= user.get("noShare") %>
+                                      <input type="checkbox" name="no-share" id="noShareChkBox"> I'd rather not prefer to share my info 
                                     </label>
                                 </div>
 
