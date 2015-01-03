@@ -170,7 +170,7 @@
         </div>
 
         <div class="col-lg-offset-2 col-lg-3">
-        <p>Showing <%= participantCount %> of <%= allUserIdsCount %> results </p>
+        <p>Showing <%= participantCount %> of <%= allUserIdsCount %>  results </p>
         </div>
 
         <div class="col-lg-offset-2 col-lg-1 col-md-3 col-xs-4 col-sm-4">
@@ -195,7 +195,7 @@
 <script>
     var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
     var participantCount = <%= participantCount %>; 
-    var allUserIdsCount = <%= Object.keys(allUserIds).length %>;
+    var allUserIdsCount = <%= allUserIdsCount %>;
 </script>
 
 <%- requireScripts("/public/js/email_preview.js") %>
