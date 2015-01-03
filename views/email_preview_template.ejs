@@ -72,11 +72,11 @@
                         
                         <% if(allUserIds[participantCount].users[i].get("noShare") == false) { %>
                     
-                        <td align="left" valign="top" style="border: 1px solid #cfcfcf">
+                        <td align="left" valign="top" style="border: 1px solid #cfcfcf; background-color: #f2f2f2;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <td align="center" valign="top">
-                                        <img align="none" height="122" src='<%= allUserIds[participantCount].users[i].get("picture") %>' style="width: 80px; height: 78px; margin: 0px;"/> 
+                                    <td align="center" valign="top" style="background-color: white">
+                                        <img align="none" height="122" src='<%= allUserIds[participantCount].users[i].get("picture") %>' style="width: 86px; height: 84px; margin: 0px;"/> 
                                     </td>
                                 </tr>
 
@@ -91,7 +91,7 @@
 
                                         <% if(allUserIds[participantCount].users[i].get("preferredContact")) {  %>
 
-                                            <% if(allUserIds[0].users[i].get("preferredContact").twitterHandle) {  %>
+                                            <% if(allUserIds[participantCount].users[i].get("preferredContact").twitterHandle) {  %>
                                                 
                                                 <a href="http://twitter.com/<%= allUserIds[participantCount].users[i].get("preferredContact").twitterHandle %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; width: 23px; margin: 0px; padding-right: 5px;" width="23" /> 
@@ -99,14 +99,14 @@
 
                                             <% } %>
 
-                                            <% if(allUserIds[0].users[i].get("preferredContact").emailInfo) {  %>
+                                            <% if(allUserIds[participantCount].users[i].get("preferredContact").emailInfo) {  %>
 
                                                 <a href="mailto:<%= allUserIds[participantCount].users[i].get("preferredContact").emailInfo %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="21" /> 
                                                 </a>
                                             <% } %>
 
-                                            <% if(allUserIds[0].users[i].get("preferredContact").linkedinURL) {  %>
+                                            <% if(allUserIds[participantCount].users[i].get("preferredContact").linkedinURL) {  %>
 
                                                 <a href="<%= allUserIds[participantCount].users[i].get("preferredContact").linkedinURL %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="23" />
