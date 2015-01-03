@@ -19,7 +19,7 @@ require([
 
         $(".previous").click(function() {
 
-            if(participantCount <= 0) {
+            if(participantCount <= 1) {
                 participantCount = 0;
                 return; 
             }
@@ -33,7 +33,7 @@ require([
 
         $(".next").click(function() {
             
-            if(participantCount >= allUserIdsCount - 1) {
+            if(participantCount >= allUserIdsCount) {
                 participantCount = allUserIdsCount; 
                 return;
             }
