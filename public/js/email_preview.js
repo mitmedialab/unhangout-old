@@ -4,6 +4,7 @@ require([
 
     var curEvent = new models.ClientEvent(EVENT_ATTRS);
     var eventTitle = curEvent.get("title");
+    var eventID = curEvent.id; 
 
     $(document).ready(function() { 
         $("#send-email").click(function() {
@@ -14,6 +15,35 @@ require([
             }).fail(function(err) {
                 console.log(err);
             });
+        });
+
+        $(".previous").click(function() {
+
+            if(participantCount <= 0) {
+                participantCount = 0;
+                return; 
+            }
+
+            participantCount = participantCount - 1;
+
+            window.location.reload();
+            window.location.href = "/followup/event/" + eventID + 
+                "/participant_" + participantCount; 
+        });
+
+        $(".next").click(function() {
+            
+            if(participantCount >= allUserIdsCount - 1) {
+                participantCount = allUserIdsCount; 
+                return;
+            }
+
+            participantCount = participantCount + 1;
+
+            window.location.reload();
+            window.location.href = "/followup/event/" + eventID + 
+                "/participant_" + participantCount; 
+            
         });
     });
 

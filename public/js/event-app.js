@@ -182,7 +182,12 @@ $(document).ready(function() {
         logger.log("Initialized app.");
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
-        $("#superuser-page-for-followupemail").attr("href", "/followup/event/" + curEvent.id);
+        
+        var participantCount = 0; 
+
+        $("#superuser-page-for-followupemail").attr("href", "/followup/event/" 
+            + curEvent.id + "/participant_" + participantCount);
+        
         $(".about-event-container").hide();
 
         //Hide the error controls 
