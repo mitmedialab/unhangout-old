@@ -167,7 +167,7 @@
     <div class="col-lg-12 nav-button-row">
 
         <div class="col-lg-3 col-md-8 col-xs-8 col-sm-8">
-            <button id="send-email" class="btn btn-primary">Send Email to All</button>
+            <button id="send-email-to-all" class="btn btn-primary">Send Email to All</button>
         </div>
 
         <div class="col-lg-offset-2 col-lg-3">
@@ -191,6 +191,29 @@
     </div>
 
     <div class="col-lg-2"></div>
+
+</div>
+
+<div class="modal fade send-email-dialog" id="send-email-dialog" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Prepare for launch</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>You are about to send a campaign to participants of <b><%= eventTitle %></b></p> 
+                <p> Total <b><%= allUserIdsCount %> participants</b>.</p> 
+                
+            </div>
+
+            <div class="modal-footer">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+
+                 <button id="send-now-button" type="button" class="btn btn-primary" data-dismiss="modal">Send Now</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>

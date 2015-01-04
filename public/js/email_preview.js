@@ -7,7 +7,11 @@ require([
     var eventID = curEvent.id; 
 
     $(document).ready(function() { 
-        $("#send-email").click(function() {
+        $("#send-email-to-all").click(function() {
+            $("#send-email-dialog").modal('show');
+        });
+
+        $("#send-now-button").click(function() {
             $.ajax({
                 type: 'POST',
                 url: "/followup/event/" + curEvent.id + "/sent/",
