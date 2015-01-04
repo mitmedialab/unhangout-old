@@ -190,6 +190,12 @@ $(document).ready(function() {
         
         $(".about-event-container").hide();
 
+        //Show contact form on event page if either 
+        //preferred contact is null or noShare is false 
+        if(preferredContact == false && noShare == false) {
+            $("#my-contact-info-modal").modal('show');
+        }
+
         //Hide the error controls 
         $(".empty-contact-info-error").hide();
         $(".email-validate-error").hide();

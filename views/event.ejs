@@ -14,13 +14,14 @@
         var RECENT_MESSAGES = <%- JSON.stringify(event.get("recentMessages")) %>;
     <% } %>
 
+    var preferredContact = false;
     var noShare = <%= user.get("noShare") %>;
 
     var emailInfo = <%- JSON.stringify(user.get("emails")[0].value) %>;
     var twitterHandle, linkedinURL; 
 
     <% if(user.get("preferredContact")) { %>
-
+        preferredContact = true; 
         emailInfo = <%- JSON.stringify(user.get("preferredContact").emailInfo) %>;
 
         twitterHandle = <%- JSON.stringify(user.get("preferredContact").twitterHandle) %>;  
@@ -676,7 +677,8 @@
         </div>
     </div>
 
-    <div class="modal my-contact-info-modal" id="my-contact-info-modal" role="dialog" aria-hidden="true">
+    <!-- My Contact Form dialog is here. Setting its data backdrop property is static disallowing it to close by itself -->
+    <div class="modal my-contact-info-modal" id="my-contact-info-modal" role="dialog" aria-hidden="true" data-backdrop="static">
 
         <div class="modal-dialog">
             
@@ -795,9 +797,6 @@
                 </div> 
 
                 <div class="modal-footer">
-
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-
                     <button id="submit-contact-info" type="button" class="btn btn-primary submit-contact-form" data-dismiss="modal">Submit</button>
                 </div>
 
