@@ -55,7 +55,12 @@
                 </h2>
 
                 <p style="font-size:14px">You recently participated in the <b><%= eventTitle %></b>
-                Unhangout along with 90 other people from all around the world! 
+                Unhangout along with other people from all around the world! 
+
+                <% if(allUserIds[participantCount].users.length > 0) { %>  
+                    <br/><br/>
+                    Say hello to people you interacted with in the event on their favored method of contact. People who you <strong>chatted with</strong> in the <strong>breakout</strong>:<br />
+                <% } %>
 
             </div>
 
@@ -65,15 +70,6 @@
                     <tr>
 
                      <% for(var i=0; i < allUserIds[participantCount].users.length; i++) { %>
-
-                        <% if(allUserIds[participantCount].users[i].length > 0) { %>
-                            <br /> <br />
-                            Say hello to people you interacted with in the event on their favored method of contact.<br />
-                            <br />
-
-                            People who you <strong>chatted with</strong> in the <strong>breakout</strong>:<br />
-                        <% } %>
-
                         
                         <% if(allUserIds[participantCount].users[i].get("noShare") == false) { %>
                     
