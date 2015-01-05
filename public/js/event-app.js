@@ -192,7 +192,8 @@ $(document).ready(function() {
 
         //Show contact form on event page if either 
         //preferred contact is null or noShare is false 
-        if(preferredContact == false && noShare == false) {
+
+        if(preferredContact == false && (noShare == false || noShare == undefined)) {
             $("#my-contact-info-modal").modal('show');
         }
 

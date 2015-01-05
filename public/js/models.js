@@ -426,7 +426,7 @@ models.User = Backbone.Model.extend({
             link: null,
             emails: [],
             preferredContact: [],
-            noShare: "",
+            noShare: false,
             userCount: 0, 
         };
     },

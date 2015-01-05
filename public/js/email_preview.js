@@ -12,12 +12,16 @@ require([
         });
 
         $("#send-now-button").click(function() {
+            $("#send-email-dialog").modal('show');
+            
             $.ajax({
                 type: 'POST',
                 url: "/followup/event/" + curEvent.id + "/sent/",
                 data: {eventTitle: eventTitle }
             }).fail(function(err) {
                 console.log(err);
+            }).success(function() {
+                console.log("emails successfully sent");
             });
         });
 
