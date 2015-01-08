@@ -121,10 +121,12 @@
 
 <script type="text/template" id="session-participant-proposed-template">
     <div id="propose-session" class="col-lg-12 propose-session">
-        <button class="btn btn-primary">
-            <i class="fa fa-plus"></i>
-            Propose a Session
-        </button>
+        <a href="#propose-session-modal" data-toggle="modal"> 
+            <button class="btn btn-primary" id="btn-propose-session">
+                <i class="fa fa-plus"></i>
+                Propose a Session
+            </button>
+        </a>
     </div>
     <div style='clear: both;'></div>
 </script>
@@ -655,6 +657,47 @@
 
                 <div class="modal-body">
                     <p>An unexpected error has occured. You have been disconnected from the server. Please refresh the page to reconnect.</p>
+                </div>
+
+                <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade propose-session-modal" id="propose-session-modal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Propose a Session</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="session-preview">
+                        <div class="propose-session-template">
+                            <div class="col-lg-12">
+                                <div class="col-lg-1">
+                                    <img src="<%= user.get("picture")%>">
+                                </div>
+
+                                 <div class="col-lg-11">
+                                    <div>
+                                        <p class="participantName col-lg-3"><b><%= user.get("displayName")%>: </b>
+                                        </p>
+                                        <p class="col-lg-9">Session title will go here...</p> 
+                                    </div>
+
+                                    <div>
+                                    Here is the session about!!
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <p>.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="modal-footer">

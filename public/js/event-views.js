@@ -210,7 +210,6 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemViewContainer: '#session-list-container',
     participantProposedSession: _.template($("#session-participant-proposed-template").html()),
 
-
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
@@ -224,7 +223,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemViewOptions: function() {
         return {event: this.options.event, transport: this.options.transport};
     }, 
-
+    
     renderControls: function() {
         this.$el.html( this.participantProposedSession());
     }
@@ -298,8 +297,10 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click .add-url-to-message': 'addUrlToSessionMessage',
         'change #session_message': 'updateSessionMessage',
         'keydown #session_message': 'updateSessionMessage',
-        'keyup #session_message': 'updateSessionMessage'
+        'keyup #session_message': 'updateSessionMessage',
+        'click #btn-propose-session': 'proposeSessionDialog'
     },
+
     addUrlToSessionMessage: function(event) {
         event.preventDefault();
         var el = $("#message-sessions-modal textarea");
@@ -312,6 +313,12 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             _.escape(formatSessionMessage($("#session_message").val()))
         );
     },
+
+    proposeSessionDialog: function() {
+        alert("hellp");
+        $("#propose-session-dialog").modal('show');
+    },
+
     sendSessionMessage: function(event) {
         event.preventDefault();
         var val = $("#session_message").val();
