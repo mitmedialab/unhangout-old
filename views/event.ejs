@@ -473,6 +473,13 @@
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
 
+        $('#username').editable({
+            type: 'text',
+            pk: 1,
+            url: '/post',
+            title: 'Enter username'
+        });
+
     </script>
 
 </script>
@@ -686,6 +693,8 @@
                                         <p class="participantName col-lg-3"><b><%= user.get("displayName")%>: </b>
                                         </p>
                                         <p class="col-lg-9">Session title will go here...</p> 
+
+                                        <a href="#" id="username" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">superuser</a>
                                     </div>
 
                                     <div>
