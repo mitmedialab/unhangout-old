@@ -62,6 +62,7 @@
 </script>
 
 <script type="text/template" id="session-template">
+
     <div class="col-lg-12 col-xs-12 session-area">
         <h3 class="col-lg-8 col-xs-8">{{- title }}</h3>
         
@@ -96,6 +97,9 @@
 
 <script type="text/template" id="session-list-template">
     <div id="session-list-container" class="full-size-container">
+        <!-- This should only appear if the mode is admin proposing session mode --> 
+        <div class="empty-notice">Sessions will appear here when they are created by an admin.</div>
+
         <div class="credits">
             Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
         </div>
@@ -105,10 +109,22 @@
 
 <script type="text/template" id="session-list-empty-template">
     <div id="session-list-container" class="full-size-container">
+        <!-- This should only appear if the mode is admin proposing session mode --> 
         <div class="empty-notice">Sessions will appear here when they are created by an admin.</div>
+        
         <div class="credits">
             Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
         </div>
+    </div>
+    <div style='clear: both;'></div>
+</script>
+
+<script type="text/template" id="session-participant-proposed-template">
+    <div id="propose-session" class="col-lg-12 propose-session">
+        <button class="btn btn-primary">
+            <i class="fa fa-plus"></i>
+            Propose a Session
+        </button>
     </div>
     <div style='clear: both;'></div>
 </script>

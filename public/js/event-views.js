@@ -30,6 +30,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     template: '#session-template',
     className: 'session',
     firstUserView: null,
+
     ui: {
         attend: '.attend',
         start:'.start',
@@ -207,13 +208,25 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     template: "#session-list-template",
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
+    participantProposedSession: _.template($("#session-participant-proposed-template").html()),
+
+
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
+      
     id: "session-list",
+
+    initialize: function() {
+        this.renderControls();
+    },
 
     itemViewOptions: function() {
         return {event: this.options.event, transport: this.options.transport};
+    }, 
+
+    renderControls: function() {
+        this.$el.html( this.participantProposedSession());
     }
 });
 
