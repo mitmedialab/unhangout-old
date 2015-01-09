@@ -213,7 +213,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
-      
+
     id: "session-list",
 
     initialize: function() {
@@ -226,9 +226,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     }, 
     
     renderControls: function() {
-        if (!IS_ADMIN_SESSIONS_ONLY) {
-            this.$el.html(this.participantProposedSession());
-        }
+        this.$el.html(this.participantProposedSession());
     }
 });
 
@@ -301,7 +299,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'change #session_message': 'updateSessionMessage',
         'keydown #session_message': 'updateSessionMessage',
         'keyup #session_message': 'updateSessionMessage',
-        'click #btn-propose-session': 'proposeSessionDialog'
+        'click #btn-propose-session': 'proposeSessionDialog',
+        'click #propose': 'proposeSession' 
     },
 
     addUrlToSessionMessage: function(event) {
@@ -317,8 +316,23 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         );
     },
 
+    proposeSession: function(event) {
+        event.preventDefault();
+        var scope = $("#propose-session-modal");
+
+        var title = $("#participantName").text();
+
+        if(title.length > 20) {
+            return;
+        }
+
+    },
+
+    closeDisconnected: function() {
+        $("#disconnected-modal").modal('hide');
+    },
+
     proposeSessionDialog: function() {
-        alert("hellp");
         $("#propose-session-dialog").modal('show');
     },
 
