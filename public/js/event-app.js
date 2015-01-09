@@ -9,9 +9,9 @@
 
 require([
     "jquery", "underscore", "backbone", "logger", "client-models",
-    "event-views", "auth", "transport",
+    "event-views", "auth", "transport", 
     // plugins
-    "bootstrap", "backbone.marionette", "underscore-template-config"
+    "bootstrap", "bootstrap-editable", "backbone.marionette", "underscore-template-config"
 ], function($, _, Backbone, logging, models, eventViews, auth, transport) {
 
 var curEvent, messages;
@@ -183,6 +183,11 @@ $(document).ready(function() {
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
+
+        //In place bootstrap editor 
+        $.fn.editable.defaults.mode = 'inline';
+        $('#participantName').editable();
+        $('#sessionTitle').editable();
 
     }, app);
 

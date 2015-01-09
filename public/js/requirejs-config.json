@@ -14,6 +14,7 @@
         "backbone.marionette": "../vendor/backbone.marionette",
         "bootstrap": "../vendor/bootstrap-3.2.0-dist/js/bootstrap.min",
         "bootstrap-datetimepicker": "../vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min",
+        "bootstrap-editable": "../vendor/bootstrap-editable/bootstrap-editable.min",
         "moment": "../vendor/moment.min",
         "moment-timezone": "../vendor/moment-timezone.min",
         "moment-timezone-data": "../vendor/timezone-data",
@@ -30,6 +31,7 @@
         "backbone.marionette": { "deps": ["backbone"], "exports": "Backbone.Marionette" },
         "bootstrap": { "deps": ["jquery"], "exports": "jQuery.fn.tooltip" },
         "bootstrap-datetimepicker": { "deps": ["bootstrap"], "exports": "jQuery.fn.datetimepicker" },
+        "bootstrap-editable": {"deps":["bootstrap"], "exports":"jQuery.fn.editable"},
         "jstz": { "exports": "jstz" },
         "sockjs": { "exports": "sockjs" }
     },

@@ -62,6 +62,7 @@
 </script>
 
 <script type="text/template" id="session-template">
+
     <div class="col-lg-12 col-xs-12 session-area">
         <h3 class="col-lg-8 col-xs-8">{{- title }}</h3>
         
@@ -96,6 +97,9 @@
 
 <script type="text/template" id="session-list-template">
     <div id="session-list-container" class="full-size-container">
+        <!-- This should only appear if the mode is admin proposing session mode --> 
+        <div class="empty-notice">Sessions will appear here when they are created by an admin.</div>
+
         <div class="credits">
             Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
         </div>
@@ -105,10 +109,24 @@
 
 <script type="text/template" id="session-list-empty-template">
     <div id="session-list-container" class="full-size-container">
+        <!-- This should only appear if the mode is admin proposing session mode --> 
         <div class="empty-notice">Sessions will appear here when they are created by an admin.</div>
+        
         <div class="credits">
             Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
         </div>
+    </div>
+    <div style='clear: both;'></div>
+</script>
+
+<script type="text/template" id="session-participant-proposed-template">
+    <div id="propose-session" class="col-lg-12 propose-session">
+        <a href="#propose-session-modal" data-toggle="modal"> 
+            <button class="btn btn-primary" id="btn-propose-session">
+                <i class="fa fa-plus"></i>
+                Propose a Session
+            </button>
+        </a>
     </div>
     <div style='clear: both;'></div>
 </script>
@@ -657,7 +675,64 @@
             </div>
         </div>
     </div>
-            
+
+    <div class="modal fade propose-session-modal" id="propose-session-modal" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Propose a Session</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="session-preview">
+                        <div class="propose-session-template">
+                            <div class="col-lg-12 proposed-session-box">
+                                <div class="col-lg-1 participant-img-row">
+                                    <img src="<%= user.get("picture")%>">
+                                </div>
+
+                                 <div class="col-lg-11 participant-topic-row">
+                                        <a class="participantName" href="#" id="participantName" data-type="text" data-pk="1">
+                                        <%= user.get("displayName")%></a> 
+
+                                        &nbsp; &nbsp; 
+
+                                        <a style="color: black; border-bottom: dashed 1px black;" href="#" id="sessionTitle" data-type="textarea" data-pk="1" data-placeholder="Your comments here..." data-title="Enter comments" class="editable editable-pre-wrapped editable-click" style="display: inline;">Enter your session title here</a>
+                                  
+                                    <div>
+                                    
+                                </div>
+
+                            </div>
+
+                            <div class="col-lg-12 timestamp-vote-row">
+                                <div class="col-lg-offset-6 col-lg-4 timestamp">
+                                    <%= moment.tz().format('h:mm a, Do MMM') %>
+                                </div>
+
+                                <div class="col-lg-2">
+
+                                    <div class="btn btn-primary btn-vote">
+                                        <p class="vote-number"> 4 </p>
+                                        <hr>
+                                        <p class="vote-label"> VOTE </p>
+                                    </div>
+                                   
+
+                                </div>
+                            </div>
+
+                        </div>  
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+
     <div id="no-urls-warning" class="modal hide fade">
         <div class="modal-header"><h3>NO HANGOUT URLS AVAILABLE</h3></div>
         <div class="modal-body">
