@@ -218,6 +218,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     initialize: function() {
         this.renderControls();
+        this.listenTo(this.options.event, 'change:adminSessionsOnly', this.renderControls, this);
     },
 
     itemViewOptions: function() {
@@ -225,7 +226,9 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     }, 
     
     renderControls: function() {
-        this.$el.html( this.participantProposedSession());
+        if (!IS_ADMIN_SESSIONS_ONLY) {
+            this.$el.html(this.participantProposedSession());
+        }
     }
 });
 
