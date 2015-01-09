@@ -184,6 +184,10 @@ $(document).ready(function() {
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
 
+        //In place bootstrap editor 
+        $.fn.editable.defaults.mode = 'inline';
+        $('#participantName').editable();
+        $('#sessionTitle').editable();
 
     }, app);
 

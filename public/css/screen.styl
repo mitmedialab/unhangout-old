@@ -1563,6 +1563,10 @@ user-admin-border-size = 2px
 
 #propose-session-modal {
 
+  .modal-dialog {
+    width: 40%;
+  }
+
   .session-preview {
     border-radius: 5px;
     border: 2px dashed #dfdfdf;
@@ -1578,27 +1582,24 @@ user-admin-border-size = 2px
     border: 1px solid #dfdfdf;
   }
 
-  .col-lg-12 {
+  .proposed-session-box {
     padding: 0px;
   }
 
-  .col-lg-1 {
+  .participant-img-row {
     padding: 0px;
   }
 
-  .col-lg-11 {
-    padding-left: 20px;
-
-    .col-lg-3 {
-      padding: 0px;
-    }
-
-    .col-lg-9 {
-      padding: 0px;
-    }
+  .participant-topic-row {
+    padding-left: 30px;
 
     .participantName {
       color: $navbar;
+      font-weight: bold;
+    }
+
+    .sessionTitle {
+      color: black;
     }
   }
 

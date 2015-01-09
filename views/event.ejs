@@ -473,13 +473,6 @@
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
 
-        $('#username').editable({
-            type: 'text',
-            pk: 1,
-            url: '/post',
-            title: 'Enter username'
-        });
-
     </script>
 
 </script>
@@ -683,22 +676,21 @@
                 <div class="modal-body">
                     <div class="session-preview">
                         <div class="propose-session-template">
-                            <div class="col-lg-12">
-                                <div class="col-lg-1">
+                            <div class="col-lg-12 proposed-session-box">
+                                <div class="col-lg-1 participant-img-row">
                                     <img src="<%= user.get("picture")%>">
                                 </div>
 
-                                 <div class="col-lg-11">
-                                    <div>
-                                        <p class="participantName col-lg-3"><b><%= user.get("displayName")%>: </b>
-                                        </p>
-                                        <p class="col-lg-9">Session title will go here...</p> 
+                                 <div class="col-lg-11 participant-topic-row">
+                                        <a class="participantName" href="#" id="participantName" data-type="text" data-pk="1">
+                                        <%= user.get("displayName")%></a> 
 
-                                        <a href="#" id="username" data-type="text" data-pk="1" data-url="/post" data-title="Enter username">superuser</a>
-                                    </div>
+                                        &nbsp; &nbsp; 
 
+                                        <a style="color: black; border-bottom: dashed 1px black;" href="#" id="sessionTitle" data-type="textarea" data-pk="1" data-placeholder="Your comments here..." data-title="Enter comments" class="editable editable-pre-wrapped editable-click" style="display: inline;">Enter your session title here</a>
+                                  
                                     <div>
-                                    Here is the session about!!
+                                    
                                     </div>
                                 </div>
 
