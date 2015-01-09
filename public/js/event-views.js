@@ -397,7 +397,8 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #close-sessions':'closeSessions',
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
-        'click #admin-start-event': 'startEvent'
+        'click #admin-start-event': 'startEvent',
+        'click #toggle-sessions-mode': 'toggleSessionsMode'
     },
 
     openSessions: function(jqevt) {
@@ -430,6 +431,19 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
             logger.error(err);
             alert("Server error!");
         });
+    },
+
+    toggleSessionsMode: function(jqevt) {
+        jqevt.preventDefault();
+        this.options.transport.send("toggle-sessions-mode", {
+            roomId: this.options.event.getRoomId(),
+            newMode: !(this.options.event.get("adminSessionsOnly"))
+        });
+        // console.log(this.options.event.get("adminSessionsOnly"));
+        // var prevMode = this.options.event.get("adminSessionsOnly");
+        // this.options.event.set("adminSessionsOnly", !prevMode);
+        // console.log(this.options.event.get("adminSessionsOnly"));
+        // this.options.event.s
     },
 
     messageSessions: function(jqevt) {
