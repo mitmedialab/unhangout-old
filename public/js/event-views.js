@@ -459,11 +459,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
             roomId: this.options.event.getRoomId(),
             newMode: !(this.options.event.get("adminSessionsOnly"))
         });
-        // console.log(this.options.event.get("adminSessionsOnly"));
-        // var prevMode = this.options.event.get("adminSessionsOnly");
-        // this.options.event.set("adminSessionsOnly", !prevMode);
-        // console.log(this.options.event.get("adminSessionsOnly"));
-        // this.options.event.s
     },
 
     messageSessions: function(jqevt) {

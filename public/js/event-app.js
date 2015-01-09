@@ -157,7 +157,7 @@ $(document).ready(function() {
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, transport: trans
             });
-            curEvent.on("change:sessionsOpen change:open", _.bind(function() {
+            curEvent.on("change:adminSessionsOnly change:sessionsOpen change:open", _.bind(function() {
                 this.adminButtonView.render();
             }, this));
             this.admin.show(this.adminButtonView);

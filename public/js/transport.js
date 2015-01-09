@@ -24,7 +24,6 @@ var Transport = function(roomId) {
     }, this);
 
     this.sock.onmessage = _.bind(function(message) {
-        console.log("hsdaf");
         var msg = JSON.parse(message.data);
         logger.debug(msg.timestamp, msg.type, msg.args);
         if (msg.timestamp) {
@@ -269,9 +268,6 @@ _.extend(Transport.prototype, Backbone.Events, {
 
     },
     send: function(type, args) {
-        console.log("???");
-        console.log(type);
-        console.log(args);
         this.sock.send(JSON.stringify({type: type, args: args}));
     }
 });
