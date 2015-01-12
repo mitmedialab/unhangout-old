@@ -27,30 +27,30 @@ require([
 
         $(".previous").click(function() {
 
-            if(participantCount <= 1) {
-                participantCount = 0;
+            if(participantIndex <= 1) {
+                participantIndex = 0;
                 return; 
             }
 
-            participantCount = participantCount - 1;
+            participantIndex = participantIndex - 1;
 
             window.location.reload();
             window.location.href = "/followup/event/" + eventID + 
-                "/participant_" + participantCount; 
+                "/participant_" + participantIndex; 
         });
 
         $(".next").click(function() {
             
-            if(participantCount >= allUserIdsCount) {
-                participantCount = allUserIdsCount; 
+            if(participantIndex >= allUserIdsCount) {
+                participantIndex = allUserIdsCount; 
                 return;
             }
 
-            participantCount = participantCount + 1;
+            participantIndex = participantIndex + 1;
 
             window.location.reload();
             window.location.href = "/followup/event/" + eventID + 
-                "/participant_" + participantCount; 
+                "/participant_" + participantIndex; 
             
         });
     });

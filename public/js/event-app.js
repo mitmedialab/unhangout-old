@@ -183,10 +183,10 @@ $(document).ready(function() {
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         
-        var participantCount = 1; 
+        var participantIndex = 1; 
 
         $("#superuser-page-for-followupemail").attr("href", "/followup/event/" 
-            + curEvent.id + "/participant_" + participantCount);
+            + curEvent.id + "/participant_" + participantIndex);
         
         $(".about-event-container").hide();
 
