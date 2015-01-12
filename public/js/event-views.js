@@ -318,11 +318,18 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     proposeSession: function(event) {
         event.preventDefault();
+        
         var scope = $("#propose-session-modal");
 
-        var title = $("#participantName").text();
+        $(".proposed-title-validate-error").hide();
+        $(".propose-session-template").css("min-height", "115px");
 
-        if(title.length > 20) {
+        var participantName = $("#participantName").text();
+
+        if(participantName.length > 20) {
+            $(".proposed-title-validate-error").show();
+            $(".propose-session-template").css("min-height", "145px");
+            scope.modal('show');
             return;
         }
 

@@ -184,6 +184,12 @@ $(document).ready(function() {
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
 
+        //For testing invoking the dialog before 
+        $("#propose-session-modal").modal('show');
+        $("#propose-session-template").css("min-height", "200px");
+
+        $(".proposed-title-validate-error").hide();
+
         //In place bootstrap editor 
         $.fn.editable.defaults.mode = 'inline';
         $('#participantName').editable();
