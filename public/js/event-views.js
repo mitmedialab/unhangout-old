@@ -351,9 +351,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".twitter-validate-error").hide();
         $(".linkedin-validate-error").hide();
 
-        $('#email_info', scope).removeClass('contact_invalid_error');
-        $('#twitter_handle', scope).removeClass('contact_invalid_error');
-        $('#linkedin_url', scope).removeClass('contact_invalid_error');
+        $('#email_info', scope).removeClass('contact-invalid-error');
+        $('#twitter_handle', scope).removeClass('contact-invalid-error');
+        $('#linkedin_url', scope).removeClass('contact-invalid-error');
 
         if((emailInfo === "" && twitterHandle === "" && linkedinURL === "") && 
             noShareChkBox === false) {
@@ -370,7 +370,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             var isEmailValid = emailInfo.match(emailRegX);
         
             if(isEmailValid === null) {
-                $('#email_info', scope).addClass('contact_invalid_error');
+                $('#email_info', scope).addClass('contact-invalid-error');
                 scope.modal('show');
                 $(".email-validate-error").show();
                 return;
@@ -385,7 +385,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             var isTwitterValid = twitterHandle.match(twitterRegex);
 
             if(isTwitterValid === null) {
-                $('#twitter_handle', scope).addClass('contact_invalid_error');
+                $('#twitter_handle', scope).addClass('contact-invalid-error');
                 scope.modal('show');
                 $(".twitter-validate-error").show();
                 return;
@@ -400,7 +400,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             var isLinkedinValid = linkedinURL.match(linkedinRegex);
 
             if(isLinkedinValid === null) {
-                $('#linkedin_url', scope).addClass('contact_invalid_error');
+                $('#linkedin_url', scope).addClass('contact-invalid-error');
                 scope.modal('show');
                 $(".linkedin-validate-error").show();
                 return;
