@@ -61,10 +61,17 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
     onRender: function() {
         var start = new Date().getTime();
+
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
-        this.$el.addClass("live");
+        this.$el.removeClass("live");
+        this.$el.removeClass("hide");
+        if (this.model.get("approved")) {
+            this.$el.addClass("live");
+        } else {
+            this.$el.addClass("hide");
+        }
 
         // remove the toggle-ness of the button once the event starts.
         this.ui.attend.attr("data-toggle", "");
@@ -369,7 +376,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             title: title,
             description:"",
             activities: activities,
-            roomId: this.options.event.getRoomId()
+            roomId: this.options.event.getRoomId(),
+            approved: false,
         });
     },
 
@@ -453,7 +461,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             description:"",
             activities: activities,
             joinCap: joinCap,
-            roomId: this.options.event.getRoomId()
+            roomId: this.options.event.getRoomId(),
+            approved: true,
         });
         $("input[type=text]", scope).val("");
         $(".yt-error, .url-error, .join-cap-error", scope).hide();
