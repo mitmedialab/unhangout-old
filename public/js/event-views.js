@@ -198,6 +198,34 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.options.transport.send("delete-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
+    },
+
+    vote: function() {
+        this.options.transport.send("vote-session", {
+            roomId: this.options.event.getRoomId(),
+            votes: this.options.event.get("votes")
+        });
+    },
+
+    unvote: function() {
+        this.options.transport.send("unvote-session", {
+            roomId: this.options.event.getRoomId(),
+            votes: this.options.event.get("votes")
+        });
+    },
+
+    approve: function() {
+        this.options.transport.send("approve-session", {
+            roomId: this.options.event.getRoomId(),
+            approve: true
+        });
+    },
+
+    unapprove: function() {
+        this.options.transport.send("approve-session", {
+            roomId: this.options.event.getRoomId(),
+            approve: false
+        });
     }
 });
 
@@ -321,11 +349,20 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var scope = $("#propose-session-modal");
 
         var title = $("#participantName").text();
-
         if(title.length > 20) {
             return;
         }
 
+        // force sessions type to be "simple"
+        var activities = [];
+        activities.push({type: "about", autoHide: true});
+
+        this.options.transport.send("create-session", {
+            title: title,
+            description:"",
+            activities: activities,
+            roomId: this.options.event.getRoomId()
+        });
     },
 
     closeDisconnected: function() {
