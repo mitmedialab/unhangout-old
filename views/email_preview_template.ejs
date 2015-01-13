@@ -17,7 +17,7 @@
                 <label class="control-label col-lg-2" for="email-to">To</label>
 
                 <div class="col-lg-10 email-to">
-                  <label class="control-label field-input" for="email-to"> <%= allUserIds[participantIndex].user.get("emails")[0].value %> </label>
+                  <label class="control-label field-input" for="email-to"> <%= userData[participantIndex].user.get("emails")[0].value %> </label>
                 </div>
 
             </div>
@@ -50,14 +50,14 @@
                 <h1 style="margin: 0px; font-size:24px;"><%= eventTitle %></h1>
 
                 <h2 style="font-size:18px">
-                Dear <%= allUserIds[participantIndex].user.getShortDisplayName() %>,
+                Dear <%= userData[participantIndex].user.getShortDisplayName() %>,
                 <br />
                 </h2>
 
                 <p style="font-size:14px">You recently participated in the <b><%= eventTitle %></b>
                 Unhangout along with other people from all around the world! 
 
-                <% if(allUserIds[participantIndex].users.length > 0) { %>  
+                <% if(userData[participantIndex].users.length > 0) { %>  
                     <br/><br/>
                     Say hello to people you interacted with in the event on their favored method of contact. People who you <strong>chatted with</strong> in the <strong>breakout</strong>:<br />
                 <% } %>
@@ -69,47 +69,47 @@
                 <table border="0" cellpadding="0" cellspacing="0" width="122">
                     <tr>
 
-                     <% for(var i=0; i < allUserIds[participantIndex].users.length; i++) { %>
+                     <% for(var i=0; i < userData[participantIndex].users.length; i++) { %>
                         
-                        <% if(allUserIds[participantIndex].users[i].get("noShare") == false) { %>
+                        <% if(userData[participantIndex].users[i].get("noShare") == false) { %>
                     
                         <td align="left" valign="top" style="border: 1px solid #cfcfcf; background-color: #f2f2f2;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td align="center" valign="top" style="background-color: white">
-                                        <img align="none" height="122" src='<%= allUserIds[participantIndex].users[i].get("picture") %>' style="width: 86px; height: 84px; margin: 0px;"/> 
+                                        <img align="none" height="122" src='<%= userData[participantIndex].users[i].get("picture") %>' style="width: 86px; height: 84px; margin: 0px;"/> 
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td align="left" valign="top" style="color: black; background-color: #f2f2f2; font-size:12px; padding-top: 5px; line-height: 16px; padding-left: 5px; padding-right: 5px; text-align:left;">
-                                        <%= allUserIds[participantIndex].users[i].get("displayName") %>
+                                        <%= userData[participantIndex].users[i].get("displayName") %>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <td align="left" valign="top" style="color: black; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
 
-                                        <% if(allUserIds[participantIndex].users[i].get("preferredContact")) {  %>
+                                        <% if(userData[participantIndex].users[i].get("preferredContact")) {  %>
 
-                                            <% if(allUserIds[participantIndex].users[i].get("preferredContact").twitterHandle) {  %>
+                                            <% if(userData[participantIndex].users[i].get("preferredContact").twitterHandle) {  %>
                                                 
-                                                <a href="http://twitter.com/<%= allUserIds[participantIndex].users[i].get("preferredContact").twitterHandle %>" target="_blank">
+                                                <a href="http://twitter.com/<%= userData[participantIndex].users[i].get("preferredContact").twitterHandle %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; width: 23px; margin: 0px; padding-right: 5px;" width="23" /> 
                                                 </a>
 
                                             <% } %>
 
-                                            <% if(allUserIds[participantIndex].users[i].get("preferredContact").emailInfo) {  %>
+                                            <% if(userData[participantIndex].users[i].get("preferredContact").emailInfo) {  %>
 
-                                                <a href="mailto:<%= allUserIds[participantIndex].users[i].get("preferredContact").emailInfo %>" target="_blank">
+                                                <a href="mailto:<%= userData[participantIndex].users[i].get("preferredContact").emailInfo %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="21" /> 
                                                 </a>
                                             <% } %>
 
-                                            <% if(allUserIds[participantIndex].users[i].get("preferredContact").linkedinURL) {  %>
+                                            <% if(userData[participantIndex].users[i].get("preferredContact").linkedinURL) {  %>
 
-                                                <a href="<%= allUserIds[participantIndex].users[i].get("preferredContact").linkedinURL %>" target="_blank">
+                                                <a href="<%= userData[participantIndex].users[i].get("preferredContact").linkedinURL %>" target="_blank">
                                                 <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 22px; margin: 0px; padding-right: 5px;" width="23" />
                                                 </a>
 
