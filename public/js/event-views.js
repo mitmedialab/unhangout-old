@@ -346,23 +346,30 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     proposeSession: function(event) {
         event.preventDefault();
+        
         var scope = $("#propose-session-modal");
+        $(".proposed-title-validate-error").hide();
+        $(".propose-session-template").css("min-height", "115px");
 
-        var title = $("#participantName").text();
-        if(title.length > 20) {
+        var participantName = $("#participantName").text();
+
+        if(participantName.length > 20) {
+            $(".proposed-title-validate-error").show();
+            $(".propose-session-template").css("min-height", "145px");
+            scope.modal('show');
             return;
         }
 
         // force sessions type to be "simple"
-        var activities = [];
-        activities.push({type: "about", autoHide: true});
+        // var activities = [];
+        // activities.push({type: "about", autoHide: true});
 
-        this.options.transport.send("create-session", {
-            title: title,
-            description:"",
-            activities: activities,
-            roomId: this.options.event.getRoomId()
-        });
+        // this.options.transport.send("create-session", {
+        //     title: "",
+        //     description:"",
+        //     activities: activities,
+        //     roomId: this.options.event.getRoomId()
+        // });
     },
 
     closeDisconnected: function() {
