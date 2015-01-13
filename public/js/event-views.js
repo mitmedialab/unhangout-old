@@ -221,19 +221,78 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         });
     },
 
-    approve: function() {
-        this.options.transport.send("approve-session", {
-            roomId: this.options.event.getRoomId(),
-            approve: true
-        });
-    },
-
     unapprove: function() {
         this.options.transport.send("approve-session", {
             roomId: this.options.event.getRoomId(),
             approve: false
         });
     }
+});
+
+
+// View for not approved sessions
+views.TopicView = Backbone.Marionette.ItemView.extend({
+    template: '#topic-template',
+    className: 'topic',
+    firstUserView: null,
+
+    ui: {
+        deleteButton: '.delete',        // delete is reserved word
+    },
+
+    events: {
+        'click .delete':'delete',
+        'click h3':'headerClick'
+    },
+
+    initialize: function() {
+    },
+
+    onRender: function() {
+        var start = new Date().getTime();
+
+        this.$el.attr("data-session-id", this.model.id);
+        // mostly just show/hide pieces of the view depending on
+        // model state.
+        this.$el.removeClass("live");
+        this.$el.removeClass("hide");
+        if (this.model.get("approved")) {
+            this.$el.addClass("hide");
+        } else {
+            this.$el.addClass("live");
+        }
+    },
+
+    destroy: function() {
+        this.model.destroy();
+    },
+
+    "delete": function() {
+        this.options.transport.send("delete-session", {
+            id: this.model.id, roomId: this.options.event.getRoomId()
+        });
+    },
+
+    vote: function() {
+        this.options.transport.send("vote-session", {
+            roomId: this.options.event.getRoomId(),
+            votes: this.options.event.get("votes")
+        });
+    },
+
+    unvote: function() {
+        this.options.transport.send("unvote-session", {
+            roomId: this.options.event.getRoomId(),
+            votes: this.options.event.get("votes")
+        });
+    },
+
+    approve: function() {
+        this.options.transport.send("approve-session", {
+            roomId: this.options.event.getRoomId(),
+            approve: true
+        });
+    },
 });
 
 // The list view contains all the individual session views. We don't
@@ -263,6 +322,31 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     renderControls: function() {
         this.$el.html(this.participantProposedSession());
     }
+});
+
+// The list view contains all the individual topic views
+views.TopicListView = Backbone.Marionette.CollectionView.extend({
+    template: "#topic-list-template",
+    itemView: views.TopicView,
+    itemViewContainer: '#topic-list-container',
+
+    emptyView: Backbone.Marionette.ItemView.extend({
+        // need to change behavior to topic-list-empty-template?
+        template: "#session-list-empty-template"
+    }),
+
+    id: "session-list",
+
+    initialize: function() {
+        this.renderControls();
+        this.listenTo(this.options.event, 'change:adminSessionsOnly', this.renderControls, this);
+    },
+
+    itemViewOptions: function() {
+        return {event: this.options.event, transport: this.options.transport};
+    }, 
+    
+    renderControls: function() { },
 });
 
 

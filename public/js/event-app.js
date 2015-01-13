@@ -125,6 +125,11 @@ $(document).ready(function() {
             event: curEvent,
             transport: trans
         });
+        this.topicListView = new eventViews.TopicListView({
+            collection: curEvent.get("sessions"),
+            event: curEvent,
+            transport: trans
+        });
         this.chatView = new eventViews.ChatLayout({
             messages: messages,
             users: curEvent.get("connectedUsers"),
@@ -141,7 +146,8 @@ $(document).ready(function() {
         this.aboutView = new eventViews.AboutEventView({model: curEvent});
 
         // present the views in their respective regions
-        this.right.show(this.chatView);
+        // this.right.show(this.chatView);
+        this.right.show(this.topicListView);
         this.main.show(this.sessionListView);
         this.topLeft.show(this.youtubeEmbedView);
         this.dialogs.show(this.dialogView);
