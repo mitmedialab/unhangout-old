@@ -13,10 +13,6 @@ views.ContactFormView = Backbone.Marionette.ItemView.extend({
 		'click .submit-contact-form' : 'submitContactForm'
 	},
 
-	initialize: function(options) {
-		Backbone.Marionette.ItemView.prototype.initialize.call(this, options);
-	},
-
 	//Function to submit the contact information
 	submitContactForm: function() {
 		var contactPreferredType = $(".contact-type").val();
