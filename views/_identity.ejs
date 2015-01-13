@@ -1,4 +1,4 @@
-<ul class="navbar-nav nav pull-right identity">
+<ul class="navbar-nav nav navbar-right identity">
     <li>
     <% if(!user) {%>
         <a href="/auth/google" class="login-link"><button class="btn btn-primary login-button">Login</button></a>
@@ -18,8 +18,8 @@
                     <li role="presentation">
                         <a role="menuitem" tabindex="-1" href="/admin/">Event/Session overview</a>
                     </li>
+                    <li role="presentation" class="divider"></li>
                 <% } %>
-
                 <li role="presentation">
                     <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
                 </li>
