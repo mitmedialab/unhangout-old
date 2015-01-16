@@ -93,11 +93,9 @@ a.dropdown-toggle {
   font-size: 20px;
   letter-spacing: 1px;
   font-weight: 400;
-
   img {
     margin-top: -15px;
   }
-
 }
 
 .nav-index .dropdown {
@@ -141,80 +139,47 @@ a.dropdown-toggle {
 }
 
 #user-menu-label {
-  font-size: 16px;
+  font-size: 15px;
   letter-spacing: 0.5px;
   font-weight: 300;  
+  max-width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
-/* Media query to get navbar to collapse sooner (for long user names) */
-@media (max-width: 991px) {
-  .navbar-header {
-    float: none;
-  }
-  .navbar-left,.navbar-right {        
-    float: none !important;
-  }
-  .navbar-toggle {
-    display: block;
-    //margin-right: 0px;
+/* media queries for responsive navbar */
 
-    .icon-bar{
-      background-color: #fff !important;
+@media (max-width: 991px){ /* for small */
+  #user-menu-label-name {
+    display: none;
+  }
+  .navbar-default{
+    .navbar-toggle{
+      .icon-bar{
+        background-color: #fff;
+      }
     }
-
-  }
-  .navbar-collapse {
-    border-top: 1px solid transparent;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-  }
-  .navbar-fixed-top {
-    top: 0;
-    border-width: 0 0 1px;
-  }
-  .navbar-collapse.collapse {
-    display: none!important;
-  }
-  .navbar-nav {
-    float: none!important;
-    margin-top: 7.5px;
-    margin-right: 0px !important;
-
-    .open{
-      .dropdown-menu {
-        position: static;
-        float: none;
-        width: auto;
-        margin-top: 0;
-        background-color: $navbar;
-        border: 0;
-        -webkit-box-shadow: none;
-        box-shadow: none;
+    .navbar-nav{
+      .open{
+        .dropdown-menu>li>a{
+          color:#fff;
+          font-weight: 300;
+        }
+        .dropdown-menu>li>a:hover{
+          background-color: transparent; 
+          color: $navbar-li;
+        }
       }
-      .dropdown-menu>li>a{
-        color:#fff !important;
-        font-weight: 300 !important;
-      }
-      .dropdown-menu>li>a:hover{
-        background-color: transparent !important; 
-        color: $navbar-li !important;
-      }
-    } 
-
+    }
   }
-  .navbar-nav>li {
-    float: none;
-  }
-  .navbar-nav>li>a {
-     padding-top: 10px;
-     padding-bottom: 10px;
-  }
-  .collapse.in{
-    display:block !important;
-  } 
-
-
 }
 
+@media(max-width: 767px){ /* for x-small */
+  #user-menu-label-name {
+    display: inline;
+  }
+}
 
 /* Event Navbar Styles */ 
 .event-navbar {
@@ -1558,7 +1523,7 @@ user-admin-border-size = 2px
   }
 }
 
-/*======================= EVENT PAGE STYLES ===========================*/
+/*======================= EVENTS PAGE STYLES ===========================*/
 
 
 .event-container {
