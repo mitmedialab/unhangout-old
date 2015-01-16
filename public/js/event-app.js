@@ -58,6 +58,10 @@ $(document).ready(function() {
     curEvent.on("change:sessionsOpen", function() {
         app.sessionListView.render();
     });
+    curEvent.on("change:adminSessionsOnly", function() {
+        app.sessionListView.render();
+        app.topicListView.render();
+    });
     curEvent.on("change:open", function(model, open, options) {
         console.log("change:open", arguments);
         if (IS_ADMIN) {
@@ -146,7 +150,7 @@ $(document).ready(function() {
         this.aboutView = new eventViews.AboutEventView({model: curEvent});
 
         // present the views in their respective regions
-        // this.right.show(this.chatView);
+        this.right.show(this.chatView);
         this.right.show(this.topicListView);
         this.main.show(this.sessionListView);
         this.topLeft.show(this.youtubeEmbedView);

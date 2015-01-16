@@ -57,6 +57,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // they get the next unused slot, and their "preference" is updated.
         this.userSlotPreference = {};
         this.userSlots = {};
+
+        this.listenTo(this.model, 'change:approved', this.render, this);
     },
 
     onRender: function() {
@@ -209,15 +211,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
     vote: function() {
         this.options.transport.send("vote-session", {
-            roomId: this.options.event.getRoomId(),
-            votes: this.options.event.get("votes")
+            id: this.model.id, roomId: this.options.event.getRoomId()
         });
     },
 
     unvote: function() {
         this.options.transport.send("unvote-session", {
-            roomId: this.options.event.getRoomId(),
-            votes: this.options.event.get("votes")
+            id: this.model.id, roomId: this.options.event.getRoomId()
         });
     },
 
@@ -237,15 +237,18 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     firstUserView: null,
 
     ui: {
+        vote: '.btn-vote',
         deleteButton: '.delete',        // delete is reserved word
     },
 
     events: {
+        'click .btn-vote':'vote',
         'click .delete':'delete',
         'click h3':'headerClick'
     },
 
     initialize: function() {
+        this.listenTo(this.model, 'change:approved', this.render, this);
     },
 
     onRender: function() {
@@ -256,11 +259,12 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         // model state.
         this.$el.removeClass("live");
         this.$el.removeClass("hide");
-        if (this.model.get("approved")) {
-            this.$el.addClass("hide");
-        } else {
+        if (!this.model.get("approved") && !IS_ADMIN_SESSIONS_ONLY) {
             this.$el.addClass("live");
+        } else {
+            this.$el.addClass("hide");
         }
+        this.ui.vote.find(".text").text(this.model.get("votes").length);
     },
 
     destroy: function() {
@@ -275,15 +279,13 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     vote: function() {
         this.options.transport.send("vote-session", {
-            roomId: this.options.event.getRoomId(),
-            votes: this.options.event.get("votes")
+            id: this.model.id, roomId: this.options.event.getRoomId()
         });
     },
 
     unvote: function() {
         this.options.transport.send("unvote-session", {
-            roomId: this.options.event.getRoomId(),
-            votes: this.options.event.get("votes")
+            id: this.model.id, roomId: this.options.event.getRoomId()
         });
     },
 
@@ -330,23 +332,15 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     itemView: views.TopicView,
     itemViewContainer: '#topic-list-container',
 
-    emptyView: Backbone.Marionette.ItemView.extend({
-        // need to change behavior to topic-list-empty-template?
-        template: "#session-list-empty-template"
-    }),
-
-    id: "session-list",
+    id: "topic-list",
 
     initialize: function() {
-        this.renderControls();
-        this.listenTo(this.options.event, 'change:adminSessionsOnly', this.renderControls, this);
+        this.listenTo(this.options.event, 'change:adminSessionsOnly', this.render, this);
     },
 
     itemViewOptions: function() {
         return {event: this.options.event, transport: this.options.transport};
-    }, 
-    
-    renderControls: function() { },
+    },
 });
 
 
@@ -843,7 +837,7 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
 
     chat: function(e) {
         var msg = this.ui.chatInput.val();
-        var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
+        var postAsAdmin = a && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
             this.options.transport.send("chat", {

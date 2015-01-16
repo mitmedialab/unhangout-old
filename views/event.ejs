@@ -97,7 +97,13 @@
 <script type="text/template" id="topic-template">
     <div class="col-lg-12 col-xs-12 session-area">
         <h3 class="col-lg-8 col-xs-8">{{- title }}</h3>
-        
+
+        <div class="btn btn-primary btn-vote">
+            <p class="vote-number"><span class="text">4</span></p>
+            <hr>
+            <p class="vote-label"> VOTE </p>
+        </div>
+
         {{ if (IS_ADMIN) { }}
             <div class="col-lg-1 col-xs-1 btn-admin-delete-session">   
                 <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
