@@ -148,6 +148,10 @@ a.dropdown-toggle {
   white-space: nowrap;
 }
 
+.profile-thumbnail {
+  border-radius: 4px;
+}
+
 /* media queries for responsive navbar */
 
 @media (max-width: 991px){ /* for small */
@@ -1523,65 +1527,65 @@ user-admin-border-size = 2px
   }
 }
 
-/*======================= EVENTS PAGE STYLES ===========================*/
+/*======================= EVENTS (upcoming/past) PAGE STYLES ======================*/
 
 
 .event-container {
-    padding-bottom: 50px;
-    min-height: 1130px;
+  margin-bottom: 30px;
+  min-height: 1130px;
 
-    .upcomingEventsTitle {
-      margin-top: 45px;
-    }
+  h3{
+    font-size: 1.9em;
+    font-weight: 400; 
+    margin-bottom: 20px;
+  }
 
-    .pastEventsTitle {
-      margin-top: 30px;
-    }
+  .upcomingEventsTitle{
+    margin-top: 40px;
+  }
 
-  .event-box {
-    height: 310px;
-    width: 360px;
-    margin-top: 20px;
-    margin-right: 20px;
-    border: 2px solid #dfdfdf;
-    padding: 3px;
+  .pastEventsTitle{
+    margin-top: 10px;
+  }
 
-    h4 {
-        color: $navbar;
-        padding-left: 5px;
-    }
+  .event-box{
+    margin-bottom: 15px;
 
-    p {
-      padding-left: 5px;
-    }
-
-    a {
+    .event-box-content {
+      width: 100%;
+      max-width: 350px;
+      height: 270px;
+      border: 2px solid #dfdfdf;
+      border-radius: 1px;
+      padding: 10px;
+      a {
         color: $navbar;
         text-decoration: none;
+      }
     }
   }
 
-  .event-box:hover {
-      border: 2px solid #2E7DAA;
+}
+
+@media(max-width: 991px){ /* for small */
+  .event-container {
+    .event-box{
+      .event-box-content {
+        height: 290px;
+      }
+    }
   }
+}
 
-  h3 {
-    margin-top: 20px;
-    margin-left: -15px;
-    font-weight: 400;
-    font-size: 28px;
-    color: #444;
+@media(max-width: 767px){ /* for x-small */
+   .event-container {
+    .event-box{
+      .event-box-content {
+        height: 100%;
+      }
+    }
   }
-}
-
-.line-break {
-  border: 1px solid #2e7daa; 
-  margin-top: 0px; 
-}
-
-.profile-thumbnail {
-  border-radius: 5px;
-}
+} 
 
 /*============================================================*/
 
