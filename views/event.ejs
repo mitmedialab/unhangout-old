@@ -74,6 +74,10 @@
                 </button>
             </div>
 
+            <div class="col-lg-3 col-xs-3 btn-admin-unapprove-session">   
+                <button class="unapprove btn btn-warning">UNAPPROVE</button>
+            </div>
+
             <div class="col-lg-1 col-xs-1 btn-admin-delete-session">   
                 <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
             </div>
@@ -105,6 +109,10 @@
         </div>
 
         {{ if (IS_ADMIN) { }}
+            <div class="col-lg-3 col-xs-3 btn-admin-approve-session">   
+                <button class="approve btn btn-warning">APPROVE</button>
+            </div>
+
             <div class="col-lg-1 col-xs-1 btn-admin-delete-session">   
                 <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
             </div>

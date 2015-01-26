@@ -34,6 +34,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     ui: {
         attend: '.attend',
         start:'.start',
+        unapprove: '.unapprove',
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users'
     },
@@ -41,6 +42,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     events: {
         'click .attend':'attend',
         'click .start':'start',
+        'click .unapprove':'unapprove',
         'click .delete':'delete',
         'click h3':'headerClick'
     },
@@ -217,6 +219,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
     unapprove: function() {
         this.options.transport.send("approve-session", {
+            id: this.model.id,
             roomId: this.options.event.getRoomId(),
             approve: false
         });
@@ -232,11 +235,13 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     ui: {
         vote: '.btn-vote',
+        approve: '.approve',
         deleteButton: '.delete',        // delete is reserved word
     },
 
     events: {
         'click .btn-vote':'vote',
+        'click .approve':'approve',
         'click .delete':'delete',
         'click h3':'headerClick'
     },
@@ -280,6 +285,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     approve: function() {
         this.options.transport.send("approve-session", {
+            id: this.model.id,
             roomId: this.options.event.getRoomId(),
             approve: true
         });
