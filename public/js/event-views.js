@@ -215,12 +215,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         });
     },
 
-    unvote: function() {
-        this.options.transport.send("unvote-session", {
-            id: this.model.id, roomId: this.options.event.getRoomId()
-        });
-    },
-
     unapprove: function() {
         this.options.transport.send("approve-session", {
             roomId: this.options.event.getRoomId(),
@@ -264,6 +258,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         } else {
             this.$el.addClass("hide");
         }
+
         this.ui.vote.find(".text").text(this.model.get("votes").length);
     },
 
@@ -279,12 +274,6 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     vote: function() {
         this.options.transport.send("vote-session", {
-            id: this.model.id, roomId: this.options.event.getRoomId()
-        });
-    },
-
-    unvote: function() {
-        this.options.transport.send("unvote-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
     },
