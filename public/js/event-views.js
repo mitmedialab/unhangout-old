@@ -351,9 +351,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".twitter-validate-error", scope).hide();
         $(".linkedin-validate-error", scope).hide();
 
-        $('#email_info', scope).removeClass('contact-invalid-error');
-        $('#twitter_handle', scope).removeClass('contact-invalid-error');
-        $('#linkedin_url', scope).removeClass('contact-invalid-error');
+        $('.contact-control', scope).removeClass('contact-invalid-error');
 
         if((emailInfo === "" && twitterHandle === "" && linkedinURL === "") && 
             noShareChkBox === false) {
