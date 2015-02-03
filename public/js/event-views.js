@@ -353,7 +353,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         $('.contact-control', scope).removeClass('contact-invalid-error');
 
-        if((emailInfo === "" && twitterHandle === "" && linkedinURL === "") && 
+        if((emailInfo === "" && twitterHandle === "" && linkedinURL === "" && 
             noShareChkBox === false) {
             $(".empty-contact-info-error", scope).show();
             scope.modal('show');
