@@ -347,9 +347,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         //Hiding the error classes
         $(".empty-contact-info-error", scope).hide();
 
-        $(".email-validate-error").hide();
-        $(".twitter-validate-error").hide();
-        $(".linkedin-validate-error").hide();
+        $(".email-validate-error", scope).hide();
+        $(".twitter-validate-error", scope).hide();
+        $(".linkedin-validate-error", scope).hide();
 
         $('#email_info', scope).removeClass('contact-invalid-error');
         $('#twitter_handle', scope).removeClass('contact-invalid-error');
@@ -372,7 +372,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             if(isEmailValid === null) {
                 $('#email_info', scope).addClass('contact-invalid-error');
                 scope.modal('show');
-                $(".email-validate-error").show();
+                $(".email-validate-error", scope).show();
                 return;
             }
         }
@@ -387,7 +387,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             if(isTwitterValid === null) {
                 $('#twitter_handle', scope).addClass('contact-invalid-error');
                 scope.modal('show');
-                $(".twitter-validate-error").show();
+                $(".twitter-validate-error", scope).show();
                 return;
             }
         }
@@ -402,7 +402,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             if(isLinkedinValid === null) {
                 $('#linkedin_url', scope).addClass('contact-invalid-error');
                 scope.modal('show');
-                $(".linkedin-validate-error").show();
+                $(".linkedin-validate-error", scope).show();
                 return;
             }
         }
