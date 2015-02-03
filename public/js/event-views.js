@@ -482,12 +482,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
     sendFollowupEmail: function(jqevt) {
         jqevt.preventDefault();
 
-        var eventTitle = this.options.event.get("title");
-
         $.ajax({
             type: 'POST',
-            url: "/followup/event/" + this.options.event.id + "/",
-            data: {eventTitle: eventTitle }
+            url: "/followup/event/" + this.options.event.id + "/"
         }).fail(function(err) {
             logger.error(err);
             alert("Server error!");

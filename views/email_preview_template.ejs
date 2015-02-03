@@ -47,14 +47,14 @@
 
             <div class="email-header">
 
-                <h1 style="margin: 0px; font-size:24px;"><%= eventTitle %></h1>
+                <h1 style="margin: 0px; font-size:24px;"><%= event.get("title") %></h1>
 
                 <h2 style="font-size:18px">
                 Dear <%= userData[participantIndex].user.getShortDisplayName() %>,
                 <br />
                 </h2>
 
-                <p style="font-size:14px">You recently participated in the <b><%= eventTitle %></b>
+                <p style="font-size:14px">You recently participated in the <b><%= event.get("title") %></b>
                 Unhangout along with other people from all around the world! 
 
                 <% if(userData[participantIndex].users.length > 0) { %>  
