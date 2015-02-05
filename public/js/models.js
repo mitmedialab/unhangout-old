@@ -330,6 +330,8 @@ models.Session = Backbone.Model.extend({
             description: "",
             shortCode: null,
             proposedBy: null,
+            proposeeDisplayName: "",
+            proposeeDisplayPic: "",
             // State
             connectedParticipants: [],
             joiningParticipants: [],

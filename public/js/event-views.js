@@ -433,6 +433,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         var title = $("#sessionTitle").text();
         var participantName = $("#participantName").text();
+        var participantPic = $(".participantPic").attr("src");
 
         // if(participantName.length > 20) {
         //     $(".proposed-title-validate-error").show();
@@ -448,6 +449,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         this.options.transport.send("create-session", {
             title: title,
             description:"",
+            proposeeDisplayName: participantName,
+            proposeeDisplayPic: participantPic,
             activities: activities,
             roomId: this.options.event.getRoomId(),
             approved: false,
