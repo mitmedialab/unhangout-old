@@ -460,8 +460,106 @@ user-admin-border-size = 2px
 
 }
 
-#session-list {
+#topic-list {
   padding-top: 5px;
+}
+
+/* 
+  * Topic display on event page 
+*/
+
+.topic {
+  float: left;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+  width: 100%;
+
+  .session-area {
+    padding: 0;
+    padding-right: 3px;
+    margin-bottom: 5px;
+  }
+
+  .proposed-topic {
+    padding: 0px;
+  }
+
+  .proposee-display-pic {
+    padding: 0px;
+  }
+
+  .proposee-name-topic-title {
+    padding: 0px;
+    line-height: 16px;
+  }
+
+  .approve-session {
+    color: #fff;
+    border-radius: 0px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-admin-approve-session {
+    border-radius: 1px;
+  }
+
+  .delete-session {
+    padding: 0px;
+    color: #fff;
+    border-radius: 0px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-admin-delete-session {
+    border-radius: 1px;
+  }
+
+  h3 {
+      color: $primary;
+      font-weight: normal;
+      font-size: 1em;
+      padding: 0px;
+      margin: 0px;
+      margin-left: 5px;
+      height: 38px;
+  }
+
+  img {
+    width: 35px;
+    height: 35px;
+  }
+
+  &.live {
+    &:nth-child(odd) {
+      background-color: #eee;
+
+    }
+
+    &:nth-child(even) {
+      background-color: #eee;
+    }
+  }
+
+  &:nth-child(odd) {
+    background-color: #eee;
+
+  }
+
+  &:nth-child(even) {
+    background-color: #eee;
+  }
+
+}
+
+#session-list {
+  float: left;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+  width: 100%;
 }
 
 /*

@@ -100,23 +100,40 @@
 
 <script type="text/template" id="topic-template">
     <div class="col-lg-12 col-xs-12 session-area">
-        <h3 class="col-lg-8 col-xs-8">{{- title }}</h3>
 
-        <div class="btn btn-primary btn-vote">
+        <div class="col-lg-12 col-xs-12 proposed-topic">
+            <div class="col-lg-1 col-xs-2 proposee-display-pic">
+                <img src="<%= user.get("picture")%>">
+            </div>
+
+            <div class="col-lg-7 col-xs-5 proposee-name-topic-title">
+                <h3><font color="#2e7daa"><strong> {{- proposeeDisplayName }} </strong> </font>  {{- title }}</h3>
+            </div>
+            
+            {{ if (IS_ADMIN) { }}
+
+            <div class= "col-lg-4 col-xs-5 session-controls-row">
+                <div class="col-lg-10 col-xs-10 approve-session">   
+                    <button class="approve btn btn-warning btn-admin-approve-session">APPROVE</button>
+                </div>
+
+                <div class="col-lg-2 col-xs-2 delete-session">   
+                    <button class="delete btn btn-danger btn-admin-delete-session"><i class="fa fa-trash-o"></i></button>
+                </div>
+            </div>
+
+            {{ } }}
+           
+        </div>
+
+        <!--<div class="btn btn-primary btn-vote">
             <p class="vote-number"><span class="text">4</span></p>
             <hr>
             <p class="vote-label"> VOTE </p>
-        </div>
+        </div>-->
 
-        {{ if (IS_ADMIN) { }}
-            <div class="col-lg-3 col-xs-3 btn-admin-approve-session">   
-                <button class="approve btn btn-warning">APPROVE</button>
-            </div>
+        
 
-            <div class="col-lg-1 col-xs-1 btn-admin-delete-session">   
-                <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
-            </div>
-        {{ } }}
     </div>
 </script>
 
@@ -709,10 +726,6 @@
                 </div>
 
                 <div class="modal-body">
-                    <p>
-                        Hello World
-                    </p>
-
                     <div class="session-preview">
 
                         <div class="propose-session-template">
