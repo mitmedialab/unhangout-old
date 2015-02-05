@@ -151,8 +151,8 @@ $(document).ready(function() {
 
         // present the views in their respective regions
         this.right.show(this.chatView);
-        this.right.show(this.topicListView);
-        this.main.show(this.sessionListView);
+        this.main.show(this.topicListView);
+        //this.main.show(this.sessionListView);
         this.topLeft.show(this.youtubeEmbedView);
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
