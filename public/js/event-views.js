@@ -553,7 +553,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         return {
             event: this.options.event,
         };
-    },
+    }
 });
 
 // The UserColumn is the gutter on the right that shows who's connected to the
