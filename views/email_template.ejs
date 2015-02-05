@@ -1,7 +1,3 @@
-<html>
-<head></head>
-<body>
-
 <table border="0" cellpadding="0" cellspacing="0" width="650">
 <tr>
 
@@ -9,108 +5,10 @@
 
 <div class="container" style="padding-top: 10px; padding-left: 20px; padding-right: 20px; padding-bottom:10px;">
 
-<h1><span style="font-size:24px; font-weight: 500;
-line-height: 1.1;"><%= event.get("title") %></span>&nbsp;</h1>
-
-<h2 style="font-size:17px; font-weight: 500;">Dear <%= userData[participantIndex].user.getShortDisplayName() %>, <br />
-&nbsp;</h2>
-
-You recently participated in the <b><%= event.get("title") %></b> Unhangout along with other people from all around the world!&nbsp;<br /> <br />
-    <% if(userData[participantIndex].users.length > 0) { %>
-        Say hello to people you interacted with in the event on their favored method of contact. People who you <strong>chatted with</strong> in the <strong>breakout</strong>:<br /> <br/>
-<% } %>
-
-<table border="0" cellpadding="0" cellspacing="0" width="122">
-    <tr>
-
-    <% for(var i=0; i < userData[participantIndex].users.length; i++) { %>
-
-    <% if(userData[participantIndex].users[i].get("noShare") == false) { %>
-
-            <td align="left" valign="top" style="border: 2px solid white; background-color: #f2f2f2;">
-            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                    <td align="center" valign="top">
-                        <img align="none" src='<%= userData[participantIndex].users[i].get("picture") %>' style="width: 86px; height: 84px; margin: 0px;"/> 
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="left" valign="top" style="color: black; background-color: #f2f2f2; font-family:Helvetica, Arial, sans-serif; font-size:12px; padding-top: 10px; padding-left: 5px; padding-right: 5px; text-align:left;">
-                        <%= userData[participantIndex].users[i].get("displayName") %>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td align="left" valign="top" style="color: black; font-family:Helvetica, Arial, sans-serif; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
-
-                        <% if(userData[participantIndex].users[i].get("preferredContact")) {  %>
-
-                            <% if(userData[participantIndex].users[i].get("preferredContact").twitterHandle) {  %>
-                                
-                                <a href="twitter.com/<%= userData[participantIndex].users[i].get("preferredContact").twitterHandle %>" target="_blank" style="text-decoration: none;">
-
-                                    <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; height: 16px; width: 18px; margin: 0px; background-color: white;" /> 
-
-                                </a>
-
-                            <% } %>
-
-                            <% if(userData[participantIndex].users[i].get("preferredContact").emailInfo) {  %>
-
-                                <a href="mailto:<%= userData[participantIndex].users[i].get("preferredContact").emailInfo %>" target="_blank" style="text-decoration: none;">
-
-                                <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 18px; height: 16px; margin: 0px; background-color: white;" /> 
-
-                                </a>
-
-                                <% } %>
-
-                            <% if(userData[participantIndex].users[i].get("preferredContact").linkedinURL) {  %>
-
-                                <a href="<%= userData[participantIndex].users[i].get("preferredContact").linkedinURL %>" target="_blank" style="text-decoration: none;">
-
-                                <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 18px; margin: 0px; background-color: white;"/> 
-
-                                </a>
-                            <% } %>
-
-                        <% } %>
-                    </td>
-                </tr>
-
-            </table>
-
-        </td>
-
-    <% } %>
-
-    <% } %>
-
-</tr>
-
-</table>
-
+<% include _email-header.ejs %>
+<% include _email-content.ejs %>
 <br />
-
-We look forward to your participation in our upcoming events!<br />
-<br />
-Thanks </span></p>
-
-<em style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">Copyright &copy; 2014 MIT Media Lab, All rights reserved.</em><span style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">&nbsp;</span><br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 10.9090909957886px; line-height: 13.75px;" />
-<br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 10.9090909957886px; line-height: 13.75px;" />
-<span style="color:rgb(96, 96, 96); font-family:helvetica; font-size:10.9090909957886px; line-height:13.75px">You are receiving this email, because you either signed up or participated in the Media Lab Unhangout events.&nbsp;</span><br style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.7272720336914px; line-height: normal;" />
-<br style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.7272720336914px; line-height: normal;" />
-<strong style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">Our mailing address is:</strong><span style="color:rgb(34, 34, 34); font-family:arial,sans-serif; font-size:12.7272720336914px; line-height:normal">&nbsp;</span>
-<div style="color: rgb(34, 34, 34); font-family: arial, sans-serif; font-size: 12.7272720336914px; line-height: normal;">MIT Media Lab
-<div>
-<div>77 Mass. Ave.</div>
-
-<div>E14-445</div>
-Cambridge,&nbsp;MA&nbsp;<a href="tel:02139-4307" style="color: rgb(17, 85, 204); word-wrap: break-word;" target="_blank" value="+4921394307">02139-4307</a><br />
-&nbsp;</div>
-</div>
-<a class="utilityLink" href="*|UNSUB|*">unsubscribe from this list</a>&nbsp;&nbsp;&nbsp; <a class="utilityLink" href="*|UPDATE_PROFILE|*">update subscription preferences</a>&nbsp;
+<% include _email-footer.ejs %>
 
 <p>&nbsp;</p> 
 
