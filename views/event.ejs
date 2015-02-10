@@ -14,14 +14,14 @@
         var RECENT_MESSAGES = <%- JSON.stringify(event.get("recentMessages")) %>;
     <% } %>
 
-    var preferredContact = false;
+    var isPreferredContactEmpty = false;
     var noShare = <%= user.get("noShare") %>;
 
     var emailInfo = <%- JSON.stringify(user.get("emails")[0].value) %>;
     var twitterHandle, linkedinURL; 
 
     <% if(user.get("preferredContact")) { %>
-        preferredContact = true; 
+        isPreferredContactEmpty = true; 
         emailInfo = <%- JSON.stringify(user.get("preferredContact").emailInfo) %>;
 
         twitterHandle = <%- JSON.stringify(user.get("preferredContact").twitterHandle) %>;  
