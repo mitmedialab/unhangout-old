@@ -201,9 +201,15 @@ $(document).ready(function() {
         $(".proposed-title-validate-error").hide();
 
         //In place bootstrap editor 
-        $.fn.editable.defaults.mode = 'inline';
-        $('#participantName').editable();
-        $('#sessionTitle').editable();
+        //$.fn.editable.defaults.mode = 'inline';
+        
+        $('#participantName').editable( {
+            placement: 'bottom'
+        });
+
+        $('#sessionTitle').editable({
+            placement: 'bottom'
+        });
 
     }, app);
 
