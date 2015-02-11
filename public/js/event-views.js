@@ -309,7 +309,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     initialize: function() {
         this.renderControls();
-        this.listenTo(this.options.event, 'change:adminSessionsOnly', this.renderControls, this);
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.renderControls, this);
     },
 
     itemViewOptions: function() {
@@ -330,7 +330,7 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     id: "topic-list",
 
     initialize: function() {
-        this.listenTo(this.options.event, 'change:adminSessionsOnly', this.render, this);
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
     },
 
     itemViewOptions: function() {
@@ -565,7 +565,8 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
         'click #admin-start-event': 'startEvent',
-        'click #toggle-sessions-mode': 'toggleSessionsMode'
+        'click #admin-proposed-sessions-mode': 'adminProposedSessionsMode',
+        'click #participant-proposed-sessions-mode': 'participantProposedSessionsMode',
     },
 
     openSessions: function(jqevt) {
@@ -586,10 +587,12 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         jqevt.preventDefault();
         this._startStopEvent("start");
     },
+
     stopEvent: function(jqevt) {
         jqevt.preventDefault();
         this._startStopEvent("stop");
     },
+
     _startStopEvent: function(action) {
         $.ajax({
             type: 'POST',
@@ -600,11 +603,20 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         });
     },
 
-    toggleSessionsMode: function(jqevt) {
+    adminProposedSessionsMode: function(jqevt) {
         jqevt.preventDefault();
-        this.options.transport.send("toggle-sessions-mode", {
-            roomId: this.options.event.getRoomId(),
-            newMode: !(this.options.event.get("adminSessionsOnly"))
+
+        this.options.transport.send("admin-proposed", {
+            roomId: this.options.event.getRoomId()
+        });
+
+    },
+
+    participantProposedSessionsMode: function(jqevt) {
+        jqevt.preventDefault();
+
+        this.options.transport.send("participant-proposed", {
+            roomId: this.options.event.getRoomId()
         });
     },
 
@@ -618,7 +630,12 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         return {
             event: this.options.event,
         };
-    }
+    },
+
+    onRender: function() {
+        
+    },
+
 });
 
 // The UserColumn is the gutter on the right that shows who's connected to the

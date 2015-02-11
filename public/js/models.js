@@ -104,7 +104,7 @@ models.Event = models.BaseModel.extend({
             youtubeEmbed: null,
             previousVideoEmbeds: [],
             sessionsOpen: false,
-            adminSessionsOnly: true,
+            adminProposedSessions: false,
             dateAndTime: null,
             timeZoneValue: null,
             admins: []
@@ -117,6 +117,7 @@ models.Event = models.BaseModel.extend({
         this.set("connectedUsers", new models.UserList());
         this.initializeSubEvents();
     },
+    
     initializeSubEvents: function() {
         // Replicate events from these sub-collections on the event. This lets
         // us use this model as a choke point for all socket traffic -- we need

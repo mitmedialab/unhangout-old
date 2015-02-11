@@ -58,10 +58,12 @@ $(document).ready(function() {
     curEvent.on("change:sessionsOpen", function() {
         app.sessionListView.render();
     });
-    curEvent.on("change:adminSessionsOnly", function() {
+
+    curEvent.on("change:adminProposedSessions", function() {
         app.sessionListView.render();
         app.topicListView.render();
     });
+
     curEvent.on("change:open", function(model, open, options) {
         console.log("change:open", arguments);
         if (IS_ADMIN) {
@@ -168,9 +170,11 @@ $(document).ready(function() {
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, transport: trans
             });
-            curEvent.on("change:adminSessionsOnly change:sessionsOpen change:open", _.bind(function() {
+
+            curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
                 this.adminButtonView.render();
             }, this));
+
             this.admin.show(this.adminButtonView);
         }
         var maybeMute = function() {
@@ -196,8 +200,7 @@ $(document).ready(function() {
         $(".about-event-container").hide();
 
         //For testing invoking the dialog before 
-        $("#propose-session-modal").modal('show');
-        $("#propose-session-template").css("min-height", "200px");
+        //$("#propose-session-modal").modal('show');
 
         $(".proposed-title-validate-error").hide();
 

@@ -4,7 +4,8 @@
 <script>
     // Initial data
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
-    var IS_ADMIN_SESSIONS_ONLY = <%= event.get("adminSessionsOnly") %>;
+    var IS_ADMIN_SESSIONS_ONLY = <%= event.get("adminProposedSessions") %>;
+
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
         var SESSION_ATTRS = <%- JSON.stringify(event.get("sessions").invoke("toClientJSON")) %>;
@@ -489,15 +490,7 @@
                 <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
                     <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
                 </a>
-                {{ if (event.get("adminSessionsOnly")) { }}
-                    <a role="menuitem" href="#" role="buton" id='toggle-sessions-mode'>
-                        Sessions Mode: Admin Only
-                    </a>
-                {{ } else { }}
-                    <a role="menuitem" href="#" role="buton" id='toggle-sessions-mode'>
-                        Sessions Mode: Admin and Proposed
-                    </a>
-                {{ } }}
+                
                 <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
                     <i class="fa fa-pencil-square-o fa-lg fa-fw"></i>
                     Edit Event Info
@@ -517,6 +510,17 @@
                     <i class="fa fa-share fa-lg fa-fw"></i>
                     Send Message to Sessions
                 </a>
+
+                {{ if (event.get("adminProposedSessions")) { }}
+                    <a role="menuitem" href="#" role="button" id='admin-proposed-sessions-mode'>
+                        <i class='fa fa-users fa-lg fa-fw'></i> Admin Proposed Sessions
+                    </a>
+                {{ } else { }}
+                    <a role="menuitem" href="#" role="button" id='participant-proposed-sessions-mode'>
+                        <i class='fa fa-user fa-lg fa-fw'></i> Participant Proposed Sessions 
+                    </a>
+                {{ } }}
+
             </li>
         </ul>
     </div>
@@ -785,6 +789,8 @@
             </div>
 
             <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
                 <button type="button" class="btn btn-primary" class="propose" id="propose" data-dismiss="modal">Propose</button>
             </div>
 
