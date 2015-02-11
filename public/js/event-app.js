@@ -106,6 +106,7 @@ $(document).ready(function() {
         right: '#main-right',
         main: '#main-left',
         topLeft: '#top-left',
+        centerLeft: '#center-left',
         global: '#global',
         dialogs: '#dialogs',
         admin: '#admin-region',
@@ -151,8 +152,8 @@ $(document).ready(function() {
 
         // present the views in their respective regions
         this.right.show(this.chatView);
+        this.centerLeft.show(this.sessionListView)
         this.main.show(this.topicListView);
-        //this.main.show(this.sessionListView);
         this.topLeft.show(this.youtubeEmbedView);
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
@@ -202,7 +203,6 @@ $(document).ready(function() {
 
         //In place bootstrap editor 
         //$.fn.editable.defaults.mode = 'inline';
-        
         $('#participantName').editable( {
             placement: 'bottom'
         });
