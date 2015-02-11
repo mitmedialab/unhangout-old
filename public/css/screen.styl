@@ -473,29 +473,30 @@ user-admin-border-size = 2px
   border-radius: 5px;
   margin-bottom: 5px;
   padding: 10px;
+  padding-bottom: 0px;
   width: 100%;
 
   .session-area {
     padding: 0;
-    padding-right: 3px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
 
-  .proposed-topic {
+  .topic-padding {
     padding: 0px;
   }
 
-  .proposee-display-pic {
-    padding: 0px;
+  .bottom-padding {
+    padding-bottom: 5px;
   }
 
-  .proposee-name-topic-title {
-    padding: 0px;
-    line-height: 16px;
+  .left-padding {
+    padding-left: 5px;
   }
 
-  .session-controls-row {
-     padding: 0px;
+  .proposee-display-name {
+    font-size: 12px;
+    margin: 0px;
+    margin-top: 8px;
   }
 
   .approve-session {
@@ -507,8 +508,10 @@ user-admin-border-size = 2px
   }
 
   .btn-admin-approve-session {
-    border-radius: 1px;
-    width: 100%;
+    border-radius: 2px;
+    padding: 0px;
+    height: 30px;
+    width: 30px;
   }
 
   .vote-session {
@@ -520,7 +523,10 @@ user-admin-border-size = 2px
   }
 
   .btn-vote {
-    border-radius: 1px;
+    height: 30px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-radius: 2px;
   }
 
   .delete-session {
@@ -532,7 +538,10 @@ user-admin-border-size = 2px
   }
 
   .btn-admin-delete-session {
-    border-radius: 1px;
+    border-radius: 2px;
+    padding: 0px;
+    height: 30px;
+    width: 30px;
   }
 
   h3 {
@@ -542,12 +551,12 @@ user-admin-border-size = 2px
       padding: 0px;
       margin: 0px;
       margin-left: 5px;
-      height: 38px;
   }
 
   img {
-    width: 25px;
-    height: 25px;
+    border-radius: 2px;
+    width: 30px;
+    height: 30px;
   }
 
   &.live {
