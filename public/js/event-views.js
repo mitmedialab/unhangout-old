@@ -81,7 +81,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.ui.attend.attr("data-toggle", "");
         this.ui.attend.removeClass("btn-info");
         this.ui.attend.removeClass("active");
-        this.ui.attend.addClass("btn-success");
 
         var numAttendees = this.model.getNumConnectedParticipants() + this.model.get("joiningParticipants").length;
 
@@ -289,7 +288,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
             roomId: this.options.event.getRoomId(),
             approve: true
         });
-    },
+    }
 });
 
 // The list view contains all the individual session views. We don't
@@ -316,9 +315,9 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         return {event: this.options.event, transport: this.options.transport};
     }, 
     
-    renderControls: function() {
+    renderControls: function() {    
         this.$el.html(this.participantProposedSession());
-    }
+    },
 });
 
 // The list view contains all the individual topic views

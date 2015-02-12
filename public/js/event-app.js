@@ -154,11 +154,38 @@ $(document).ready(function() {
 
         // present the views in their respective regions
         this.right.show(this.chatView);
-        this.centerLeft.show(this.sessionListView)
-        this.main.show(this.topicListView);
         this.topLeft.show(this.youtubeEmbedView);
+        this.centerLeft.show(this.sessionListView);
+        this.main.show(this.topicListView)
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
+
+        // if(curEvent.get("adminProposedSessions")) {
+        //     console.log("admin proposed mode is true");
+        //     this.main.show(this.topicListView);
+        // }
+
+        curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
+            this.adminButtonView.render();
+            
+            if(curEvent.get("adminProposedSessions")) {
+                console.log("PP Mode");
+                this.main.show(this.sessionListView);
+
+                //app.sessionListView.render();
+                //app.topicListView.render();
+
+            } else {
+                console.log("AP Mode");
+
+                this.centerLeft.show(this.sessionListView);
+                this.main.show(this.topicListView);
+
+                //app.sessionListView.render();
+                //app.topicListView.render();
+            }
+
+        }, this));
 
         // this is a little unorthodox, but not sure how else
         // to do it.
@@ -171,12 +198,9 @@ $(document).ready(function() {
                 event: curEvent, transport: trans
             });
 
-            curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
-                this.adminButtonView.render();
-            }, this));
-
             this.admin.show(this.adminButtonView);
         }
+
         var maybeMute = function() {
             var hoa = curEvent.get("hoa");
             if (hoa && _.findWhere(hoa.get("connectedParticipants"), {id: auth.USER_ID})) {

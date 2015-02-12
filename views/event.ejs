@@ -66,38 +66,48 @@
 
 <script type="text/template" id="session-template">
     <div class="col-lg-12 col-xs-12 session-area">
-        <h3 class="col-lg-8 col-xs-8">{{- title }}</h3>
-        
-        {{ if (IS_ADMIN) { }}
-            <div class="col-lg-3 col-xs-3 btn-admin-join-session">
-                <button class="attend btn btn-success" data-toggle="button">
-                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
-                    <div class="attendance"></div>
+
+        <div class="col-lg-8 col-xs-8 session-padding">
+                    <h3>{{- title }}</h3>
+        </div>
+
+        <div class="col-lg-3 col-xs-3 session-padding">
+            <div class="col-lg-12 col-xs-12 session-padding">
+                
+
+                <div class="col-lg-3 col-xs-3 session-padding">
+                    <img src="<%= user.get("picture")%>">
+                </div>
+
+                <div class="col-lg-9 col-xs-9 session-padding proposee-display-name">
+                    <h3><font color="#2e7daa"> Srishti Sethi </font></h3>
+                </div>
+            </div>
+
+            <div class="col-lg-12 col-xs-12 session-padding btn-admin-join-session">
+                <button class="attend btn btn-primary">
+                    <i class="lock fa fa-lock"></i><span class="text"> LOCKED</span>
                 </button>
             </div>
+        </div>
 
-            <div class="col-lg-3 col-xs-3 btn-admin-unapprove-session">   
-                <button class="unapprove btn btn-warning">UNAPPROVE</button>
+        <div class="col-lg-1 col-xs-1 session-padding left-padding">
+            <div class="col-lg-12 col-xs-12 session-padding bottom-padding">
+                <button class="unapprove btn btn-warning btn-admin-unapprove-session" data-toggle="tooltip" data-placement="right" data-container="body" title="Unapprove this topic" data-original-title="Unpprove this topic"><i class="fa fa-history"></i></button>    
             </div>
 
-            <div class="col-lg-1 col-xs-1 btn-admin-delete-session">   
-                <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
+            <div class="col-lg-12 col-xs-12 session-padding">
+                <button class="delete btn btn-danger btn-admin-delete-session" data-toggle="tooltip" data-placement="right" data-container="body" title="Delete this topic" data-original-title="Delete this topic"><i class="fa fa-trash-o"></i></button>
             </div>
-        {{ } else { }}
-            <div class="col-lg-4 col-xs-4 btn-join-session">
-                <button class="attend btn btn-success" data-toggle="button">
-                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
-                    <div class="attendance"></div>
-                </button>
-            </div>
-
-        {{ } }}
+        </div>
+    
     </div>
 
     
     <div class="col-lg-12 col-xs-12 session-spots">
         <ul class="hangout-users"></ul>
     </div>
+
 </script>
 
 <script type="text/template" id="topic-template">
@@ -119,7 +129,7 @@
                 </div>       
             </div>
 
-            <div class="col-lg-12 col-xs-12 topic-padding">
+            <div class="col-lg-12 col-xs-12 topic-padding vote-session">
                 <button class="btn btn-primary btn-vote col-lg-offset-6" data-toggle="tooltip" data-placement="bottom" data-container="body" title="Vote this for this topic" data-original-title="Vote for this topic">
                     <i class="fa fa-thumbs-up fa-2"></i> 4 
                     </button>
