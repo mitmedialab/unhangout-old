@@ -16,7 +16,7 @@ require([
 
 var curEvent, messages;
 var app;
-var curSession = null;
+var curSession = null;  
 var logger = new logging.Logger("event-app");
 
 $(document).ready(function() {
@@ -160,29 +160,15 @@ $(document).ready(function() {
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
 
-        // if(curEvent.get("adminProposedSessions")) {
-        //     console.log("admin proposed mode is true");
-        //     this.main.show(this.topicListView);
-        // }
-
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();
             
             if(curEvent.get("adminProposedSessions")) {
-                console.log("PP Mode");
                 this.main.show(this.sessionListView);
 
-                //app.sessionListView.render();
-                //app.topicListView.render();
-
             } else {
-                console.log("AP Mode");
-
                 this.centerLeft.show(this.sessionListView);
                 this.main.show(this.topicListView);
-
-                //app.sessionListView.render();
-                //app.topicListView.render();
             }
 
         }, this));
@@ -223,13 +209,8 @@ $(document).ready(function() {
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
 
-        //For testing invoking the dialog before 
-        //$("#propose-session-modal").modal('show');
-
         $(".proposed-title-validate-error").hide();
 
-        //In place bootstrap editor 
-        //$.fn.editable.defaults.mode = 'inline';
         $('#participantName').editable( {
             placement: 'bottom'
         });

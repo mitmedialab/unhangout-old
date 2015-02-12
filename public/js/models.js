@@ -339,7 +339,7 @@ models.Session = Backbone.Model.extend({
             activities: [],
             joinCap: this.MAX_ATTENDEES,
             approved: false,
-            votes: [],
+            votes: 0,
         };
     },
     getRoomId: function() {

@@ -204,7 +204,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         window.open(url);
     },
 
-    "delete": function() {
+    delete: function() {
         this.options.transport.send("delete-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
@@ -247,6 +247,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     initialize: function() {
         this.listenTo(this.model, 'change:approved', this.render, this);
+        this.listenTo(this.model, 'change:votes', this.render, this);
     },
 
     onRender: function() {
@@ -263,14 +264,14 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("hide");
         }
 
-        this.ui.vote.find(".text").text(this.model.get("votes").length);
+        this.ui.vote.find(".text").text(this.model.get("votes"));
     },
 
     destroy: function() {
         this.model.destroy();
     },
 
-    "delete": function() {
+    delete: function() {
         this.options.transport.send("delete-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
@@ -278,8 +279,11 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     vote: function() {
         this.options.transport.send("vote-session", {
-            id: this.model.id, roomId: this.options.event.getRoomId()
+            id: this.model.id, 
+            roomId: this.options.event.getRoomId(),
+            vote: parseInt(this.model.get("votes")) + 1,
         });
+
     },
 
     approve: function() {
