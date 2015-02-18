@@ -66,6 +66,10 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         var start = new Date().getTime();
 
+        console.log('testing');
+
+        $(".unapprove").tooltip('hide');
+
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
@@ -253,6 +257,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         var start = new Date().getTime();
 
+        $("[data-role='tooltip']").tooltip('hide');
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
