@@ -136,7 +136,7 @@
             <div class="col-lg-12 col-xs-12 topic-padding bottom-padding">
                 
                 <div class="col-lg-3 col-xs-3 topic-padding">
-                    <img src="<%= user.get("picture")%>"> 
+                    <img src="{{- proposeeDisplayPic }}">
                 </div>
 
                  <div class="col-lg-9 col-xs-9 topic-padding proposee-display-name">
@@ -765,8 +765,6 @@
                 <div class="modal-body">
                     <div class="session-preview col-lg-12">
 
-                        
-                            
                             <div class="col-lg-12 proposed-session-box">
                                 <div class="col-lg-8 col-xs-8 no-padding">
 
@@ -778,7 +776,7 @@
                                     <div class="col-lg-12 col-xs-12 no-padding">
                 
                                         <div class="col-lg-3 col-xs-3 no-padding">
-                                            <img src="<%= user.get("picture")%>"> 
+                                            <img src="<%= user.get("picture")%>" id="participantPic"> 
                                         </div>
 
                                         <div class="col-lg-9 col-xs-9 no-padding">

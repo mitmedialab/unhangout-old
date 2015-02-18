@@ -441,7 +441,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         var title = $("#sessionTitle").text();
         var participantName = $("#participantName").text();
-        var participantPic = $(".participantPic").attr("src");
+        var participantPic = $("#participantPic").attr("src");
 
         // if(participantName.length > 20) {
         //     $(".proposed-title-validate-error").show();
