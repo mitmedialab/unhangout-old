@@ -61,7 +61,6 @@ $(document).ready(function() {
 
     curEvent.on("change:adminProposedSessions", function() {
         app.sessionListView.render();
-        app.topicListView.render();
     });
 
     curEvent.on("change:open", function(model, open, options) {
@@ -160,21 +159,25 @@ $(document).ready(function() {
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
 
+        if(curEvent.get("adminProposedSessions")) {
+            $("#propose-session").show();
+        }
+
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();
             
-            if(curEvent.get("adminProposedSessions")) {
-                this.main.show(this.sessionListView);
+            $("#propose-session").hide();
 
-            } else {
-                this.centerLeft.show(this.sessionListView);
-                this.main.show(this.topicListView);
+            if(curEvent.get("adminProposedSessions")) {
+                $("#propose-session").show();
             }
+
+            this.centerLeft.show(this.sessionListView);
 
         }, this));
 
         // this is a little unorthodox, but not sure how else
-        // to do it.
+        // to do it.s
         $(this.bar.el).hide();
 
         // obviously this is not secure, but any admin requests are re-authenticated on
