@@ -167,12 +167,14 @@ $(document).ready(function() {
             this.adminButtonView.render();
             
             $("#propose-session").hide();
+            this.centerLeft.show(this.sessionListView);
 
             if(curEvent.get("adminProposedSessions")) {
                 $("#propose-session").show();
             }
 
             this.centerLeft.show(this.sessionListView);
+            this.main.show(this.topicListView);
 
         }, this));
 
