@@ -66,10 +66,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         var start = new Date().getTime();
 
-        console.log('testing');
-
-        $(".unapprove").tooltip('hide');
-
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
@@ -209,6 +205,9 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     },
 
     delete: function() {
+        //Hide tooltip without rendering the view
+        $(".tooltip").hide();
+        
         this.options.transport.send("delete-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
@@ -255,9 +254,11 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
+        $('.tooltip').hide();
+        $('[data-toggle="tooltip"]').tooltip();
+
         var start = new Date().getTime();
 
-        $("[data-role='tooltip']").tooltip('hide');
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
@@ -277,6 +278,9 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     },
 
     delete: function() {
+        //Hide tooltip without rendering the view
+        $(".tooltip").hide();
+
         this.options.transport.send("delete-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
