@@ -59,10 +59,6 @@ $(document).ready(function() {
         app.sessionListView.render();
     });
 
-    curEvent.on("change:adminProposedSessions", function() {
-        app.sessionListView.render();
-    });
-
     curEvent.on("change:open", function(model, open, options) {
         console.log("change:open", arguments);
         if (IS_ADMIN) {
@@ -154,8 +150,10 @@ $(document).ready(function() {
         // present the views in their respective regions
         this.right.show(this.chatView);
         this.topLeft.show(this.youtubeEmbedView);
+        
         this.centerLeft.show(this.sessionListView);
-        this.main.show(this.topicListView)
+        this.main.show(this.topicListView);
+
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
 
@@ -165,10 +163,11 @@ $(document).ready(function() {
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();
+            this.sessionListView.render();
+            this.topicListView.render();
             
             $("#propose-session").hide();
-            this.centerLeft.show(this.sessionListView);
-
+            
             if(curEvent.get("adminProposedSessions")) {
                 $("#propose-session").show();
             }
