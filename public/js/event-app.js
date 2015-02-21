@@ -215,6 +215,7 @@ $(document).ready(function() {
         $(".about-event-container").hide();
 
         $(".proposed-title-validate-error").hide();
+        $(".session-title-validate-error").hide();
 
         $('#participantName').editable( {
             placement: 'bottom'

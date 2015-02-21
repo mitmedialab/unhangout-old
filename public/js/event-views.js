@@ -516,6 +516,15 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             return;
         }
 
+        if(title.length > 140) {    
+            scope.modal('show');
+            $(".session-title-validate-error", scope).show();
+            return;
+        } else {
+            $(".session-title-validate-error", scope).hide();
+        }
+
+
         var activities = [];
         switch (type) {
             case "simple":
