@@ -148,7 +148,8 @@
 </script>
 
 <script type="text/template" id="chat-message-template">
-    <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
+    <span class="chat-message-author">{{- user.shortDisplayName}} </span>
+    <span class="chat-message-text">{{= text}}</span>
 </script>
 <script type="text/template" id="chat-atname-template">
     {{ if (isMe) { }}
@@ -454,6 +455,7 @@
         $(".youtube-url").hide();
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
+        $(".title-length-error").hide();
 
     </script>
 
@@ -505,6 +507,10 @@
                 <div class="col-lg-offset-1 col-lg-10 alert alert-warning alert-dismissible join-cap-error" role="alert">
                   <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
                   Warning! Please enter a number between 2 and 10.
+                </div>
+                <div class="col-lg-offset-1 col-lg-10 alert alert-warning alert-dismissible title-length-error" role="alert">
+                  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  Warning! Title length cannot exceed 100 characters.
                 </div>
             </div>
 

@@ -333,9 +333,15 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var title = $("[name=session_name]", scope).val();
         var joinCap = parseInt($.trim($("[name=join_cap]", scope).val()));
         var type = $("[name='session_type']:checked", scope).val();
+        var MAX_TITLE = 100;
 
         if (isNaN(joinCap) || joinCap < 2 || joinCap > 10) {
             $(".join-cap-error", scope).show();
+            return;
+        }
+
+        if(title.length > MAX_TITLE) {
+            $(".title-length-error", scope).show();
             return;
         }
 
@@ -787,7 +793,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             // display it differently.
             this.$el.addClass("system");
         } else if (this.options.isAdmin && this.model.get("postAsAdmin")) {
-            this.$el.find(".from").addClass("admin");
+            this.$el.find(".chat-message-author").addClass("admin");
         }
 
         if (this.model.get("past")) {
