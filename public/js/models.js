@@ -104,7 +104,7 @@ models.Event = models.BaseModel.extend({
             youtubeEmbed: null,
             previousVideoEmbeds: [],
             sessionsOpen: false,
-            adminProposedSessions: false,
+            adminProposedSessions: true,
             dateAndTime: null,
             timeZoneValue: null,
             admins: []

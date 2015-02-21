@@ -157,7 +157,7 @@ $(document).ready(function() {
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
 
-        if(curEvent.get("adminProposedSessions")) {
+        if(!curEvent.get("adminProposedSessions")) {
             $("#propose-session").show();
         }
 
@@ -167,8 +167,8 @@ $(document).ready(function() {
             this.topicListView.render();
             
             $("#propose-session").hide();
-            
-            if(curEvent.get("adminProposedSessions")) {
+
+            if(!curEvent.get("adminProposedSessions")) {
                 $("#propose-session").show();
             }
 

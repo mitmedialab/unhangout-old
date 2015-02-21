@@ -69,18 +69,18 @@
 
         {{ if(IS_ADMIN) { }}
 
-            {{ if(IS_ADMIN_SESSIONS_ONLY) { }}
-                <div class="col-lg-8 col-xs-8 session-padding">
+            {{ if(!IS_ADMIN_SESSIONS_ONLY) { }}
+                <div class="col-lg-8 col-xs-8 session-padding session-title">
                     <h3>{{- title }} </h3>
                 </div>
             {{ } else { }} 
-                <div class="col-lg-9 col-xs-9 session-padding">
+                <div class="col-lg-9 col-xs-9 session-padding session-title">
                     <h3>{{- title }} </h3>
                 </div>
             {{ } }}
 
         {{ } else { }}
-            <div class="col-lg-9 col-xs-9 session-padding">
+            <div class="col-lg-9 col-xs-9 session-padding session-title">
                 <h3>{{- title }} </h3>
             </div>
         {{ } }} 
@@ -117,7 +117,7 @@
 
         {{ if(IS_ADMIN) { }}
 
-            {{ if(IS_ADMIN_SESSIONS_ONLY) { }}
+            {{ if(!IS_ADMIN_SESSIONS_ONLY) { }}
 
             <div class="col-lg-1 col-xs-1 session-padding left-padding">
                 <div class="col-lg-12 col-xs-12 session-padding bottom-padding">
@@ -157,7 +157,7 @@
     
     </div>  
 
-    
+
     <div class="col-lg-12 col-xs-12 session-spots">
         <ul class="hangout-users"></ul>
     </div>
@@ -585,13 +585,16 @@
                 </a>
 
                 {{ if (event.get("adminProposedSessions")) { }}
-                    <a role="menuitem" href="#" role="button" id='admin-proposed-sessions-mode'>
-                        <i class='fa fa-users fa-lg fa-fw'></i> Admin Proposed Sessions
-                    </a>
-                {{ } else { }}
                     <a role="menuitem" href="#" role="button" id='participant-proposed-sessions-mode'>
-                        <i class='fa fa-user fa-lg fa-fw'></i> Participant Proposed Sessions 
+                        <i class='fa fa-users fa-lg fa-fw'></i> Participant Proposed Sessions 
                     </a>
+
+                {{ } else { }}
+                    
+                    <a role="menuitem" href="#" role="button" id='admin-proposed-sessions-mode'>
+                        <i class='fa fa-user fa-lg fa-fw'></i> Admin Proposed Sessions
+                    </a>
+
                 {{ } }}
 
             </li>

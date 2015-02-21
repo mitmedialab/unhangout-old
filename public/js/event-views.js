@@ -36,7 +36,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         start:'.start',
         unapprove: '.unapprove',
         deleteButton: '.delete',        // delete is reserved word
-        hangoutUsers: '.hangout-users'
+        hangoutUsers: '.hangout-users',
+        sessionTitle: '.session-title'
     },
 
     events: {
@@ -75,6 +76,20 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("live");
         } else {
             this.$el.addClass("hide");
+        }
+
+        //Hide unapprove UI if admin proposed session mode
+        if(this.options.event.get("adminProposedSessions")) {
+            this.ui.unapprove.hide();
+            this.ui.sessionTitle.removeClass("col-lg-8");
+            this.ui.sessionTitle.removeClass("col-xs-8");
+            this.ui.sessionTitle.addClass("col-lg-9");
+            this.ui.sessionTitle.addClass("col-xs-9");
+        } else {
+            this.ui.sessionTitle.removeClass("col-lg-9");
+            this.ui.sessionTitle.removeClass("col-xs-9");
+            this.ui.sessionTitle.addClass("col-lg-8");
+            this.ui.sessionTitle.addClass("col-xs-8");
         }
 
         // remove the toggle-ness of the button once the event starts.
