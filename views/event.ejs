@@ -68,9 +68,17 @@
     <div class="col-lg-12 col-xs-12 session-area">
 
         {{ if(IS_ADMIN) { }}
-            <div class="col-lg-8 col-xs-8 session-padding">
-                <h3>{{- title }} </h3>
-            </div>
+
+            {{ if(IS_ADMIN_SESSIONS_ONLY) { }}
+                <div class="col-lg-8 col-xs-8 session-padding">
+                    <h3>{{- title }} </h3>
+                </div>
+            {{ } else { }} 
+                <div class="col-lg-9 col-xs-9 session-padding">
+                    <h3>{{- title }} </h3>
+                </div>
+            {{ } }}
+
         {{ } else { }}
             <div class="col-lg-9 col-xs-9 session-padding">
                 <h3>{{- title }} </h3>
@@ -90,25 +98,35 @@
                 </div>
             </div>
 
-            <div class="col-lg-12 col-xs-12 session-padding btn-admin-join-session">
+           
+        </div>
+
+        {{ if(IS_ADMIN) { }}
+
+            {{ if(IS_ADMIN_SESSIONS_ONLY) { }}
+
+            <div class="col-lg-1 col-xs-1 session-padding left-padding">
+                <div class="col-lg-12 col-xs-12 session-padding bottom-padding">
+                    <button class="unapprove btn btn-warning btn-admin-unapprove-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Unapprove this topic"><i class="fa fa-history"></i></button>  
+                </div>      
+            </div>
+
+            {{ } }}
+
+        {{ } }}
+
+        <div class="col-lg-12 col-xs-12 session-padding">
+            <div class="col-lg-offset-8 col-xs-offset-8 col-lg-3 col-xs-3 session-padding btn-admin-join-session">
                 <button class="attend btn btn-primary">
                     <i class="lock fa fa-lock fa-2"></i>&nbsp;<span class="text"> LOCKED</span>
                 </button>
             </div>
-        </div>
 
-        {{ if(IS_ADMIN) { }}
-        <div class="col-lg-1 col-xs-1 session-padding left-padding">
-            <div class="col-lg-12 col-xs-12 session-padding bottom-padding">
-                <button class="unapprove btn btn-warning btn-admin-unapprove-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Unapprove this topic"><i class="fa fa-history"></i></button>  
-            </div>
-
-            <div class="col-lg-12 col-xs-12 session-padding">
+            <div class="col-lg-1 col-xs-1 session-padding">
                 <button class="delete btn btn-danger btn-admin-delete-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Delete this topic"><i class="fa fa-trash-o"></i></button>
-            </div>
-        </div>
+            </div>  
 
-        {{ } }}
+        </div>
     
     </div>
 
