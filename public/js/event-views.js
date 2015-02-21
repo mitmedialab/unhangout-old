@@ -207,7 +207,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     delete: function() {
         //Hide tooltip without rendering the view
         $(".tooltip").hide();
-        
+
         this.options.transport.send("delete-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
@@ -438,21 +438,20 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     proposeSession: function(event) {
         event.preventDefault();
-        
+
         var scope = $("#propose-session-modal");
-        $(".proposed-title-validate-error").hide();
-        $(".propose-session-template").css("min-height", "115px");
 
         var title = $("#sessionTitle").text();
         var participantName = $("#participantName").text();
         var participantPic = $("#participantPic").attr("src");
 
-        // if(participantName.length > 20) {
-        //     $(".proposed-title-validate-error").show();
-        //     $(".propose-session-template").css("min-height", "145px");
-        //     scope.modal('show');
-        //     return;
-        // }
+        if(title.length > 140) {    
+            scope.modal('show');
+            $(".proposed-title-validate-error", scope).show();
+            return;
+        } else {
+            $(".proposed-title-validate-error", scope).hide();
+        }
 
         // force sessions type to be "simple"
         var activities = [];
