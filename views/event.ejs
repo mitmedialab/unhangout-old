@@ -239,6 +239,7 @@
 </script>
 
 <script type="text/template" id="session-participant-proposed-template">
+    {{ if(!IS_ADMIN_SESSIONS_ONLY) { }}
     <div id="propose-session" class="col-lg-12 propose-session">
         <a href="#propose-session-modal" data-toggle="modal"> 
             <button class="btn btn-primary" id="btn-propose-session">
@@ -247,6 +248,7 @@
             </button>
         </a>
     </div>
+    {{ } }}
     <div style='clear: both;'></div>
 </script>
 

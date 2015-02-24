@@ -159,6 +159,12 @@ $(document).ready(function() {
 
         if(!curEvent.get("adminProposedSessions")) {
             $("#propose-session").show();
+            $("#session-list").show();
+            $("#topic-list").show();
+        } else {
+            $("#propose-session").hide();
+            $("#session-list").show();
+            $("#topic-list").hide();
         }
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
@@ -167,9 +173,12 @@ $(document).ready(function() {
             this.topicListView.render();
             
             $("#propose-session").hide();
+            $("#topic-list").hide();
 
             if(!curEvent.get("adminProposedSessions")) {
                 $("#propose-session").show();
+                $("#topic-list").show();
+                $("#session-list").show();
             }
 
             this.centerLeft.show(this.sessionListView);

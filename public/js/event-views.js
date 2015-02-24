@@ -89,7 +89,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.sessionTitle.removeClass("col-lg-9");
             this.ui.sessionTitle.removeClass("col-xs-9");
             this.ui.sessionTitle.addClass("col-lg-8");
-            this.ui.sessionTitle.addClass("col-xs-8");
+            this.ui.sessionTitle.addClass("col-xs-8 ");
         }
 
         // remove the toggle-ness of the button once the event starts.
@@ -364,6 +364,7 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     itemViewOptions: function() {
         return {event: this.options.event, transport: this.options.transport};
     },
+
 });
 
 
