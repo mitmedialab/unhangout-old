@@ -280,7 +280,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         // model state.
         this.$el.removeClass("live");
         this.$el.removeClass("hide");
-        if (!this.model.get("approved") && !IS_ADMIN_SESSIONS_ONLY) {
+        if (!this.model.get("approved")) {
             this.$el.addClass("live");
         } else {
             this.$el.addClass("hide");
@@ -337,7 +337,6 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     initialize: function() {
         this.renderControls();
-        this.listenTo(this.options.event, 'change:adminProposedSessions', this.renderControls, this);
     },
 
     itemViewOptions: function() {
@@ -357,9 +356,7 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
 
     id: "topic-list",
 
-    initialize: function() {
-        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
-    },
+    initialize: function() {},
 
     itemViewOptions: function() {
         return {event: this.options.event, transport: this.options.transport};
