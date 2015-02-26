@@ -563,6 +563,7 @@ user-admin-border-size = 2px
   float: left;
   border-radius: 5px;
   margin-bottom: 5px;
+  margin-top: 5px;
   padding: 0px;
   width: 100%;
 }
@@ -580,101 +581,96 @@ user-admin-border-size = 2px
 
   .session-area {
     padding: 0;
-    margin-bottom: 5px;
+  }
 
-    .session-padding {
-      padding: 0px;
-    }
+  .session-padding {
+    padding: 0px;
+  }
 
-    .bottom-padding {
-      padding-bottom: 5px;
-    }
+  .bottom-padding {
+    padding-bottom: 5px;
+  }
 
-    .left-padding {
-      padding-left: 5px;
-    }
+  .left-padding {
+    padding-left: 10px;
+  }
 
-    h3 {
-      color: $primary;
-      font-weight: normal;
-      font-size: 1em;
-      padding: 0px;
-      margin: 0px;
-    }
+  h3 {
+    color: $primary;
+    font-weight: normal;
+    font-size: 1em;
+    padding: 0px;
+    margin: 0px;
+  }
 
-    .proposee-display-name {
-      font-size: 12px;
-      margin: 0px;
-      margin-top: 8px;
-      padding-left: 5px;
-    }
+  .proposee-display-name {
+    font-size: 12px;
+    margin: 0px;
+    margin-top: 8px;
+    padding-left: 5px;
+  }
 
-    img {
+  img {
+    border-radius: 2px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .btn-join-session {
+    padding: 0px;
+    .attend.btn {
+      color: white;
+      width: 100%;
       border-radius: 2px;
-      width: 30px;
-      height: 30px;
-    }
-
-    .btn-join-session {
-      padding: 0px;
-      .attend.btn {
-        color: white;
-        width: 100%;
-        border-radius: 2px;
-        font-size: 1.2em;
-        font-weight: 300;
-        letter-spacing: 0.5px;
-      }
-    }
-
-    .btn-admin-join-session {
-      padding: 0px;
-
-      .attend.btn {
-        padding: 0px;
-        margin-top: 5px;
-        color: white;
-        width: 100%;
-        border-radius: 2px;
-        font-size: 14px;
-        font-weight: 300;
-        letter-spacing: 0.5px;
-        height: 30px;
-      }
-    }
-
-    .unapprove {
-      color: #fff;
-      border-radius: 0px;
-      font-weight: 300;
-      letter-spacing: 0.5px;
-      padding: 0px;
-    }
-
-    .btn-admin-unapprove-session {
-      border-radius: 2px;
-      padding: 0px;
-      height: 30px;
-      width: 30px;
-    }
-
-    .delete-session {
-      padding: 0px;
-      color: #fff;
-      border-radius: 0px;
+      font-size: 1.2em;
       font-weight: 300;
       letter-spacing: 0.5px;
     }
+  }
 
-    .btn-admin-delete-session {
-      border-radius: 2px;
+  .btn-admin-join-session {
+    padding: 0px;
+
+    .attend.btn {
       padding: 0px;
+      color: white;
+      width: 100%;
+      border-radius: 2px;
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
       height: 30px;
-      width: 30px;
-      margin-top: 5px;
-      margin-left: 5px;
     }
+  }
 
+  .unapprove {
+    color: #fff;
+    border-radius: 0px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    padding: 0px;
+  }
+
+  .btn-admin-unapprove-session {
+    border-radius: 2px;
+    padding: 0px;
+    height: 30px;
+    width: 30px;
+  }
+
+  .delete-session {
+    padding: 0px;
+    color: #fff;
+    border-radius: 0px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-admin-delete-session {
+    border-radius: 2px;
+    padding: 0px;
+    height: 30px;
+    width: 30px;
   }
 
   .session-spots {
@@ -683,6 +679,8 @@ user-admin-border-size = 2px
 
   .hangout-users {
     padding: 0px;
+    margin-top: 5px;
+
     li.user, li.empty {
       background-color: white;
       border: 1px solid #dfdfdf;
