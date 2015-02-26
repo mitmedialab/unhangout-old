@@ -53,6 +53,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // re-render to show them.
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
@@ -81,15 +82,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         //Hide unapprove UI if admin proposed session mode
         if(this.options.event.get("adminProposedSessions")) {
             this.ui.unapprove.hide();
-            this.ui.sessionTitle.removeClass("col-lg-8");
-            this.ui.sessionTitle.removeClass("col-xs-8");
-            this.ui.sessionTitle.addClass("col-lg-9");
-            this.ui.sessionTitle.addClass("col-xs-9");
         } else {
-            this.ui.sessionTitle.removeClass("col-lg-9");
-            this.ui.sessionTitle.removeClass("col-xs-9");
-            this.ui.sessionTitle.addClass("col-lg-8");
-            this.ui.sessionTitle.addClass("col-xs-8 ");
+            this.ui.unapprove.show();
         }
 
         // remove the toggle-ness of the button once the event starts.

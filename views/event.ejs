@@ -68,23 +68,17 @@
     <div class="col-lg-12 col-xs-12 session-area">
 
         {{ if(IS_ADMIN) { }}
-
-            {{ if(!IS_ADMIN_SESSIONS_ONLY) { }}
-                <div class="col-lg-8 col-xs-8 session-padding session-title">
+            
+            <div class="col-lg-8 col-xs-8 session-padding session-title">
                     <h3>{{- title }} </h3>
-                </div>
-            {{ } else { }} 
-                <div class="col-lg-9 col-xs-9 session-padding session-title">
-                    <h3>{{- title }} </h3>
-                </div>
-            {{ } }}
+            </div>
 
         {{ } else { }}
             <div class="col-lg-9 col-xs-9 session-padding session-title">
                 <h3>{{- title }} </h3>
             </div>
         {{ } }} 
-
+        
         <div class="col-lg-3 col-xs-3 session-padding">
             <div class="col-lg-12 col-xs-12 session-padding">
                 
