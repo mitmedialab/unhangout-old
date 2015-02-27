@@ -37,7 +37,10 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         unapprove: '.unapprove',
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
-        sessionTitle: '.session-title'
+        sessionTitle: '.session-title',
+        proposeeDetails: '.proposee-details',
+        btnJoinRow: '.btn-join-row',
+        btnAdminJoinSession: '.btn-admin-join-session'
     },
 
     events: {
@@ -73,6 +76,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // model state.
         this.$el.removeClass("live");
         this.$el.removeClass("hide");
+
         if (this.model.get("approved")) {
             this.$el.addClass("live");
         } else {
@@ -82,8 +86,28 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         //Hide unapprove UI if admin proposed session mode
         if(this.options.event.get("adminProposedSessions")) {
             this.ui.unapprove.hide();
+            this.ui.proposeeDetails.hide();
         } else {
             this.ui.unapprove.show();
+            this.ui.proposeeDetails.show();
+        }
+
+        if(IS_ADMIN) {
+            this.ui.deleteButton.show();
+
+            //Will these bootstrap tags after participant view rendering is fixed
+            // and if there will be need to use the classes indicated below
+
+            //this.ui.btnJoinRow.addClass("col-lg-offset-8 col-xs-offset-8");
+            //this.ui.btnJoinRow.removeClass("col-lg-offset-9 col-xs-offset-9");
+            //this.ui.btnAdminJoinSession.addClass("col-lg-9 col-md-9 col-sm-9 col-xs-9");
+            //this.ui.btnAdminJoinSession.removeClass("col-lg-11 col-md-11 col-sm-11 col-xs-11");
+        } else {
+            this.ui.deleteButton.hide();
+            //this.ui.btnJoinRow.addClass("col-lg-offset-9 col-xs-offset-9");
+            //this.ui.btnJoinRow.removeClass("col-lg-offset-8 col-xs-offset-8");
+            //this.ui.btnAdminJoinSession.addClass("col-lg-11 col-md-11 col-sm-11 col-xs-11");
+            //this.ui.btnAdminJoinSession.removeClass("col-lg-9 col-md-9 col-sm-9 col-xs-9");
         }
 
         // remove the toggle-ness of the button once the event starts.
