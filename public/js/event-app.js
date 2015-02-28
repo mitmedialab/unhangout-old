@@ -170,6 +170,8 @@ $(document).ready(function() {
             //Hide Edit Session Input in Session View  
             $(".edit-session-warning").hide();
             $(".edit-session-title").hide();
+            $(".edit-topic-warning").hide();
+            $(".edit-topic-title").hide();
 
             $("#propose-session").hide();
             $("#topic-list").hide();
@@ -223,6 +225,8 @@ $(document).ready(function() {
         //Hide Edit Session Input in Session View  
         $(".edit-session-warning").hide();
         $(".edit-session-title").hide();
+        $(".edit-topic-warning").hide();
+        $(".edit-topic-title").hide();
 
         $('#participantName').editable( {
             placement: 'bottom'

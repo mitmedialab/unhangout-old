@@ -38,10 +38,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
         proposeeDetails: '.proposee-details',
-      //  btnJoinRow: '.btn-join-row',
-      //  btnAdminJoinSession: '.btn-admin-join-session',
-        editSessionTitle: '#edit-title',
-        btnEditSession: '.btn-edit-session'
     },
 
     events: {
@@ -92,28 +88,14 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.proposeeDetails.hide(); 
             
         } else {
-            
-           
             this.ui.unapprove.show();
             this.ui.proposeeDetails.show();
         }
 
         if(IS_ADMIN) {
             this.ui.deleteButton.show();
-
-            //Will these bootstrap tags after participant view rendering is fixed
-            // and if there will be need to use the classes indicated below
-
-            //this.ui.btnJoinRow.addClass("col-lg-offset-8 col-xs-offset-8");
-            //this.ui.btnJoinRow.removeClass("col-lg-offset-9 col-xs-offset-9");
-            //this.ui.btnAdminJoinSession.addClass("col-lg-9 col-md-9 col-sm-9 col-xs-9");
-            //this.ui.btnAdminJoinSession.removeClass("col-lg-11 col-md-11 col-sm-11 col-xs-11");
         } else {
             this.ui.deleteButton.hide();
-            //this.ui.btnJoinRow.addClass("col-lg-offset-9 col-xs-offset-9");
-            //this.ui.btnJoinRow.removeClass("col-lg-offset-8 col-xs-offset-8");
-            //this.ui.btnAdminJoinSession.addClass("col-lg-11 col-md-11 col-sm-11 col-xs-11");
-            //this.ui.btnAdminJoinSession.removeClass("col-lg-9 col-md-9 col-sm-9 col-xs-9");
         }
 
         // remove the toggle-ness of the button once the event starts.
@@ -312,7 +294,9 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         'click .btn-vote':'vote',
         'click .approve':'approve',
         'click .delete':'delete',
-        'click h3':'headerClick'
+        'click h3':'headerClick',
+        'click .btn-edit-topic': 'invokeEditTopicInput',
+        'change #edit-topic':'editTopicTitle'
     },
 
     initialize: function() {
@@ -368,7 +352,34 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
             roomId: this.options.event.getRoomId(),
             approve: true
         });
-    }
+    },
+
+    invokeEditTopicInput: function() {
+        this.$el.find(".topic-title-container").hide();
+        this.$el.find(".edit-topic-title").show();
+    },
+
+    editTopicTitle: function() {
+        var title = this.$el.find("#edit-topic").val();
+
+        if(title.length > 140) {    
+            this.$el.find(".edit-topic-warning").show();
+            return;
+        } else {
+
+            this.options.transport.send("edit-session", {
+                title: title,
+                id: this.model.id,
+                roomId: this.options.event.getRoomId(),
+            });
+
+            this.$el.find(".edit-topic-warning").hide();
+            this.$el.find(".edit-topic-title").hide();
+            this.$el.find(".topic-title").text(title);
+            this.$el.find(".topic-title-container").show();
+
+        }
+    },
 });
 
 // The list view contains all the individual session views. We don't
