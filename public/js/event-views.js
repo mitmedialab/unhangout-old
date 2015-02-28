@@ -37,10 +37,11 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         unapprove: '.unapprove',
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
-        sessionTitle: '.session-title',
         proposeeDetails: '.proposee-details',
-        btnJoinRow: '.btn-join-row',
-        btnAdminJoinSession: '.btn-admin-join-session'
+      //  btnJoinRow: '.btn-join-row',
+      //  btnAdminJoinSession: '.btn-admin-join-session',
+        editSessionTitle: '#edit-title',
+        btnEditSession: '.btn-edit-session'
     },
 
     events: {
@@ -48,7 +49,9 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         'click .start':'start',
         'click .unapprove':'unapprove',
         'click .delete':'delete',
-        'click h3':'headerClick'
+        'click h3':'headerClick',
+        'click .btn-edit-session': 'invokeEditSessionInput',
+        'change #edit-title':'editSessionTitle'
     },
 
     initialize: function() {
@@ -69,7 +72,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
-        var start = new Date().getTime();
+        var start = new Date().getTime();  
 
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
@@ -86,8 +89,11 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         //Hide unapprove UI if admin proposed session mode
         if(this.options.event.get("adminProposedSessions")) {
             this.ui.unapprove.hide();
-            this.ui.proposeeDetails.hide();
+            this.ui.proposeeDetails.hide(); 
+            
         } else {
+            
+           
             this.ui.unapprove.show();
             this.ui.proposeeDetails.show();
         }
@@ -259,7 +265,34 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             roomId: this.options.event.getRoomId(),
             approve: false
         });
-    }
+    },
+
+    invokeEditSessionInput: function() {
+        this.$el.find(".session-title-container").hide();
+        this.$el.find(".edit-session-title").show();
+    },
+
+    editSessionTitle: function() {
+        var title = this.$el.find("#edit-title").val();
+
+        if(title.length > 140) {    
+            this.$el.find(".edit-session-warning").show();
+            return;
+        } else {
+
+            this.options.transport.send("edit-session", {
+                title: title,
+                id: this.model.id,
+                roomId: this.options.event.getRoomId(),
+            });
+
+            this.$el.find(".edit-session-warning").hide();
+            this.$el.find(".edit-session-title").hide();
+            this.$el.find(".session-title").text(title);
+            this.$el.find(".session-title-container").show();
+
+        }
+    },
 });
 
 

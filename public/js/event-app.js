@@ -167,7 +167,10 @@ $(document).ready(function() {
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();
-            
+            //Hide Edit Session Input in Session View  
+            $(".edit-session-warning").hide();
+            $(".edit-session-title").hide();
+
             $("#propose-session").hide();
             $("#topic-list").hide();
 
@@ -213,8 +216,13 @@ $(document).ready(function() {
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
 
+        //Session Title Length Error
         $(".proposed-title-validate-error").hide();
         $(".session-title-validate-error").hide();
+        
+        //Hide Edit Session Input in Session View  
+        $(".edit-session-warning").hide();
+        $(".edit-session-title").hide();
 
         $('#participantName').editable( {
             placement: 'bottom'

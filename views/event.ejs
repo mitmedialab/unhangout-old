@@ -68,8 +68,24 @@
     <div class="col-lg-12 col-xs-12 session-area">
 
         {{ if(IS_ADMIN) { }}   
-            <div class="col-lg-8 col-xs-8 session-padding session-title">
-                <h3>{{- title }} </h3>
+            <div class="col-lg-8 col-xs-8 session-padding session-title-container">
+                <div class="col-lg-1 col-xs-1 session-padding">
+                    <button class="btn btn-primary btn-edit-session"><i class="fa fa-pencil"></i></button>
+                </div>
+
+                <div class="col-lg-11 col-xs-11 session-title-padding">
+                    <h3 class="session-title">{{- title }} </h3> 
+                </div>
+            </div>
+
+            <div class="col-lg-8 col-xs-8 session-padding edit-session-title">
+                <div class="col-lg-11 col-xs-10 session-padding">
+                    <input type="text" id="edit-title" class="form-control" placeholder='{{- title }}'></input>
+                </div>
+
+                <div class="col-lg-11 col-xs-10 session-padding edit-session-warning">
+                    <p style="color: #D9524F" >Title should be less than 140 characters. </p>
+                </div>
             </div>
 
         {{ } else { }}
@@ -111,8 +127,8 @@
 
         {{ if(IS_ADMIN) { }}
             <div class="col-lg-1 col-xs-1 session-padding left-padding">
-                <div class="col-lg-12 col-xs-12 session-padding">
-                    <button class="unapprove btn btn-warning btn-admin-unapprove-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Unapprove this topic"><i class="fa fa-history"></i></button>  
+                <div class="col-lg-12 col-xs-12 session-padding btn-admin-unapprove-session">
+                    <button class="unapprove btn btn-warning" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Unapprove this topic"><i class="fa fa-history"></i></button>  
                 </div>      
             </div>
         {{ } }}
