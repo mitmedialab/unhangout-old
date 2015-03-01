@@ -157,14 +157,6 @@ $(document).ready(function() {
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
 
-        if(!curEvent.get("adminProposedSessions")) {
-            $("#propose-session").show();
-            $("#topic-list").show();
-        } else {
-            $("#propose-session").hide();
-            $("#topic-list").hide();
-        }
-
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();
             //Hide Edit Session Input in Session View  
