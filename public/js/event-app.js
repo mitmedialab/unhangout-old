@@ -157,6 +157,16 @@ $(document).ready(function() {
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
 
+        //On page reload show and hide topic list
+        //according to the current mode
+        if(!curEvent.get("adminProposedSessions")) {
+            $("#propose-session").show();
+            $("#topic-list").show();
+        } else {
+            $("#propose-session").hide();
+            $("#topic-list").hide();
+        }
+
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();  
         }, this));
