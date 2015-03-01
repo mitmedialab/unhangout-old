@@ -399,6 +399,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     initialize: function() {
         this.renderControls();
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
     },
 
     itemViewOptions: function() {
@@ -408,6 +409,14 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     renderControls: function() {    
         this.$el.html(this.participantProposedSession());
     },
+
+    onRender: function() {
+        if(this.options.event.get("adminProposedSessions")) {
+            $("#propose-session").hide();
+        } else {
+            $("#propose-session").show();
+        }
+    }
 });
 
 // The list view contains all the individual topic views
@@ -418,10 +427,20 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
 
     id: "topic-list",
 
-    initialize: function() {},
+    initialize: function() {
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+    },
 
     itemViewOptions: function() {
         return {event: this.options.event, transport: this.options.transport};
+    },
+
+    onRender: function() {
+        if(this.options.event.get("adminProposedSessions")) {
+            $("#topic-list").hide();
+        } else {
+            $("#topic-list").show();
+        }
     },
 
 });

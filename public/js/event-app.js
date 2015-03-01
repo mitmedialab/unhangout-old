@@ -168,18 +168,12 @@ $(document).ready(function() {
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();
             //Hide Edit Session Input in Session View  
+            
             $(".edit-session-warning").hide();
             $(".edit-session-title").hide();
             $(".edit-topic-warning").hide();
-            $(".edit-topic-title").hide();
-
-            $("#propose-session").hide();
-            $("#topic-list").hide();
-
-            if(!curEvent.get("adminProposedSessions")) {
-                $("#propose-session").show();
-                $("#topic-list").show();
-            }
+            $(".edit-topic-title").hide();        
+            
         }, this));
 
         // this is a little unorthodox, but not sure how else
