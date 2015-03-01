@@ -38,6 +38,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
         proposeeDetails: '.proposee-details',
+        editSessionTitle: '.edit-session-title',
+        editSessionWarning: '.edit-session-warning'
     },
 
     events: {
@@ -251,14 +253,14 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
     invokeEditSessionInput: function() {
         this.$el.find(".session-title-container").hide();
-        this.$el.find(".edit-session-title").show();
+        this.$el.find(".edit-session-title").addClass('show');
     },
 
     editSessionTitle: function() {
         var title = this.$el.find("#edit-title").val();
 
         if(title.length > 140) {    
-            this.$el.find(".edit-session-warning").show();
+            this.$el.find(".edit-session-warning").addClass('show');
             return;
         } else {
 
@@ -268,8 +270,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
                 roomId: this.options.event.getRoomId(),
             });
 
-            this.$el.find(".edit-session-warning").hide();
-            this.$el.find(".edit-session-title").hide();
+            this.$el.find(".edit-session-warning").addClass('hide');
+            this.$el.find(".edit-session-title").addClass('hide');
             this.$el.find(".session-title").text(title);
             this.$el.find(".session-title-container").show();
 
@@ -356,7 +358,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     invokeEditTopicInput: function() {
         this.$el.find(".topic-title-container").hide();
-        this.$el.find(".edit-topic-title").show();
+        this.$el.find(".edit-topic-title").addClass('show');
     },
 
     editTopicTitle: function() {
@@ -373,8 +375,8 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
                 roomId: this.options.event.getRoomId(),
             });
 
-            this.$el.find(".edit-topic-warning").hide();
-            this.$el.find(".edit-topic-title").hide();
+            this.$el.find(".edit-topic-warning").addClass('hide');
+            this.$el.find(".edit-topic-title").addClass('hide');
             this.$el.find(".topic-title").text(title);
             this.$el.find(".topic-title-container").show();
 
@@ -402,15 +404,17 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
     },
 
-    itemViewOptions: function() {
-        return {event: this.options.event, transport: this.options.transport};
+    itemViewOptions: function() {        
+        return {
+            event: this.options.event, transport: this.options.transport
+        };
     }, 
     
     renderControls: function() {    
         this.$el.html(this.participantProposedSession());
     },
 
-    onRender: function() {
+    onRender: function() { 
         if(this.options.event.get("adminProposedSessions")) {
             $("#propose-session").hide();
         } else {
@@ -432,10 +436,13 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     },
 
     itemViewOptions: function() {
-        return {event: this.options.event, transport: this.options.transport};
+        return {
+            event: this.options.event, transport: this.options.transport
+        };
     },
 
     onRender: function() {
+        
         if(this.options.event.get("adminProposedSessions")) {
             $("#topic-list").hide();
         } else {

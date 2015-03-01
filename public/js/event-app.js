@@ -158,14 +158,7 @@ $(document).ready(function() {
         this.top.show(this.aboutView);
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
-            this.adminButtonView.render();
-            //Hide Edit Session Input in Session View  
-            
-            $(".edit-session-warning").hide();
-            $(".edit-session-title").hide();
-            $(".edit-topic-warning").hide();
-            $(".edit-topic-title").hide();        
-            
+            this.adminButtonView.render();  
         }, this));
 
         // this is a little unorthodox, but not sure how else
@@ -207,12 +200,6 @@ $(document).ready(function() {
         //Session Title Length Error
         $(".proposed-title-validate-error").hide();
         $(".session-title-validate-error").hide();
-        
-        //Hide Edit Session Input in Session View  
-        $(".edit-session-warning").hide();
-        $(".edit-session-title").hide();
-        $(".edit-topic-warning").hide();
-        $(".edit-topic-title").hide();
 
         $('#participantName').editable( {
             placement: 'bottom'
