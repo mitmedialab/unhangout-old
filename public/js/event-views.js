@@ -566,7 +566,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         var title = $("#sessionTitle").text();
         var participantName = $("#participantName").text();
-        var participantPic = $("#participantPic").attr("src");
 
         if(title.length > 140) {    
             scope.modal('show');
@@ -584,7 +583,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             title: title,
             description:"",
             proposeeDisplayName: participantName,
-            proposeeDisplayPic: participantPic,
             activities: activities,
             roomId: this.options.event.getRoomId(),
             approved: false,

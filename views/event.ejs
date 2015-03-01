@@ -99,13 +99,7 @@
             <div class="col-lg-12 col-xs-12 session-padding">
                 
                 <div class="col-lg-3 col-xs-3 session-padding">
-
-                    {{ if(proposeeDisplayPic) { }}
-                            <img src="{{- proposeeDisplayPic }}">
-                    {{ } else { }}
-                        <img src="<%= user.get("picture") %>">
-                    {{ } }}
-
+                    <img src="{{- proposedBy.picture }}">
                 </div>
 
                 <div class="col-lg-9 col-xs-9 session-padding proposee-display-name">
@@ -114,7 +108,7 @@
                     {{ if(proposeeDisplayName) { }}
                         {{- proposeeDisplayName }} 
                     {{ } else { }}
-                        <%= user.get("displayName") %>
+                        {{- proposedBy.displayName }}
                     {{ } }}
 
                     </font>
@@ -200,11 +194,19 @@
             <div class="col-lg-12 col-xs-12 topic-padding bottom-padding">
                 
                 <div class="col-lg-3 col-xs-3 topic-padding">
-                    <img src="{{- proposeeDisplayPic }}">
+                    <img src="{{- proposedBy.picture }}">
                 </div>
 
                  <div class="col-lg-9 col-xs-9 topic-padding proposee-display-name">
-                    <h3><font color="#2e7daa"> {{- proposeeDisplayName }}  </font> </h3>
+                    <h3><font color="#2e7daa"> 
+                    
+                    {{ if(proposeeDisplayName) { }}
+                        {{- proposeeDisplayName }} 
+                    {{ } else { }}
+                        {{- proposedBy.displayName }}
+                    {{ } }}
+
+                    </font> </h3>
                 </div>       
             </div>
 
