@@ -253,6 +253,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
     invokeEditSessionInput: function() {
         this.$el.find(".session-title-container").hide();
+
+        this.$el.find(".edit-session-title").removeClass('hide');
         this.$el.find(".edit-session-title").addClass('show');
     },
 
@@ -260,6 +262,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         var title = this.$el.find("#edit-title").val();
 
         if(title.length > 140) {    
+
+            this.$el.find(".edit-session-warning").removeClass('hide');
             this.$el.find(".edit-session-warning").addClass('show');
             return;
         } else {
@@ -270,11 +274,14 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
                 roomId: this.options.event.getRoomId(),
             });
 
+            this.$el.find(".edit-session-warning").removeClass('show');
             this.$el.find(".edit-session-warning").addClass('hide');
+
+            this.$el.find(".edit-session-title").removeClass('show');
             this.$el.find(".edit-session-title").addClass('hide');
+
             this.$el.find(".session-title").text(title);
             this.$el.find(".session-title-container").show();
-
         }
     },
 });
@@ -365,7 +372,8 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         var title = this.$el.find("#edit-topic").val();
 
         if(title.length > 140) {    
-            this.$el.find(".edit-topic-warning").show();
+            this.$el.find(".edit-topic-warning").removeClass('hide');
+            this.$el.find(".edit-topic-warning").addClass('show');
             return;
         } else {
 
@@ -375,8 +383,12 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
                 roomId: this.options.event.getRoomId(),
             });
 
+            this.$el.find(".edit-topic-warning").removeClass('show');
             this.$el.find(".edit-topic-warning").addClass('hide');
+
+            this.$el.find(".edit-topic-title").removeClass('show');
             this.$el.find(".edit-topic-title").addClass('hide');
+
             this.$el.find(".topic-title").text(title);
             this.$el.find(".topic-title-container").show();
 
@@ -442,7 +454,7 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     },
 
     onRender: function() {
-        
+
         if(this.options.event.get("adminProposedSessions")) {
             $("#topic-list").hide();
         } else {
