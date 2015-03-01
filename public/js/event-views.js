@@ -324,10 +324,19 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         // model state.
         this.$el.removeClass("live");
         this.$el.removeClass("hide");
+
         if (!this.model.get("approved")) {
             this.$el.addClass("live");
         } else {
             this.$el.addClass("hide");
+        }
+
+        //For participants who proposed a session, show delete button 
+        //, hide approve button from the topic template and position
+        // delete button
+        if(!IS_ADMIN && (USER.displayName === this.model.get("proposedBy").displayName)) {
+            this.ui.approve.hide();
+            this.ui.deleteButton.addClass("pos-admin-delete");
         }
 
         this.ui.vote.find(".text").text(this.model.get("votes"));
