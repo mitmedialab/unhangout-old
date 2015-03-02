@@ -334,7 +334,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         //For participants who proposed a session, show delete button 
         //, hide approve button from the topic template and position
         // delete button
-        if(!IS_ADMIN && (USER.displayName === this.model.get("proposedBy").displayName)) {
+        if(!IS_ADMIN && (USER.id === this.model.get("proposedBy").id)) {
             this.ui.approve.hide();
             this.ui.deleteButton.addClass("pos-admin-delete");
         }

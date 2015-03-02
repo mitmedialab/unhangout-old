@@ -162,7 +162,7 @@
 <script type="text/template" id="topic-template">
     <div class="col-lg-12 col-xs-12 session-area">
 
-        {{ if(IS_ADMIN || (proposedBy.displayName == USER.displayName)) { }}
+        {{ if(IS_ADMIN || (proposedBy.id == USER.id)) { }}
 
             <div class="col-lg-8 col-xs-8 topic-padding topic-title-container">
                 <div class="col-lg-1 col-xs-1 topic-padding">
@@ -217,7 +217,7 @@
             </div>
         </div>
 
-        {{ if(IS_ADMIN || (proposedBy.displayName == USER.displayName)) { }}
+        {{ if(IS_ADMIN || (proposedBy.id == USER.id)) { }}
         
         <div class="col-lg-1 col-xs-1 topic-padding left-padding">
 
