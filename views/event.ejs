@@ -103,15 +103,10 @@
                 </div>
 
                 <div class="col-lg-9 col-xs-9 session-padding proposee-display-name">
-                    <h3><font color="#2e7daa"> 
+                    <h3>
 
-                    {{ if(proposeeDisplayName) { }}
-                        {{- proposeeDisplayName }} 
-                    {{ } else { }}
-                        {{- proposedBy.displayName }}
-                    {{ } }}
-
-                    </font>
+                    {{- proposedBy.displayName }}
+                   
                     </h3>
                 </div>
 
@@ -188,15 +183,11 @@
                 </div>
 
                  <div class="col-lg-9 col-xs-9 topic-padding proposee-display-name">
-                    <h3><font color="#2e7daa"> 
+                    <h3>
                     
-                    {{ if(proposeeDisplayName) { }}
-                        {{- proposeeDisplayName }} 
-                    {{ } else { }}
-                        {{- proposedBy.displayName }}
-                    {{ } }}
+                    {{- proposedBy.displayName }}
 
-                    </font> </h3>
+                    </h3>
                 </div>       
             </div>
 
@@ -837,12 +828,8 @@
                                         <img src="<%= user.get("picture")%>" id="participantPic"> 
                                     </div>
 
-                                    <div class="col-lg-9 col-xs-9 no-padding">
-                                        <a class="proposee-display-name" href="#" id="participantName" data-type="text" data-pk="1">
-                                
-                                            <%= user.get("displayName")%>
-                                        </a> 
-
+                                    <div class="proposee-display-name col-lg-9 col-xs-9 no-padding">      
+                                        <%= user.get("displayName")%>
                                     </div>       
                             
 

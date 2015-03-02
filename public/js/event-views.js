@@ -106,9 +106,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.deleteButton.addClass("top-margin");
         }
 
-        
-
-
 
         // remove the toggle-ness of the button once the event starts.
         this.ui.attend.attr("data-toggle", "");
@@ -577,7 +574,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var scope = $("#propose-session-modal");
 
         var title = $("#sessionTitle").text();
-        var participantName = $("#participantName").text();
 
         if(title.length > 140) {    
             scope.modal('show');
@@ -594,7 +590,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         this.options.transport.send("create-session", {
             title: title,
             description:"",
-            proposeeDisplayName: participantName,
             activities: activities,
             roomId: this.options.event.getRoomId(),
             approved: false,
