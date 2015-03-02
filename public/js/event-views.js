@@ -67,6 +67,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.userSlots = {};
 
         this.listenTo(this.model, 'change:approved', this.render, this);
+        this.listenTo(this.model, 'change:title', this.render, this);
     },
 
     onRender: function() {
@@ -319,6 +320,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     initialize: function() {
         this.listenTo(this.model, 'change:approved', this.render, this);
         this.listenTo(this.model, 'change:votes', this.render, this);
+        this.listenTo(this.model, 'change:title', this.render, this);
     },
 
     onRender: function() {
@@ -1137,7 +1139,6 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("past");
         }
         this.$el.find("[data-toggle='popover']").popover({html: true});
-        console.log
     }
 });
 
