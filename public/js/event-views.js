@@ -280,6 +280,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.$el.find(".edit-session-title").removeClass('show');
             this.$el.find(".edit-session-title").addClass('hide');
 
+            this.$el.find(".session-title").text("");
             this.$el.find(".session-title").text(title);
             this.$el.find(".session-title-container").show();
         }
@@ -387,7 +388,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         } else {
 
             this.options.transport.send("edit-session", {
-                title: title,
+                title: title,   
                 id: this.model.id,
                 roomId: this.options.event.getRoomId(),
             });
@@ -398,6 +399,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
             this.$el.find(".edit-topic-title").removeClass('show');
             this.$el.find(".edit-topic-title").addClass('hide');
 
+            this.$el.find(".topic-title").text("");
             this.$el.find(".topic-title").text(title);
             this.$el.find(".topic-title-container").show();
 
@@ -682,6 +684,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             roomId: this.options.event.getRoomId(),
             approved: true,
         });
+
         $("input[type=text]", scope).val("");
         $(".yt-error, .url-error, .join-cap-error", scope).hide();
         $(".error", scope).removeClass(".error");
