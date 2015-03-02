@@ -1004,7 +1004,7 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
 
     chat: function(e) {
         var msg = this.ui.chatInput.val();
-        var postAsAdmin = a && this.ui.asAdmin.is(":checked");
+        var postAsAdmin = e && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
             this.options.transport.send("chat", {
