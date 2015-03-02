@@ -84,21 +84,31 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("hide");
         }
 
-        //Hide unapprove UI if admin proposed session mode
-        if(this.options.event.get("adminProposedSessions")) {
-            this.ui.unapprove.hide();
-            this.ui.proposeeDetails.hide(); 
-            
-        } else {
-            this.ui.unapprove.show();
-            this.ui.proposeeDetails.show();
-        }
-
+        //Show delete button only for admins  
         if(IS_ADMIN) {
             this.ui.deleteButton.show();
         } else {
             this.ui.deleteButton.hide();
         }
+
+        //Hide unapprove UI if admin proposed session mode
+        if(this.options.event.get("adminProposedSessions")) {
+            this.ui.unapprove.hide();
+            this.ui.proposeeDetails.hide(); 
+
+            if(IS_ADMIN) {
+                this.ui.deleteButton.removeClass("top-margin");
+            } 
+            
+        } else {
+            this.ui.unapprove.show();
+            this.ui.proposeeDetails.show();
+            this.ui.deleteButton.addClass("top-margin");
+        }
+
+        
+
+
 
         // remove the toggle-ness of the button once the event starts.
         this.ui.attend.attr("data-toggle", "");
