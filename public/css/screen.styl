@@ -468,6 +468,11 @@ user-admin-border-size = 2px
   * Topic display on event page 
 */
 
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) .topic { 
+  width: 98%; 
+}
+
 .topic {
   float: left;
   border-radius: 5px;
@@ -596,6 +601,11 @@ user-admin-border-size = 2px
  * Session display on event page
  */
 
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) .session { 
+  width: 98%; 
+}
+
 .session {
   float: left;
   border-radius: 5px;
@@ -605,6 +615,7 @@ user-admin-border-size = 2px
 
   .session-area {
     padding: 0;
+    padding-right: 2px;
   }
 
   .btn-edit-session {
@@ -709,6 +720,12 @@ user-admin-border-size = 2px
 
   .session-spots {
     padding: 0px;
+    margin-left: 22px;
+  }
+
+  /* FF 3.5+ */
+  body:not(:-moz-handler-blocked) & > .session-spots { 
+    margin-left: 17px; 
   }
 
   .hangout-users {
@@ -1057,6 +1074,7 @@ user-admin-border-size = 2px
  */
 
 #video-embed {
+
   .current-video-controls {
 
     .btn {
@@ -1094,6 +1112,11 @@ user-admin-border-size = 2px
     }
   }
 
+  /* FF 3.5+ */
+  body:not(:-moz-handler-blocked) & > .video-controls { 
+    width: 98%; 
+  }
+
   & > .video-controls {
 
     background-color: #f3bd71;   
@@ -1104,6 +1127,7 @@ user-admin-border-size = 2px
     border-right: 3px dashed #f90;
     border-bottom: 3px dashed #f90;
 
+    
     .video-play-trash-row {
       margin: 0;
       padding-bottom: 25px;
@@ -1725,6 +1749,11 @@ user-admin-border-size = 2px
   .empty-notice {
     text-align: center;
   }
+}
+
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) #propose-session { 
+  width: 98%; 
 }
 
 #propose-session {
