@@ -269,10 +269,11 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     editSessionTitle: function() {
         var title = this.$el.find("#edit-title").val();
 
-        if(title.length > 70) {    
+        if(title.length > 70 || title.length == 0) {    
 
             this.$el.find(".edit-session-warning").removeClass('hide');
             this.$el.find(".edit-session-warning").addClass('show');
+            this.$el.find(".edit-session-warning").text("Title cannot be left blank");
             return;
         } else {
 
@@ -390,9 +391,10 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     editTopicTitle: function() {
         var title = this.$el.find("#edit-topic").val();
 
-        if(title.length > 70) {    
+        if(title.length > 70 || title.length == 0) {    
             this.$el.find(".edit-topic-warning").removeClass('hide');
             this.$el.find(".edit-topic-warning").addClass('show');
+            this.$el.find(".edit-topic-warning").text("Title cannot be left blank");
             return;
         } else {
 
@@ -577,9 +579,10 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         var title = $("#sessionTitle").text();
 
-        if(title.length > 70) {    
+        if(title.length > 70 || title.length == 0) {    
             scope.modal('show');
             $(".proposed-title-validate-error", scope).show();
+            $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
             return;
         } else {
             $(".proposed-title-validate-error", scope).hide();
@@ -647,9 +650,10 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             return;
         }
 
-        if(title.length > 70) {    
+        if(title.length > 70 || title.length == 0) {    
             scope.modal('show');
             $(".session-title-validate-error", scope).show();
+            $(".session-title-validate-error", scope).text("Title cannot be left blank");
             return;
         } else {
             $(".session-title-validate-error", scope).hide();
