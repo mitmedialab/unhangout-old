@@ -269,7 +269,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     editSessionTitle: function() {
         var title = this.$el.find("#edit-title").val();
 
-        if(title.length > 140) {    
+        if(title.length > 70) {    
 
             this.$el.find(".edit-session-warning").removeClass('hide');
             this.$el.find(".edit-session-warning").addClass('show');
@@ -390,7 +390,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     editTopicTitle: function() {
         var title = this.$el.find("#edit-topic").val();
 
-        if(title.length > 140) {    
+        if(title.length > 70) {    
             this.$el.find(".edit-topic-warning").removeClass('hide');
             this.$el.find(".edit-topic-warning").addClass('show');
             return;
@@ -577,7 +577,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         var title = $("#sessionTitle").text();
 
-        if(title.length > 140) {    
+        if(title.length > 70) {    
             scope.modal('show');
             $(".proposed-title-validate-error", scope).show();
             return;
@@ -647,14 +647,13 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             return;
         }
 
-        if(title.length > 140) {    
+        if(title.length > 70) {    
             scope.modal('show');
             $(".session-title-validate-error", scope).show();
             return;
         } else {
             $(".session-title-validate-error", scope).hide();
         }
-
 
         var activities = [];
         switch (type) {
