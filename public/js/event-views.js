@@ -474,9 +474,11 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     onRender: function() { 
         if(this.options.event.get("adminProposedSessions")) {
-            $("#propose-session").hide();
+            $("#btn-propose-session").addClass('hide');
+            $("#btn-propose-session").removeClass('show');
         } else {
-            $("#propose-session").show();
+            $("#btn-propose-session").addClass('show');
+            $("#btn-propose-session").removeClass('hide');
         }
     }
 });

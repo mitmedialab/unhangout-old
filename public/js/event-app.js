@@ -160,10 +160,12 @@ $(document).ready(function() {
         //On page reload show and hide topic list
         //according to the current mode
         if(!curEvent.get("adminProposedSessions")) {
-            $("#propose-session").show();
+            $("#btn-propose-session").addClass('show');
+            $("#btn-propose-session").removeClass('hide');
             $("#topic-list").show();
         } else {
-            $("#propose-session").hide();
+            $("#btn-propose-session").addClass('hide');
+            $("#btn-propose-session").removeClass('show');
             $("#topic-list").hide();
         }
 
