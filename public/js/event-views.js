@@ -201,7 +201,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.attend.find(".lock").show();
             this.ui.attend.attr("disabled", true);
             this.ui.attend.addClass("disabled");
-             this.ui.hangoutUsers.hide();
 
             if (numAttendees >= joinCap) {
                 this.ui.attend.find(".text").text("FULL");
@@ -213,7 +212,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.attend.find(".text").text("JOIN");
             this.ui.attend.removeAttr("disabled");
             this.ui.attend.removeClass("disabled");
-            this.ui.hangoutUsers.show();
         }
     },
 
