@@ -116,11 +116,11 @@
 
             <div class="col-lg-12 col-xs-12 session-padding bottom-padding proposee-details">
                 
-                <div class="col-lg-3 col-xs-3 session-padding">
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-4 session-padding">
                     <img src="{{- proposedBy.picture }}">
                 </div>
 
-                <div class="col-lg-9 col-xs-9 session-padding proposee-display-name">
+                <div class="col-lg-9 col-md-8 col-sm-8 col-xs-8 session-padding proposee-display-name">
                     <h3>
 
                     {{- proposedBy.displayName }}
@@ -192,11 +192,11 @@
         <div class="col-lg-3 col-xs-3 topic-padding user-details-left-padding">
             <div class="col-lg-12 col-xs-12 topic-padding bottom-padding">
                 
-                <div class="col-lg-3 col-xs-3 topic-padding">
+                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-4 topic-padding">
                     <img src="{{- proposedBy.picture }}">
                 </div>
 
-                 <div class="col-lg-9 col-xs-9 topic-padding proposee-display-name">
+                 <div class="col-lg-9 col-md-8 col-xs-8 col-sm-8 topic-padding proposee-display-name">
                     <h3>
                     
                     {{- proposedBy.displayName }}
@@ -244,13 +244,13 @@
 </script>
 
 <script type="text/template" id="session-participant-proposed-template">
-    <div id="propose-session" class="col-lg-12 propose-session session-padding">
+    <div id="propose-session" class="col-lg-12 col-xs-12 col-md-12 col-sm-12 propose-session session-padding">
 
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 session-padding">
+        <div class="col-lg-6 col-md-5 col-sm-5 col-xs-5 session-padding">
             <h4>Breakout Rooms</h4>
         </div>
 
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+        <div class="col-lg-6 col-md-7 col-sm-7 col-xs-7">
             <a href="#propose-session-modal" data-toggle="modal"> 
                 <button class="btn btn-primary hide" id="btn-propose-session">
                 <i class="fa fa-plus fa-lg fa-lw"></i>
@@ -853,23 +853,23 @@
                             </div>
                         </div>
 
-                        <div class="session-preview col-lg-12">
+                        <div class="session-preview col-lg-12 col-md-12 col-sm-12 col-xs-12">
 
-                        <div class="col-lg-12 proposed-session-box">
-                            <div class="col-lg-8 col-xs-8 no-padding">
+                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 proposed-session-box">
+                            <div class="col-lg-8 col-xs-7 no-padding">
 
                                 <p class="title-preview">Your title will appear here</p>
                               
                             </div>
 
-                            <div class="col-lg-4 col-xs-4 left-padding">
+                            <div class="col-lg-4 col-xs-5 left-padding">
                                 <div class="col-lg-12 col-xs-12 no-padding">
             
-                                    <div class="col-lg-3 col-xs-3 no-padding">
+                                    <div class="col-lg-3 col-xs-4 no-padding">
                                         <img src="<%= user.get("picture")%>" id="participantPic"> 
                                     </div>
 
-                                    <div class="proposee-display-name col-lg-9 col-xs-9 no-padding">      
+                                    <div class="proposee-display-name col-lg-9 col-xs-8 no-padding">      
                                         <%= user.get("displayName")%>
                                     </div>       
                             
