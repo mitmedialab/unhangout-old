@@ -478,7 +478,8 @@ body:not(:-moz-handler-blocked) .topic {
   border-radius: 5px;
   margin-bottom: 5px;
   padding: 10px;
-  padding-bottom: 0px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   width: 100%;
   background-color: white;
   border: 2px dashed #2e7daa;
@@ -487,9 +488,13 @@ body:not(:-moz-handler-blocked) .topic {
     word-wrap: break-word;
   }
 
+  #edit-topic {
+    height: 30px;
+    border-radius: 2px;
+  }
+
   .session-area {
     padding: 0;
-    margin-bottom: 10px;
   }
 
   .btn-edit-topic {
@@ -520,6 +525,10 @@ body:not(:-moz-handler-blocked) .topic {
   }
 
   .left-padding {
+    padding-left: 5px;
+  }
+
+  .user-details-left-padding {
     padding-left: 5px;
   }
 
@@ -597,7 +606,7 @@ body:not(:-moz-handler-blocked) .topic {
 #session-list {
   float: left;
   border-radius: 5px;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
   margin-top: 5px;
   padding: 0px;
   width: 100%;
@@ -617,6 +626,7 @@ body:not(:-moz-handler-blocked) .session {
   border-radius: 5px;
   margin-bottom: 5px;
   padding: 10px;
+  padding-bottom: 5px;
   width: 100%;
 
   .session-area {
@@ -626,6 +636,12 @@ body:not(:-moz-handler-blocked) .session {
 
   .session-title {
     word-wrap: break-word;
+    height: 30px;
+  }
+
+  .user-session-title {
+    word-wrap: break-word;
+    height: 31px;
   }
 
   .btn-edit-session {
@@ -656,7 +672,16 @@ body:not(:-moz-handler-blocked) .session {
   }
 
   .top-margin {
-    margin-top: 5px;
+    margin-top: 6px;
+  }
+
+  .user-details-left-padding {
+    padding-left: 5px;
+  }
+
+  #edit-title {
+    height: 30px;
+    border-radius: 2px;
   }
 
   h3 {
@@ -687,6 +712,7 @@ body:not(:-moz-handler-blocked) .session {
 
   .btn-join-session {
     padding: 0px;
+
     .attend.btn {
       color: white;
       width: 100%;
@@ -694,6 +720,7 @@ body:not(:-moz-handler-blocked) .session {
       font-size: 1.2em;
       font-weight: 300;
       letter-spacing: 0.5px;
+      margin-top: 1px;
     }
   }
 
@@ -709,6 +736,7 @@ body:not(:-moz-handler-blocked) .session {
       font-weight: 300;
       letter-spacing: 0.5px;
       height: 30px;
+      margin-top: 1px;
     }
   }
 
@@ -739,12 +767,6 @@ body:not(:-moz-handler-blocked) .session {
 
   .session-spots {
     padding: 0px;
-    margin-left: 22px;
-  }
-
-  /* FF 3.5+ */
-  body:not(:-moz-handler-blocked) & > .session-spots { 
-    margin-left: 17px; 
   }
 
   .hangout-users {
@@ -755,14 +777,18 @@ body:not(:-moz-handler-blocked) .session {
       background-color: white;
       border: 1px solid #dfdfdf;
       float: left;
-      width: 44px;
-      height: 44px;
+      width: 30px;
+      height: 30px;
       list-style: none;
+      border-radius: 2px;
+
       img {
-        width: 42px;
-        height: 42px;
+        width: 28px;
+        height: 28px;
       }
+
       &.admin { border: 2px solid orange; }
+
       &.joining {
         opacity: 0.5;
         margin: 0;
@@ -776,11 +802,11 @@ body:not(:-moz-handler-blocked) .session {
 
     @media(max-width: 1199px) {
       li.user, li.empty {
-        width: 37px;
-        height: 37px;
+        width: 23px;
+        height: 23px;
         img {
-          width: 35px;
-          height: 35px;
+          width: 21px;
+          height: 21px;
         }
       }
     }
@@ -1768,6 +1794,11 @@ body:not(:-moz-handler-blocked) .session {
   .empty-notice {
     text-align: center;
   }
+}
+
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) #session-list-container { 
+  width: 98%; 
 }
 
 /* FF 3.5+ */
