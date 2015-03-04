@@ -483,6 +483,10 @@ body:not(:-moz-handler-blocked) .topic {
   background-color: white;
   border: 2px dashed #2e7daa;
 
+  .topic-title {
+    word-wrap: break-word;
+  }
+
   .session-area {
     padding: 0;
     margin-bottom: 10px;
@@ -618,6 +622,10 @@ body:not(:-moz-handler-blocked) .session {
   .session-area {
     padding: 0;
     padding-right: 2px;
+  }
+
+  .session-title {
+    word-wrap: break-word;
   }
 
   .btn-edit-session {
@@ -1837,6 +1845,10 @@ body:not(:-moz-handler-blocked) #propose-session {
     padding: 0px;
   }
 
+  .title-preview {
+    word-wrap: break-word;
+  }
+
   .btn-vote {
     height: 30px;
     padding-top: 0px;
@@ -1860,7 +1872,8 @@ body:not(:-moz-handler-blocked) #propose-session {
   }
 
   .proposed-title-validate-error {
-    margin-top: 10px;
+    margin: 0px;
+    margin-top: 15px;
   }
 }
 

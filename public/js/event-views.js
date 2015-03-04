@@ -38,8 +38,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
         proposeeDetails: '.proposee-details',
-        editSessionTitle: '.edit-session-title',
-        editSessionWarning: '.edit-session-warning'
     },
 
     events: {
@@ -49,7 +47,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         'click .delete':'delete',
         'click h3':'headerClick',
         'click .btn-edit-session': 'invokeEditSessionInput',
-        'change #edit-title':'editSessionTitle'
+        'change #edit-title':'editSessionTitle',
+        'keypress #edit-title':'callEditSessionTitle',
     },
 
     initialize: function() {
@@ -259,7 +258,18 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         });
     },
 
+    callEditSessionTitle: function(event) {
+        var code = (event.keyCode ? event.keyCode : event.which);
+        
+        if (code == 13) { //Enter keycode                        
+            event.preventDefault();
+
+            this.editSessionTitle();
+        }
+    },
+
     invokeEditSessionInput: function() {
+        this.$el.find("#edit-title").val(this.model.get("title"));
         this.$el.find(".session-title-container").hide();
 
         this.$el.find(".edit-session-title").removeClass('hide');
@@ -269,11 +279,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     editSessionTitle: function() {
         var title = this.$el.find("#edit-title").val();
 
-        if(title.length > 70 || title.length == 0) {    
+        if(title.length > 80) {    
 
             this.$el.find(".edit-session-warning").removeClass('hide');
             this.$el.find(".edit-session-warning").addClass('show');
-            this.$el.find(".edit-session-warning").text("Title cannot be left blank");
+
+            this.$el.find(".edit-session-warning", scope).text("Title should be less than 80 characters");
+           
             return;
         } else {
 
@@ -315,7 +327,8 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         'click .delete':'delete',
         'click h3':'headerClick',
         'click .btn-edit-topic': 'invokeEditTopicInput',
-        'change #edit-topic':'editTopicTitle'
+        'change #edit-topic':'editTopicTitle',
+        'keypress #edit-topic':'callEditTopicTitle'
     },
 
     initialize: function() {
@@ -383,15 +396,28 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         });
     },
 
+    callEditTopicTitle: function(event) {
+        var code = (event.keyCode ? event.keyCode : event.which);
+        
+        if (code == 13) { //Enter keycode                        
+            event.preventDefault();
+
+            this.editTopicTitle();
+        }
+    },
+
     invokeEditTopicInput: function() {
+        this.$el.find("#edit-topic").val(this.model.get("title"));
+
         this.$el.find(".topic-title-container").hide();
         this.$el.find(".edit-topic-title").addClass('show');
     },
 
     editTopicTitle: function() {
         var title = this.$el.find("#edit-topic").val();
+        console.log("Edited : " + title);
 
-        if(title.length > 70 || title.length == 0) {    
+        if(title.length > 80) {    
             this.$el.find(".edit-topic-warning").removeClass('hide');
             this.$el.find(".edit-topic-warning").addClass('show');
             this.$el.find(".edit-topic-warning").text("Title cannot be left blank");
@@ -556,7 +582,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'keydown #session_message': 'updateSessionMessage',
         'keyup #session_message': 'updateSessionMessage',
         'click #btn-propose-session': 'proposeSessionDialog',
-        'click #propose': 'proposeSession' 
+        'click #propose': 'proposeSession', 
+        'input .input-topic-title': 'fillTopicPreview',
     },
 
     addUrlToSessionMessage: function(event) {
@@ -572,23 +599,56 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         );
     },
 
-    proposeSession: function(event) {
+    fillTopicPreview: function(event) {
         event.preventDefault();
 
+        var title = $(".input-topic-title").val();
         var scope = $("#propose-session-modal");
 
-        var title = $("#sessionTitle").text();
-
-        if(title.length > 70 || title.length == 0) {    
+        if(title.length > 80 || title.length === 0 || title === "") {    
             scope.modal('show');
-            $(".proposed-title-validate-error", scope).show();
-            $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
-            return;
-        } else {
-            $(".proposed-title-validate-error", scope).hide();
-        }
+            $(".proposed-title-validate-error", scope).addClass('show');
+            $(".proposed-title-validate-error", scope).removeClass('hide');
 
-        // force sessions type to be "simple"
+            if(title.length > 80)
+                $(".proposed-title-validate-error", scope).text("Title should be less than 80 characters");
+            else if (title.length === 0 || title === "")
+                $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
+
+            return;
+        } 
+
+        $(".title-preview").text("");
+        $(".title-preview").text(title);
+        $(".proposed-title-validate-error", scope).removeClass('show');
+        $(".proposed-title-validate-error", scope).addClass('hide');
+
+    },
+
+    proposeSession: function(event) {
+        event.preventDefault();
+        
+        var scope = $("#propose-session-modal");
+        var title = $(".input-topic-title").val();
+
+        if(title.length > 80 || title.length === 0 || title === "") {    
+            scope.modal('show');
+
+            $(".proposed-title-validate-error", scope).removeClass('hide');
+            $(".proposed-title-validate-error", scope).addClass('show');
+
+            if(title.length > 80) {
+                $(".proposed-title-validate-error", scope).text("Title should be less than 80 characters");
+            }
+
+            else if (title.length === 0 || title === "") {
+                $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
+            }
+
+            return;
+        } 
+
+        //Force sessions type to be "simple"
         var activities = [];
         activities.push({type: "about", autoHide: true});
 
@@ -599,6 +659,13 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             roomId: this.options.event.getRoomId(),
             approved: false,
         });
+
+        scope.modal('hide');
+
+        $(".title-preview").text("Your title will appear here");
+        $(".input-topic-title").val("");
+        $(".proposed-title-validate-error", scope).addClass('hide');
+        $(".proposed-title-validate-error", scope).removeClass('show');
     },
 
     closeDisconnected: function() {
@@ -650,14 +717,19 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             return;
         }
 
-        if(title.length > 70 || title.length == 0) {    
+        if(title.length > 80 || title.length === 0 || title === "") {    
             scope.modal('show');
-            $(".session-title-validate-error", scope).show();
-            $(".session-title-validate-error", scope).text("Title cannot be left blank");
+            $(".session-title-validate-error", scope).addClass('show');
+            $(".session-title-validate-error", scope).removeClass('hide');
+            
+            if(title.length > 80)
+                $(".session-title-validate-error", scope).text("Title should be less than 80 characters");
+            else if (title.length === 0 || title == "")
+                $(".session-title-validate-error", scope).text("Title cannot be left blank");
+
             return;
-        } else {
-            $(".session-title-validate-error", scope).hide();
-        }
+
+        } 
 
         var activities = [];
         switch (type) {
@@ -699,6 +771,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".yt-error, .url-error, .join-cap-error", scope).hide();
         $(".error", scope).removeClass(".error");
         scope.modal('hide');
+
+        $(".session-title-validate-error", scope).addClass('hide');
+        $(".session-title-validate-error", scope).removeClass('show');
     },
 
     closeDisconnected: function() {

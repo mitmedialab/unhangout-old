@@ -11,7 +11,7 @@ require([
     "jquery", "underscore", "backbone", "logger", "client-models",
     "event-views", "auth", "transport", 
     // plugins
-    "bootstrap", "bootstrap-editable", "backbone.marionette", "underscore-template-config"
+    "bootstrap", "backbone.marionette", "underscore-template-config"
 ], function($, _, Backbone, logging, models, eventViews, auth, transport) {
 
 var curEvent, messages;
@@ -196,6 +196,7 @@ $(document).ready(function() {
                 maybeMute();
             }
         });
+
         // The following two calls aren't necessary for muting, as we mute when
         // the video starts playing. But this gives the appearance of muting
         // even if the video hasn't started yet.
@@ -206,18 +207,6 @@ $(document).ready(function() {
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
-
-        //Session Title Length Error
-        $(".proposed-title-validate-error").hide();
-        $(".session-title-validate-error").hide();
-
-        $('#participantName').editable( {
-            placement: 'bottom'
-        });
-
-        $('#sessionTitle').editable({
-            placement: 'bottom'
-        });
 
     }, app);
 
