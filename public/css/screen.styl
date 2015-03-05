@@ -74,8 +74,8 @@ a.dropdown-toggle {
   overflow:hidden;
   width:100%;
   padding:20px 0;
-  font-size: 1.2em;
-  letter-spacing: 0.04em;
+  font-size: 1em;
+  letter-spacing: normal;
   background:#F4F4F4;
   line-height:1.5;
   text-align:center;
@@ -93,11 +93,9 @@ a.dropdown-toggle {
   font-size: 20px;
   letter-spacing: 1px;
   font-weight: 400;
-
   img {
     margin-top: -15px;
   }
-
 }
 
 .nav-index .dropdown {
@@ -114,11 +112,12 @@ a.dropdown-toggle {
 
 .nav-index .container .navbar-collapse {
   margin-top: 15px;
+  background-color: $navbar;
 } 
 
 .nav-index .navbar-nav {
-  font-size: 18px;
-  letter-spacing: 1px;
+  font-size: 16px;
+  letter-spacing: .5px;
   font-weight: 300;
 }
 
@@ -140,9 +139,50 @@ a.dropdown-toggle {
 }
 
 #user-menu-label {
-  font-size: 18px;
-  letter-spacing: 1px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
   font-weight: 300;  
+  max-width: 250px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.profile-thumbnail {
+  border-radius: 4px;
+}
+
+/* media queries for responsive navbar */
+
+@media (max-width: 991px){ /* for small */
+  #user-menu-label-name {
+    display: none;
+  }
+}
+
+@media(max-width: 767px){ /* for x-small */
+  #user-menu-label-name {
+    display: inline;
+  }
+  .navbar-default{
+    .navbar-toggle{
+      .icon-bar{
+        background-color: #fff;
+      }
+    }
+    .navbar-nav{
+      .open{
+        .dropdown-menu>li>a{
+          color:#fff;
+          font-weight: 300;
+        }
+        .dropdown-menu>li>a:hover{
+          background-color: transparent; 
+          color: $navbar-li;
+        }
+      }
+    }
+  }
 }
 
 /* Event Navbar Styles */ 
@@ -279,6 +319,8 @@ hr.noshade {
     height: 35px;
     background-color: white;
     color: $navbar;
+    margin-left: 15px;
+    margin-bottom: 10px;
   }
 }
 
@@ -406,8 +448,7 @@ hr.noshade {
   font-size: 18px;
   font-weight: 300;
   color: white;
-  margin-top: 17px;
-  margin-left: 20px;
+  margin: 17px 0px 10px 15px;
 
   &:hover, &:active, &:visited {
     color: $navbar-li;
@@ -1461,7 +1502,7 @@ body:not(:-moz-handler-blocked) .session {
 /*======================== HOME PAGE STYLES ============================*/
 
 .home-page-container {
-  padding-top: 60px;
+  padding-top: 40px;
   padding-bottom: 20px;
   font-family: Helvetica,Arial,sans-serif;
   min-height: 1113px; 
@@ -1501,14 +1542,17 @@ body:not(:-moz-handler-blocked) .session {
     font-size: 1.8em;
     line-height: 1.2em;
     margin: 0px;
+    margin-bottom: 15px;
   }
 
   .project-about {
     padding: 0px;
 
     p {
-      font-size: 1.2em;
-      margin-top: 20px;
+      font-size: 1.1em;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      text-align: center;
     }
   }
 
@@ -1520,10 +1564,11 @@ body:not(:-moz-handler-blocked) .session {
       }
 
     .mini-event-box {
-      min-height: 200px;
+      padding: 0 0 15px 0;
 
       .event-thumbnail {
         padding: 0px;
+        margin-bottom: 10px;
         box-shadow: 1px 2px 2px 1px #ddd;
 
         img {
@@ -1536,6 +1581,7 @@ body:not(:-moz-handler-blocked) .session {
         color: $navbar;
         font-size: 1.8em;
         font-weight: 400;
+        margin-top: 5px;
       }
 
       .lead {
@@ -1587,14 +1633,16 @@ body:not(:-moz-handler-blocked) .session {
 
       background-color: $navbar;
       border-radius: 5px;
-      padding: 12px;
+      padding: 15px;
 
       h3 {
         color: white;
         font-weight: 300;
-        letter-spacing: 0.5px;
+        letter-spacing: normal;
         font-size: 1.5em;
-        padding-bottom: 5px;
+        padding-bottom: 10px;
+        padding-top: 5px;
+        margin: 0px;
       }
 
       .create-event-button {
@@ -1611,67 +1659,195 @@ body:not(:-moz-handler-blocked) .session {
   }
 }
 
-/*======================= EVENT PAGE STYLES ===========================*/
+/* media queries for appropriate resposive layout resizing on homepage*/
+
+@media(max-width: 1199px){ /* for medium */
+  
+  .home-page-container {
+    .project-about {
+      p {
+        font-size: 1em;
+        margin-top: 0px;
+        margin-bottom: 15px;
+        text-align: left;
+        }
+    }
+
+    .button-container-row {
+      .button-container {
+        padding: 15px;
+        h3 {
+          font-size: 1.5em;
+          padding-top: 10px;
+        }
+        .create-event-button {
+            padding-bottom: 15px;
+          .btn-primary {
+            font-size: 1.3em;
+          }
+        }
+      } 
+    }
+
+    .updates {
+      .mini-event-box {
+        h4 {
+         margin-top: 0px;
+         margin-bottom: 5px; 
+         font-size: 1.4em;
+       }
+        .lead {
+          margin-bottom: 0px;
+        }
+        p {
+          font-size: 1em;
+          margin-bottom: 5px;
+        }
+      }
+    }
+  }
+
+}
+
+@media(max-width: 991px){ /* for small */
+  
+  .home-page-container {
+    .logo-item{
+      .logo{
+        padding-bottom: 5px;
+      }
+    }
+
+    .project-about {
+      p {
+        font-size: .9em;
+        margin-top: 0px;
+        margin-bottom: 5px;
+        text-align: left;
+        line-height: 17px;
+        }
+    }
+
+    .button-container-row {
+      .button-container {
+        padding: 10px;
+        h3 {
+          font-size: 1.1em;
+          padding-top: 2px;
+        }
+        .create-event-button {
+            padding-bottom: 3px;
+          .btn-primary {
+            font-size: 1em;
+          }
+        }
+      } 
+    }
+  }
+}
+
+@media(max-width: 767px){ /* for x-small */
+  
+  .home-page-container {
+    .logo-item{
+      .logo{
+        padding-bottom: 10px;
+      }
+    }
+
+    .project-about {
+      p {
+        font-size: 1.1em;
+        margin-top: 5px;
+        margin-bottom: 15px;
+        text-align: left;
+        line-height: normal;
+        }
+    }
+
+    .button-container-row {
+      .button-container {
+        padding: 15px;
+        h3 {
+          font-size: 1.5em;
+          padding-top: 5px;
+        }
+        .create-event-button {
+            padding-bottom: 10px;
+          .btn-primary {
+            font-size: 1.3em;
+          }
+        }
+      } 
+    }
+  }
+}
+
+/*======================= EVENTS (upcoming/past) PAGE STYLES ======================*/
 
 
 .event-container {
-    padding-bottom: 50px;
-    min-height: 1130px;
+  margin-bottom: 30px;
+  min-height: 1130px;
 
-    .upcomingEventsTitle {
-      margin-top: 45px;
-    }
+  h3{
+    font-size: 1.9em;
+    font-weight: 400; 
+    margin-bottom: 20px;
+  }
 
-    .pastEventsTitle {
-      margin-top: 30px;
-    }
+  .upcomingEventsTitle{
+    margin-top: 40px;
+  }
 
-  .event-box {
-    height: 310px;
-    width: 360px;
-    margin-top: 20px;
-    margin-right: 20px;
-    border: 2px solid #dfdfdf;
-    padding: 3px;
+  .pastEventsTitle{
+    margin-top: 10px;
+  }
 
-    h4 {
-        color: $navbar;
-        padding-left: 5px;
-    }
+  .event-box{
+    margin-bottom: 15px;
 
-    p {
-      padding-left: 5px;
-    }
-
-    a {
+    .event-box-content {
+      width: 100%;
+      max-width: 350px;
+      height: 260px;
+      border: 2px solid #dfdfdf;
+      border-radius: 1px;
+      padding: 10px;
+      a {
         color: $navbar;
         text-decoration: none;
+      }
     }
   }
 
-  .event-box:hover {
-      border: 2px solid #2E7DAA;
+}
+
+@media(max-width: 991px){ /* for small */
+  .event-container {
+    .event-box{
+      .event-box-content {
+        height: 290px;
+      }
+    }
   }
-
-  h3 {
-    margin-top: 20px;
-    margin-left: -15px;
-    font-weight: 400;
-    font-size: 28px;
-    color: #444;
-  }
 }
 
-.line-break {
-  border: 1px solid #2e7daa; 
-  margin-top: 0px; 
-}
-
-.profile-thumbnail {
-  border-radius: 5px;
-}
-
+<<<<<<< HEAD
 /*===========================================================*/
+=======
+@media(max-width: 767px){ /* for x-small */
+   .event-container {
+    .event-box{
+      .event-box-content {
+        height: 100%;
+      }
+    }
+  }
+} 
+
+/*============================================================*/
+>>>>>>> master
 
 #about-event {
     margin-top: 30px;

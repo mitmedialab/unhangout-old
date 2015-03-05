@@ -43,11 +43,11 @@ define(["jquery", "underscore", "moment", "underscore-template-config"], functio
       _.each(rows, function(row) {
         if (row.date && row.date.valueOf() > now) {
           hasUpcoming = true;
-          $("#upcomingEvents").append(template(row));
+          $("#upcomingEvents").prepend(template(row));
         } else {
           hasPast = true;
           var html = template(row);
-          $("#pastEvents").append(template(row));
+          $("#pastEvents").prepend(template(row));
         }
       });
       if (hasUpcoming) {

@@ -1,4 +1,4 @@
-<ul class="navbar-nav nav pull-right identity">
+<ul class="navbar-nav nav navbar-right identity">
     <li>
     <% if(!user) {%>
         <a href="/auth/google" class="login-link"><button class="btn btn-primary login-button">Login</button></a>
@@ -7,7 +7,8 @@
             <a class="dropdown-toggle username" data-toggle="dropdown" id='user-menu-label'>
                 <img class="profile-thumbnail" src="<%= user.get("picture")%>"
                      style='width: 40px; height: 40px' alt='Profile'>
-                <%= user.get("displayName")%> <i class="fa fa-caret-down"></i>&nbsp; &nbsp;
+                <span id="user-menu-label-name">
+                <%= user.get("displayName")%></span><i class="fa fa-caret-down"></i>&nbsp; &nbsp;
             </a>
 
             <ul class="dropdown-menu" role="menu" aria-labelledby="user-menu-label">
@@ -18,8 +19,8 @@
                     <li role="presentation">
                         <a role="menuitem" tabindex="-1" href="/admin/">Event/Session overview</a>
                     </li>
+                    <li role="presentation" class="divider"></li>
                 <% } %>
-
                 <li role="presentation">
                     <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
                 </li>
