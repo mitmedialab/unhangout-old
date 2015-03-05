@@ -501,67 +501,310 @@ user-admin-border-size = 2px
 
 }
 
-#session-list {
+#topic-list {
   padding-top: 5px;
+}
+
+/* 
+  * Topic display on event page 
+*/
+
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) .topic { 
+  width: 98%; 
+}
+
+.topic {
+  float: left;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  padding: 10px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  width: 100%;
+  background-color: white;
+  border: 2px dashed #2e7daa;
+
+  .topic-title {
+    word-wrap: break-word;
+  }
+
+  #edit-topic {
+    height: 30px;
+    border-radius: 2px;
+  }
+
+  .session-area {
+    padding: 0;
+  }
+
+  .btn-edit-topic {
+      border-radius: 0px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      border-radius: 2px;
+      padding: 0px;
+      height: 30px;
+      width: 30px;
+  }
+
+  .topic-title-padding {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .topic-padding {
+    padding: 0px;
+  }
+
+  .topic-left-padding {
+    padding-left: 6px;
+  }
+
+  .bottom-padding {
+    padding-bottom: 5px;
+  }
+
+  .left-padding {
+    padding-left: 5px;
+  }
+
+  .user-details-left-padding {
+    padding-left: 5px;
+  }
+
+  .proposee-display-name {
+    font-size: 12px;
+    margin: 0px;
+    max-height: 27px;
+    overflow: hidden;
+
+    h3 {
+      margin-left: 5px;
+      word-wrap: break-word;
+    }
+  }
+
+  .approve-session {
+    color: #fff;
+    border-radius: 0px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    padding: 0px;
+  }
+
+  .btn-admin-approve-session {
+    border-radius: 2px;
+    padding: 0px;
+    height: 30px;
+    width: 30px;
+  }
+
+  .btn-vote {
+    height: 30px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-radius: 2px;
+    width: 100%;
+  }
+
+  .delete-session {
+    padding: 0px;
+    color: #fff;
+    border-radius: 0px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-admin-delete-session {
+    border-radius: 2px;
+    padding: 0px;
+    height: 30px;
+    width: 30px;
+  }
+
+  .pos-admin-delete {
+    position: relative;
+    margin-top: 30px;
+  }
+
+  h3 {
+      color: $primary;
+      font-weight: normal;
+      font-size: 1em;
+      padding: 0px;
+      margin: 0px;
+  }
+
+  img {
+    border-radius: 2px;
+    width: 30px;
+    height: 30px;
+  }
+
+}
+
+#session-list {
+  float: left;
+  border-radius: 5px;
+  margin-bottom: 2px;
+  margin-top: 5px;
+  padding: 0px;
+  width: 100%;
 }
 
 /*
  * Session display on event page
  */
 
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) .session { 
+  width: 98%; 
+}
+
 .session {
   float: left;
   border-radius: 5px;
   margin-bottom: 5px;
   padding: 10px;
+  padding-bottom: 5px;
   width: 100%;
+  min-height: 85px;
 
   .session-area {
     padding: 0;
-    padding-right: 3px;
-    margin-bottom: 5px;
+    padding-right: 2px;
+  }
+
+  .session-title {
+    word-wrap: break-word;
+    height: 30px;
+  }
+
+  .user-session-title {
+    word-wrap: break-word;
+    height: 31px;
+  }
+
+  .btn-edit-session {
+      border-radius: 0px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      border-radius: 2px;
+      padding: 0px;
+      height: 30px;
+      width: 30px;
+  }
+
+  .session-title-padding {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .session-padding {
+    padding: 0px;
+  }
+
+  .bottom-padding {
+    padding-bottom: 5px;
+  }
+
+  .left-padding {
+    padding-left: 10px;
+  }
+
+  .top-margin {
+    margin-top: 6px;
+  }
+
+  .user-details-left-padding {
+    padding-left: 5px;
+  }
+
+  #edit-title {
+    height: 30px;
+    border-radius: 2px;
+  }
+
+  h3 {
+    color: $primary;
+    font-weight: normal;
+    font-size: 1em;
+    padding: 0px;
+    margin: 0px;
+  }
+
+  .proposee-display-name {
+    font-size: 12px;
+    margin: 0px;
+    padding-left: 5px;
+    max-height: 27px;
+    overflow: hidden;
 
     h3 {
-      color: $primary;
-      font-weight: normal;
-      font-size: 1em;
-      padding: 0px;
-      margin: 0px;
-      height: 38px;
+      word-wrap: break-word;
     }
+  }
 
-    .btn-join-session {
-      padding: 0px;
-      .attend.btn {
-        color: white;
-        width: 100%;
-        border-radius: 2px;
-        font-size: 1.2em;
-        font-weight: 300;
-        letter-spacing: 0.5px;
-      }
-    }
+  img {
+    border-radius: 2px;
+    width: 30px;
+    height: 30px;
+  }
 
-    .btn-admin-join-session {
-      padding: 0px;
-      .attend.btn {
-        color: white;
-        width: 100%;
-        border-radius: 2px 0px 0px 2px;
-        font-size: 1.2em;
-        font-weight: 300;
-        letter-spacing: 0.5px;
-      }
-    }
+  .btn-join-session {
+    padding: 0px;
 
-    .btn-admin-delete-session{
-      padding: 0px;
-      .delete {
-        border-radius: 0px 2px 2px 0px;
-        text-align: center;
-        font-size: 1.2em;
-      }
+    .attend.btn {
+      color: white;
+      width: 100%;
+      border-radius: 2px;
+      font-size: 1.2em;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      margin-top: 1px;
     }
+  }
+
+  .btn-admin-join-session {
+    padding: 0px;
+
+    .attend.btn {
+      padding: 0px;
+      color: white;
+      width: 100%;
+      border-radius: 2px;
+      font-size: 14px;
+      font-weight: 300;
+      letter-spacing: 0.5px;
+      height: 30px;
+      margin-top: 1px;
+    }
+  }
+
+  .unapprove {  
+    color: #fff;
+    border-radius: 2px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    padding: 0px;
+    width: 30px;
+    height: 30px;
+  }
+
+  .delete-session {
+    padding: 0px;
+    color: #fff;
+    border-radius: 0px;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+  }
+
+  .btn-admin-delete-session {
+    border-radius: 2px;
+    padding: 0px;
+    height: 30px;
+    width: 30px;
   }
 
   .session-spots {
@@ -570,18 +813,24 @@ user-admin-border-size = 2px
 
   .hangout-users {
     padding: 0px;
+    margin-top: 5px;
+
     li.user, li.empty {
       background-color: white;
       border: 1px solid #dfdfdf;
       float: left;
-      width: 44px;
-      height: 44px;
+      width: 30px;
+      height: 30px;
       list-style: none;
+      border-radius: 2px;
+
       img {
-        width: 42px;
-        height: 42px;
+        width: 28px;
+        height: 28px;
       }
+
       &.admin { border: 2px solid orange; }
+
       &.joining {
         opacity: 0.5;
         margin: 0;
@@ -595,11 +844,11 @@ user-admin-border-size = 2px
 
     @media(max-width: 1199px) {
       li.user, li.empty {
-        width: 37px;
-        height: 37px;
+        width: 23px;
+        height: 23px;
         img {
-          width: 35px;
-          height: 35px;
+          width: 21px;
+          height: 21px;
         }
       }
     }
@@ -912,6 +1161,7 @@ user-admin-border-size = 2px
  */
 
 #video-embed {
+
   .current-video-controls {
 
     .btn {
@@ -949,6 +1199,11 @@ user-admin-border-size = 2px
     }
   }
 
+  /* FF 3.5+ */
+  body:not(:-moz-handler-blocked) & > .video-controls { 
+    width: 98%; 
+  }
+
   & > .video-controls {
 
     background-color: #f3bd71;   
@@ -959,6 +1214,7 @@ user-admin-border-size = 2px
     border-right: 3px dashed #f90;
     border-bottom: 3px dashed #f90;
 
+    
     .video-play-trash-row {
       margin: 0;
       padding-bottom: 25px;
@@ -1587,8 +1843,6 @@ user-admin-border-size = 2px
   }
 } 
 
-/*============================================================*/
-
 #about-event {
     margin-top: 30px;
     font: 13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif;
@@ -1713,8 +1967,136 @@ user-admin-border-size = 2px
   }
 }
 
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) #session-list-container { 
+  width: 98%; 
+}
 
-/*-------------------------- STATIC EVENT PAGE ------------------------*/
+/* FF 3.5+ */
+body:not(:-moz-handler-blocked) #propose-session { 
+  width: 98%; 
+}
+
+#propose-session {
+  padding: 0px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin-bottom: 5px;
+  margin-top: 5px;
+  background-color: #2e7daa;
+  border-radius: 2px;
+  color: white;
+
+  h4 {
+    font-size: 16px;
+    font-weight: normal;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  button {
+    width: 100%;
+    color: #2e7daa;
+    font-weight: 300;
+    letter-spacing: 0.5px;
+    padding: 8px;
+    text-align: center;
+    background-color: white;
+    margin-left: 5px;
+  }
+
+  i {
+    margin-right: 5px;
+  }
+}
+
+#create-session-modal {
+  
+  .session-title-validate-error {
+    margin-top: 10px;
+  }
+}
+
+#propose-session-modal {
+
+  .modal-dialog {
+    width: 40%;
+  }
+
+  .modal-row {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .session-preview {
+    border-radius: 5px;
+    border: 2px dashed #2e7daa;
+    padding: 10px;
+  }
+
+  .no-padding {
+    padding: 0px;
+  }
+
+  .left-padding {
+    padding: 0px;
+    padding-left: 5px;
+  }
+
+  .session-title-label {
+    padding-top: 6px;
+  }
+
+  img {
+    width: 30px;
+    height: 30px;
+    border: 1px solid #dfdfdf;
+  }
+
+  .proposed-session-box {
+    padding: 0px;
+  }
+
+  .participant-img-row {
+    padding: 0px;
+  }
+
+  .title-preview {
+    word-wrap: break-word;
+  }
+
+  .btn-vote {
+    height: 30px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    border-radius: 2px;
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .proposee-display-name {
+    font-size: 12px;
+    margin: 0px;
+    max-height: 27px;
+    overflow: hidden;
+    line-height: 14px;
+    padding-left: 5px;
+
+    h3 {
+      word-wrap: break-word;
+    }
+  }
+
+  .proposed-title-validate-error {
+    margin: 0px;
+    margin-top: 15px;
+  }
+}
+
+
+/*-------------------------- STATIC EVENT PAGE -----------------------*/
 
 .event-static {
   padding: 0px;

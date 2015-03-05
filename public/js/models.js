@@ -104,6 +104,7 @@ models.Event = models.BaseModel.extend({
             youtubeEmbed: null,
             previousVideoEmbeds: [],
             sessionsOpen: false,
+            adminProposedSessions: true,
             dateAndTime: null,
             timeZoneValue: null,
             admins: []
@@ -116,6 +117,7 @@ models.Event = models.BaseModel.extend({
         this.set("connectedUsers", new models.UserList());
         this.initializeSubEvents();
     },
+    
     initializeSubEvents: function() {
         // Replicate events from these sub-collections on the event. This lets
         // us use this model as a choke point for all socket traffic -- we need
@@ -328,11 +330,15 @@ models.Session = Backbone.Model.extend({
             title: "",
             description: "",
             shortCode: null,
+            proposedBy: null,
             // State
             connectedParticipants: [],
             joiningParticipants: [],
             activities: [],
             joinCap: this.MAX_ATTENDEES,
+            approved: false,
+            votes: 0,
+            votedBy: []
         };
     },
     getRoomId: function() {
