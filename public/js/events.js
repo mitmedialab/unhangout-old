@@ -1,5 +1,5 @@
 require(
-  ['jquery', 'underscore', 'events-spreadsheet', 'update-navbars'],
+  ['jquery', 'underscore', 'events-spreadsheet', 'update-navbars', 'bootstrap'],
   function($, _, eventsSpreadsheet) {
     var key = $("[data-spreadsheet-key]").attr("data-spreadsheet-key"); 
     var template = _.template($("#event-listing").html());

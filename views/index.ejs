@@ -3,28 +3,29 @@
 
 <div class="container home-page-container">
     <div class="row">
-        <div class="col-lg-7 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-7 col-md-8 col-sm-8 col-xs-12">
             <div class="videowrapper well">
                 <iframe src="https://player.vimeo.com/video/90475288?title=0&amp;byline=0&amp;portrait=0" height="300" frameborder="0" webkitallowfullscreen="" mozallowfullscreen="" allowfullscreen=""></iframe> 
             </div>
             <!--<hr class="line-break">-->
         </div>
 
-        <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
-            <div class="col-lg-12 col-md-5 col-sm-6 col-xs-6 logo-item">
+        <div class="col-lg-5 col-md-4 col-sm-4 col-xs-12">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-6 logo-item">
                 <div class="logo">
                     <img src="/public/img/unhangout-logo-blue-full.png">
                 </div>
             </div>
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 project-about">
-                <p>Unhangout is an open source platform for running large scale online un-conferences. We use Google Hangouts to create as many small sessions as needed, and help users find others with shared interests.</p>
+                <p>Unhangout is an open source platform for running large-scale, unconferences online. We use Google Hangouts to create as many small breakout sessions as needed, and help users find others with shared interests.
+                </p>
             </div>
 
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 button-container-row">
                 <div class="button-container">
 
-                    <h3>Interested in running your own unhangout?</h3>
+                    <h3>Interested in running your own Unhangout?</h3>
 
                     <div class="create-event-button">
                         <% if (!user) { %>
@@ -62,8 +63,8 @@
 
      <div class="row updates">
 
-        <div class="col-lg-7 col-md-12 col-xs-12">
-            <h3 class='upcomingEventsTitle'>Upcoming events</h3>
+        <div class="col-lg-7 col-md-6 col-sm-6 col-xs-12">
+            <h3 class='upcomingEventsTitle'>Upcoming Events</h3>
             <div id='upcomingEvents'><!-- populated from spreadsheet script --></div>
         </div>
 
@@ -78,7 +79,7 @@
             </div>
         </div> -->
 
-        <div class="col-lg-5 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12">
             <a class="twitter-timeline" href="https://twitter.com/search?q=unhangout+" data-widget-id="506910601990270976">Tweets about "unhangout "</a>
             <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
         </div>   
@@ -181,11 +182,11 @@
 
 <!-- template for event listings on the front page -->
 <script type='text/template' id='frontpage-events' data-spreadsheet-key='<%= spreadsheetKey %>'>
-    <div class="mini-event-box">
-        <div class="col-lg-5 col-sm-5 col-md-4 col-xs-7 event-thumbnail">
+    <div class="mini-event-box col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="col-lg-5 col-md-5 col-sm-6 col-xs-6 event-thumbnail">
             <img src="{{= image }}">
         </div>
-        <div class="col-lg-7 col-sm-7 col-md-8 col-xs-12">
+        <div class="col-lg-7 col-md-7 col-sm-6 col-xs-6">
             <a href="{{= link }}" target="_blank"><h4>{{= title }}</h4> </a>
             <p>{{= date.format("MMM D, YYYY, h:mm a [GMT]Z") }}</p>
             <p class="lead">{{= description }}</p>
