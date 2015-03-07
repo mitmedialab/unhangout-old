@@ -795,8 +795,8 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
         'click #admin-start-event': 'startEvent',
-        'click #admin-proposed-sessions-mode': 'adminProposedSessionsMode',
-        'click #participant-proposed-sessions-mode': 'participantProposedSessionsMode',
+        'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
+        'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
     },
 
     openSessions: function(jqevt) {
@@ -823,7 +823,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         this._startStopEvent("stop");
     },
 
-    _startStopEvent: function(action) {
+    _startStopEvent: function(action) { 
         $.ajax({
             type: 'POST',
             url: "/admin/event/" + this.options.event.id + "/" + action
@@ -833,20 +833,20 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         });
     },
 
-    adminProposedSessionsMode: function(jqevt) {
+    disableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
-
-        this.options.transport.send("admin-proposed", {
-            roomId: this.options.event.getRoomId()
-        });
-
+        this.changeSessionsProposedMode(true);
     },
 
-    participantProposedSessionsMode: function(jqevt) {
+    enableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
+        this.changeSessionsProposedMode(false);
+    },
 
-        this.options.transport.send("participant-proposed", {
-            roomId: this.options.event.getRoomId()
+    changeSessionsProposedMode: function(action) {
+        this.options.transport.send("admin-proposed", {
+            roomId: this.options.event.getRoomId(),
+            isAdminSessionsOnly: action
         });
     },
 
