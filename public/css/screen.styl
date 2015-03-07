@@ -509,11 +509,6 @@ user-admin-border-size = 2px
   * Topic display on event page 
 */
 
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) .topic { 
-  width: 98%; 
-}
-
 .topic {
   float: left;
   border-radius: 5px;
@@ -656,11 +651,6 @@ body:not(:-moz-handler-blocked) .topic {
 /*
  * Session display on event page
  */
-
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) .session { 
-  width: 98%; 
-}
 
 .session {
   float: left;
@@ -1197,11 +1187,6 @@ body:not(:-moz-handler-blocked) .session {
         padding-top: 2px;
       }
     }
-  }
-
-  /* FF 3.5+ */
-  body:not(:-moz-handler-blocked) & > .video-controls { 
-    width: 98%; 
   }
 
   & > .video-controls {
@@ -1969,16 +1954,6 @@ body:not(:-moz-handler-blocked) .session {
   }
 }
 
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) #session-list-container { 
-  width: 98%; 
-}
-
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) #propose-session { 
-  width: 98%; 
-}
-
 #propose-session {
   padding: 0px;
   padding-top: 10px;
@@ -2541,4 +2516,36 @@ html.oldie {
       }
     }
   }
+}
+
+
+/* ---------------- Firefox 3.5+ Overrides ---------------*/
+
+/* :-moz-handler-blocked matches elements that cannot be 
+displayed because their handlers have been blocked
+
+As scroll bar in Firefox is quite wide and it overlaps session
+view, moz handler blocked tag is being used to handle Firefox overrides 
+and reduce width of session containers
+
+*/
+
+body:not(:-moz-handler-blocked) {
+
+  #propose-session { 
+    width: 98%; 
+  }
+
+  .topic {
+    width: 98%;
+  }
+
+  .session {
+    width: 98%;
+  }
+
+  .video-controls { 
+    width: 98%; 
+  }
+
 }
