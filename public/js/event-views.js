@@ -413,7 +413,6 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     editTopicTitle: function() {
         var title = this.$el.find("#edit-topic").val();
-        console.log("Edited : " + title);
 
         if(title.length > 80) {    
             this.$el.find(".edit-topic-warning").removeClass('hide');
