@@ -861,9 +861,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         };
     },
 
-    onRender: function() {
-        
-    },
 
 });
 
@@ -1081,7 +1078,7 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
 
     chat: function(e) {
         var msg = this.ui.chatInput.val();
-        var postAsAdmin = e && this.ui.asAdmin.is(":checked");
+        var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
             this.options.transport.send("chat", {
