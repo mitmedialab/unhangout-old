@@ -27,7 +27,7 @@
 
             <div id="top"></div> 
 
-            <div class="col-lg-5 col-xs-5 event-column-left">
+            <div class="col-xs-5 event-column-left">
                 <div id="top-left"></div>
                 <div id="center-left"></div>
                 <div id="main-left"></div> 
@@ -65,23 +65,23 @@
 </script>
 
 <script type="text/template" id="session-template">
-    <div class="col-lg-12 col-xs-12 session-area">
+    <div class="col-xs-12 session-area">
 
         {{ if(IS_ADMIN) { }}   
-            <div class="col-lg-8 col-xs-8 session-padding">
+            <div class="col-xs-8 session-padding">
 
-                <div class="col-lg-12 col-xs-12 session-padding session-title-container">
-                    <div class="col-lg-1 col-xs-1 session-padding">
+                <div class="col-xs-12 session-padding session-title-container">
+                    <div class="col-xs-1 session-padding">
                         <button class="btn btn-primary btn-edit-session"><i class="fa fa-pencil"></i></button>
                     </div>
 
-                    <div class="col-lg-11 col-xs-11 session-title-padding">
+                    <div class="col-xs-11 session-title-padding">
                         <h3 class="session-title">{{- title }} </h3> 
                     </div>
                 </div>
 
-                <div class="col-lg-12 col-xs-12 session-padding">
-                    <div class="col-lg-12 col-xs-12 session-padding edit-session-title hide">
+                <div class="col-xs-12 session-padding">
+                    <div class="col-xs-12 session-padding edit-session-title hide">
                         <div class="col-lg-11 col-xs-10 session-padding">
                             <input type="text" id="edit-title" class="form-control" placeholder='{{- title }}'></input>
                         </div>
@@ -92,19 +92,19 @@
                     </div>
                 </div>
 
-                <div class="col-lg-12 col-xs-12 session-padding">
-                    <div class="col-lg-12 col-xs-12 session-spots">
+                <div class="col-xs-12 session-padding">
+                    <div class="col-xs-12 session-spots">
                     <ul class="hangout-users"></ul>
                     </div>
                 </div>
             </div>
 
         {{ } else { }}
-            <div class="col-lg-9 col-xs-9 session-padding session-title">
+            <div class="col-xs-9 session-padding session-title">
                 <h3 class="user-session-title">{{- title }} </h3>
 
-                <div class="col-lg-12 col-xs-12 session-padding">
-                    <div class="col-lg-12 col-xs-12 session-spots">
+                <div class="col-xs-12 session-padding">
+                    <div class="col-xs-12 session-spots">
                     <ul class="hangout-users"></ul>
                     </div>
                 </div>
@@ -112,15 +112,15 @@
             </div>
         {{ } }} 
 
-        <div class="col-lg-3 col-xs-3 session-padding bottom-padding user-details-left-padding">
+        <div class="col-xs-3 session-padding bottom-padding user-details-left-padding">
 
-            <div class="col-lg-12 col-xs-12 session-padding bottom-padding proposee-details">
+            <div class="col-xs-12 session-padding bottom-padding proposee-details">
                 
-                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-4 session-padding">
+                <div class="col-lg-3 col-xs-4 session-padding">
                     <img src="{{- proposedBy.picture }}">
                 </div>
 
-                <div class="col-lg-9 col-md-8 col-sm-8 col-xs-8 session-padding proposee-display-name">
+                <div class="col-lg-9 col-xs-8 session-padding proposee-display-name">
                     <h3>
 
                     {{- proposedBy.displayName }}
@@ -141,13 +141,13 @@
         </div>
 
         {{ if(IS_ADMIN) { }}
-            <div class="col-lg-1 col-xs-1 session-padding left-padding">
+            <div class="col-xs-1 session-padding left-padding">
                 
-                <div class="col-lg-12 col-xs-12 session-padding btn-admin-unapprove-session">
+                <div class="col-xs-12 session-padding btn-admin-unapprove-session">
                     <button class="unapprove btn btn-warning" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Unapprove this topic"><i class="fa fa-history"></i></button>  
                 </div>      
 
-                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1 session-padding">
+                <div class="col-xs-1 session-padding">
                     <button class="delete btn btn-danger btn-admin-delete-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Delete this topic"><i class="fa fa-trash-o"></i></button>
                 </div>
 
@@ -159,21 +159,21 @@
 </script>
 
 <script type="text/template" id="topic-template">
-    <div class="col-lg-12 col-xs-12 session-area">
+    <div class="col-xs-12 session-area">
 
         {{ if(IS_ADMIN || (proposedBy.id == USER.id)) { }}
 
-            <div class="col-lg-8 col-xs-8 topic-padding topic-title-container">
-                <div class="col-lg-1 col-xs-1 topic-padding">
+            <div class="col-xs-8 topic-padding topic-title-container">
+                <div class="col-xs-1 topic-padding">
                     <button class="btn btn-primary btn-edit-topic"><i class="fa fa-pencil"></i></button>
                 </div>
 
-                <div class="col-lg-11 col-xs-11 topic-title-padding">
+                <div class="col-xs-11 topic-title-padding">
                     <h3 class="topic-title">{{- title }} </h3> 
                 </div>
             </div>
 
-            <div class="col-lg-8 col-xs-8 topic-padding edit-topic-title hide">
+            <div class="col-xs-8 topic-padding edit-topic-title hide">
                 <div class="col-lg-11 col-xs-10 topic-padding">
                     <input type="text" id="edit-topic" class="form-control" placeholder='{{- title }}'></input>
                 </div>
@@ -184,19 +184,19 @@
             </div>
 
         {{ } else { }}
-            <div class="col-lg-9 col-xs-9 topic-padding">
+            <div class="col-xs-9 topic-padding">
                 <h3>{{- title }} </h3>
             </div>
         {{ } }} 
 
-        <div class="col-lg-3 col-xs-3 topic-padding user-details-left-padding">
-            <div class="col-lg-12 col-xs-12 topic-padding bottom-padding">
+        <div class="col-xs-3 topic-padding user-details-left-padding">
+            <div class="col-xs-12 topic-padding bottom-padding">
                 
-                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-4 topic-padding">
+                <div class="col-lg-3 col-xs-4 topic-padding">
                     <img src="{{- proposedBy.picture }}">
                 </div>
 
-                 <div class="col-lg-9 col-md-8 col-xs-8 col-sm-8 topic-padding proposee-display-name">
+                 <div class="col-lg-9 col-sm-8 topic-padding proposee-display-name">
                     <h3>
                     
                     {{- proposedBy.displayName }}
@@ -205,7 +205,7 @@
                 </div>       
             </div>
 
-            <div class="col-lg-12 col-xs-12 topic-padding vote-session">
+            <div class="col-xs-12 topic-padding vote-session">
                 <button class="btn btn-primary btn-vote" data-toggle="tooltip" data-placement="bottom" data-container="body" title="" data-original-title="Vote for this topic">
                     VOTE | {{- votes }} 
                     </button>
@@ -214,14 +214,14 @@
 
         {{ if(IS_ADMIN || (proposedBy.id == USER.id)) { }}
         
-        <div class="col-lg-1 col-xs-1 topic-padding left-padding">
+        <div class="col-xs-1 topic-padding left-padding">
 
-            <div class="col-lg-12 col-xs-12 topic-padding bottom-padding topic-left-padding">
+            <div class="col-xs-12 topic-padding bottom-padding topic-left-padding">
                 <button class="approve btn btn-success btn-admin-approve-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Approve this topic"><i class="fa fa-check" ></i></button>    
             </div>
             
 
-            <div class="col-lg-12 col-xs-12 topic-padding topic-left-padding">
+            <div class="col-xs-12 topic-padding topic-left-padding">
                 <button class="delete btn btn-danger btn-admin-delete-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Delete this topic"><i class="fa fa-trash-o"></i></button>
             </div>
         </div>
@@ -244,13 +244,13 @@
 </script>
 
 <script type="text/template" id="session-participant-proposed-template">
-    <div id="propose-session" class="col-lg-12 col-xs-12 col-md-12 col-sm-12 propose-session session-padding">
+    <div id="propose-session" class="col-xs-12 propose-session session-padding">
 
-        <div class="col-lg-6 col-md-5 col-sm-5 col-xs-5 session-padding">
+        <div class="col-lg-6 col-xs-5 session-padding">
             <h4>Breakout Rooms</h4>
         </div>
 
-        <div class="col-lg-6 col-md-7 col-sm-7 col-xs-7">
+        <div class="col-lg-6 col-xs-7">
             <a href="#propose-session-modal" data-toggle="modal"> 
                 <button class="btn btn-primary hide" id="btn-propose-session">
                 <i class="fa fa-plus fa-lg fa-lw"></i>
@@ -321,7 +321,7 @@
 </script>
 
 <script type="text/template" id="chat-layout">
-     <div id="chat-container-region" class="col-lg-10 col-xs-10">
+     <div id="chat-container-region" class="col-xs-10">
         <div class="panel">
             <div class="panel-heading">
                 <div id='chat-whiteboard'></div>
@@ -335,7 +335,7 @@
         </div>
     </div>
     
-    <div id="presence-gutter" class="col-lg-2 col-xs-2"></div>
+    <div id="presence-gutter" class="col-xs-2"></div>
 </script>
 
 <script type="text/template" id="chat-whiteboard-template">
@@ -401,7 +401,7 @@
 <script type='text/template' id="video-embed-controls-template">
     {{ if (youtubeEmbed) { }}
         <div class="row video-play-trash-row">
-            <div class='col-lg-7 col-xs-7 btn-play-pause'>
+            <div class='col-xs-7 btn-play-pause'>
                 <div class='current-video-controls'>
                     <button class='btn btn-success play-for-all'>
                         {{ if (isPlayingForEveryone) { }}
@@ -416,7 +416,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-1 col-xs-1 btn-video-trash">
+            <div class="col-xs-1 btn-video-trash">
                 <button class='btn btn-danger remove-video' title="Remove video embed">
                     <i class='fa fa-trash-o'></i>
                 </button>
@@ -472,26 +472,24 @@
             type="button">Add to List</button>
         </div>
 
-        <div class="col-lg-2 col-xs-2 btn-video-embed">
+        <div class="col-xs-2 btn-video-embed">
             <button class='btn btn-default set-video'
             type="button">Embed</button>
         </div>
 
-        <!--<p class="alert text-warning">Unrecognized youtube URL.  Please use the URL for a single video.</p>-->
-
-        <div class="col-lg-12 col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
+        <div class="col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
           <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
         </div>
 
-        <div class="col-lg-12 col-xs-12 OR-field">
+        <div class="col-xs-12 OR-field">
             <p>OR</p>
         </div>
         
       
         {{ if (hoaParticipationLink) { }}
            
-            <div class="col-lg-6 col-xs-6 btn-join-hoa">
+            <div class="col-xs-6 btn-join-hoa">
                 <a class="join-hoa" target='_blank'
                     href="{{= hoaParticipationLink }}">
                     <button class="btn btn-default hoa">
@@ -500,14 +498,14 @@
                 </a>
             </div>
 
-            <div class="col-lg-6 col-xs-6 btn-remove-hoa">
+            <div class="col-xs-6 btn-remove-hoa">
                 <button class='btn btn-danger remove-hoa'>Remove Hangout-on-Air
                 </button>
             </div>
             
         {{ } else { }}
             
-            <div class="col-lg-12 col-xs-12 btn-hoa">
+            <div class="col-xs-12 btn-hoa">
                 <a class="btn btn-default create-hoa hoa" target="_blank"
                     href='/event/{{- id }}/create-hoa/'>
                 <i class='fa fa-users'></i> Create Hangout-on-Air
@@ -653,11 +651,6 @@
 
             <div class="form-group">
                 <label class="col-lg-3 control-label" for='join_cap'>Participant Limit</label>
-
-                <!--<span class='help-block join-cap-error hide'>
-                   Please enter a number between 2 and 10.
-                </span>-->
-
 
                 <div class="col-lg-4">
                     <input class="form-control" type='number' min='2' max='10' step='1'
@@ -853,9 +846,9 @@
                             </div>
                         </div>
 
-                        <div class="session-preview col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="session-preview col-xs-12">
 
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 proposed-session-box">
+                        <div class="col-xs-12 proposed-session-box">
                             <div class="col-lg-8 col-xs-7 no-padding">
 
                                 <p class="title-preview">Your title will appear here</p>
@@ -863,7 +856,7 @@
                             </div>
 
                             <div class="col-lg-4 col-xs-5 left-padding">
-                                <div class="col-lg-12 col-xs-12 no-padding">
+                                <div class="col-xs-12 no-padding">
             
                                     <div class="col-lg-3 col-xs-4 no-padding">
                                         <img src="<%= user.get("picture")%>" id="participantPic"> 
@@ -874,7 +867,7 @@
                                     </div>       
                             
 
-                                    <div class="col-lg-12 col-xs-12 no-padding">
+                                    <div class="col-xs-12 no-padding">
                                         <button class="btn btn-primary btn-vote" disabled=" ">
                                             VOTE | 1 
                                             </button>
