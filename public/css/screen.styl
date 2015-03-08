@@ -2518,34 +2518,3 @@ html.oldie {
   }
 }
 
-
-/* ---------------- Firefox 3.5+ Overrides ---------------*/
-
-/* :-moz-handler-blocked matches elements that cannot be 
-displayed because their handlers have been blocked
-
-As scroll bar in Firefox is quite wide and it overlaps session
-view, moz handler blocked tag is being used to handle Firefox overrides 
-and reduce width of session containers
-
-*/
-
-body:not(:-moz-handler-blocked) {
-
-  #propose-session { 
-    width: 98%; 
-  }
-
-  .topic {
-    width: 98%;
-  }
-
-  .session {
-    width: 98%;
-  }
-
-  .video-controls { 
-    width: 98%; 
-  }
-
-}
