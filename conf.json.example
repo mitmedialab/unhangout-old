@@ -23,6 +23,7 @@
     "UNHANGOUT_MANAGERS": ["manager1@example.com"],
 
     "UNHANGOUT_HANGOUT_APP_ID": 123456789012,
+    "UNHANGOUT_LOCALHOST_PORT": 7777,
     "UNHANGOUT_HANGOUT_ORIGIN_REGEX": "^https://[-a-z0-9]+hangout-opensocial.googleusercontent.com$",
 
     "UNHANGOUT_USE_SSL":false,
