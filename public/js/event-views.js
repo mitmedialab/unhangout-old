@@ -38,6 +38,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
         proposeeDetails: '.proposee-details',
+        userDetails: '#user-details'
     },
 
     events: {
@@ -89,6 +90,17 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.deleteButton.show();
         } else {
             this.ui.deleteButton.hide();
+        }
+
+        //When proposed field is empty for a session (most likely it 
+        //will happen for previous sessions where we didn't store 
+        //proposedBy field) add and remove bottom padding to 
+        //user details div
+
+        if(this.model.get("proposedBy")) {
+            this.ui.userDetails.addClass("bottom-padding");
+        } else {
+            this.ui.userDetails.removeClass("bottom-padding");
         }
 
         //Hide unapprove UI if admin proposed session mode
@@ -317,6 +329,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         vote: '.btn-vote',
         approve: '.approve',
         deleteButton: '.delete',        // delete is reserved word
+        userDetails: '#user-details'
     },
 
     events: {
@@ -353,15 +366,29 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("hide");
         }
 
+        //When proposed field is empty for a session (most likely it 
+        //will happen for previous sessions where we didn't store 
+        //proposedBy field) add and remove bottom padding to 
+        //user details div
+
+        if(this.model.get("proposedBy")) {
+            this.ui.userDetails.addClass("bottom-padding");
+        } else {
+            this.ui.userDetails.removeClass("bottom-padding");
+        }
+
         //For participants who proposed a session, show delete button 
         //, hide approve button from the topic template and position
         // delete button
-        if(!IS_ADMIN && (USER.id === this.model.get("proposedBy").id)) {
+
+        if(!IS_ADMIN && (this.model.get("proposedBy") && 
+                USER.id === this.model.get("proposedBy").id)) {
             this.ui.approve.hide();
             this.ui.deleteButton.addClass("pos-admin-delete");
         }
 
         this.ui.vote.find(".text").text(this.model.get("votes"));
+
     },
 
     destroy: function() {

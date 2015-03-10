@@ -114,17 +114,19 @@
 
         <div class="col-xs-3 session-padding bottom-padding user-details-left-padding">
 
-            <div class="col-xs-12 session-padding bottom-padding proposee-details">
+            <div id="user-details" class="col-xs-12 session-padding proposee-details">
                 
                 <div class="col-lg-3 col-xs-4 session-padding">
+                    {{ if(proposedBy) { }}
                     <img src="{{- proposedBy.picture }}">
+                    {{ } }}
                 </div>
 
                 <div class="col-lg-9 col-xs-8 session-padding proposee-display-name">
                     <h3>
-
+                    {{ if(proposedBy) { }}
                     {{- proposedBy.displayName }}
-                   
+                    {{ } }}
                     </h3>
                 </div>
 
@@ -161,7 +163,7 @@
 <script type="text/template" id="topic-template">
     <div class="col-xs-12 session-area">
 
-        {{ if(IS_ADMIN || (proposedBy.id == USER.id)) { }}
+        {{ if(IS_ADMIN || (proposedBy && proposedBy.id == USER.id)) { }}
 
             <div class="col-xs-8 topic-padding topic-title-container">
                 <div class="col-xs-1 topic-padding">
@@ -190,17 +192,19 @@
         {{ } }} 
 
         <div class="col-xs-3 topic-padding user-details-left-padding">
-            <div class="col-xs-12 topic-padding bottom-padding">
+            <div id="user-details" class="col-xs-12 topic-padding">
                 
                 <div class="col-lg-3 col-xs-4 topic-padding">
+                    {{ if(proposedBy) { }}
                     <img src="{{- proposedBy.picture }}">
+                    {{ } }}
                 </div>
 
                  <div class="col-lg-9 col-sm-8 topic-padding proposee-display-name">
                     <h3>
-                    
+                    {{ if(proposedBy) { }}
                     {{- proposedBy.displayName }}
-
+                    {{ } }}
                     </h3>
                 </div>       
             </div>
@@ -212,7 +216,7 @@
             </div>
         </div>
 
-        {{ if(IS_ADMIN || (proposedBy.id == USER.id)) { }}
+        {{ if(IS_ADMIN || (proposedBy && proposedBy.id == USER.id)) { }}
         
         <div class="col-xs-1 topic-padding left-padding">
 
