@@ -51,6 +51,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Updates session participant list when not present in the event", function(done) {
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         var sock;
         var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         var ready = false;
@@ -554,6 +556,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Adds joining participant UI", function(done) {
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
 
