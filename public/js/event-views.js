@@ -38,6 +38,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
         proposeeDetails: '.proposee-details',
+        userDetails: '#user-details'
     },
 
     events: {
@@ -89,6 +90,17 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.deleteButton.show();
         } else {
             this.ui.deleteButton.hide();
+        }
+
+        //When proposed field is empty for a session (most likely it 
+        //will happen for previous sessions where we didn't store 
+        //proposedBy field) add and remove bottom padding to 
+        //user details div
+
+        if(this.model.get("proposedBy")) {
+            this.ui.userDetails.addClass("bottom-padding");
+        } else {
+            this.ui.userDetails.removeClass("bottom-padding");
         }
 
         //Hide unapprove UI if admin proposed session mode
@@ -317,6 +329,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         vote: '.btn-vote',
         approve: '.approve',
         deleteButton: '.delete',        // delete is reserved word
+        userDetails: '#user-details'
     },
 
     events: {
@@ -353,15 +366,29 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("hide");
         }
 
+        //When proposed field is empty for a session (most likely it 
+        //will happen for previous sessions where we didn't store 
+        //proposedBy field) add and remove bottom padding to 
+        //user details div
+
+        if(this.model.get("proposedBy")) {
+            this.ui.userDetails.addClass("bottom-padding");
+        } else {
+            this.ui.userDetails.removeClass("bottom-padding");
+        }
+
         //For participants who proposed a session, show delete button 
         //, hide approve button from the topic template and position
         // delete button
-        if(!IS_ADMIN && (USER.id === this.model.get("proposedBy").id)) {
+
+        if(!IS_ADMIN && (this.model.get("proposedBy") && 
+                USER.id === this.model.get("proposedBy").id)) {
             this.ui.approve.hide();
             this.ui.deleteButton.addClass("pos-admin-delete");
         }
 
         this.ui.vote.find(".text").text(this.model.get("votes"));
+
     },
 
     destroy: function() {
@@ -413,7 +440,6 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     editTopicTitle: function() {
         var title = this.$el.find("#edit-topic").val();
-        console.log("Edited : " + title);
 
         if(title.length > 80) {    
             this.$el.find(".edit-topic-warning").removeClass('hide');
@@ -795,8 +821,8 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
         'click #admin-start-event': 'startEvent',
-        'click #admin-proposed-sessions-mode': 'adminProposedSessionsMode',
-        'click #participant-proposed-sessions-mode': 'participantProposedSessionsMode',
+        'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
+        'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
     },
 
     openSessions: function(jqevt) {
@@ -823,7 +849,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         this._startStopEvent("stop");
     },
 
-    _startStopEvent: function(action) {
+    _startStopEvent: function(action) { 
         $.ajax({
             type: 'POST',
             url: "/admin/event/" + this.options.event.id + "/" + action
@@ -833,20 +859,20 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         });
     },
 
-    adminProposedSessionsMode: function(jqevt) {
+    disableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
-
-        this.options.transport.send("admin-proposed", {
-            roomId: this.options.event.getRoomId()
-        });
-
+        this.changeSessionsProposedMode(true);
     },
 
-    participantProposedSessionsMode: function(jqevt) {
+    enableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
+        this.changeSessionsProposedMode(false);
+    },
 
-        this.options.transport.send("participant-proposed", {
-            roomId: this.options.event.getRoomId()
+    changeSessionsProposedMode: function(action) {
+        this.options.transport.send("admin-proposed", {
+            roomId: this.options.event.getRoomId(),
+            isAdminSessionsOnly: action
         });
     },
 
@@ -862,9 +888,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         };
     },
 
-    onRender: function() {
-        
-    },
 
 });
 
@@ -1082,7 +1105,7 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
 
     chat: function(e) {
         var msg = this.ui.chatInput.val();
-        var postAsAdmin = e && this.ui.asAdmin.is(":checked");
+        var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
             this.options.transport.send("chat", {

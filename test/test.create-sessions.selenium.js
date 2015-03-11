@@ -70,7 +70,7 @@ describe("CREATE SESSIONS", function() {
         browser.byCss("#session_name").sendKeys("My New Session");
         browser.waitForSelector("#create-session");
         browser.byCss("#create-session").click();
-        browser.byCsss(".session h3").then(function(els) {
+        browser.byCsss(".session-title").then(function(els) {
             expect(els.length).to.be(1);
             els[0].getText().then(function(text) {
                 expect(text).to.eql("My New Session");
@@ -103,7 +103,7 @@ describe("CREATE SESSIONS", function() {
             "https://www.youtube.com/watch?v=jNQXAC9IVRw"
         );
         browser.byCss("#create-session").click();
-        browser.byCsss(".session h3").then(function(els) {
+        browser.byCsss(".session-title").then(function(els) {
             expect(els.length).to.be(1);
             expect(event.get("sessions").at(0).get("activities")).to.eql([{
                 type: "video",

@@ -92,7 +92,7 @@ a.dropdown-toggle {
   color: white;
   font-size: 20px;
   letter-spacing: 1px;
-  font-weight: 400;
+  font-weight: 400; 
   img {
     margin-top: -15px;
   }
@@ -509,11 +509,6 @@ user-admin-border-size = 2px
   * Topic display on event page 
 */
 
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) .topic { 
-  width: 98%; 
-}
-
 .topic {
   float: left;
   border-radius: 5px;
@@ -656,11 +651,6 @@ body:not(:-moz-handler-blocked) .topic {
 /*
  * Session display on event page
  */
-
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) .session { 
-  width: 98%; 
-}
 
 .session {
   float: left;
@@ -1197,11 +1187,6 @@ body:not(:-moz-handler-blocked) .session {
         padding-top: 2px;
       }
     }
-  }
-
-  /* FF 3.5+ */
-  body:not(:-moz-handler-blocked) & > .video-controls { 
-    width: 98%; 
   }
 
   & > .video-controls {
@@ -1843,6 +1828,8 @@ body:not(:-moz-handler-blocked) .session {
   }
 } 
 
+/*============================================================*/
+
 #about-event {
     margin-top: 30px;
     font: 13px/1.5 'Helvetica Neue',Arial,'Liberation Sans',FreeSans,sans-serif;
@@ -1965,16 +1952,6 @@ body:not(:-moz-handler-blocked) .session {
   .empty-notice {
     text-align: center;
   }
-}
-
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) #session-list-container { 
-  width: 98%; 
-}
-
-/* FF 3.5+ */
-body:not(:-moz-handler-blocked) #propose-session { 
-  width: 98%; 
 }
 
 #propose-session {
@@ -2137,6 +2114,7 @@ body:not(:-moz-handler-blocked) #propose-session {
       font-size: 16px;
       line-height: 22px;
       color: #333;
+      padding-right: 20px;
     }
 
     .social-media-icons {
@@ -2540,3 +2518,4 @@ html.oldie {
     }
   }
 }
+

@@ -60,7 +60,6 @@ $(document).ready(function() {
     });
 
     curEvent.on("change:open", function(model, open, options) {
-        console.log("change:open", arguments);
         if (IS_ADMIN) {
             app.chatView.chatInputView.onRender();
         } else if (!open) {
