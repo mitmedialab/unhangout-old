@@ -793,8 +793,23 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         if (this.model.get("past")) {
             this.$el.addClass("past");
         }
-        this.$el.find("[data-toggle='popover']").popover({html: true});
-        console.log
+        
+        //Me and Atname Popover definition
+        this.$el.find('.me').popover({html: true});
+
+        var html = this.$el.find('#add-to-network-popover').html();
+        this.$el.find('.atname-network').popover({
+            container: 'body',
+            html: true,
+            placement: 'top',
+
+            content: function () {
+                return html;
+            }
+
+        }).click(function(e) {
+            e.preventDefault();
+        });
     }
 });
 

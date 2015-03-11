@@ -151,22 +151,35 @@
     <span class="from">{{- user.shortDisplayName}}</span>{{= text}}
 </script>
 <script type="text/template" id="chat-atname-template">
-    {{ if (isMe) { }}
+    {{ if (isMe) { }}   
+
         <b class='atname me'
            data-toggle='popover'
-           data-placement='top'
            data-trigger='hover'
+           data-placement='top'
            data-container='body'
            title='{{- displayName }}'
-           data-content="That's you!">$1</b>
+           data-content="&lt;p&gt;That's you!&lt;/&gt;">$1</b>
+
     {{ } else { }}
-        <b class='atname'
-           data-toggle='popover'
-           data-placement='top'
-           data-trigger='hover'
-           data-container='body'
-           title='{{- user.get("displayName") }}'
-           data-content="&lt;img src=&quot;{{- user.get("picture") }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt;">$1</b>
+
+        <b class='atname atname-network' 
+           rel='popover'
+           title="&lt;img src=&quot;{{- user.get("picture") }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt; 
+                &lt;p&gt; {{- user.get("displayName") }} &lt;/&gt;"
+           data-popover-content='#add-to-network-popover'>$1</b>
+
+        <div id="add-to-network-popover" class="hide">
+            <a href="#">
+                <div class="col-xs-12 no-padding list-item">
+                    <p> <i class="fa fa-users"></i> 
+                    Remove From My Network
+                    </p>
+                </div>
+            </a>
+               
+        </div>  
+
     {{ } }}
 </script>
 

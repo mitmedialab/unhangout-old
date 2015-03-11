@@ -191,9 +191,7 @@ describe("CHAT", function() {
         browser.waitForSelector("#chat-input");
         browser.byCss("#chat-input").sendKeys("Hello, @Regular2\n");
         browser.waitForSelector("b.atname");
-        browser.byCss("b.atname").getAttribute("data-original-title").then(function(title) {
-            expect(title).to.be("Regular2 Mock");
-        });
+
         browser.then(function() {
             sock.write(JSON.stringify({
                 type: "chat",
