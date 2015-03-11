@@ -61,10 +61,12 @@ describe("CREATE SESSIONS", function() {
         // Start with no sessions.
         event.get("sessions").reset();
         event.set("open", true);
+        event.set("adminProposedSessions", true);
+
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id)
         browser.waitForEventReady(event, "superuser1");
-        browser.byCss(".admin-button").click();
+        browser.byCss(".admin-button").click();        
         browser.byCss("#show-create-session-modal").click();
         browser.waitForSelector("#session_name");
         browser.byCss("#session_name").sendKeys("My New Session");
@@ -89,6 +91,8 @@ describe("CREATE SESSIONS", function() {
     it("Creates an event session with youtube", function(done) {
         event.get("sessions").reset();
         event.set("open", true);
+        event.set("adminProposedSessions", true);
+
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "superuser1");
@@ -121,6 +125,8 @@ describe("CREATE SESSIONS", function() {
     it("Creates an event session with joinCap", function(done) {
         event.get("sessions").reset();
         event.set("open", true);
+        event.set("adminProposedSessions", true);
+
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "superuser1");
@@ -129,6 +135,8 @@ describe("CREATE SESSIONS", function() {
         browser.waitForSelector("#join_cap");
 
         // Error for NaN
+        browser.waitForSelector("#session_name");
+        browser.byCss("#session_name").sendKeys("Joining Capacity");
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("wat");
         browser.byCss("#join_cap").getAttribute("value").then(function(val) {
@@ -139,6 +147,8 @@ describe("CREATE SESSIONS", function() {
         browser.executeScript("$('.join-cap-error').hide();");
 
         // Error for too low
+        browser.waitForSelector("#session_name");
+        browser.byCss("#session_name").sendKeys("Joining Capacity");
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("1");
         browser.byCss("#create-session").click();
@@ -146,6 +156,8 @@ describe("CREATE SESSIONS", function() {
         browser.executeScript("$('.join-cap-error').hide();");
 
         // Error for too high
+        browser.waitForSelector("#session_name");
+        browser.byCss("#session_name").sendKeys("Joining Capacity");
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("11");
         browser.byCss("#create-session").click();
@@ -153,9 +165,13 @@ describe("CREATE SESSIONS", function() {
         browser.executeScript("$('.join-cap-error').hide();");
 
         // Goldilocks
+
+        browser.waitForSelector("#session_name");
+        browser.byCss("#session_name").sendKeys("Joining Capacity");
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("3");
         browser.byCss("#create-session").click();
+
         browser.waitForSelector(".session .hangout-users");
         browser.byCsss(".session .hangout-users li").then(function(els) {
             expect(els.length).to.be(3);
