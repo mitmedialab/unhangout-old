@@ -511,6 +511,46 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
     }
 });
 
+views.NetworkListView = Backbone.Marionette.CompositeView.extend({
+    template: '#network-list-template',
+    itemView: views.UserView,
+    itemViewContainer: "#network-list-container",
+    id: "network-list",
+
+    initialize: function() {
+        this.listenTo(this.collection, 'add remove', function() {
+            // going to manually update the current user counter because
+            // doing it during render doesn't seem to work. There's some
+            // voodoo in how marionette decides how much of the view to
+            // re-render on events, and it seems to exclude the piece out-
+            // side the item-view-container, assuming it doesn't have
+            // reactive bits.
+            // I would also expect this to be .totalRecords, but for
+            // some reason totalRecords doesn't decrease when records
+            // are removed, but totalUnfilteredRecords does. Could
+            // be a bug.
+
+            this.$el.find(".header .contents").text(this.collection.length);
+        }, this);
+    },
+
+    serializeData: function() {
+        var data = {};
+
+        data = this.collection.toJSON();
+
+        data.numUsers = this.collection.length;
+
+        logger.log("running user list serialize data");
+        return data;
+    },
+
+    update: function() {
+        logger.log("rendering UserListView");
+        this.render();
+    }
+});
+
 // Manages chat message display. The layout piece sets up the differnt chat zones:
 // the area where we show messages, the space where we put users, and the space
 // where chat messages are entered.
@@ -521,7 +561,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     regions: {
         whiteboard: '#chat-whiteboard',
         chat:'#chat-messages',
-        presence: '#presence-gutter',
+        presenceNetworkGutter: '#presence-network-gutter',
+        presenceUserGutter: '#presence-user-gutter',
         chatInput: '#chat-input-region'
     },
 
@@ -532,15 +573,23 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
             transport: this.options.transport,
             messages: this.options.messages
         });
+
         this.chatView = new views.ChatView({
             collection: this.options.messages,
             users: this.options.users,
             event: this.options.event
         });
+
         this.userListView = new views.UserListView({
             collection: this.options.users,
             event: this.options.event
         });
+
+        this.networkListView = new views.NetworkListView({
+            collection: this.options.users,
+            event: this.options.event
+        });
+
         this.chatInputView = new views.ChatInputView({
             event: this.options.event,
             transport: this.options.transport
@@ -550,7 +599,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     onRender: function() {
         this.whiteboard.show(this.whiteboardView);
         this.chat.show(this.chatView);
-        this.presence.show(this.userListView);
+        this.presenceNetworkGutter.show(this.networkListView);
+        this.presenceUserGutter.show(this.userListView);
         this.chatInput.show(this.chatInputView);
     }
 });
