@@ -592,7 +592,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
         this.chatInputView = new views.ChatInputView({
             event: this.options.event,
-            transport: this.options.transport
+            transport: this.options.transport    
         });
     },
 
@@ -750,6 +750,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         msg = this.atify(msg);
         this.model.set("text", msg);
     },
+
     atify: function(msg) {
       function matchAll(regex, string) {
         if (!regex.global) {
@@ -842,12 +843,13 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
         if (this.model.get("past")) {
             this.$el.addClass("past");
-        }
-        
+        }       
+
         //Me and Atname Popover definition
         this.$el.find('.me').popover({html: true});
 
-        var html = this.$el.find('#add-to-network-popover').html();
+        var html = this.$el.find('#add-to-network-popover').html();  
+
         this.$el.find('.atname-network').popover({
             container: 'body',
             html: true,
@@ -857,10 +859,20 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
                 return html;
             }
 
-        }).click(function(e) {
-            e.preventDefault();
         });
-    }
+
+        $('body').on('click', "#remove-from-network", function(e){
+            e.stopImmediatePropagation();
+            addToNetwork(); 
+        });
+
+        function addToNetwork() {
+            //console.log("hola");
+            console.log();
+        }
+
+    },
+
 });
 
 // This view contains all the ChatMessageViews and handles scrolling for them.
