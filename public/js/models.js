@@ -336,7 +336,7 @@ models.Session = Backbone.Model.extend({
             joiningParticipants: [],
             activities: [],
             joinCap: this.MAX_ATTENDEES,
-            approved: false,
+            approved: true,
             votes: 0,
             votedBy: []
         };
