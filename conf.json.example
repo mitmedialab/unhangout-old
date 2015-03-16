@@ -31,6 +31,7 @@
     "UNHANGOUT_CERTIFICATE":"ssl/cert.pem",
 
     "EMAIL_LOG_RECIPIENTS": ["sysadmin1@example.com"],
+    "UNHANGOUT_LOG_DIR": "logs",
     "TESTING_SELENIUM_PATH": "bin/selenium-server-standalone.jar",
     "TESTING_SELENIUM_VERBOSE": false,
     "TESTING_FIREFOX_BIN": null
