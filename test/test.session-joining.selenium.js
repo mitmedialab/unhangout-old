@@ -59,7 +59,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "regular1");
-        browser.byCsss("#presence-gutter .user").then(function(els) {
+        browser.byCsss("#presence-user-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
         });
         // We should have an empty session participant list.
@@ -118,7 +118,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Two sockets should show up on the event page -- the browser, and the
         // bare socket.
         browser.waitWithTimeout(function() {
-            return browser.byCsss("#presence-gutter .user").then(function(els) {
+            return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                 return els.length === 2;
             });
         });
@@ -128,7 +128,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         // Have the socket leave the event page, but not the participant list.
         browser.waitWithTimeout(function() {
-            return browser.byCsss("#presence-gutter .user").then(function(els) {
+            return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                 return els.length == 1;
             });
         });
@@ -380,7 +380,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
         browser.waitWithTimeout(function() {
-            return browser.byCsss("#presence-gutter .user").then(function(els) {
+            return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                 return els.length == 2;
             });
         }).then(function() {
@@ -404,7 +404,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                     return event.get("connectedUsers").length === 1;
                 });
                 browser.waitWithTimeout(function() {
-                    return browser.byCsss("#presence-gutter .user").then(function(els) {
+                    return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                         return els.length === 1;
                     })
                 });
