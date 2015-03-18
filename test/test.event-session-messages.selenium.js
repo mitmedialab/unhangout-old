@@ -34,6 +34,8 @@ describe("EVENT SESSION MESSAGES", function() {
         // event's session rooms.
         var sock;
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         browser.mockAuthenticate("superuser1");
         // Admin goes to the event page.  Connect a socket to a session.
         browser.get(common.URL + "/event/" + event.id)
@@ -56,7 +58,7 @@ describe("EVENT SESSION MESSAGES", function() {
                 sock.on("data", onData);
             });
         });
-        // Wait for the user to show up as a participant.
+        //Wait for the user to show up as a participant.
         browser.waitForSelector("#session-list .session[data-session-id='"
                                 + session.id + "'] li i.fa-user");
         // Send the message... sock's on("data, ...) handler will pick it up
@@ -73,6 +75,7 @@ describe("EVENT SESSION MESSAGES", function() {
 
         var sock;
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
 
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
@@ -122,6 +125,8 @@ describe("EVENT SESSION MESSAGES", function() {
 
     it("Replaces entities with unicode", function(done) {
         var session = event.get("sessions").at(1);
+        session.set("approved", true);
+
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
         browser.waitForHangoutReady(session, "superuser1");

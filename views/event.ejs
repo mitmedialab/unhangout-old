@@ -4,6 +4,8 @@
 <script>
     // Initial data
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
+    var USER = <%- JSON.stringify(user) %>;
+
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
         var SESSION_ATTRS = <%- JSON.stringify(event.get("sessions").invoke("toClientJSON")) %>;
@@ -25,8 +27,9 @@
 
             <div id="top"></div> 
 
-            <div class="col-lg-5 col-xs-5 event-column-left">
+            <div class="col-xs-5 event-column-left">
                 <div id="top-left"></div>
+                <div id="center-left"></div>
                 <div id="main-left"></div> 
             </div>
 
@@ -62,40 +65,181 @@
 </script>
 
 <script type="text/template" id="session-template">
-    <div class="col-lg-12 col-xs-12 session-area">
-        <h3 class="col-lg-8 col-xs-8">{{- title }}</h3>
-        
-        {{ if (IS_ADMIN) { }}
-            <div class="col-lg-3 col-xs-3 btn-admin-join-session">
-                <button class="attend btn btn-success" data-toggle="button">
-                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
-                    <div class="attendance"></div>
-                </button>
+    <div class="col-xs-12 session-area">
+
+        {{ if(IS_ADMIN) { }}   
+            <div class="col-xs-8 session-padding">
+
+                <div class="col-xs-12 session-padding session-title-container">
+                    <div class="col-xs-1 session-padding">
+                        <button class="btn btn-primary btn-edit-session"><i class="fa fa-pencil"></i></button>
+                    </div>
+
+                    <div class="col-xs-11 session-title-padding">
+                        <h3 class="session-title">{{- title }} </h3> 
+                    </div>
+                </div>
+
+                <div class="col-xs-12 session-padding">
+                    <div class="col-xs-12 session-padding edit-session-title hide">
+                        <div class="col-lg-11 col-xs-10 session-padding">
+                            <input type="text" id="edit-title" class="form-control" placeholder='{{- title }}'></input>
+                        </div>
+
+                        <div class="col-lg-11 col-xs-10 session-padding edit-session-warning hide">
+                            <p style="color: #D9524F" >Title should be less than 80 characters. </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xs-12 session-padding">
+                    <div class="col-xs-12 session-spots">
+                    <ul class="hangout-users"></ul>
+                    </div>
+                </div>
             </div>
 
-            <div class="col-lg-1 col-xs-1 btn-admin-delete-session">   
-                <button class="delete btn btn-warning"><i class="fa fa-trash-o"></i></button>
-            </div>
         {{ } else { }}
-            <div class="col-lg-4 col-xs-4 btn-join-session">
-                <button class="attend btn btn-success" data-toggle="button">
-                    <span class="outer"><i class="lock fa fa-lock"></i><span class="text">LOCKED</span></span>
-                    <div class="attendance"></div>
-                </button>
+            <div class="col-xs-9 session-padding session-title">
+                <h3 class="user-session-title">{{- title }} </h3>
+
+                <div class="col-xs-12 session-padding">
+                    <div class="col-xs-12 session-spots">
+                    <ul class="hangout-users"></ul>
+                    </div>
+                </div>
+
+            </div>
+        {{ } }} 
+
+        <div class="col-xs-3 session-padding bottom-padding user-details-left-padding">
+
+            <div id="user-details" class="col-xs-12 session-padding proposee-details">
+                
+                <div class="col-lg-3 col-xs-4 session-padding">
+                    {{ if(proposedBy) { }}
+                    <img src="{{- proposedBy.picture }}">
+                    {{ } }}
+                </div>
+
+                <div class="col-lg-9 col-xs-8 session-padding proposee-display-name">
+                    <h3>
+                    {{ if(proposedBy) { }}
+                    {{- proposedBy.displayName }}
+                    {{ } }}
+                    </h3>
+                </div>
+
             </div>
 
-        {{ } }}
-    </div>
+            <div class="col-lg-12 session-padding btn-admin-join-session">
+        
+                <button class="attend btn btn-primary">
+                    <i class="lock fa fa-lock fa-2"></i>&nbsp;<span class="text"> LOCKED</span>
+                </button>
 
-    
-    <div class="col-lg-12 col-xs-12 session-spots">
-        <ul class="hangout-users"></ul>
-    </div>
+            </div>
+
+        </div>
+
+        {{ if(IS_ADMIN) { }}
+            <div class="col-xs-1 session-padding left-padding">
+                
+                <div class="col-xs-12 session-padding btn-admin-unapprove-session">
+                    <button class="unapprove btn btn-warning" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Unapprove this topic"><i class="fa fa-history"></i></button>  
+                </div>      
+
+                <div class="col-xs-1 session-padding">
+                    <button class="delete btn btn-danger btn-admin-delete-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Delete this topic"><i class="fa fa-trash-o"></i></button>
+                </div>
+
+            </div>
+        {{ } }}
+
+    </div>      
 
 </script>
 
-<script type="text/template" id="session-list-template">
+<script type="text/template" id="topic-template">
+    <div class="col-xs-12 session-area">
+
+        {{ if(IS_ADMIN || (proposedBy && proposedBy.id == USER.id)) { }}
+
+            <div class="col-xs-8 topic-padding topic-title-container">
+                <div class="col-xs-1 topic-padding">
+                    <button class="btn btn-primary btn-edit-topic"><i class="fa fa-pencil"></i></button>
+                </div>
+
+                <div class="col-xs-11 topic-title-padding">
+                    <h3 class="topic-title">{{- title }} </h3> 
+                </div>
+            </div>
+
+            <div class="col-xs-8 topic-padding edit-topic-title hide">
+                <div class="col-lg-11 col-xs-10 topic-padding">
+                    <input type="text" id="edit-topic" class="form-control" placeholder='{{- title }}'></input>
+                </div>
+
+                <div class="col-lg-11 col-xs-10 topic-padding edit-topic-warning hide">
+                    <p style="color: #D9524F" >Title should be less than 80 characters. </p>
+                </div>
+            </div>
+
+        {{ } else { }}
+            <div class="col-xs-9 topic-padding">
+                <h3>{{- title }} </h3>
+            </div>
+        {{ } }} 
+
+        <div class="col-xs-3 topic-padding user-details-left-padding">
+            <div id="user-details" class="col-xs-12 topic-padding">
+                
+                <div class="col-lg-3 col-xs-4 topic-padding">
+                    {{ if(proposedBy) { }}
+                    <img src="{{- proposedBy.picture }}">
+                    {{ } }}
+                </div>
+
+                 <div class="col-lg-9 col-sm-8 topic-padding proposee-display-name">
+                    <h3>
+                    {{ if(proposedBy) { }}
+                    {{- proposedBy.displayName }}
+                    {{ } }}
+                    </h3>
+                </div>       
+            </div>
+
+            <div class="col-xs-12 topic-padding vote-session">
+                <button class="btn btn-primary btn-vote" data-toggle="tooltip" data-placement="bottom" data-container="body" title="" data-original-title="Vote for this topic">
+                    VOTE | {{- votes }} 
+                    </button>
+            </div>
+        </div>
+
+        {{ if(IS_ADMIN || (proposedBy && proposedBy.id == USER.id)) { }}
+        
+        <div class="col-xs-1 topic-padding left-padding">
+
+            <div class="col-xs-12 topic-padding bottom-padding topic-left-padding">
+                <button class="approve btn btn-success btn-admin-approve-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Approve this topic"><i class="fa fa-check" ></i></button>    
+            </div>
+            
+
+            <div class="col-xs-12 topic-padding topic-left-padding">
+                <button class="delete btn btn-danger btn-admin-delete-session" data-toggle="tooltip" data-placement="right" data-container="body" title="" data-original-title="Delete this topic"><i class="fa fa-trash-o"></i></button>
+            </div>
+        </div>
+
+        {{ } }}
+
+
+    </div>
+</script>
+
+<script type="text/template" id="session-list-empty-template">
     <div id="session-list-container" class="full-size-container">
+        <div class="empty-notice">Sessions will appear here when they are either created or approved by an admin.</div>
+        
         <div class="credits">
             Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
         </div>
@@ -103,12 +247,22 @@
     <div style='clear: both;'></div>
 </script>
 
-<script type="text/template" id="session-list-empty-template">
-    <div id="session-list-container" class="full-size-container">
-        <div class="empty-notice">Sessions will appear here when they are created by an admin.</div>
-        <div class="credits">
-            Powered by <a href="http://unhangout.media.mit.edu" target="_blank"><img src="/public/img/unhangout-logo-blue-full.png"></a> from <a href="http://media.mit.edu" target="_blank">MIT Media Lab</a>
+<script type="text/template" id="session-participant-proposed-template">
+    <div id="propose-session" class="col-xs-12 propose-session session-padding">
+
+        <div class="col-lg-6 col-xs-5 session-padding">
+            <h4>Breakout Rooms</h4>
         </div>
+
+        <div class="col-lg-6 col-xs-7">
+            <a href="#propose-session-modal" data-toggle="modal"> 
+                <button class="btn btn-primary hide" id="btn-propose-session">
+                <i class="fa fa-plus fa-lg fa-lw"></i>
+                PROPOSE A SESSION
+                </button>
+            </a>
+        </div>
+
     </div>
     <div style='clear: both;'></div>
 </script>
@@ -193,7 +347,9 @@
 </script>
 
 <script type="text/template" id="chat-layout">
+
      <div id="chat-container-region" class="col-xs-9">
+
         <div class="panel">
             <div class="panel-heading">
                 <div id='chat-whiteboard'></div>
@@ -211,6 +367,7 @@
         <div id="presence-network-gutter" class="col-xs-12 no-padding">Hello </div>
         <div id="presence-user-gutter" class="col-xs-12 no-padding">Hello</div>
     </div>
+
 </script>
 
 <script type="text/template" id="chat-whiteboard-template">
@@ -276,7 +433,7 @@
 <script type='text/template' id="video-embed-controls-template">
     {{ if (youtubeEmbed) { }}
         <div class="row video-play-trash-row">
-            <div class='col-lg-7 col-xs-7 btn-play-pause'>
+            <div class='col-xs-7 btn-play-pause'>
                 <div class='current-video-controls'>
                     <button class='btn btn-success play-for-all'>
                         {{ if (isPlayingForEveryone) { }}
@@ -291,7 +448,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-1 col-xs-1 btn-video-trash">
+            <div class="col-xs-1 btn-video-trash">
                 <button class='btn btn-danger remove-video' title="Remove video embed">
                     <i class='fa fa-trash-o'></i>
                 </button>
@@ -347,26 +504,24 @@
             type="button">Add to List</button>
         </div>
 
-        <div class="col-lg-2 col-xs-2 btn-video-embed">
+        <div class="col-xs-2 btn-video-embed">
             <button class='btn btn-default set-video'
             type="button">Embed</button>
         </div>
 
-        <!--<p class="alert text-warning">Unrecognized youtube URL.  Please use the URL for a single video.</p>-->
-
-        <div class="col-lg-12 col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
+        <div class="col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
           <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
           <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
         </div>
 
-        <div class="col-lg-12 col-xs-12 OR-field">
+        <div class="col-xs-12 OR-field">
             <p>OR</p>
         </div>
         
       
         {{ if (hoaParticipationLink) { }}
            
-            <div class="col-lg-6 col-xs-6 btn-join-hoa">
+            <div class="col-xs-6 btn-join-hoa">
                 <a class="join-hoa" target='_blank'
                     href="{{= hoaParticipationLink }}">
                     <button class="btn btn-default hoa">
@@ -375,14 +530,14 @@
                 </a>
             </div>
 
-            <div class="col-lg-6 col-xs-6 btn-remove-hoa">
+            <div class="col-xs-6 btn-remove-hoa">
                 <button class='btn btn-danger remove-hoa'>Remove Hangout-on-Air
                 </button>
             </div>
             
         {{ } else { }}
             
-            <div class="col-lg-12 col-xs-12 btn-hoa">
+            <div class="col-xs-12 btn-hoa">
                 <a class="btn btn-default create-hoa hoa" target="_blank"
                     href='/event/{{- id }}/create-hoa/'>
                 <i class='fa fa-users'></i> Create Hangout-on-Air
@@ -451,6 +606,7 @@
                 <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
                     <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
                 </a>
+                
                 <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
                     <i class="fa fa-pencil-square-o fa-lg fa-fw"></i>
                     Edit Event Info
@@ -470,6 +626,20 @@
                     <i class="fa fa-share fa-lg fa-fw"></i>
                     Send Message to Sessions
                 </a>
+
+                {{ if (event.get("adminProposedSessions")) { }}
+                    <a role="menuitem" href="#" role="button" id='participant-proposed-sessions-mode'>
+                        <i class='fa fa-users fa-lg fa-fw'></i> Enable Participant Proposed Sessions 
+                    </a>
+
+                {{ } else { }}
+                    
+                    <a role="menuitem" href="#" role="button" id='admin-proposed-sessions-mode'>
+                        <i class='fa fa-user fa-lg fa-fw'></i> Disable Participant Proposed Sessions
+                    </a>
+
+                {{ } }}
+
             </li>
         </ul>
     </div>
@@ -479,7 +649,8 @@
         $(".youtube-url").hide();
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
-
+        $('[data-toggle="tooltip"]').tooltip();
+        
     </script>
 
 </script>
@@ -512,11 +683,6 @@
 
             <div class="form-group">
                 <label class="col-lg-3 control-label" for='join_cap'>Participant Limit</label>
-
-                <!--<span class='help-block join-cap-error hide'>
-                   Please enter a number between 2 and 10.
-                </span>-->
-
 
                 <div class="col-lg-4">
                     <input class="form-control" type='number' min='2' max='10' step='1'
@@ -584,8 +750,17 @@
                         </div>
 
                     </div>
+
+                    <div class="col-lg-12 alert alert-danger alert-dismissible session-title-validate-error validate-error hide" role="alert">
+
+                        <button type="button" class="close" data-dismiss="alert"><span class="sr-only">Close</span></button>
+                    Title should be less than 80 characters
+
+                    </div>
+
                 </div>
             </div>
+
           </div> 
 
           <div class="modal-footer">
@@ -672,7 +847,92 @@
             </div>
         </div>
     </div>
+
+    <div class="modal propose-session-modal" id="propose-session-modal" role="dialog" aria-hidden="true">
+
+        <div class="modal-dialog">
             
+            <div class="modal-content">
+                
+                <div class="modal-header">
+                    <h4 class="modal-title">Propose a Session</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row modal-row">
+                        
+                        <div class="input-topic-box col-lg-12 no-padding">
+
+                            <div class="col-lg-12 no-padding">
+                                <div class="form-group">
+                                    <label class="col-lg-3 control-label no-padding session-title-label" for="topic_title">Session Title</label>
+
+                                    <div class="col-lg-9 no-padding">
+                                        <input class="form-control input-topic-title" type="text" name="topic_title" placeholder="Enter session title in less than 80 characters"value="" id="topic_title">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-12 no-padding">
+                                 <hr/> 
+                            </div>
+                        </div>
+
+                        <div class="session-preview col-xs-12">
+
+                        <div class="col-xs-12 proposed-session-box">
+                            <div class="col-lg-8 col-xs-7 no-padding">
+
+                                <p class="title-preview">Your title will appear here</p>
+                              
+                            </div>
+
+                            <div class="col-lg-4 col-xs-5 left-padding">
+                                <div class="col-xs-12 no-padding">
+            
+                                    <div class="col-lg-3 col-xs-4 no-padding">
+                                        <img src="<%= user.get("picture")%>" id="participantPic"> 
+                                    </div>
+
+                                    <div class="proposee-display-name col-lg-9 col-xs-8 no-padding">      
+                                        <%= user.get("displayName")%>
+                                    </div>       
+                            
+
+                                    <div class="col-xs-12 no-padding">
+                                        <button class="btn btn-primary btn-vote" disabled=" ">
+                                            VOTE | 1 
+                                            </button>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        </div>  
+
+                        <div class="col-lg-12 alert alert-danger alert-dismissible proposed-title-validate-error validate-error hide" role="alert">
+
+                            <button type="button" class="close" data-dismiss="alert"><span class="sr-only">Close</span></button>
+                            Title should be less than 80 characters
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    <button type="button" class="btn btn-primary" class="propose" id="propose" data-dismiss="modal">Propose</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <div id="no-urls-warning" class="modal hide fade">
         <div class="modal-header"><h3>NO HANGOUT URLS AVAILABLE</h3></div>
         <div class="modal-body">
