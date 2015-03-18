@@ -797,16 +797,26 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             document.title = document.title.replace(text, "");
             clearTimeout(interval);
           }, 5000);
+
+
+
         } else {
           var user = users.find(function(user) {
             return normalize(user.get("displayName")).indexOf(atname) !== -1;
           });
+
           if (user) {
             msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
               isMe: false,
               user: user
             })));
           }
+
+          this.options.transport.send("add-to-network", {
+            user: user,
+            roomId: this.options.event.getRoomId()
+          });
+
         }
       }, this));
       return msg;
