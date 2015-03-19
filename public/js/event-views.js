@@ -1256,13 +1256,9 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
               isMe: false,
               user: user
             })));
+
           }
-
-          this.options.transport.send("add-to-network", {
-            user: user,
-            roomId: this.options.event.getRoomId()
-          });
-
+        
         }
       }, this));
       return msg;
