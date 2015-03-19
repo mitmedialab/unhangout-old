@@ -9,14 +9,14 @@
 
 require([
     "jquery", "underscore", "backbone", "logger", "client-models",
-    "event-views", "auth", "transport",
+    "event-views", "auth", "transport", 
     // plugins
     "bootstrap", "backbone.marionette", "underscore-template-config"
 ], function($, _, Backbone, logging, models, eventViews, auth, transport) {
 
 var curEvent, messages;
 var app;
-var curSession = null;
+var curSession = null;  
 var logger = new logging.Logger("event-app");
 
 $(document).ready(function() {
@@ -58,8 +58,8 @@ $(document).ready(function() {
     curEvent.on("change:sessionsOpen", function() {
         app.sessionListView.render();
     });
+
     curEvent.on("change:open", function(model, open, options) {
-        console.log("change:open", arguments);
         if (IS_ADMIN) {
             app.chatView.chatInputView.onRender();
         } else if (!open) {
@@ -102,6 +102,7 @@ $(document).ready(function() {
         right: '#main-right',
         main: '#main-left',
         topLeft: '#top-left',
+        centerLeft: '#center-left',
         global: '#global',
         dialogs: '#dialogs',
         admin: '#admin-region',
@@ -125,6 +126,11 @@ $(document).ready(function() {
             event: curEvent,
             transport: trans
         });
+        this.topicListView = new eventViews.TopicListView({
+            collection: curEvent.get("sessions"),
+            event: curEvent,
+            transport: trans
+        });
         this.chatView = new eventViews.ChatLayout({
             messages: messages,
             users: curEvent.get("connectedUsers"),
@@ -142,10 +148,29 @@ $(document).ready(function() {
 
         // present the views in their respective regions
         this.right.show(this.chatView);
-        this.main.show(this.sessionListView);
         this.topLeft.show(this.youtubeEmbedView);
+        
+        this.centerLeft.show(this.sessionListView);
+        this.main.show(this.topicListView);
+
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
+
+        //On page reload show and hide topic list
+        //according to the current mode
+        if(!curEvent.get("adminProposedSessions")) {
+            $("#btn-propose-session").addClass('show');
+            $("#btn-propose-session").removeClass('hide');
+            $("#topic-list").show();
+        } else {
+            $("#btn-propose-session").addClass('hide');
+            $("#btn-propose-session").removeClass('show');
+            $("#topic-list").hide();
+        }
+
+        curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
+            this.adminButtonView.render();  
+        }, this));
 
         // this is a little unorthodox, but not sure how else
         // to do it.
@@ -157,11 +182,10 @@ $(document).ready(function() {
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, transport: trans
             });
-            curEvent.on("change:sessionsOpen change:open", _.bind(function() {
-                this.adminButtonView.render();
-            }, this));
+
             this.admin.show(this.adminButtonView);
         }
+
         var maybeMute = function() {
             var hoa = curEvent.get("hoa");
             if (hoa && _.findWhere(hoa.get("connectedParticipants"), {id: auth.USER_ID})) {
@@ -173,6 +197,7 @@ $(document).ready(function() {
                 maybeMute();
             }
         });
+
         // The following two calls aren't necessary for muting, as we mute when
         // the video starts playing. But this gives the appearance of muting
         // even if the video hasn't started yet.
