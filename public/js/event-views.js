@@ -1316,14 +1316,8 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             //console.log("hola");
             console.log();
         }
-<<<<<<< HEAD
-        this.$el.find("[data-toggle='popover']").popover({html: true});
-    }
-=======
-
     },
 
->>>>>>> a1f6d46eb3698b739404cb0397ff7ee5fba3907d
 });
 
 // This view contains all the ChatMessageViews and handles scrolling for them.
