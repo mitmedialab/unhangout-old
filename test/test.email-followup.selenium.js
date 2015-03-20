@@ -3,6 +3,7 @@ var expect = require('expect.js'),
     _ = require('underscore')._,
     sinon = require("sinon"),
     models = require("../lib/server-models"),
+    request = require('superagent'),
 
 describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
     var browser = null;
@@ -20,6 +21,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
             browser = theBrowser;
             common.standardSetup(function() {
                 event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+                event.set("open", true)
                 done();
             });
         });
@@ -33,14 +35,25 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
 
     function generateUserData(done) {   
         var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
-        var event = new models.ServerEvent({open: true});
+        
+        var session = event.get("sessions").at(1);
+        session.set("approved", true);
+
+        var participants = [{id: "p1", displayName: "P1", picture: ""},
+                            {id: "p2", displayName: "P2", picture: ""},
+                            {id: "0", displayName: "Regular1 Mock", picture: ""}];
+        session.set("hangout-url", "http://example.com");
+        session.set("connectedParticipants", participants);
+
         var session = new models.ServerSession();
         session.save(); // make sure it gets an ID.
 
         var user_one = common.server.db.users.get(1);
+        user_one.set("displayName", "Srishti");
+        user_one.set("picture", "http://pldb.media.mit.edu/face/srishti");
+
         var user_two = common.server.db.users.get(2);
         var user_three = common.server.db.users.get(3);
-
 
         event.get("sessions").add(session);
 
@@ -94,15 +107,28 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         browser.get(common.URL + "/event/" + event.id)
         browser.waitForEventReady(event, "superuser1");
         browser.byCss("#submit-contact-info").click(); 
-        
+    
+        var userData = generateUserData(done);
+        userData.unshift(null);
+
+        request.get(common.URL + '/followup/event/1/participant_1')
+            .send({userData: userData, participantIndex: 1})
+            .redirects(0)
+            .end(function(res) {
+                done();
+            });
+
         browser.byCss(".admin-button").click();
         browser.waitForSelector("#superuser-page-for-followupemail");
         browser.byCss("#superuser-page-for-followupemail").click();
 
-        var userData = generateUserData(done);
-        userData.unshift(null);
-
+        browser.get(common.URL + '/followup/event/1/participant_1');
         
+        browser.byCss("#send-email-to-all").click();
+
+        browser.byCss("#send-now-button").click().then(function() {
+            
+        });
 
     });
 
