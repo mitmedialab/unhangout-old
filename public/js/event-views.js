@@ -1222,6 +1222,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
       var matches = matchAll(/@([a-zA-Z0-9]+)/g, msg);
       var selfName = normalize(auth.USER_NAME);
+      console.log(this.options);
       var users = this.options.users;
       _.each(matches, _.bind(function(match) {
         // Is it referring to ourselves?
