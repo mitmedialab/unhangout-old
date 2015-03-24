@@ -1040,6 +1040,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
             event: this.options.event,
             transport: this.options.transport    
         });
+
     },
 
     onRender: function() {
