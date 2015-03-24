@@ -1158,11 +1158,13 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
         var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
+
             this.options.transport.send("chat", {
                 text: msg,
                 postAsAdmin: postAsAdmin,
                 roomId: this.options.event.getRoomId()
             });
+
             this.ui.chatInput.val("");
         }
 
@@ -1204,17 +1206,22 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         }
         var match = null;
         var matches = [];
+        
         while (match = regex.exec(string)) {
           matches.push(match);
         }
+
         return matches;
       };
+
       function normalize(name) {
         return name.replace(/\s/g, "").toLowerCase();
       };
+
       function quoteRegExp(pattern) {
         return pattern.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
       };
+
       function replaceAtName(msg, atname, replacement) {
         return msg.replace(new RegExp("(" + quoteRegExp(atname) + ")", "gi"),
                            replacement);
@@ -1222,17 +1229,22 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
       var matches = matchAll(/@([a-zA-Z0-9]+)/g, msg);
       var selfName = normalize(auth.USER_NAME);
-      console.log(this.options);
+
       var users = this.options.users;
+
       _.each(matches, _.bind(function(match) {
         // Is it referring to ourselves?
         var atname = normalize(match[1]);
+
         if (selfName.indexOf(atname) !== -1) {
+
           msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
             isMe: true,
             displayName: auth.USER_NAME
           })));
+
           var text = "✉ Message! ";
+
           var interval = setInterval(function() {
             if (document.title.indexOf(text) === 0) {
               document.title = document.title.replace(text, "");
@@ -1240,12 +1252,12 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
               document.title = text + document.title;
             }
           }, 500);
+
           setTimeout(function() {
             document.title = document.title.replace(text, "");
             clearTimeout(interval);
+
           }, 5000);
-
-
 
         } else {
           var user = users.find(function(user) {
@@ -1320,8 +1332,6 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         });
 
         function addToNetwork() {
-            //console.log("hola");
-            console.log();
         }
     },
 
