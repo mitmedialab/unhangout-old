@@ -33,7 +33,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         });
     });
 
-    function generateUserData(done) {   
+    function generateUserData() {   
         var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         
         var session = event.get("sessions").at(1);
@@ -90,6 +90,10 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
 
     };
 
+    function sendFollowupEmails(userData) {
+
+    };
+
     it("Is prompted to login when unauthenticated", function(done) {
         browser.get(common.URL);
         browser.byCss("#login-first-button").click();
@@ -108,7 +112,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         browser.waitForEventReady(event, "superuser1");
         browser.byCss("#submit-contact-info").click(); 
     
-        var userData = generateUserData(done);
+        userData = generateUserData();
         userData.unshift(null);
 
         request.get(common.URL + '/followup/event/1/participant_1')
@@ -124,10 +128,16 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
 
         browser.get(common.URL + '/followup/event/1/participant_1');
         
-        browser.byCss("#send-email-to-all").click();
+        browser.byCss("#send-email-to-all").click(); 
 
-        browser.byCss("#send-now-button").click().then(function() {
-            
+        browser.waitForSelector("#send-now-button");
+
+        browser.byCss("#send-now-button").click().then(function(done) {
+            var userData = generateUserData();
+
+            sendFollowupEmails(userData);
+
+
         });
 
     });
