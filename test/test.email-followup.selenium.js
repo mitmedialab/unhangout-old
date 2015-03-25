@@ -4,11 +4,10 @@ var expect = require('expect.js'),
     sinon = require("sinon"),
     models = require("../lib/server-models"),
     request = require('superagent'),
+    mandrill = require("mandrill-api"),
 
 describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
     var browser = null;
-
-    var longEnough = "This is a description that is long enough to meet the 100 char length validation for descriptions..."
 
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
@@ -36,18 +35,16 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
     function generateUserData() {   
         var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
         
-        var session = event.get("sessions").at(1);
-        session.set("approved", true);
-
         var participants = [{id: "p1", displayName: "P1", picture: ""},
                             {id: "p2", displayName: "P2", picture: ""},
                             {id: "0", displayName: "Regular1 Mock", picture: ""}];
+        
+        var session = event.get("sessions").at(1);
+        session.set("approved", true);
+
         session.set("hangout-url", "http://example.com");
         session.set("connectedParticipants", participants);
-
-        var session = new models.ServerSession();
-        session.save(); // make sure it gets an ID.
-
+        
         var user_one = common.server.db.users.get(1);
         user_one.set("displayName", "Srishti");
         user_one.set("picture", "http://pldb.media.mit.edu/face/srishti");
@@ -55,7 +52,9 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         var user_two = common.server.db.users.get(2);
         var user_three = common.server.db.users.get(3);
 
-        event.get("sessions").add(session);
+        event.get("connectedUsers").add(user_one);
+        event.get("connectedUsers").add(user_two);
+        event.get("connectedUsers").add(user_three);
 
         session.addConnectedParticipant(user_one);
         session.addConnectedParticipant(user_two);
@@ -70,7 +69,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         var userData = [];
 
         _.each(history, function(elapsedTime, userId) {
-                        
+
             //Get the user object for a specific ID 
             var user = common.server.db.users.get(userId);
 
@@ -115,7 +114,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         userData = generateUserData();
         userData.unshift(null);
 
-        request.get(common.URL + '/followup/event/1/participant_1')
+        request.get(common.URL + '/followup/event/' + event.id + '/participant_1')
             .send({userData: userData, participantIndex: 1})
             .redirects(0)
             .end(function(res) {
@@ -126,16 +125,21 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         browser.waitForSelector("#superuser-page-for-followupemail");
         browser.byCss("#superuser-page-for-followupemail").click();
 
-        browser.get(common.URL + '/followup/event/1/participant_1');
+        browser.get(common.URL + '/followup/event/' + event.id + '/participant_1');
         
         browser.byCss("#send-email-to-all").click(); 
 
         browser.waitForSelector("#send-now-button");
+        //browser.get(common.URL + '/followup/event' + event.id + '/sent/');
 
         browser.byCss("#send-now-button").click().then(function(done) {
             var userData = generateUserData();
 
-            sendFollowupEmails(userData);
+            var mandrill_client = new mandrill.Mandrill('API Key');
+
+            // mandrill_client.messages.send({"message": message}, function(result) {
+                            
+            // }
 
 
         });
