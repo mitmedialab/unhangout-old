@@ -16,7 +16,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
-        this.timeout(240000);
+        this.timeout(240000);   
 
         /* Mock Mandrill's API here */
 
@@ -65,9 +65,23 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         user_two.set("displayName", "Unhangout Developer");
         user_two.set("picture", "https://lh3.googleusercontent.com/-OP7MAxbSCvs/AAAAAAAAAAI/AAAAAAAAAEA/js2MqRDWiJk/photo.jpg");
 
+        var preferredContact = {};
+        preferredContact.emailInfo = "unhangout.developer@gmail.com";
+        preferredContact.twitterHandle = "Unhangout Developer";
+
+        user_two.set("noShare", false);
+        user_two.set("preferredContact", preferredContact);
+
         var user_three = common.server.db.users.get(3);
         user_three.set("displayName", "Jules");
         user_three.set("picture", "http://lh4.googleusercontent.com/-8NHi4O5-AF0/AAAAAAAAAAI/AAAAAAAAAAA/8kJJNYEwztM/s32-c/photo.jpg");
+
+        var preferredContact = {};
+        preferredContact.emailInfo = "jules.shmulz@gmail.com";
+        preferredContact.twitterHandle = "Jules Schmulz";
+
+        user_three.set("noShare", false);
+        user_three.set("preferredContact", preferredContact);
 
         var superuser1 = common.server.db.users.findWhere({"sock-key": "superuser1"});
 
@@ -82,9 +96,10 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
 
         var history = {events: {}, sessions: {}};
 
-        history.event = {"1" : {start: 0, total: 1000}, "2": {start: 0, total: 1000}, "3" : {start: 0, total: 1000}};
-
-        history.sessions[session.id] = {"1": {"1": {total: 2346, start: 0}, "2": {total: 2346, start: 0}, "3": {total: 2346, start: 0}}};
+        history.event = {"1" : {start: 0, total: 1000}, "2": {start: 0, total: 1000}, "3" : {start: 0, total: 1000}, "4" : {start: 0, total: 1000}};
+        history.sessions[session.id] = {"1": {total: 2346, start: 0}, "2": {total: 2346, start: 0}, "3": {total: 2346, start: 0}};
+        
+        event.set("history", history);
 
     };
 
