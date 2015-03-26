@@ -5,7 +5,7 @@ var expect = require('expect.js'),
     models = require("../lib/server-models"),
     request = require('superagent'),
     mandrill = require("mandrill-api"),
-    outbox = [],
+    outbox = [];
 
 describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
     var browser = null;
@@ -45,9 +45,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         });
     });
 
-    function generateUserData() {   
-        var clock = sinon.useFakeTimers(1, "setTimeout", "clearTimeout", "Date");
-        
+    function setEvent() {           
         var session = event.get("sessions").at(1);
         session.set("approved", true);
 
@@ -88,30 +86,6 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
 
         history.sessions[session.id] = {"1": {"1": {total: 2346, start: 0}, "2": {total: 2346, start: 0}, "3": {total: 2346, start: 0}}};
 
-        clock.restore();
-
-        var userData = [];
-
-        _.each(history, function(elapsedTime, userId) {
-
-            //Get the user object for a specific ID 
-            var user = common.server.db.users.get(userId);
-
-            // Find all userIDs for users who shared sessions with me at this event.
-            var userIds = event.getUserIdsSharingSessionsWith(userId);
-            
-            // get user objects for the IDs.
-            var users = _.map(userIds, function(userId) { 
-                return common.server.db.users.get(userId); 
-            });
-
-            userData.push({ user: user, users: users });
-
-        });
-
-        return userData; 
-
-
     };
 
     it("Is prompted to login when unauthenticated", function(done) {
@@ -130,17 +104,12 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         //Superuser goes to the event page.  Connect a socket to a session.
         browser.get(common.URL + "/event/" + event.id)
         browser.waitForEventReady(event, "superuser1");
-        browser.byCss("#submit-contact-info").click(); 
-    
-        userData = generateUserData();
-        userData.unshift(null);
 
-        request.get(common.URL + '/followup/event/' + event.id + '/participant_1')
-            .send({userData: userData, participantIndex: 1})
-            .redirects(0)
-            .end(function(res) {
-                done();
-            });
+        //Set event function sets the state of the event
+        //and related user models
+        setEvent();
+
+        browser.byCss("#submit-contact-info").click(); 
 
         browser.byCss(".admin-button").click();
         browser.waitForSelector("#superuser-page-for-followupemail");
@@ -152,22 +121,19 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
 
         browser.waitForSelector("#send-now-button");
 
-
         browser.byCss("#send-now-button").click().then(function() {
-            generateUserData();
+            setEvent();
 
             var noOfUsers = event.get("connectedUsers").length;
-
             expect(outbox.length).to.be(noOfUsers);
 
             expect(outbox[0].to[0].email).to.be("regular2@example.com");
             expect(outbox[0].from_email).to.be("noreply@media.mit.edu");
             expect(outbox[0].subject).to.be("Unhangout Event: Followup");
             expect(outbox[0].html).to.not.eql(-1);
-            //expect(outbox[0].html).to.be("Unhangout Event: Followup");
 
             outbox.length =  0;
-            
+            done();
         });
 
     });
