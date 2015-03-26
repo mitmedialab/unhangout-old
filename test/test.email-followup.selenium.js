@@ -46,7 +46,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
     });
 
     function generateUserData() {   
-        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout", "Date");
+        var clock = sinon.useFakeTimers(1, "setTimeout", "clearTimeout", "Date");
         
         var session = event.get("sessions").at(1);
         session.set("approved", true);
@@ -82,9 +82,11 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         session.addConnectedParticipant(user_two);
         session.addConnectedParticipant(user_three);
 
-        var history = {event: {}, sessions: {}};
+        var history = {events: {}, sessions: {}};
 
-        history.sessions[session.id] = {"1": {start: 0, total: 1000}, "2": {start: 0, total: 1000}, "3": {start: 0, total: 1000}};
+        history.event = {"1" : {start: 0, total: 1000}, "2": {start: 0, total: 1000}, "3" : {start: 0, total: 1000}};
+
+        history.sessions[session.id] = {"1": {"1": {total: 2346, start: 0}, "2": {total: 2346, start: 0}, "3": {total: 2346, start: 0}}};
 
         clock.restore();
 
@@ -161,7 +163,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
             expect(outbox[0].to[0].email).to.be("regular2@example.com");
             expect(outbox[0].from_email).to.be("noreply@media.mit.edu");
             expect(outbox[0].subject).to.be("Unhangout Event: Followup");
-
+            expect(outbox[0].html).to.not.eql(-1);
             //expect(outbox[0].html).to.be("Unhangout Event: Followup");
 
             outbox.length =  0;
