@@ -982,7 +982,6 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
 
     serializeData: function() {
         var data = {};
-
         data = this.collection.toJSON();
 
         data.numUsers = this.collection.length;
