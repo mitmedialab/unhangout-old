@@ -551,34 +551,63 @@ views.UserView = Backbone.Marionette.ItemView.extend({
         'click' : 'click'
     },
 
+    initialize: function() {
+        console.log(this.model.get("networkList"));
+        this.listenTo(this.model, 'change:networkList', this.fun, this);
+    },
 
     click: function() {
         logger.log("user clicked: " + this.model.get("displayName"));
     },
 
+    fun: function() {
+        console.log("change in network list");
+    },
+
     onRender: function() {
         // add in the tooltip attributes
-        if(this.model.isAdminOf(this.options.event)) {
-             this.$el.addClass("admin");
-        }
 
-        // look for either an img or an i child, since people who don't have
-        // a g+ icon should still get tooltips
-        this.$el.find("img, i").attr("data-toggle", "tooltip");
+        // if(this.model.get("networkList").otherUsers.indexOf(this.model.get("id")) {
 
-        // if we're a child of hangout-users, then we're a small session user icon,
-        // not a big presence gutter icon. in this case, make the data container
-        // the session.
-        if(this.$el.parent().hasClass("hangout-users")) {
-            // this.$el.find("img, i").attr("data-container", "#chat-container-region");
-            this.$el.find("img, i").attr("data-placement", "top");
+        // }
+
+        //this.$el.hide();
+
+        console.log("AUTH FOR YOU : " + auth.USER_NAME);
+
+        if(auth.USER_ID != this.model.get("id")) {
+
+            if(auth.USER_NETWORK_LIST.otherUsers.indexOf(this.model.get("id"))) {
+                console.log(this.model.get("displayName") + " : is in my network");
+                this.$el.show();
+            } else {
+                this.$el.hide();
+            }
         } else {
-            this.$el.find("img, i").attr("data-container", "body");
-            this.$el.find("img, i").attr("data-placement", "left");
+            this.$el.hide();
         }
 
-        this.$el.find("img, i").attr("title", this.model.get("displayName"));
-        this.$el.find("img, i").tooltip({'placement':'top'});
+        // if(this.model.isAdminOf(this.options.event)) {
+        //      this.$el.addClass("admin");
+        // }
+
+        // // look for either an img or an i child, since people who don't have
+        // // a g+ icon should still get tooltips
+        // this.$el.find("img, i").attr("data-toggle", "tooltip");
+
+        // // if we're a child of hangout-users, then we're a small session user icon,
+        // // not a big presence gutter icon. in this case, make the data container
+        // // the session.
+        // if(this.$el.parent().hasClass("hangout-users")) {
+        //     // this.$el.find("img, i").attr("data-container", "#chat-container-region");
+        //     this.$el.find("img, i").attr("data-placement", "top");
+        // } else {
+        //     this.$el.find("img, i").attr("data-container", "body");
+        //     this.$el.find("img, i").attr("data-placement", "left");
+        // }
+
+        // this.$el.find("img, i").attr("title", this.model.get("displayName"));
+        // this.$el.find("img, i").tooltip({'placement':'top'});
     }
 });
 
@@ -964,7 +993,7 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     id: "network-list",
 
     initialize: function() {
-        this.listenTo(this.collection, 'add remove', function() {
+        this.listenTo(this.collection, 'change add remove', function() {
             // going to manually update the current user counter because
             // doing it during render doesn't seem to work. There's some
             // voodoo in how marionette decides how much of the view to
@@ -975,6 +1004,8 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
             // some reason totalRecords doesn't decrease when records
             // are removed, but totalUnfilteredRecords does. Could
             // be a bug.
+
+            console.log("call on change");
 
             this.$el.find(".header .contents").text(this.collection.length);
         }, this);
