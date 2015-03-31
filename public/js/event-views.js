@@ -569,19 +569,19 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
 
         //this.$el.hide();
 
-        console.log("AUTH FOR YOU : " + auth.USER_NAME);
+        // console.log("AUTH FOR YOU : " + auth.USER_NAME);
 
-        if(auth.USER_ID != this.model.get("id")) {
+        // if(auth.USER_ID != this.model.get("id")) {
 
-            if(auth.USER_NETWORK_LIST.otherUsers.indexOf(this.model.get("id"))) {
-                console.log(this.model.get("displayName") + " : is in my network");
-                this.$el.show();
-            } else {
-                this.$el.hide();
-            }
-        } else {
-            this.$el.hide();
-        }
+        //     if(auth.USER_NETWORK_LIST.otherUsers.indexOf(this.model.get("id"))) {
+        //         console.log(this.model.get("displayName") + " : is in my network");
+        //         this.$el.show();
+        //     } else {
+        //         this.$el.hide();
+        //     }
+        // } else {
+        //     this.$el.hide();
+        // }
 
         // if(this.model.isAdminOf(this.options.event)) {
         //      this.$el.addClass("admin");
