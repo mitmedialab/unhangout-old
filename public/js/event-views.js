@@ -538,11 +538,7 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
 
 });
 
-
-// UserViews are the little square profile pictures that we use throughout
-// the app to represent users.
-
-views.UserView = Backbone.Marionette.ItemView.extend({
+views.NetworkView = Backbone.Marionette.ItemView.extend({
     template: '#user-template',
     className: 'user focus',
     tagName: "li",
@@ -608,6 +604,59 @@ views.UserView = Backbone.Marionette.ItemView.extend({
 
         // this.$el.find("img, i").attr("title", this.model.get("displayName"));
         // this.$el.find("img, i").tooltip({'placement':'top'});
+    }
+});
+
+
+// UserViews are the little square profile pictures that we use throughout
+// the app to represent users.
+
+views.UserView = Backbone.Marionette.ItemView.extend({
+    template: '#user-template',
+    className: 'user focus',
+    tagName: "li",
+
+    events: {
+        'click' : 'click'
+    },
+
+    initialize: function() {
+        console.log(this.model.get("networkList"));
+        this.listenTo(this.model, 'change:networkList', this.fun, this);
+    },
+
+    click: function() {
+        logger.log("user clicked: " + this.model.get("displayName"));
+    },
+
+    fun: function() {
+        console.log("change in network list");
+    },
+
+    onRender: function() {
+        // add in the tooltip attributes
+
+        if(this.model.isAdminOf(this.options.event)) {
+             this.$el.addClass("admin");
+        }
+
+        // look for either an img or an i child, since people who don't have
+        // a g+ icon should still get tooltips
+        this.$el.find("img, i").attr("data-toggle", "tooltip");
+
+        // if we're a child of hangout-users, then we're a small session user icon,
+        // not a big presence gutter icon. in this case, make the data container
+        // the session.
+        if(this.$el.parent().hasClass("hangout-users")) {
+            // this.$el.find("img, i").attr("data-container", "#chat-container-region");
+            this.$el.find("img, i").attr("data-placement", "top");
+        } else {
+            this.$el.find("img, i").attr("data-container", "body");
+            this.$el.find("img, i").attr("data-placement", "left");
+        }
+
+        this.$el.find("img, i").attr("title", this.model.get("displayName"));
+        this.$el.find("img, i").tooltip({'placement':'top'});
     }
 });
 
@@ -988,7 +1037,7 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
 
 views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     template: '#network-list-template',
-    itemView: views.UserView,
+    itemView: views.NetworkView,
     itemViewContainer: "#network-list-container",
     id: "network-list",
 
