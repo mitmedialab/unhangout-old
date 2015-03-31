@@ -563,47 +563,49 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         // add in the tooltip attributes
 
-        // if(this.model.get("networkList").otherUsers.indexOf(this.model.get("id")) {
+        //If AUTH's user network list is empty, hide
+        //the network list and all the user elements 
+        // of the model and return
 
-        // }
+        if(typeof auth.USER_NETWORK_LIST.otherUsers == 'undefined') {
+            $("#presence-network-gutter").hide();
+            this.$el.hide();
+            return;
+        } 
 
-        //this.$el.hide();
+        if(this.model.isAdminOf(this.options.event)) {
+             this.$el.addClass("admin");
+        }
 
-        // console.log("AUTH FOR YOU : " + auth.USER_NAME);
+        // look for either an img or an i child, since people who don't have
+        // a g+ icon should still get tooltips
+        this.$el.find("img, i").attr("data-toggle", "tooltip");
 
-        // if(auth.USER_ID != this.model.get("id")) {
+        // if we're a child of hangout-users, then we're a small session user icon,
+        // not a big presence gutter icon. in this case, make the data container
+        // the session.
+        if(this.$el.parent().hasClass("hangout-users")) {
+            // this.$el.find("img, i").attr("data-container", "#chat-container-region");
+            this.$el.find("img, i").attr("data-placement", "top");
+        } else {
+            this.$el.find("img, i").attr("data-container", "body");
+            this.$el.find("img, i").attr("data-placement", "left");
+        }
 
-        //     if(auth.USER_NETWORK_LIST.otherUsers.indexOf(this.model.get("id"))) {
-        //         console.log(this.model.get("displayName") + " : is in my network");
-        //         this.$el.show();
-        //     } else {
-        //         this.$el.hide();
-        //     }
-        // } else {
-        //     this.$el.hide();
-        // }
+        this.$el.find("img, i").attr("title", this.model.get("displayName"));
+        this.$el.find("img, i").tooltip({'placement':'top'});
 
-        // if(this.model.isAdminOf(this.options.event)) {
-        //      this.$el.addClass("admin");
-        // }
+        if(auth.USER_ID != this.model.get("id")) {
 
-        // // look for either an img or an i child, since people who don't have
-        // // a g+ icon should still get tooltips
-        // this.$el.find("img, i").attr("data-toggle", "tooltip");
-
-        // // if we're a child of hangout-users, then we're a small session user icon,
-        // // not a big presence gutter icon. in this case, make the data container
-        // // the session.
-        // if(this.$el.parent().hasClass("hangout-users")) {
-        //     // this.$el.find("img, i").attr("data-container", "#chat-container-region");
-        //     this.$el.find("img, i").attr("data-placement", "top");
-        // } else {
-        //     this.$el.find("img, i").attr("data-container", "body");
-        //     this.$el.find("img, i").attr("data-placement", "left");
-        // }
-
-        // this.$el.find("img, i").attr("title", this.model.get("displayName"));
-        // this.$el.find("img, i").tooltip({'placement':'top'});
+            if(auth.USER_NETWORK_LIST.otherUsers.indexOf(this.model.get("id"))) {
+                console.log(this.model.get("displayName") + " : is in my network");
+                this.$el.show();
+            } else {
+                this.$el.hide();
+            }
+        } else {
+            this.$el.hide();
+        }
     }
 });
 
@@ -1053,10 +1055,6 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
             // some reason totalRecords doesn't decrease when records
             // are removed, but totalUnfilteredRecords does. Could
             // be a bug.
-
-            console.log("call on change");
-
-            this.$el.find(".header .contents").text(this.collection.length);
         }, this);
     },
 
