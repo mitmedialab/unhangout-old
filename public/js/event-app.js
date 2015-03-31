@@ -209,6 +209,12 @@ $(document).ready(function() {
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         $(".about-event-container").hide();
 
+        //Hide the presence network gutter when app loads and the network
+        //list is empty
+        if(typeof auth.USER_NETWORK_LIST.otherUsers == 'undefined') {
+            $("#presence-network-gutter").hide();
+        }
+
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {
