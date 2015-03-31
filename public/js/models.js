@@ -431,7 +431,7 @@ models.User = Backbone.Model.extend({
             displayName: "[unknown]",
             link: null,
             emails: [],
-            networkList: [],
+            networkList: {},
         };
     },
 
