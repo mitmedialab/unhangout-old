@@ -1,14 +1,14 @@
-<table border="0" cellpadding="0" cellspacing="0" width="122">
+<table border="0" cellpadding="0" cellspacing="0" width="90" style="border-collapse: separate; border-spacing: 2px;">
     <tr>
 
     <% _.each(userData[participantIndex].users, function(otherUser) { %>
 
     <% if(otherUser.get("noShare") == false) { %>
 
-            <td align="left" valign="top" style="border: 2px solid #cfcfcf; background-color: #f2f2f2;">
+            <td align="left" valign="top" style="border: 1px solid #cfcfcf; background-color: #f2f2f2;">
             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
-                    <td align="center" valign="top">
+                    <td align="left" valign="top">
                         <img align="none" src='<%= otherUser.get("picture") %>' style="width: 86px; height: 84px; margin: 0px;"/> 
                     </td>
                 </tr>

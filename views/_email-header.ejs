@@ -9,8 +9,18 @@ Dear <%= userData[participantIndex].user.getShortDisplayName() %>,
 Unhangout along with other people from all around the world! 
 
 <% if(userData[participantIndex].users.length > 0) { %>  
-    <br/><br/>
-    Say hello to people you interacted with in the event on their favored method of contact. People who you <strong>chatted with</strong> in the <strong>breakout</strong>:<br />
+
+	<% for(var i=0; i < userData[participantIndex].users.length; i++) { %>
+
+		<% if(userData[participantIndex].users[i].get("noShare") == false ) { %>
+			
+			<br/><br/>
+			Say hello to people you interacted with in the event on their favored method of contact. People who you <strong>chatted with</strong> in the <strong>breakout</strong>:<br />
+
+			<% break %>
+		<% } %>
+	<% } %>
+
 <% } %>
 
 </p>
