@@ -1,9 +1,14 @@
-<table border="0" cellpadding="0" cellspacing="0" width="90" style="border-collapse: separate; border-spacing: 2px;">
-    <tr>
+<table border="0" cellspacing="2" width="90" style="border-collapse: separate; border-spacing: 5px;">
 
-    <% _.each(userData[participantIndex].users, function(otherUser) { %>
+    <% var tdCount = 1; %>
+    
+    <% _.each(userData[participantIndex].users, function(otherUser, index) { %>
 
     <% if(otherUser.get("noShare") == false) { %>
+
+            <% if(tdCount === 1 || tdCount % 6 === 0) { %>
+                <tr>
+            <% } %>
 
             <td align="left" valign="top" style="border: 1px solid #cfcfcf; background-color: #f2f2f2;">
             <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -61,10 +66,16 @@
 
         </td>
 
+        <% if(tdCount % 6 === 0) { %>
+            </tr>
+        <% } %>
+
+        <% tdCount = tdCount + 1; %>
+
+
     <% } %>
 
     <% }) %>
 
-</tr>
 
 </table>

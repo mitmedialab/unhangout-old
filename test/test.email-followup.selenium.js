@@ -144,7 +144,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
 
             expect(outbox[0].to[0].email).to.be("regular2@example.com");
             expect(outbox[0].from_email).to.be("noreply@media.mit.edu");
-            expect(outbox[0].subject).to.be("Unhangout Event: Followup");
+            expect(outbox[0].subject).to.be("Following up from the Unhangout");
             expect(outbox[0].html).to.not.eql(-1);
 
             outbox.length =  0;
