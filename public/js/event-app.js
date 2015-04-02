@@ -211,7 +211,7 @@ $(document).ready(function() {
 
         //Hide the presence network gutter when app loads and the network
         //list is empty
-        if(typeof auth.USER_NETWORK_LIST.otherUsers == 'undefined') {
+        if(typeof auth.USER_NETWORK_LIST[curEvent.id] == 'undefined') {
             $("#presence-network-gutter").hide();
         }
 

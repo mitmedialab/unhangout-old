@@ -567,7 +567,7 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
         //the network list and all the user elements 
         // of the model and return
 
-        if(typeof auth.USER_NETWORK_LIST.otherUsers == 'undefined') {
+        if(typeof auth.USER_NETWORK_LIST[this.options.event.id] == 'undefined') {
             $("#presence-network-gutter").hide();
             this.$el.hide();
             return;
@@ -597,12 +597,16 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
 
         if(auth.USER_ID != this.model.get("id")) {
 
-            if(auth.USER_NETWORK_LIST.otherUsers.indexOf(this.model.get("id"))) {
-                console.log(this.model.get("displayName") + " : is in my network");
-                this.$el.show();
-            } else {
-                this.$el.hide();
+            if(auth.USER_NETWORK_LIST[this.options.event.id]) {
+                $("#presence-network-gutter").show();
+
+                if(auth.USER_NETWORK_LIST[this.options.event.id].indexOf(this.model.get("id")) > -1) {
+                    this.$el.show();
+                } else {
+                    this.$el.hide();
+                }
             }
+
         } else {
             this.$el.hide();
         }
@@ -1057,6 +1061,12 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
             // be a bug.
         }, this);
     },
+
+    itemViewOptions: function() {        
+        return {
+            event: this.options.event, transport: this.options.transport
+        };
+    }, 
 
     serializeData: function() {
         var data = {};
