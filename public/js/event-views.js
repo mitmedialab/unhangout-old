@@ -548,7 +548,6 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
     },
 
     initialize: function() {
-        console.log(this.model.get("networkList"));
         this.listenTo(this.model, 'change:networkList', this.fun, this);
     },
 
@@ -557,7 +556,7 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
     },
 
     fun: function() {
-        console.log("change in network list");
+    
     },
 
     onRender: function() {
@@ -626,17 +625,9 @@ views.UserView = Backbone.Marionette.ItemView.extend({
         'click' : 'click'
     },
 
-    initialize: function() {
-        console.log(this.model.get("networkList"));
-        this.listenTo(this.model, 'change:networkList', this.fun, this);
-    },
 
     click: function() {
         logger.log("user clicked: " + this.model.get("displayName"));
-    },
-
-    fun: function() {
-        console.log("change in network list");
     },
 
     onRender: function() {
@@ -1119,7 +1110,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
         });
 
         this.networkListView = new views.NetworkListView({
-            collection: this.options.users,
+            collection: this.options.event.get("connectedUsers"),
             event: this.options.event
         });
 
