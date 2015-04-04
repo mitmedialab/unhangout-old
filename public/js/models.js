@@ -389,6 +389,10 @@ models.Session = Backbone.Model.extend({
     getNumConnectedParticipants: function() {
         return this.get("connectedParticipants").length;
     },
+    getNumConnectedAndJoiningParticipants: function() {
+        return this.get("connectedParticipants").length + 
+               this.get("joiningParticipants").length;
+    },
     validate: function(attrs, options) {
         if (!_.isArray(attrs.activities)) {
             return "Missing activities.";

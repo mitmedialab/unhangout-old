@@ -62,6 +62,8 @@ var stop = function(callback) {
             }
             return callback(null);
         }
+    } else {
+        callback(null);
     }
 }
 
