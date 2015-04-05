@@ -41,8 +41,8 @@ require([
 
         $(".next").click(function() {
             
-            if(participantIndex >= userDataCount) {
-                participantIndex = userDataCount; 
+            if(participantIndex >= userData.length) {
+                participantIndex = userData.length; 
                 return;
             }
 

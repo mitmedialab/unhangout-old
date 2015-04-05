@@ -208,10 +208,8 @@ $(document).ready(function() {
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         
-        var participantIndex = 0; 
-
         $("#superuser-page-for-followupemail").attr("href", "/followup/event/" 
-            + curEvent.id + "/participant_" + participantIndex);
+            + curEvent.id + "/participant_0");
         
         $(".about-event-container").hide();
 
