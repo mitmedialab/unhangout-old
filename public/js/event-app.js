@@ -223,6 +223,7 @@ $(document).ready(function() {
             ) {
 
             $("#my-contact-info-modal").modal('show');
+            $(".empty-contact-info-error").hide();
             $(".email-validate-error").hide();
             $(".twitter-validate-error").hide();
             $(".linkedin-validate-error").hide();
