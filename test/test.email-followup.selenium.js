@@ -5,10 +5,12 @@ var expect = require('expect.js'),
     models = require("../lib/server-models"),
     request = require('superagent'),
     mandrill = require("mandrill-api"),
+    conf = require("../lib/options"),
     outbox = [];
 
 describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
     var browser = null;
+    var event = null;
 
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
@@ -45,85 +47,97 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         });
     });
 
-    function setEvent() {           
+
+    // Set up the event with history and user profile settings for testing
+    // followup emails
+    function prepareEventAndUsers(event) {           
         var session = event.get("sessions").at(1);
         session.set("approved", true);
+        //session.set("hangout-url", "http://example.com");
 
-        session.set("hangout-url", "http://example.com");
-        
-        var user_one = common.server.db.users.get(1);
-        user_one.set("displayName", "Srishti");
-        user_one.set("picture", "http://pldb.media.mit.edu/face/srishti");
+        var users = [];
+        /*
+        var noShare = common.server.db.users.get(1);
+        noShare.set({
+          displayName: "NoShareUser",
+          picture: "http://pldb.media.mit.edu/face/srishti",
+          preferredContact: {},
+          noShare: true // to be changed
+        });
+        users.push(noShare);
+        */
 
-        var preferredContact = {};
-        preferredContact.emailInfo = "srishakatux@gmail.com";
-        preferredContact.twitterHandle = "srishakatux";
+        var emailOnly = common.server.db.users.get(2);
+        emailOnly.set({
+          displayName: "EmailOnlyUser",
+          picture: "https://lh3.googleusercontent.com/-OP7MAxbSCvs/AAAAAAAAAAI/AAAAAAAAAEA/js2MqRDWiJk/photo.jpg",
+          preferredContact: {
+            emailInfo: "unhangout.developer@gmail.com",
+          }
+        });
+        users.push(emailOnly);
 
-        user_one.set("preferredContact", preferredContact)
+        var emailAndTwitter = common.server.db.users.get(3);
+        emailAndTwitter.set({ 
+          displayName: "EmailAndTwitterUser",
+          picture: "http://lh4.googleusercontent.com/-8NHi4O5-AF0/AAAAAAAAAAI/AAAAAAAAAAA/8kJJNYEwztM/s32-c/photo.jpg",
+          preferredContact: {
+            emailInfo: "jules.schmulz@gmail.com",
+            twitterHandle: "JulesSchmulz",
+          }
+        });
+        users.push(emailAndTwitter);
 
-        var user_two = common.server.db.users.get(2);
-        user_two.set("displayName", "Unhangout Developer");
-        user_two.set("picture", "https://lh3.googleusercontent.com/-OP7MAxbSCvs/AAAAAAAAAAI/AAAAAAAAAEA/js2MqRDWiJk/photo.jpg");
-
-        var preferredContact = {};
-        preferredContact.emailInfo = "unhangout.developer@gmail.com";
-        preferredContact.twitterHandle = "Unhangout Developer";
-
-        user_two.set("noShare", false);
-        user_two.set("preferredContact", preferredContact);
-
-        var user_three = common.server.db.users.get(3);
-        user_three.set("displayName", "Jules");
-        user_three.set("picture", "http://lh4.googleusercontent.com/-8NHi4O5-AF0/AAAAAAAAAAI/AAAAAAAAAAA/8kJJNYEwztM/s32-c/photo.jpg");
-
-        var preferredContact = {};
-        preferredContact.emailInfo = "jules.shmulz@gmail.com";
-        preferredContact.twitterHandle = "Jules Schmulz";
-
-        user_three.set("noShare", false);
-        user_three.set("preferredContact", preferredContact);
+        var linkedInOnly = common.server.db.users.get(4);
+        linkedInOnly.set({
+          displayName: "LinkedInOnlyUser",
+          preferredContact: {
+            linkedinURL: "https://www.linkeedin.com/doesanyonereallyusethis"
+          }
+        });
+        users.push(linkedInOnly);
 
         var superuser1 = common.server.db.users.findWhere({"sock-key": "superuser1"});
+        users.push(superuser1);
 
-        event.get("connectedUsers").add(user_one);
-        event.get("connectedUsers").add(user_two);
-        event.get("connectedUsers").add(user_three);
-        event.get("connectedUsers").add(superuser1);
+        // Set up event history such that 
+        var history = {event: {}, sessions: {}};
+        history.event[noShare.id] = {start: 0, total: 1000};
+        history.event[emailOnly.id] = {start: 0, total: 1000};
+        history.event[emailAndTwitter.id] = {start: 0, total: 1000};
+        history.event[linkedInOnly.id] = {start: 0, total: 1000};
+        history.event[superuser1.id] = {start: 0, total: 1000};
+        var sessHist = history.sessions[session.id] = {};
+        sessHist[noShare.id] = {start: 0, total: 2345};
+        sessHist[emailOnly.id] = {start: 0, total: 2345};
+        sessHist[linkedInOnly.id] = {start: 0, total: 2345};
 
-        session.addConnectedParticipant(user_one);
-        session.addConnectedParticipant(user_two);
-        session.addConnectedParticipant(user_three);
-
-        var history = {events: {}, sessions: {}};
-
-        history.event = {"1" : {start: 0, total: 1000}, "2": {start: 0, total: 1000}, "3" : {start: 0, total: 1000}, "4" : {start: 0, total: 1000}};
-        history.sessions[session.id] = {"1": {total: 2346, start: 0}, "2": {total: 2346, start: 0}, "3": {total: 2346, start: 0}};
-        
         event.set("history", history);
-
+        return users;
     };
 
     it("Is prompted to login when unauthenticated", function(done) {
-        browser.get(common.URL);
-        browser.byCss("#login-first-button").click();
-        browser.waitForSelector("#login-first-modal h4");
-        browser.byCss("#login-first-modal h4").getText().then(function(text) {
-            expect(text).to.eql("Please log in!");
-            done();
+        var users = prepareEventAndUsers(event);
+        var url = common.URL + "/followup/event/" + event.id + "/participant_0";
+
+        browser.get(url);
+        browser.getCurrentUrl().then(function(url) {
+          // redirect to login.
+          expect(url).to.contain("https://accounts.google.com");
+          done();
         });
     });
 
     it("Super User sends followup emails", function(done) {
+        var users = prepareEventAndUsers(event);
         
         browser.mockAuthenticate("superuser1");
-        //Superuser goes to the event page.  Connect a socket to a session.
+        //Superuser goes to the event page.
         browser.get(common.URL + "/event/" + event.id)
         browser.waitForEventReady(event, "superuser1");
 
-        //Set event function sets the state of the event
-        //and related user models
-        setEvent();
-
+        // Click through the contact info dialog.
+        browser.waitForSelector("#submit-contact-info");
         browser.byCss("#submit-contact-info").click(); 
 
         browser.byCss(".admin-button").click();
@@ -131,22 +145,29 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         browser.byCss("#superuser-page-for-followupemail").click();
 
         browser.get(common.URL + '/followup/event/' + event.id + '/participant_1');
-        
         browser.byCss("#send-email-to-all").click(); 
-
         browser.waitForSelector("#send-now-button");
 
         browser.byCss("#send-now-button").click().then(function() {
-            setEvent();
 
-            var noOfUsers = event.get("connectedUsers").length;
-            expect(outbox.length).to.be(noOfUsers);
+            expect(outbox.length).to.be(users.length);
 
-            expect(outbox[0].to[0].email).to.be("regular2@example.com");
-            expect(outbox[0].from_email).to.be("noreply@media.mit.edu");
-            expect(outbox[0].subject).to.be("Following up from the Unhangout");
-            expect(outbox[0].html).to.not.eql(-1);
+            // Ensure that we only have expected recipients, and only one email
+            // to each.
+            var expectedRecipients = _.map(users, function(u) {
+              return u.get("emails")[0].value;
+            });
+            var actualRecipients = _.map(outbox, function(email) {
+              return email.to[0].email;
+            });
+            expect(expectedRecipients.sort()).to.eql(actualRecipients.sort());
 
+            _.each(outbox, function(email) {
+              expect(email.from_email).to.be(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS);
+              expect(email.subject).to.be("Following up from the Unhangout");
+            });
+
+            // Clear the outbox.
             outbox.length =  0;
             done();
         });
