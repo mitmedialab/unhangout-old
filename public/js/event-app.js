@@ -208,18 +208,21 @@ $(document).ready(function() {
 
         $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         
-        var participantIndex = 1; 
+        var participantIndex = 0; 
 
         $("#superuser-page-for-followupemail").attr("href", "/followup/event/" 
             + curEvent.id + "/participant_" + participantIndex);
         
         $(".about-event-container").hide();
 
-        //Show contact form on event page if either 
-        //isPreferredContactEmpty is false or noShare is false 
+        //Show contact form on event page if noShare is false
+        //and none of the contact details are entered
 
-        if(isPreferredContactEmpty === false && (noShare === false || noShare === undefined)) {
-            $("#my-contact-info-modal").modal('show');
+        if(USER.preferredContact.emailInfo === "" && USER.preferredContact.twitterHandle === ""
+            && USER.preferredContact.linkedinURL === "" && USER.preferredContact.noShare === false) {
+                $("#my-contact-info-modal").modal('show');
+        } else if (USER.preferredContact === null) {
+            $("#my-contact-info-modal").modal('hide');
         }
 
         //Hide the error controls 
@@ -229,10 +232,10 @@ $(document).ready(function() {
         $(".linkedin-validate-error").hide();
 
         //Populating contact fields        
-        $("#email_info").val(emailInfo);
-        $("#twitter_handle").val(twitterHandle);
-        $("#linkedin_url").val(linkedinURL);
-        $("#noShareChkBox").prop("checked", noShare);
+        $("#email_info").val(USER.preferredContact.emailInfo);
+        $("#twitter_handle").val(USER.preferredContact.twitterHandle);
+        $("#linkedin_url").val(USER.preferredContact.linkedinURL);
+        $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
     }, app);
 

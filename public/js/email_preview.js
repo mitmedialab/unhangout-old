@@ -27,7 +27,7 @@ require([
 
         $(".previous").click(function() {
 
-            if(participantIndex <= 1) {
+            if(participantIndex <= 0) {
                 participantIndex = 0;
                 return; 
             }
