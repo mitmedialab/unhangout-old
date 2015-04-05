@@ -218,10 +218,8 @@ $(document).ready(function() {
         //Show contact form on event page if noShare is false
         //and none of the contact details are entered
 
-        if(USER.preferredContact === undefined || USER.preferredContact.emailInfo === "" && USER.preferredContact.twitterHandle === ""
-            && USER.preferredContact.linkedinURL === "" && USER.preferredContact.noShare === false
-            ) {
-
+        var pc = USER.preferredContact;
+        if(!pc || !pc.noShare && !pc.twitterHandle && !pc.emailInfo && !pc.linkedinURL) {
             $("#my-contact-info-modal").modal('show');
             $(".empty-contact-info-error").hide();
             $(".email-validate-error").hide();
