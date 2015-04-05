@@ -126,6 +126,10 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
     environment variable set, emails reporting any errors logged by the server
     will be sent to the addresses listed here.
 
+  - ``UNHANGOUT_LOG_DIR``: Path to the directory for log file storage. Must be
+    writeable by the user running the Node process. Relative paths will be
+    appended to the application root. Default is ``logs``.
+
   - ``TESTING_SELENIUM_PATH``: The path to "selenium-server-standalone.jar",
     required to run tests with selenium.
 
