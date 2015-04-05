@@ -72,7 +72,7 @@
             </div>
 
             <div class="col-xs-offset-2 col-xs-3 no-padding">
-                <p>Showing <%= participantIndex %> of <%= userDataCount %>  results </p>
+                <p>Showing <%= participantIndex %> of <%= userDataCount - 1 %>  results </p>
             </div>
 
             <div class="col-xs-offset-2 col-xs-1 nav-controls">
@@ -104,7 +104,7 @@
 
                 <div class="modal-body">
                     <p>You are about to send a campaign to participants of <b><%= event.get("title") %></b></p> 
-                    <p> Total <b><%= userDataCount %> participants</b>.</p> 
+                    <p> Total <b><%= userDataCount  %> participants</b>.</p> 
                     
                 </div>
 
