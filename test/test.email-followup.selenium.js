@@ -58,6 +58,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         var preferredContact = {};
         preferredContact.emailInfo = "srishakatux@gmail.com";
         preferredContact.twitterHandle = "srishakatux";
+        preferredContact.noShare = false;
 
         user_one.set("preferredContact", preferredContact)
 
@@ -68,8 +69,8 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         var preferredContact = {};
         preferredContact.emailInfo = "unhangout.developer@gmail.com";
         preferredContact.twitterHandle = "Unhangout Developer";
+        preferredContact.noShare = false;
 
-        user_two.set("noShare", false);
         user_two.set("preferredContact", preferredContact);
 
         var user_three = common.server.db.users.get(3);
@@ -79,8 +80,8 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         var preferredContact = {};
         preferredContact.emailInfo = "jules.shmulz@gmail.com";
         preferredContact.twitterHandle = "Jules Schmulz";
+        preferredContact.noShare = false;
 
-        user_three.set("noShare", false);
         user_three.set("preferredContact", preferredContact);
 
         var superuser1 = common.server.db.users.findWhere({"sock-key": "superuser1"});
@@ -130,7 +131,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         browser.waitForSelector("#superuser-page-for-followupemail");
         browser.byCss("#superuser-page-for-followupemail").click();
 
-        browser.get(common.URL + '/followup/event/' + event.id + '/participant_1');
+        browser.get(common.URL + '/followup/event/' + event.id + '/participant_0');
         
         browser.byCss("#send-email-to-all").click(); 
 
