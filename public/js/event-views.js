@@ -738,7 +738,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         
         var preferredContact = {}; //Making an object for preferred contact 
 
-        var noShareVal = false;
+        var noShare = false;
         var scope = $("#my-contact-info-modal");
         var emailInfo = $("[name=email_info]", scope).val();
         var twitterHandle = $("[name=twitter_handle]", scope).val();
@@ -806,22 +806,22 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             }
         }
 
-        noShareVal = noShareChkBox; 
+        noShare = noShareChkBox; 
 
         preferredContact.emailInfo = emailInfo;
         preferredContact.twitterHandle = twitterHandle;
         preferredContact.linkedinURL = linkedinURL;
+        preferredContact.noShare = noShareChkBox;
 
         $("#email_info", scope).val(emailInfo); 
         $("#twitter_handle", scope).val(twitterHandle); 
         $("#linkedin_url", scope).val(linkedinURL);
-        $("input[type=checkbox]", scope).prop("checked", noShareVal);
+        $("input[type=checkbox]", scope).prop("checked", noShare);
         
         scope.modal('hide');
 
         this.options.transport.send("store-contact", {
             preferredContact: preferredContact,
-            noShareVal: noShareVal,
             roomId: this.options.event.getRoomId()
         });
 
