@@ -218,7 +218,7 @@ $(document).ready(function() {
         //Show contact form on event page if either 
         //isPreferredContactEmpty is false or noShare is false 
 
-        if(isPreferredContactEmpty === false && (noShare === false || noShare === undefined)) {
+        if(USER.preferredContact === null && (USER.noShare === false || USER.noShare === undefined)) {
             $("#my-contact-info-modal").modal('show');
         }
 
@@ -229,10 +229,10 @@ $(document).ready(function() {
         $(".linkedin-validate-error").hide();
 
         //Populating contact fields        
-        $("#email_info").val(emailInfo);
-        $("#twitter_handle").val(twitterHandle);
-        $("#linkedin_url").val(linkedinURL);
-        $("#noShareChkBox").prop("checked", noShare);
+        $("#email_info").val(USER.preferredContact.emailInfo);
+        $("#twitter_handle").val(USER.preferredContact.twitterHandle);
+        $("#linkedin_url").val(USER.preferredContact.linkedinURL);
+        $("#noShareChkBox").prop("checked", USER.noShare);
 
     }, app);
 
