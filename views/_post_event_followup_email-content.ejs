@@ -4,7 +4,7 @@
     
     <% _.each(userData[participantIndex].users, function(otherUser, index) { %>
 
-    <% if(otherUser.get("preferredContact").noShare == false) { %>
+    <% if(!otherUser.get("preferredContact").noShare) { %>
 
             <% if(tdCount === 1 || tdCount % 6 === 0) { %>
                 <tr>

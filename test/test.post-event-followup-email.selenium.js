@@ -1,4 +1,4 @@
-var expect = require('expect.js'),
+var expect = require('chai').expect,
     common = require('./common');
     _ = require('underscore')._,
     sinon = require("sinon"),
@@ -7,6 +7,9 @@ var expect = require('expect.js'),
     mandrill = require("mandrill-api"),
     conf = require("../lib/options"),
     outbox = [];
+
+// XXX WARNING: This test uses chai flavored expect, rather than expect.js flavored
+// expect, so we can get the custom failure messages that chai supports.
 
 describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
     var browser = null;
@@ -55,27 +58,30 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
         session.set("approved", true);
         //session.set("hangout-url", "http://example.com");
 
-        var users = [];
-        var noShare = common.server.db.users.get(1);
-        noShare.set({
+        var users = {};
+        users.noShare = common.server.db.users.get(0);
+        users.noShare.set({
           displayName: "NoShareUser",
           picture: "http://pldb.media.mit.edu/face/srishti",
-          preferredContact: {noShare: true}
+          preferredContact: {
+            noShare: true,
+            emailInfo: "dontshareme@example.com",
+            twitterHandle: "dontshareme",
+            linkedinURL: "http://linkedin/dontshareme"
+          }
         });
-        users.push(noShare);
 
-        var emailOnly = common.server.db.users.get(2);
-        emailOnly.set({
+        users.emailOnly = common.server.db.users.get(1);
+        users.emailOnly.set({
           displayName: "EmailOnlyUser",
           picture: "https://lh3.googleusercontent.com/-OP7MAxbSCvs/AAAAAAAAAAI/AAAAAAAAAEA/js2MqRDWiJk/photo.jpg",
           preferredContact: {
             emailInfo: "unhangout.developer@gmail.com",
           }
         });
-        users.push(emailOnly);
 
-        var emailAndTwitter = common.server.db.users.get(3);
-        emailAndTwitter.set({ 
+        users.emailAndTwitter = common.server.db.users.get(2);
+        users.emailAndTwitter.set({ 
           displayName: "EmailAndTwitterUser",
           picture: "http://lh4.googleusercontent.com/-8NHi4O5-AF0/AAAAAAAAAAI/AAAAAAAAAAA/8kJJNYEwztM/s32-c/photo.jpg",
           preferredContact: {
@@ -83,31 +89,28 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
             twitterHandle: "JulesSchmulz",
           }
         });
-        users.push(emailAndTwitter);
 
-        var linkedInOnly = common.server.db.users.get(4);
-        linkedInOnly.set({
+        users.linkedInOnly = common.server.db.users.get(3);
+        users.linkedInOnly.set({
           displayName: "LinkedInOnlyUser",
           preferredContact: {
             linkedinURL: "https://www.linkeedin.com/doesanyonereallyusethis"
           }
         });
-        users.push(linkedInOnly);
 
-        var superuser1 = common.server.db.users.findWhere({"sock-key": "superuser1"});
-        users.push(superuser1);
+        users.superuser1 = common.server.db.users.findWhere({"sock-key": "superuser1"});
 
         // Set up event history such that 
         var history = {event: {}, sessions: {}};
-        history.event[noShare.id] = {start: 0, total: 1000};
-        history.event[emailOnly.id] = {start: 0, total: 1000};
-        history.event[emailAndTwitter.id] = {start: 0, total: 1000};
-        history.event[linkedInOnly.id] = {start: 0, total: 1000};
-        history.event[superuser1.id] = {start: 0, total: 1000};
+        history.event[users.noShare.id] = {start: 0, total: 1000};
+        history.event[users.emailOnly.id] = {start: 0, total: 1000};
+        history.event[users.emailAndTwitter.id] = {start: 0, total: 1000};
+        history.event[users.linkedInOnly.id] = {start: 0, total: 1000};
+        history.event[users.superuser1.id] = {start: 0, total: 1000};
         var sessHist = history.sessions[session.id] = {};
-        sessHist[noShare.id] = {start: 0, total: 2345};
-        sessHist[emailOnly.id] = {start: 0, total: 2345};
-        sessHist[linkedInOnly.id] = {start: 0, total: 2345};
+        sessHist[users.noShare.id] = {start: 0, total: 2345};
+        sessHist[users.emailOnly.id] = {start: 0, total: 2345};
+        sessHist[users.linkedInOnly.id] = {start: 0, total: 2345};
 
         event.set("history", history);
         return users;
@@ -125,6 +128,31 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
         });
     });
 
+    it("Prompts to enter preferredContact when null", function(done) {
+        var user = common.server.db.users.get(1);
+        user.set("preferredContact", null);
+        browser.mockAuthenticate(user.get("sock-key"));
+        browser.get(common.URL + "/event/" + event.id);
+        browser.waitForSelector("#submit-contact-info").then(function() {
+          done();
+        });
+    });
+
+    it("Prompts to enter preferredContact when empty", function(done) {
+        var user = common.server.db.users.get(1);
+        user.set("preferredContact", {
+          emailInfo: "",
+          twitterHandle: "",
+          linkedinURL: "",
+          noShare: false
+        });
+        browser.mockAuthenticate(user.get("sock-key"));
+        browser.get(common.URL + "/event/" + event.id);
+        browser.waitForSelector("#submit-contact-info").then(function() {
+          done();
+        });
+    });
+
     it("Super User sends followup emails", function(done) {
         var users = prepareEventAndUsers(event);
         
@@ -134,8 +162,8 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
         browser.waitForEventReady(event, "superuser1");
 
         // Click through the contact info dialog.
-        browser.waitForSelector("#submit-contact-info");
-        browser.byCss("#submit-contact-info").click(); 
+        //browser.waitForSelector("#submit-contact-info");
+        //browser.byCss("#submit-contact-info").click(); 
 
         browser.byCss(".admin-button").click();
         browser.waitForSelector("#superuser-page-for-followupemail");
@@ -147,7 +175,7 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
 
         browser.byCss("#send-now-button").click().then(function() {
 
-            expect(outbox.length).to.be(users.length);
+            expect(outbox.length).to.equal(_.size(users));
 
             // Ensure that we only have expected recipients, and only one email
             // to each.
@@ -160,8 +188,50 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
             expect(expectedRecipients.sort()).to.eql(actualRecipients.sort());
 
             _.each(outbox, function(email) {
-              expect(email.from_email).to.be(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS);
-              expect(email.subject).to.be("Following up from the Unhangout");
+              expect(email.from_email).to.equal(conf.UNHANGOUT_SERVER_EMAIL_ADDRESS);
+              expect(email.subject).to.equal("Following up from the Unhangout");
+
+              // Ensure that preferredContact info is respected.
+              var recipient = _.find(users, function(u) {
+                return u.get("emails")[0].value === email.to[0].email;
+              });
+              var cohort = event.getUserIdsSharingSessionsWith(recipient.id);
+              _.each(cohort, function(userId) {
+                var user = _.find(users, function(u) { return u.id === userId; });
+                var pc = user.get("preferredContact");
+                var emailIndex = email.html.indexOf(pc.emailInfo);
+                var twitterIndex = email.html.indexOf(pc.twitterHandle);
+                var linkedinIndex = email.html.indexOf(pc.linkedinURL);
+                var nameIndex = email.html.indexOf(user.get("displayName"));
+                var sharing = !pc.noShare;
+                
+                if (sharing) {
+                  expect(nameIndex).to.not.equal(-1, "Name not found: " + user.get("displayName"));
+                } else {
+                  expect(nameIndex).to.equal(-1, "unshared name found: " + user.get("displayName"));
+                }
+                if (pc.emailInfo) {
+                  if (sharing) {
+                    expect(emailIndex).to.not.equal(-1, "emailIndex not found: " + pc.emailInfo);
+                  } else {
+                    expect(emailIndex).to.equal(-1, "unshared emailIndex found: " + pc.emailInfo);
+                  }
+                }
+                if (pc.twitterHandle) {
+                  if (sharing) {
+                    expect(twitterIndex).to.not.equal(-1, "twitterHandle not found: " + pc.twitterHandle);
+                  } else {
+                    expect(twitterIndex).to.equal(-1, "unshared twitterHandle found: " + pc.twitterHandle);
+                  }
+                }
+                if (pc.linkedinURL) {
+                  if (sharing) {
+                    expect(linkedinIndex).to.not.equal(-1, "twitterHandle not found: " + pc.linkedinURL);
+                  } else {
+                    expect(linkedinIndex).to.equal(-1, "unshared twitterHandle found: " + pc.linkedinURL);
+                  }
+                }
+              });
             });
 
             // Clear the outbox.
