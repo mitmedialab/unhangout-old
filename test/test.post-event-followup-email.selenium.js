@@ -8,7 +8,7 @@ var expect = require('expect.js'),
     conf = require("../lib/options"),
     outbox = [];
 
-describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
+describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
     var browser = null;
     var event = null;
 
@@ -56,16 +56,13 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         //session.set("hangout-url", "http://example.com");
 
         var users = [];
-        /*
         var noShare = common.server.db.users.get(1);
         noShare.set({
           displayName: "NoShareUser",
           picture: "http://pldb.media.mit.edu/face/srishti",
-          preferredContact: {},
-          noShare: true // to be changed
+          preferredContact: {noShare: true}
         });
         users.push(noShare);
-        */
 
         var emailOnly = common.server.db.users.get(2);
         emailOnly.set({
