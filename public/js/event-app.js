@@ -218,18 +218,15 @@ $(document).ready(function() {
         //Show contact form on event page if noShare is false
         //and none of the contact details are entered
 
-        if(USER.preferredContact.emailInfo === "" && USER.preferredContact.twitterHandle === ""
-            && USER.preferredContact.linkedinURL === "" && USER.preferredContact.noShare === false) {
-                $("#my-contact-info-modal").modal('show');
-        } else if (USER.preferredContact === null) {
-            $("#my-contact-info-modal").modal('hide');
-        }
+        if(USER.preferredContact === undefined || USER.preferredContact.emailInfo === "" && USER.preferredContact.twitterHandle === ""
+            && USER.preferredContact.linkedinURL === "" && USER.preferredContact.noShare === false
+            ) {
 
-        //Hide the error controls 
-        $(".empty-contact-info-error").hide();
-        $(".email-validate-error").hide();
-        $(".twitter-validate-error").hide();
-        $(".linkedin-validate-error").hide();
+            $("#my-contact-info-modal").modal('show');
+            $(".email-validate-error").hide();
+            $(".twitter-validate-error").hide();
+            $(".linkedin-validate-error").hide();
+        } 
 
         //Populating contact fields        
         $("#email_info").val(USER.preferredContact.emailInfo);

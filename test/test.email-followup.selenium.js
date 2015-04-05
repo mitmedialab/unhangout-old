@@ -125,7 +125,7 @@ describe("SUPERUSER SENDS FOLLOWUP EMAILS (BROWSER)", function() {
         //and related user models
         setEvent();
 
-        browser.byCss("#my-contact-info").click();
+        //browser.byCss("#my-contact-info").click();
         browser.byCss("#submit-contact-info").click(); 
 
         browser.byCss(".admin-button").click();
