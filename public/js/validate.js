@@ -1,62 +1,52 @@
-(function () {
+(function (name, definition) {
 
 // This is include-able both in a browser environment and in a v8/node env, so
 // it needs to figure out which situation it is in. If it's on the server, put
 // everything in exports and behave like a module. If it's on the client, use
 // requirejs styling.  Either way, make sure a 'define' method is available to
 // wrap our call in.
-if (typeof define === "undefined") {
-    var root = this;
-    define = function(deps, callback) {
-        if (typeof exports !== "undefined") {
-            module.exports = callback();
-        } else {
-            root.models = callback();
-        }
-    };
-}
 
-define(["underscore", "backbone"], function(_, Backbone, preferredContact) {
+if (typeof module !== 'undefined') module.exports = definition();
+else if (typeof define === 'function' && typeof define.amd === 'object') define(definition);
+else this[name] = definition();
 
-	console.log("VALIDATE PREFERRED CONTACT");
+})('validate', function() {
 
-	var exports = {};
+	var exp = {};
 
-	exports.linkedInRegEx = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    exports.emailRegEx =  /^@?(\w+)$/;
-    exports.twitterRegEx = /^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/.+/gm;
+	exp.twitterRegEx = /^@?(\w+)$/;
 
-    exports.preferredContact = function(obj) {
+  exp.emailRegEx =  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 
-    	if (obj.linkedinUrl) {
-            var isLinkedInURLValid = obj.linkedinUrl.match(exports.linkedInRegEx);
-            
-            if(isLinkedInURLValid == null) {
-            	return;
-            }
-        }
+  exp.linkedInRegEx = /^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/.+/gm;
 
-        if (obj.emailInfo) {
+  exp.validateEmail = function(email) {
+      return !!(email && email.match(exp.emailRegEx));
+  };
 
-        	var isEmailValid = obj.emailInfo.match(exports.emailRegEx);
-            
-            if(isEmailValid == null) {
-            	return;
-            }
-        }
+  exp.validateTwitterHandle = function(twitterHandle) {
+      return !!(twitterHandle && twitterHandle.match(exp.twitterRegEx));
+  };
 
-        if (obj.twitterHandle) {
+  exp.validateLinkedIn = function(linkedinURL) {
+      return !!(linkedinURL && linkedinURL.match(exp.linkedInRegEx));
+  };
 
-        	var isTwitterHandleValid = obj.twitterHandle.match(exports.twitterRegEx);
-            
-            if(isTwitterHandleValid == null) {
-            	return ;
-            }
-        }
-        
-    }
+  exp.preferredContact = function(obj) {
+      if (obj.linkedinURL && !exp.validateLinkedIn(obj.linkedinURL)) {
+          return false;
+      }
+      if (obj.twitterHandle && !exp.validateTwitterHandle(obj.twitterHandle)) {
+          return false;
+      }
+      if (obj.emailInfo && !exp.validateEmail(obj.emailInfo)) {
+          return false;
+      }
+      if (!obj.linkedinURL && !obj.twitterHandle && !obj.emailInfo && obj.noShare !== true) {
+          return false;
+      }
+      return true;
+  };
 
-	return models;
-}); // End of define
-
-})(); // End of module-level anonymous function
+	return exp;
+});

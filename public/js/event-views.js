@@ -736,98 +736,56 @@ views.DialogView = Backbone.Marionette.Layout.extend({
     submitContactInfo: function(event) {
         event.preventDefault(); 
         
-        var preferredContact = {}; //Making an object for preferred contact 
+        var pc = {}; //Making an object for preferred contact 
 
         var noShare = false;
         var scope = $("#my-contact-info-modal");
-        var emailInfo = $("[name=email_info]", scope).val();
-        var twitterHandle = $("[name=twitter_handle]", scope).val();
-        var linkedinURL = $("[name=linkedin_url]", scope).val();
-        var noShareChkBox = $("[name=no-share]", scope).is(':checked');
+        pc.emailInfo = $("[name=email_info]", scope).val();
+        pc.twitterHandle = $("[name=twitter_handle]", scope).val();
+        pc.linkedinURL = $("[name=linkedin_url]", scope).val();
+        pc.noShare = $("[name=no-share]", scope).is(':checked');
 
         //Hiding the error classes
         $(".empty-contact-info-error", scope).hide();
-
         $(".email-validate-error", scope).hide();
         $(".twitter-validate-error", scope).hide();
         $(".linkedin-validate-error", scope).hide();
-
         $('.contact-control', scope).removeClass('contact-invalid-error');
 
-        //Call valida
-        validate.preferredContact(emailInfo); 
-
-        if(emailInfo === "" && twitterHandle === "" && linkedinURL === "" && 
-            noShareChkBox === false) {
+        if(!pc.emailInfo && !pc.twitterHandle && !pc.linkedinURL && !pc.noShare) {
             $(".empty-contact-info-error", scope).show();
             scope.modal('show');
             return;
         }
 
-        //Regular expression test for email input
-        var emailRegX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-        
-        if(emailInfo) {
-
-            var isEmailValid = emailInfo.match(emailRegX);
-        
-            if(isEmailValid === null) {
-                $('#email_info', scope).addClass('contact-invalid-error');
-                scope.modal('show');
-                $(".email-validate-error", scope).show();
-                return;
-            }
+        if (pc.emailInfo && !validate.validateEmail(pc.emailInfo)) {
+            $('#email_info', scope).addClass('contact-invalid-error');
+            scope.modal('show');
+            $(".email-validate-error", scope).show();
+            return;
+        }
+        if (pc.twitterHandle && !validate.validateTwitterHandle(pc.twitterHandle)) {
+            $('#twitter_handle', scope).addClass('contact-invalid-error');
+            scope.modal('show');
+            $(".twitter-validate-error", scope).show();
+            return;
+        }
+        if (pc.linkedinURL && !validate.validateLinkedIn(pc.linkedinURL)) {
+            $('#linkedin_url', scope).addClass('contact-invalid-error');
+            scope.modal('show');
+            $(".linkedin-validate-error", scope).show();
+            return;
         }
 
-        //Regular expression test for twitter input 
-        var twitterRegex = /^@?(\w+)$/;
-
-        if(twitterHandle) {
-
-            var isTwitterValid = twitterHandle.match(twitterRegex);
-
-            if(isTwitterValid === null) {
-                $('#twitter_handle', scope).addClass('contact-invalid-error');
-                scope.modal('show');
-                $(".twitter-validate-error", scope).show();
-                return;
-            }
+        if (validate.preferredContact(pc)) {
+            scope.modal('hide');
+            this.options.transport.send("store-contact", {
+                preferredContact: pc,
+                roomId: this.options.event.getRoomId()
+            });
+        } else {
+            alert("Error submitting details");
         }
-
-        //Regular expression test for linkedin input 
-        var linkedinRegex = /^(http(s)?:\/\/)?([\w]+\.)?linkedin\.com\/(pub|in|profile)\/.+/gm;
-
-        if(linkedinURL) {
-
-            var isLinkedinValid = linkedinURL.match(linkedinRegex);
-
-            if(isLinkedinValid === null) {
-                $('#linkedin_url', scope).addClass('contact-invalid-error');
-                scope.modal('show');
-                $(".linkedin-validate-error", scope).show();
-                return;
-            }
-        }
-
-        noShare = noShareChkBox; 
-
-        preferredContact.emailInfo = emailInfo;
-        preferredContact.twitterHandle = twitterHandle;
-        preferredContact.linkedinURL = linkedinURL;
-        preferredContact.noShare = noShareChkBox;
-
-        $("#email_info", scope).val(emailInfo); 
-        $("#twitter_handle", scope).val(twitterHandle); 
-        $("#linkedin_url", scope).val(linkedinURL);
-        $("input[type=checkbox]", scope).prop("checked", noShare);
-        
-        scope.modal('hide');
-
-        this.options.transport.send("store-contact", {
-            preferredContact: preferredContact,
-            roomId: this.options.event.getRoomId()
-        });
-
     },
 
     createSession: function(event) {
