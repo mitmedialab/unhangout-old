@@ -17,9 +17,9 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "logger", "models", "auth", "client-utils",
+   "underscore", "backbone", "video", "validate", "logger", "models", "auth", "client-utils",
    "backbone.marionette", "underscore-template-config", "jquery.autosize"
-], function(_, Backbone, video, logging, models, auth, utils) {
+], function(_, Backbone, video, validate, logging, models, auth, utils) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -753,6 +753,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".linkedin-validate-error", scope).hide();
 
         $('.contact-control', scope).removeClass('contact-invalid-error');
+
+        //Call valida
+        validate.preferredContact(emailInfo); 
 
         if(emailInfo === "" && twitterHandle === "" && linkedinURL === "" && 
             noShareChkBox === false) {
