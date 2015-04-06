@@ -54,9 +54,10 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
     // Set up the event with history and user profile settings for testing
     // followup emails
     function prepareEventAndUsers(event) {           
-        var session = event.get("sessions").at(1);
+        var session = event.get("sessions").at(0);
+        var session2 = event.get("sessions").at(1);
         session.set("approved", true);
-        //session.set("hangout-url", "http://example.com");
+        session2.set("approved", true);
 
         var users = {};
         users.noShare = common.server.db.users.get(0);
@@ -100,7 +101,7 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
 
         users.superuser1 = common.server.db.users.findWhere({"sock-key": "superuser1"});
 
-        // Set up event history such that 
+        // Set up event history such that users shared sessions with each other.
         var history = {event: {}, sessions: {}};
         history.event[users.noShare.id] = {start: 0, total: 1000};
         history.event[users.emailOnly.id] = {start: 0, total: 1000};
@@ -111,6 +112,9 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
         sessHist[users.noShare.id] = {start: 0, total: 2345};
         sessHist[users.emailOnly.id] = {start: 0, total: 2345};
         sessHist[users.linkedInOnly.id] = {start: 0, total: 2345};
+        var sessHist2 = history.sessions[session2.id] = {};
+        sessHist[users.emailAndTwitter.id] = {start: 0, total: 2345};
+        sessHist[users.noShare.id] = {start: 0, total: 2345};
 
         event.set("history", history);
         return users;
