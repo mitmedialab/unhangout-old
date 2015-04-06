@@ -219,10 +219,6 @@ $(document).ready(function() {
         var pc = USER.preferredContact;
         if(!pc || !pc.noShare && !pc.twitterHandle && !pc.emailInfo && !pc.linkedinURL) {
             $("#my-contact-info-modal").modal('show');
-            $(".empty-contact-info-error").hide();
-            $(".email-validate-error").hide();
-            $(".twitter-validate-error").hide();
-            $(".linkedin-validate-error").hide();
         } 
 
         //Populating contact fields        

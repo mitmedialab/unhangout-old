@@ -745,15 +745,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         pc.linkedinURL = $("[name=linkedin_url]", scope).val();
         pc.noShare = $("[name=no-share]", scope).is(':checked');
 
-        //Hiding the error classes
-        $(".empty-contact-info-error", scope).hide();
-        $(".email-validate-error", scope).hide();
-        $(".twitter-validate-error", scope).hide();
-        $(".linkedin-validate-error", scope).hide();
-        $('.contact-control', scope).removeClass('contact-invalid-error');
-
         if(!pc.emailInfo && !pc.twitterHandle && !pc.linkedinURL && !pc.noShare) {
-            $(".empty-contact-info-error", scope).show();
+            $(".empty-contact-info-error", scope).addClass('show');
             scope.modal('show');
             return;
         }
@@ -761,24 +754,23 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         if (pc.emailInfo && !validate.validateEmail(pc.emailInfo)) {
             $('#email_info', scope).addClass('contact-invalid-error');
             scope.modal('show');
-            $(".email-validate-error", scope).show();
+            $(".email-validate-error", scope).addClass('show');
             return;
         }
         if (pc.twitterHandle && !validate.validateTwitterHandle(pc.twitterHandle)) {
             $('#twitter_handle', scope).addClass('contact-invalid-error');
             scope.modal('show');
-            $(".twitter-validate-error", scope).show();
+            $(".twitter-validate-error", scope).addClass('show');
             return;
         }
         if (pc.linkedinURL && !validate.validateLinkedIn(pc.linkedinURL)) {
             $('#linkedin_url', scope).addClass('contact-invalid-error');
             scope.modal('show');
-            $(".linkedin-validate-error", scope).show();
+            $(".linkedin-validate-error", scope).addClass('show');
             return;
         }
 
         if (validate.preferredContact(pc)) {
-            scope.modal('hide');
             this.options.transport.send("store-contact", {
                 preferredContact: pc,
                 roomId: this.options.event.getRoomId()
@@ -786,6 +778,24 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         } else {
             alert("Error submitting details");
         }
+
+        //Hiding and showing the error classes
+        $(".empty-contact-info-error", scope).removeClass('show');
+        $(".empty-contact-info-error", scope).addClass('hide');
+
+        $(".email-validate-error", scope).removeClass('show');
+        $(".email-validate-error", scope).addClass('hide');
+
+        $(".twitter-validate-error", scope).removeClass('show');
+        $(".twitter-validate-error", scope).addClass('hide');
+
+        $(".linkedin-validate-error", scope).removeClass('show');
+        $(".linkedin-validate-error", scope).addClass('hide');
+
+        $('.contact-control', scope).removeClass('contact-invalid-error');
+
+        scope.modal('hide');
+
     },
 
     createSession: function(event) {
