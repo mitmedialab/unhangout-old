@@ -24,35 +24,5 @@ require([
                 console.log("emails successfully sent");
             });
         });
-
-        $(".previous").click(function() {
-
-            if(participantIndex <= 0) {
-                participantIndex = 0;
-                return; 
-            }
-
-            participantIndex = participantIndex - 1;
-
-            window.location.reload();
-            window.location.href = "/followup/event/" + eventID + 
-                "/participant_" + participantIndex; 
-        });
-
-        $(".next").click(function() {
-            
-            if(participantIndex >= userData.length) {
-                participantIndex = userData.length; 
-                return;
-            }
-
-            participantIndex = participantIndex + 1;
-
-            window.location.reload();
-            window.location.href = "/followup/event/" + eventID + 
-                "/participant_" + participantIndex; 
-            
-        });
     });
-
 });

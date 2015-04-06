@@ -16,7 +16,7 @@
                 <label class="control-label col-lg-2" for="email-to">To</label>
 
                 <div class="col-lg-10 email-to">
-                  <label class="control-label field-input" for="email-to"> <%= userData[participantIndex].user.get("emails")[0].value %> </label>
+                  <label class="control-label field-input" for="email-to"> <%= recipient.user.get("emails")[0].value %> </label>
                 </div>
 
             </div>
@@ -72,19 +72,25 @@
             </div>
 
             <div class="col-xs-offset-2 col-xs-3 no-padding">
-                <p>Showing <%= participantIndex %> of <%= userData.length %>  results </p>
+                <p>Showing <%= participantIndex + 1 %> of <%= userData.length %>  results </p>
             </div>
 
             <div class="col-xs-offset-2 col-xs-1 nav-controls">
-                <button class="btn btn-primary previous">
-                <i class="fa fa-chevron-left white-text"></i>
-                </button>
+                <% if (participantIndex > 0) { %>
+                    <a class='btn btn-primary previous'
+                       href='<%= "/followup/event/" + event.id + "/participant_" + (participantIndex - 1) %>'>
+                        <i class="fa fa-chevron-left white-text"></i>
+                    </a>
+                <% } %>
             </div>
 
             <div class="col-xs-1 nav-controls">
-                <button class="btn btn-primary next">
-                <i class="fa fa-chevron-right white-text"></i>
-                </button>
+                <% if (participantIndex < userData.length - 1) { %>
+                    <a class='btn btn-primary next'
+                       href='<%= "/followup/event/" + event.id + "/participant_" + (participantIndex + 1) %>'>
+                        <i class='fa fa-chevron-right white-text'></i>
+                    </a>
+                <% } %>
             </div>
         
         </div>
