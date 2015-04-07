@@ -6,7 +6,7 @@
 
     <% if(!otherUser.get("preferredContact").noShare) { %>
 
-            <% if(tdCount === 0 || tdCount % 5 === 0) { %>
+            <% if(tdCount === 0) { %>
                 <tr>
             <% } %>
 
@@ -66,7 +66,7 @@
 
         </td>
 
-        <% if(tdCount!==0 && tdCount % 5 === 0) { %>
+        <% if(tdCount!==0 && tdCount % 4 === 0) { %>
             </tr>
             <% tdCount = 0; %>
         <% } else { %>
