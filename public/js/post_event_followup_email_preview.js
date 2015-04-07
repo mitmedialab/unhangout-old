@@ -8,6 +8,7 @@ require([
 
     $(document).ready(function() { 
         $("#send-email-to-all").click(function() {
+            console.log("show send email dialog");
             $("#send-email-dialog").modal('show');
         });
 
