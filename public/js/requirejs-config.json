@@ -44,6 +44,7 @@
         "myevents.js": { "include": "myevents" },
         "permalink.js": { "include": "permalink" },
         "permalink-intro.js": { "include": "permalink-intro" },
+        "post_event_followup_email_preview.js": { "include": "post_event_followup_email_preview" },
         "facilitator.js": { "include": "facilitator" }
     }
 }
