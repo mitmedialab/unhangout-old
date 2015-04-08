@@ -1,81 +1,66 @@
 <table border="0" cellspacing="2" width="90" style="border-collapse: separate; border-spacing: 5px;">
+  <% var tdCount = 0; %>
+  <% _.each(recipient.users || [], function(otherUser, index) { %>
+  <% if(!otherUser.get("preferredContact").noShare) { %>
 
-    <% var tdCount = 0; %>
-    
-    <% _.each(recipient.users, function(otherUser, index) { %>
+      <% if(tdCount === 0) { %>
+        <tr>
+      <% } %>
 
-    <% if(!otherUser.get("preferredContact").noShare) { %>
+      <td align="left" valign="top" style="border: 1px solid #cfcfcf; background-color: #f2f2f2;">
+      <table border="0" cellpadding="0" cellspacing="0" width="100%">
+        <tr>
+          <td align="left" valign="top">
+            <img align="none" src='<%= otherUser.get("picture") %>' style="width: 86px; height: 84px; margin: 0px;"/> 
+          </td>
+        </tr>
 
-            <% if(tdCount === 0) { %>
-                <tr>
+        <tr>
+          <td align="left" valign="top" style="color: black; background-color: #f2f2f2; font-family:Helvetica, Arial, sans-serif; font-size:12px; padding-top: 10px; padding-left: 5px; padding-right: 5px; text-align:left;">
+            <%= otherUser.get("displayName") %>
+          </td>
+        </tr>
+
+        <tr>
+          <td align="left" valign="top" style="color: black; font-family:Helvetica, Arial, sans-serif; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
+
+            <% var pc = otherUser.get("preferredContact"); %>
+            <% if (pc) {
+              <% if(pc.twitterHandle) {  %>
+                <a href="https://twitter.com/<%= pc.twitterHandle %>" target="_blank" style="text-decoration: none;">
+                  <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; height: 16px; width: 18px; margin: 0px; background-color: white;" alt='twitter' /> 
+                </a>
+              <% } %>
+
+              <% if(pc.emailInfo) {  %>
+                <a href="mailto:<%= pc.emailInfo %>" target="_blank" style="text-decoration: none;">
+                    <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 18px; height: 16px; margin: 0px; background-color: white;" alt='email' />
+                </a>
+              <% } %>
+
+              <% if(pc.linkedinURL) {  %>
+                <a href="<%= pc.linkedinURL %>" target="_blank" style="text-decoration: none;">
+                    <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 18px; margin: 0px; background-color: white;" alt='linked in'/> 
+                </a>
+              <% } %>
             <% } %>
+          </td>
+        </tr>
 
-            <td align="left" valign="top" style="border: 1px solid #cfcfcf; background-color: #f2f2f2;">
-            <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                <tr>
-                    <td align="left" valign="top">
-                        <img align="none" src='<%= otherUser.get("picture") %>' style="width: 86px; height: 84px; margin: 0px;"/> 
-                    </td>
-                </tr>
+      </table>
 
-                <tr>
-                    <td align="left" valign="top" style="color: black; background-color: #f2f2f2; font-family:Helvetica, Arial, sans-serif; font-size:12px; padding-top: 10px; padding-left: 5px; padding-right: 5px; text-align:left;">
-                        <%= otherUser.get("displayName") %>
-                    </td>
-                </tr>
+    </td>
 
-                <tr>
-                    <td align="left" valign="top" style="color: black; font-family:Helvetica, Arial, sans-serif; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
-
-                        <% if(otherUser.get("preferredContact")) {  %>
-
-                            <% if(otherUser.get("preferredContact").twitterHandle) {  %>
-                                
-                                <a href="twitter.com/<%= otherUser.get("preferredContact").twitterHandle %>" target="_blank" style="text-decoration: none;">
-
-                                    <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; height: 16px; width: 18px; margin: 0px; background-color: white;" /> 
-
-                                </a>
-
-                            <% } %>
-
-                            <% if(otherUser.get("preferredContact").emailInfo) {  %>
-
-                                <a href="mailto:<%= otherUser.get("preferredContact").emailInfo %>" target="_blank" style="text-decoration: none;">
-
-                                <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/c68761d1-2a0a-47c7-ab4f-e237daacdcde.png" style="opacity: 0.9; width: 18px; height: 16px; margin: 0px; background-color: white;" /> 
-
-                                </a>
-
-                                <% } %>
-
-                            <% if(otherUser.get("preferredContact").linkedinURL) {  %>
-
-                                <a href="<%= otherUser.get("preferredContact").linkedinURL %>" target="_blank" style="text-decoration: none;">
-
-                                <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/6424d3ae-2249-4270-9fb7-ff754bf7a191.png" style="opacity: 0.9; width: 18px; margin: 0px; background-color: white;"/> 
-
-                                </a>
-                            <% } %>
-
-                        <% } %>
-                    </td>
-                </tr>
-
-            </table>
-
-        </td>
-
-        <% if(tdCount!==0 && tdCount % 4 === 0) { %>
-            </tr>
-            <% tdCount = 0; %>
-        <% } else { %>
-            <% tdCount = tdCount + 1; %>
-        <% } %>
-
+    <% if ((tdCount !== 0 && tdCount % 4 === 0) || (recipient.users && index === recipient.users.length - 1)) { %>
+      </tr>
+      <% tdCount = 0; %>
+    <% } else { %>
+      <% tdCount = tdCount + 1; %>
     <% } %>
 
-    <% }) %>
+  <% } %>
+
+  <% }) %>
 
 
 </table>
