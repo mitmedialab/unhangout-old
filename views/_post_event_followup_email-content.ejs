@@ -1,7 +1,8 @@
 <table border="0" cellspacing="2" width="90" style="border-collapse: separate; border-spacing: 5px;">
   <% var tdCount = 0; %>
   <% _.each(recipient.users || [], function(otherUser, index) { %>
-  <% if(!otherUser.get("preferredContact").noShare) { %>
+  <% var pc = otherUser && otherUser.get("preferredContact"); %>
+  <% if(pc && !pcotherUser.get("preferredContact").noShare) { %>
 
       <% if(tdCount === 0) { %>
         <tr>
@@ -24,7 +25,6 @@
         <tr>
           <td align="left" valign="top" style="color: black; font-family:Helvetica, Arial, sans-serif; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
 
-            <% var pc = otherUser.get("preferredContact"); %>
             <% if (pc) { %>
               <% if(pc.twitterHandle) {  %>
                 <a href="https://twitter.com/<%= pc.twitterHandle %>" target="_blank" style="text-decoration: none;">
