@@ -25,7 +25,7 @@
           <td align="left" valign="top" style="color: black; font-family:Helvetica, Arial, sans-serif; font-size:16px; padding-top: 5px; padding-bottom: 5px; padding-right: 5px; padding-left: 5px; padding-right: 5px; text-align:left; background-color: #f2f2f2;">
 
             <% var pc = otherUser.get("preferredContact"); %>
-            <% if (pc) {
+            <% if (pc) { %>
               <% if(pc.twitterHandle) {  %>
                 <a href="https://twitter.com/<%= pc.twitterHandle %>" target="_blank" style="text-decoration: none;">
                   <img src="https://gallery.mailchimp.com/e595898d31c1f2db261ad60d7/images/b3cb604c-01c1-44d7-b4fb-eb998d66a1d6.png" style="opacity: 0.9; height: 16px; width: 18px; margin: 0px; background-color: white;" alt='twitter' /> 
