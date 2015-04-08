@@ -2,7 +2,7 @@
   <% var tdCount = 0; %>
   <% _.each(recipient.users || [], function(otherUser, index) { %>
   <% var pc = otherUser && otherUser.get("preferredContact"); %>
-  <% if(pc && !pcotherUser.get("preferredContact").noShare) { %>
+  <% if(pc && !pc.noShare) { %>
 
       <% if(tdCount === 0) { %>
         <tr>
