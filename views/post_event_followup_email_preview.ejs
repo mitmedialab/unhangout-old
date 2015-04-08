@@ -72,7 +72,7 @@
             </div>
 
             <div class="col-xs-offset-2 col-xs-3 no-padding">
-                <p>Showing <%= participantIndex + 1 %> of <%= userData.length %>  results </p>
+                <p>Showing <%= participantIndex + 1 %> of <%= totalUsers %>  results </p>
             </div>
 
             <div class="col-xs-offset-2 col-xs-1 nav-controls">
@@ -85,7 +85,7 @@
             </div>
 
             <div class="col-xs-1 nav-controls">
-                <% if (participantIndex < userData.length - 1) { %>
+                <% if (participantIndex < totalUsers - 1) { %>
                     <a class='btn btn-primary next'
                        href='<%= "/followup/event/" + event.id + "/participant_" + (participantIndex + 1) %>'>
                         <i class='fa fa-chevron-right white-text'></i>
@@ -110,7 +110,7 @@
 
                 <div class="modal-body">
                     <p>You are about to send a campaign to participants of <b><%= event.get("title") %></b></p> 
-                    <p> Total <b><%= userData.length  %> participants</b>.</p> 
+                    <p> Total <b><%= totalUsers %> participants</b>.</p> 
                     
                 </div>
 
