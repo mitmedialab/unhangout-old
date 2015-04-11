@@ -227,6 +227,12 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
+        //Hide the presence network gutter when app loads and the network
+        //list is empty
+        if(typeof auth.USER_NETWORK_LIST[curEvent.id] == 'undefined') {
+            $("#presence-network-gutter").hide();
+        }
+
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {

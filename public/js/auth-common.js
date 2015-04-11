@@ -32,6 +32,8 @@ define(["logger"], function(logging) {
         exports.SOCK_KEY = window.UNHANGOUT_AUTH.SOCK_KEY;
         exports.USER_ID = window.UNHANGOUT_AUTH.USER_ID;
         exports.USER_NAME = window.UNHANGOUT_AUTH.USER_NAME;
+        exports.USER_NETWORK_LIST = window.UNHANGOUT_AUTH.USER_NETWORK_LIST;
+
         try {
             localStorage.setItem("UNHANGOUT_AUTH", JSON.stringify(exports));
         } catch (e) {

@@ -538,6 +538,80 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
 
 });
 
+views.NetworkView = Backbone.Marionette.ItemView.extend({
+    template: '#user-template',
+    className: 'user focus',
+    tagName: "li",
+
+    events: {
+        'click' : 'click'
+    },
+
+    initialize: function() {
+        this.listenTo(this.model, 'change:networkList', this.fun, this);
+    },
+
+    click: function() {
+        logger.log("user clicked: " + this.model.get("displayName"));
+    },
+
+    fun: function() {
+    
+    },
+
+    onRender: function() {
+        // add in the tooltip attributes
+
+        //If AUTH's user network list is empty, hide
+        //the network list and all the user elements 
+        // of the model and return
+
+        if(typeof auth.USER_NETWORK_LIST[this.options.event.id] == 'undefined') {
+            $("#presence-network-gutter").hide();
+            this.$el.hide();
+            return;
+        } 
+
+        if(this.model.isAdminOf(this.options.event)) {
+             this.$el.addClass("admin");
+        }
+
+        // look for either an img or an i child, since people who don't have
+        // a g+ icon should still get tooltips
+        this.$el.find("img, i").attr("data-toggle", "tooltip");
+
+        // if we're a child of hangout-users, then we're a small session user icon,
+        // not a big presence gutter icon. in this case, make the data container
+        // the session.
+        if(this.$el.parent().hasClass("hangout-users")) {
+            // this.$el.find("img, i").attr("data-container", "#chat-container-region");
+            this.$el.find("img, i").attr("data-placement", "top");
+        } else {
+            this.$el.find("img, i").attr("data-container", "body");
+            this.$el.find("img, i").attr("data-placement", "left");
+        }
+
+        this.$el.find("img, i").attr("title", this.model.get("displayName"));
+        this.$el.find("img, i").tooltip({'placement':'top'});
+
+        if(auth.USER_ID != this.model.get("id")) {
+
+            if(auth.USER_NETWORK_LIST[this.options.event.id]) {
+                $("#presence-network-gutter").show();
+
+                if(auth.USER_NETWORK_LIST[this.options.event.id].indexOf(this.model.get("id")) > -1) {
+                    this.$el.show();
+                } else {
+                    this.$el.hide();
+                }
+            }
+
+        } else {
+            this.$el.hide();
+        }
+    }
+});
+
 
 // UserViews are the little square profile pictures that we use throughout
 // the app to represent users.
@@ -558,6 +632,7 @@ views.UserView = Backbone.Marionette.ItemView.extend({
 
     onRender: function() {
         // add in the tooltip attributes
+
         if(this.model.isAdminOf(this.options.event)) {
              this.$el.addClass("admin");
         }
@@ -1035,6 +1110,49 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
     }
 });
 
+views.NetworkListView = Backbone.Marionette.CompositeView.extend({
+    template: '#network-list-template',
+    itemView: views.NetworkView,
+    itemViewContainer: "#network-list-container",
+    id: "network-list",
+
+    initialize: function() {
+        this.listenTo(this.collection, 'change add remove', function() {
+            // going to manually update the current user counter because
+            // doing it during render doesn't seem to work. There's some
+            // voodoo in how marionette decides how much of the view to
+            // re-render on events, and it seems to exclude the piece out-
+            // side the item-view-container, assuming it doesn't have
+            // reactive bits.
+            // I would also expect this to be .totalRecords, but for
+            // some reason totalRecords doesn't decrease when records
+            // are removed, but totalUnfilteredRecords does. Could
+            // be a bug.
+        }, this);
+    },
+
+    itemViewOptions: function() {        
+        return {
+            event: this.options.event, transport: this.options.transport
+        };
+    }, 
+
+    serializeData: function() {
+        var data = {};
+        data = this.collection.toJSON();
+
+        data.numUsers = this.collection.length;
+
+        logger.log("running user list serialize data");
+        return data;
+    },
+
+    update: function() {
+        logger.log("rendering UserListView");
+        this.render();
+    }
+});
+
 // Manages chat message display. The layout piece sets up the differnt chat zones:
 // the area where we show messages, the space where we put users, and the space
 // where chat messages are entered.
@@ -1045,7 +1163,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     regions: {
         whiteboard: '#chat-whiteboard',
         chat:'#chat-messages',
-        presence: '#presence-gutter',
+        presenceNetworkGutter: '#presence-network-gutter',
+        presenceUserGutter: '#presence-user-gutter',
         chatInput: '#chat-input-region'
     },
 
@@ -1056,26 +1175,37 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
             transport: this.options.transport,
             messages: this.options.messages
         });
+
         this.chatView = new views.ChatView({
             collection: this.options.messages,
             users: this.options.users,
-            event: this.options.event
+            event: this.options.event,
+            transport: this.options.transport
         });
+
         this.userListView = new views.UserListView({
             collection: this.options.users,
             event: this.options.event
         });
+
+        this.networkListView = new views.NetworkListView({
+            collection: this.options.event.get("connectedUsers"),
+            event: this.options.event
+        });
+
         this.chatInputView = new views.ChatInputView({
             event: this.options.event,
-            transport: this.options.transport
+            transport: this.options.transport    
         });
+
     },
 
     onRender: function() {
         this.whiteboard.show(this.whiteboardView);
         this.chat.show(this.chatView);
-        this.presence.show(this.userListView);
-        this.chatInput.show(this.chatInputView);
+        this.presenceNetworkGutter.show(this.networkListView);
+        this.presenceUserGutter.show(this.userListView); 
+        this.chatInput.show(this.chatInputView); 
     }
 });
 
@@ -1186,11 +1316,13 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
         var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
+
             this.options.transport.send("chat", {
                 text: msg,
                 postAsAdmin: postAsAdmin,
                 roomId: this.options.event.getRoomId()
             });
+
             this.ui.chatInput.val("");
         }
 
@@ -1224,6 +1356,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         msg = this.atify(msg);
         this.model.set("text", msg);
     },
+
     atify: function(msg) {
       function matchAll(regex, string) {
         if (!regex.global) {
@@ -1231,17 +1364,22 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         }
         var match = null;
         var matches = [];
+        
         while (match = regex.exec(string)) {
           matches.push(match);
         }
+
         return matches;
       };
+
       function normalize(name) {
         return name.replace(/\s/g, "").toLowerCase();
       };
+
       function quoteRegExp(pattern) {
         return pattern.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
       };
+
       function replaceAtName(msg, atname, replacement) {
         return msg.replace(new RegExp("(" + quoteRegExp(atname) + ")", "gi"),
                            replacement);
@@ -1249,16 +1387,22 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
       var matches = matchAll(/@([a-zA-Z0-9]+)/g, msg);
       var selfName = normalize(auth.USER_NAME);
+
       var users = this.options.users;
+
       _.each(matches, _.bind(function(match) {
         // Is it referring to ourselves?
         var atname = normalize(match[1]);
+
         if (selfName.indexOf(atname) !== -1) {
+
           msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
             isMe: true,
             displayName: auth.USER_NAME
           })));
+
           var text = "✉ Message! ";
+
           var interval = setInterval(function() {
             if (document.title.indexOf(text) === 0) {
               document.title = document.title.replace(text, "");
@@ -1266,20 +1410,26 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
               document.title = text + document.title;
             }
           }, 500);
+
           setTimeout(function() {
             document.title = document.title.replace(text, "");
             clearTimeout(interval);
+
           }, 5000);
+
         } else {
           var user = users.find(function(user) {
             return normalize(user.get("displayName")).indexOf(atname) !== -1;
           });
+
           if (user) {
             msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
               isMe: false,
               user: user
             })));
+
           }
+        
         }
       }, this));
       return msg;
@@ -1304,7 +1454,79 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         return model;
     },
 
+    getAtNameUser: function(atname) {
+        var users = this.options.users;
+
+        var user = users.find(function(user) {
+            if(user.get("displayName").indexOf(atname)) {
+                return user;
+            }
+        });
+
+        return user;
+    },
+
     onRender: function() {
+
+        var atName = this.$el.find('.atname').text();  
+        var atNameUser = this.getAtNameUser(atName);
+
+        var transport = this.options.transport;
+        var event = this.options.event;
+
+        var authNetworkList = auth.USER_NETWORK_LIST[this.options.event.id]; 
+
+        var addRemoveNetwork = this.$el.find("#add-remove-network").find("p");
+
+        if(atNameUser) {
+
+            if(typeof authNetworkList == 'undefined') {
+                return;
+            } 
+
+            if(auth.USER_ID != atNameUser.get("id")) {
+
+                if(authNetworkList) {
+
+                    if(authNetworkList.indexOf(atNameUser.get("id")) > -1) {
+                        addRemoveNetwork.text("Remove From My Network");
+                    } else {
+                        addRemoveNetwork.text("Add To My Network");
+                    }
+
+                } else {
+                    addRemoveNetwork.text("Add To My Network");
+                }                  
+
+            } 
+
+        }
+
+        //Me and Atname Popover definition
+        this.$el.find('.me').popover({html: true});
+
+        var html = this.$el.find('#add-remove-network-popover').html();  
+
+        this.$el.find('.atname-network').popover({
+            container: 'body',
+            html: true,
+            placement: 'top',
+
+            content: function () {
+                return html;
+            }
+
+        });
+
+        $('body').on('click', "#add-remove-network", function(e){
+            e.stopImmediatePropagation();
+
+            transport.send("change-networklist", {
+                roomId: event.getRoomId(),
+                atNameUser: atNameUser,
+            });
+
+        });
 
         if (!this.model.has("user")) {
             // mark this chat message as a system message, so we can
@@ -1316,9 +1538,9 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
         if (this.model.get("past")) {
             this.$el.addClass("past");
-        }
-        this.$el.find("[data-toggle='popover']").popover({html: true});
-    }
+        }       
+    },
+
 });
 
 // This view contains all the ChatMessageViews and handles scrolling for them.
@@ -1346,7 +1568,9 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
         return {
             model: model,
             isAdmin: new models.User(model.get("user")).isAdminOf(this.options.event),
-            users: this.options.users
+            users: this.options.users,
+            transport: this.options.transport,
+            event: this.options.event
         };
     },
     onBeforeItemAdded: function() {

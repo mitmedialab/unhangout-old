@@ -30,7 +30,8 @@
             window.UNHANGOUT_AUTH = <%- JSON.stringify({
                 SOCK_KEY: user.getSockKey(),
                 USER_ID: user.id,
-                USER_NAME: user.get("displayName")
+                USER_NAME: user.get("displayName"),
+                USER_NETWORK_LIST: user.get("networkList"),
             }) %>;
         <% } else { %>
             window.UNHANGOUT_AUTH = null;
