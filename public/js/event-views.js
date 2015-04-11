@@ -1101,7 +1101,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
         this.chatView = new views.ChatView({
             collection: this.options.messages,
             users: this.options.users,
-            event: this.options.event
+            event: this.options.event,
+            transport: this.options.transport
         });
 
         this.userListView = new views.UserListView({
@@ -1125,8 +1126,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
         this.whiteboard.show(this.whiteboardView);
         this.chat.show(this.chatView);
         this.presenceNetworkGutter.show(this.networkListView);
-        this.presenceUserGutter.show(this.userListView);
-        this.chatInput.show(this.chatInputView);
+        this.presenceUserGutter.show(this.userListView); 
+        this.chatInput.show(this.chatInputView); 
     }
 });
 
@@ -1375,24 +1376,58 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         return model;
     },
 
+    getAtNameUser: function(atname) {
+        var users = this.options.users;
+
+        var user = users.find(function(user) {
+            if(user.get("displayName").indexOf(atname)) {
+                return user;
+            }
+        });
+
+        return user;
+    },
+
     onRender: function() {
 
-        if (!this.model.has("user")) {
-            // mark this chat message as a system message, so we can
-            // display it differently.
-            this.$el.addClass("system");
-        } else if (this.options.isAdmin && this.model.get("postAsAdmin")) {
-            this.$el.find(".from").addClass("admin");
-        }
+        var atName = this.$el.find('.atname').text();  
+        var atNameUser = this.getAtNameUser(atName);
 
-        if (this.model.get("past")) {
-            this.$el.addClass("past");
-        }       
+        var transport = this.options.transport;
+        var event = this.options.event;
+
+        var authNetworkList = auth.USER_NETWORK_LIST[this.options.event.id]; 
+
+        var addRemoveNetwork = this.$el.find("#add-remove-network").find("p");
+
+        if(atNameUser) {
+
+            if(typeof authNetworkList == 'undefined') {
+                return;
+            } 
+
+            if(auth.USER_ID != atNameUser.get("id")) {
+
+                if(authNetworkList) {
+
+                    if(authNetworkList.indexOf(atNameUser.get("id")) > -1) {
+                        addRemoveNetwork.text("Remove From My Network");
+                    } else {
+                        addRemoveNetwork.text("Add To My Network");
+                    }
+
+                } else {
+                    addRemoveNetwork.text("Add To My Network");
+                }                  
+
+            } 
+
+        }
 
         //Me and Atname Popover definition
         this.$el.find('.me').popover({html: true});
 
-        var html = this.$el.find('#add-to-network-popover').html();  
+        var html = this.$el.find('#add-remove-network-popover').html();  
 
         this.$el.find('.atname-network').popover({
             container: 'body',
@@ -1405,13 +1440,27 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
         });
 
-        $('body').on('click', "#remove-from-network", function(e){
+        $('body').on('click', "#add-remove-network", function(e){
             e.stopImmediatePropagation();
-            addToNetwork(); 
+
+            transport.send("change-networklist", {
+                roomId: event.getRoomId(),
+                atNameUser: atNameUser,
+            });
+
         });
 
-        function addToNetwork() {
+        if (!this.model.has("user")) {
+            // mark this chat message as a system message, so we can
+            // display it differently.
+            this.$el.addClass("system");
+        } else if (this.options.isAdmin && this.model.get("postAsAdmin")) {
+            this.$el.find(".from").addClass("admin");
         }
+
+        if (this.model.get("past")) {
+            this.$el.addClass("past");
+        }       
     },
 
 });
@@ -1441,7 +1490,9 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
         return {
             model: model,
             isAdmin: new models.User(model.get("user")).isAdminOf(this.options.event),
-            users: this.options.users
+            users: this.options.users,
+            transport: this.options.transport,
+            event: this.options.event
         };
     },
     onBeforeItemAdded: function() {
