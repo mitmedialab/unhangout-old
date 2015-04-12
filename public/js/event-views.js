@@ -17,9 +17,9 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "validate", "logger", "models", "auth", "client-utils",
+   "underscore", "backbone", "video", "validate", "match", "logger", "models", "auth", "client-utils",
    "backbone.marionette", "underscore-template-config", "jquery.autosize"
-], function(_, Backbone, video, validate, logging, models, auth, utils) {
+], function(_, Backbone, video, validate, match, logging, models, auth, utils) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -1364,45 +1364,19 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     },
 
     atify: function(msg) {
-      function matchAll(regex, string) {
-        if (!regex.global) {
-          throw new Error("RegEx must have global flag to use matchAll");
-        }
-        var match = null;
-        var matches = [];
-        
-        while (match = regex.exec(string)) {
-          matches.push(match);
-        }
 
-        return matches;
-      };
-
-      function normalize(name) {
-        return name.replace(/\s/g, "").toLowerCase();
-      };
-
-      function quoteRegExp(pattern) {
-        return pattern.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
-      };
-
-      function replaceAtName(msg, atname, replacement) {
-        return msg.replace(new RegExp("(" + quoteRegExp(atname) + ")", "gi"),
-                           replacement);
-      };
-
-      var matches = matchAll(/@([a-zA-Z0-9]+)/g, msg);
-      var selfName = normalize(auth.USER_NAME);
+      var matches = match.atMessages(msg);
+      var selfName = match.normalize(auth.USER_NAME);
 
       var users = this.options.users;
 
-      _.each(matches, _.bind(function(match) {
+      _.each(matches, _.bind(function(arr) {
         // Is it referring to ourselves?
-        var atname = normalize(match[1]);
+        var atname = match.normalize(arr[1]);
 
         if (selfName.indexOf(atname) !== -1) {
 
-          msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
+          msg = match.replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
             isMe: true,
             displayName: auth.USER_NAME
           })));
@@ -1425,11 +1399,11 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
         } else {
           var user = users.find(function(user) {
-            return normalize(user.get("displayName")).indexOf(atname) !== -1;
+            return match.normalize(user.get("displayName")).indexOf(atname) !== -1;
           });
 
           if (user) {
-            msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
+            msg = match.replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
               isMe: false,
               user: user
             })));
