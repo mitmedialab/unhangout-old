@@ -1058,6 +1058,7 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
               if (!this.registered) {
                 this.listenTo(model, "change:networkList", this.render, this);
                 this.registered = true;
+                this.render();
               }
             }
 
@@ -1086,10 +1087,9 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     },
 
     onRender: function() {
-
         var me = this.collection.get(auth.USER_ID);
         var myList = me && me.get("networkList"); 
-        var thisEvent = myList && myList[this.options.event.id];
+        var thisEvent = myList && myList["event/" + this.options.event.id];
         
         if(!me || _.size(thisEvent) < 1) {
           this.$el.hide();
