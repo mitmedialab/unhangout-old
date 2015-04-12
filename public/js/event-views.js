@@ -538,87 +538,6 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
 
 });
 
-views.NetworkView = Backbone.Marionette.ItemView.extend({
-    template: '#user-template',
-    className: 'user focus',
-    tagName: "li",
-
-    events: {
-        'click' : 'click'
-    },
-
-    initialize: function() {
-        this.listenTo(this.model, 'change:networkList', this.fun, this);
-    },
-
-    click: function() {
-        logger.log("user clicked: " + this.model.get("displayName"));
-    },
-
-    fun: function() {
-    
-    },
-
-    onRender: function() {
-        // add in the tooltip attributes
-
-        //If AUTH's user network list is empty, hide
-        //the network list and all the user elements 
-        // of the model and return
-
-        var event = this.options.event; 
-
-        var me = event.get("connectedUsers").get(auth.USER_ID); 
-        var myList = me && me.get("networkList");
-        var thisEvent = myList && myList[event.id];
-
-        if(!me || _.size(thisEvent) < 1) {
-            $("#presence-network-gutter").hide();
-            this.$el.hide();
-            return;
-        }   
-
-        if(this.model.isAdminOf(this.options.event)) {
-             this.$el.addClass("admin");
-        }
-
-        // look for either an img or an i child, since people who don't have
-        // a g+ icon should still get tooltips
-        this.$el.find("img, i").attr("data-toggle", "tooltip");
-
-        // if we're a child of hangout-users, then we're a small session user icon,
-        // not a big presence gutter icon. in this case, make the data container
-        // the session.
-        if(this.$el.parent().hasClass("hangout-users")) {
-            // this.$el.find("img, i").attr("data-container", "#chat-container-region");
-            this.$el.find("img, i").attr("data-placement", "top");
-        } else {
-            this.$el.find("img, i").attr("data-container", "body");
-            this.$el.find("img, i").attr("data-placement", "left");
-        }
-
-        this.$el.find("img, i").attr("title", this.model.get("displayName"));
-        this.$el.find("img, i").tooltip({'placement':'top'});
-
-        if(auth.USER_ID != this.model.get("id")) {
-
-            if(thisEvent) {
-                $("#presence-network-gutter").show();
-
-                if(thisEvent.indexOf(this.model.get("id")) > -1) {
-                    this.$el.show();
-                } else {
-                    this.$el.hide();
-                }
-            }
-
-        } else {
-            this.$el.hide();
-        }
-    }
-});
-
-
 // UserViews are the little square profile pictures that we use throughout
 // the app to represent users.
 
@@ -1118,7 +1037,7 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
 
 views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     template: '#network-list-template',
-    itemView: views.NetworkView,
+    itemView: views.UserView,
     itemViewContainer: "#network-list-container",
     id: "network-list",
 
