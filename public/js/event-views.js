@@ -566,11 +566,17 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
         //the network list and all the user elements 
         // of the model and return
 
-        if(typeof auth.USER_NETWORK_LIST[this.options.event.id] == 'undefined') {
+        var event = this.options.event; 
+
+        var me = event.get("connectedUsers").get(auth.USER_ID); 
+        var myList = me && me.get("networkList");
+        var thisEvent = myList && myList[event.id];
+
+        if(!me || _.size(thisEvent) < 1) {
             $("#presence-network-gutter").hide();
             this.$el.hide();
             return;
-        } 
+        }   
 
         if(this.model.isAdminOf(this.options.event)) {
              this.$el.addClass("admin");
@@ -596,10 +602,10 @@ views.NetworkView = Backbone.Marionette.ItemView.extend({
 
         if(auth.USER_ID != this.model.get("id")) {
 
-            if(auth.USER_NETWORK_LIST[this.options.event.id]) {
+            if(thisEvent) {
                 $("#presence-network-gutter").show();
 
-                if(auth.USER_NETWORK_LIST[this.options.event.id].indexOf(this.model.get("id")) > -1) {
+                if(thisEvent.indexOf(this.model.get("id")) > -1) {
                     this.$el.show();
                 } else {
                     this.$el.hide();
@@ -1474,30 +1480,30 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         var transport = this.options.transport;
         var event = this.options.event;
 
-        var authNetworkList = auth.USER_NETWORK_LIST[this.options.event.id]; 
+        var me = event.get("connectedUsers").get(auth.USER_ID);
+        var myList = me && me.get("networkList");
+        var thisEvent = myList && myList[event.id];
 
-        var addRemoveNetwork = this.$el.find("#add-remove-network").find("p");
+        var addRemoveNetworkBtn = this.$el.find("#add-remove-network").find("p");
 
         if(atNameUser) {
 
-            if(typeof authNetworkList == 'undefined') {
+            if(thisEvent == 'undefined') {
                 return;
-            } 
-
+            }
+            
             if(auth.USER_ID != atNameUser.get("id")) {
 
-                if(authNetworkList) {
-
-                    if(authNetworkList.indexOf(atNameUser.get("id")) > -1) {
-                        addRemoveNetwork.text("Remove From My Network");
+                if(thisEvent) {
+                    if(thisEvent.indexOf(atNameUser.get("id")) > -1) {
+                        addRemoveNetworkBtn.text("Remove From My Network");
                     } else {
-                        addRemoveNetwork.text("Add To My Network");
+                        addRemoveNetworkBtn.text("Add To My Network");
                     }
 
                 } else {
-                    addRemoveNetwork.text("Add To My Network");
-                }                  
-
+                    addRemoveNetworkBtn.text("Add To My Network");
+                }
             } 
 
         }
