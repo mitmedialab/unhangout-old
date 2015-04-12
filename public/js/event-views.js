@@ -1042,7 +1042,7 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     id: "network-list",
 
     initialize: function() {
-        this.listenTo(this.collection, 'change add remove', function() {
+        this.listenTo(this.collection, 'change add', function(model) {
             // going to manually update the current user counter because
             // doing it during render doesn't seem to work. There's some
             // voodoo in how marionette decides how much of the view to
@@ -1053,7 +1053,15 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
             // some reason totalRecords doesn't decrease when records
             // are removed, but totalUnfilteredRecords does. Could
             // be a bug.
-        }, this);
+
+            if (model.id === auth.USER_ID) {
+              if (!this.registered) {
+                this.listenTo(model, "change:networkList", this.render, this);
+                this.registered = true;
+              }
+            }
+
+        }.bind(this));
     },
 
     itemViewOptions: function() {        
@@ -1075,6 +1083,20 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     update: function() {
         logger.log("rendering UserListView");
         this.render();
+    },
+
+    onRender: function() {
+
+        var me = this.collection.get(auth.USER_ID);
+        var myList = me && me.get("networkList");
+        var thisEvent = myList && myList.get(this.options.event.id);
+
+        if(!me || _.size(thisEvent) < 1) {
+          this.$el.hide();
+        } else {
+          this.$el.show();
+        }
+
     }
 });
 
