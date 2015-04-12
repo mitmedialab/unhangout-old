@@ -1088,9 +1088,9 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     onRender: function() {
 
         var me = this.collection.get(auth.USER_ID);
-        var myList = me && me.get("networkList");
-        var thisEvent = myList && myList.get(this.options.event.id);
-
+        var myList = me && me.get("networkList"); 
+        var thisEvent = myList && myList[this.options.event.id];
+        
         if(!me || _.size(thisEvent) < 1) {
           this.$el.hide();
         } else {
