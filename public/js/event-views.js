@@ -1098,7 +1098,7 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
         if(this.getMyNetworkList().length > 0) {
           this.$el.show();
         } else {
-          this.$el.hide();
+          this.$el.hide(); 
         }
 
     }
@@ -1379,77 +1379,48 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         return model;
     },
 
-    getAtNameUser: function(atname) {
-        var users = this.options.users;
-        var user = users.find(function(user) {
-            if(user.get("displayName").indexOf(atname)) {
-                return user;
-            }
-        });
-        return user;
-    },
-
     onRender: function() {
-
-        var atName = this.$el.find('.atname').text();  
-        var atNameUser = this.getAtNameUser(atName);
 
         var transport = this.options.transport;
         var event = this.options.event;
 
-        var me = event.get("connectedUsers").get(auth.USER_ID);
-        var myList = me && me.get("networkList");
-        var thisEvent = myList && myList[event.id];
-
-        var addRemoveNetworkBtn = this.$el.find("#add-remove-network").find("p");
-
-        if(atNameUser) {
-
-            if(thisEvent == 'undefined') {
-                return;
-            }
-            
-            if(auth.USER_ID !== atNameUser.get("id")) {
-
-                if(thisEvent) {
-                    if(thisEvent.indexOf(atNameUser.get("id")) > -1) {
-                        addRemoveNetworkBtn.text("Remove From My Network");
-                    } else {
-                        addRemoveNetworkBtn.text("Add To My Network");
-                    }
-
-                } else {
-                    addRemoveNetworkBtn.text("Add To My Network");
-                }
-            } 
-
-        }
-
         //Me and Atname Popover definition
         this.$el.find('.me').popover({html: true});
 
-        var html = this.$el.find('#add-remove-network-popover').html();  
-
         this.$el.find('.atname-network').popover({
-            container: 'body',
             html: true,
             placement: 'top',
+            content: '<a class="btn btn-network" id="add-remove-network">Add To My Network</a>'
 
-            content: function () {
-                return html;
+        }).on('shown.bs.popover', function() {
+            atName = $(this).html();
+        }).parent().on('click', '#add-remove-network', function() {
+
+            var users = event.get("connectedUsers");
+
+            var atNameUser = users.find(function(user) {
+                if(user.get("displayName").indexOf(atName)) {
+                    return user;
+                }
+            });
+
+
+            var addRemoveNetworkBtn = $(this).html();
+
+            if(addRemoveNetworkBtn === "Add To My Network") {
+                $(this).html("Remove From My Network");
+            } else {
+                $(this).html("Add To My Network");
             }
-
-        });
-
-        $('body').on('click', "#add-remove-network", function(e){
-            e.stopImmediatePropagation();
 
             transport.send("change-networklist", {
                 roomId: event.getRoomId(),
                 atNameUser: atNameUser,
             });
 
+
         });
+
 
         if (!this.model.has("user")) {
             // mark this chat message as a system message, so we can
@@ -1459,9 +1430,10 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
             this.$el.find(".from").addClass("admin");
         }
 
+
         if (this.model.get("past")) {
             this.$el.addClass("past");
-        }       
+        }      
     },
 
 });
