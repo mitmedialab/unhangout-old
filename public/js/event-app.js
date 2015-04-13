@@ -227,17 +227,6 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
-        //Hide the presence network gutter when app loads 
-        //and the network list is empty
-        
-        var me = curEvent.get("connectedUsers").get(auth.USER_ID);
-        var myList = me && me.get("networkList");
-        var thisEvent = myList && myList[curEvent.id];
-
-        if(!me || _.size(thisEvent) < 1) {
-            $("#presence-network-gutter").hide();
-        }
-
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {

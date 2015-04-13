@@ -1041,8 +1041,8 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     itemViewContainer: "#network-list-container",
     id: "network-list",
 
-    initialize: function() {
-        this.listenTo(this.collection, 'change add', function(model) {
+    initialize: function(options) {
+        this.listenTo(options.event.get("connectedUsers"), 'change add remove', function(model) {
             // going to manually update the current user counter because
             // doing it during render doesn't seem to work. There's some
             // voodoo in how marionette decides how much of the view to
@@ -1058,43 +1058,47 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
               if (!this.registered) {
                 this.listenTo(model, "change:networkList", this.render, this);
                 this.registered = true;
-                this.render();
+                this.update();
               }
             }
+            var users = _.map(this.getMyNetworkList(), function(id) {
+              var user = this.options.event.get("connectedUsers").get(id);
+              return user ? user.toJSON() : null;
+            }.bind(this));
+            users = _.without(users, null);
+            this.collection.reset(users);
 
         }.bind(this));
     },
 
-    itemViewOptions: function() {        
-        return {
-            event: this.options.event, transport: this.options.transport
-        };
-    }, 
-
-    serializeData: function() {
-        var data = {};
-        data = this.collection.toJSON();
-
-        data.numUsers = this.collection.length;
-
-        logger.log("running user list serialize data");
-        return data;
+    getMyNetworkList: function() {
+        var me = this.options.event.get("connectedUsers").get(auth.USER_ID);
+        var myList = me && me.get("networkList");
+        var thisEventList = myList && myList[this.options.event.id];
+        var withoutMe = _.without(thisEventList || [], auth.USER_ID);
+        return withoutMe;
     },
 
+    itemViewOptions: function() {        
+        return {
+            event: this.options.event,
+            transport: this.options.transport
+        };
+    }, 
+    serializeData: function() {
+        var data = this.collection.toJSON();
+        data.numUsers = data.length;
+        return data;
+    },
     update: function() {
-        logger.log("rendering UserListView");
         this.render();
     },
 
     onRender: function() {
-        var me = this.collection.get(auth.USER_ID);
-        var myList = me && me.get("networkList"); 
-        var thisEvent = myList && myList["event/" + this.options.event.id];
-        
-        if(!me || _.size(thisEvent) < 1) {
-          this.$el.hide();
-        } else {
+        if(this.getMyNetworkList().length > 0) {
           this.$el.show();
+        } else {
+          this.$el.hide();
         }
 
     }
@@ -1136,7 +1140,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
         });
 
         this.networkListView = new views.NetworkListView({
-            collection: this.options.event.get("connectedUsers"),
+            collection: new models.UserList,
             event: this.options.event
         });
 
@@ -1377,13 +1381,11 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
     getAtNameUser: function(atname) {
         var users = this.options.users;
-
         var user = users.find(function(user) {
             if(user.get("displayName").indexOf(atname)) {
                 return user;
             }
         });
-
         return user;
     },
 
@@ -1407,7 +1409,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
                 return;
             }
             
-            if(auth.USER_ID != atNameUser.get("id")) {
+            if(auth.USER_ID !== atNameUser.get("id")) {
 
                 if(thisEvent) {
                     if(thisEvent.indexOf(atNameUser.get("id")) > -1) {
