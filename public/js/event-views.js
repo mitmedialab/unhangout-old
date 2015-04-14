@@ -1043,17 +1043,6 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
 
     initialize: function(options) {
         this.listenTo(options.event.get("connectedUsers"), 'change add remove', function(model) {
-            // going to manually update the current user counter because
-            // doing it during render doesn't seem to work. There's some
-            // voodoo in how marionette decides how much of the view to
-            // re-render on events, and it seems to exclude the piece out-
-            // side the item-view-container, assuming it doesn't have
-            // reactive bits.
-            // I would also expect this to be .totalRecords, but for
-            // some reason totalRecords doesn't decrease when records
-            // are removed, but totalUnfilteredRecords does. Could
-            // be a bug.
-
             if (model.id === auth.USER_ID) {
               if (!this.registered) {
                 this.listenTo(model, "change:networkList", this.render, this);
@@ -1067,7 +1056,6 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
             }.bind(this));
             users = _.without(users, null);
             this.collection.reset(users);
-
         }.bind(this));
     },
 
@@ -1304,7 +1292,9 @@ views.AtNamePopover = Backbone.View.extend({
       this.event = options.event;
       this.linkText = options.linkText
       this.transport = options.transport;
-      this.listenTo(this.user, "change:networkList", this.render);
+      if (this.user) {
+        this.listenTo(this.user, "change:networkList", this.render);
+      }
       $(document).on("click", this.handlePopovers.bind(this));
   },
   remove: function() {
@@ -1327,12 +1317,12 @@ views.AtNamePopover = Backbone.View.extend({
       }
   },
   isInNetwork: function() {
-      var networkList = (this.user.get("networkList") || {})[this.event.id];
+      var networkList = this.user && (this.user.get("networkList") || {})[this.event.id];
       return !!(networkList && _.contains(networkList, this.mentioned.id));
   },
   render: function() {
     var context = {
-      isMe: this.user.id === this.mentioned.id,
+      isMe: this.user && this.user.id === this.mentioned.id,
       inNetwork: this.isInNetwork(),
       linkText: this.linkText,
       mentioned: this.mentioned.toJSON()

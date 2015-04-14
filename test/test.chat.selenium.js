@@ -218,9 +218,11 @@ describe("CHAT", function() {
                 if (html) {
                     expect(html.trim()).to.be(
                         '<span class="from">Regular1 M</span>' +
-                       "&lt;b&gt;Escape 'this\"&lt;/b&gt; and " +
-                       "<a href=\"http://google.com\" " +
-                           "target=\"_blank\">http://google.com</a>"
+                        '<span class="contents"><span>' +
+                        "&lt;b&gt;Escape 'this\"&lt;/b&gt; and " +
+                        "<a href=\"http://google.com\" " +
+                           "target=\"_blank\">http://google.com</a>" +
+                        '</span></span>'
                     );
                     return true;
                 }
