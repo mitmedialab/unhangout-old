@@ -191,9 +191,7 @@ describe("CHAT", function() {
         browser.waitForSelector("#chat-input");
         browser.byCss("#chat-input").sendKeys("Hello, @Regular2\n");
         browser.waitForSelector("b.atname");
-        browser.byCss("b.atname").getAttribute("data-original-title").then(function(title) {
-            expect(title).to.be("Regular2 Mock");
-        });
+
         browser.then(function() {
             sock.write(JSON.stringify({
                 type: "chat",
@@ -220,9 +218,11 @@ describe("CHAT", function() {
                 if (html) {
                     expect(html.trim()).to.be(
                         '<span class="from">Regular1 M</span>' +
-                       "&lt;b&gt;Escape 'this\"&lt;/b&gt; and " +
-                       "<a href=\"http://google.com\" " +
-                           "target=\"_blank\">http://google.com</a>"
+                        '<span class="contents"><span>' +
+                        "&lt;b&gt;Escape 'this\"&lt;/b&gt; and " +
+                        "<a href=\"http://google.com\" " +
+                           "target=\"_blank\">http://google.com</a>" +
+                        '</span></span>'
                     );
                     return true;
                 }

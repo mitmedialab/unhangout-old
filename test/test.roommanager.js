@@ -678,7 +678,8 @@ describe("ROOM MANAGER", function() {
     it("Clears sync log messages with timestamps that are too old", function() {
         var mgr = new RoomManager(socketServer, users);
         mgr.sync("someroom", "important", [1, 2, 3]);
-        mgr.opLog.someroom[0][0][0] -= mgr.OP_LOG_AGE - 1;
+        mgr.opLog.someroom[0][0][0] -= (mgr.OP_LOG_AGE + 1);
+
         mgr.sync("someroom", "yeah dog", [4, 5, 6]);
         expect(mgr.opLog.someroom.length).to.be(1);
         expect(mgr.opLog.someroom[0][1]).to.eql("yeah dog");

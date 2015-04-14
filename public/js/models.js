@@ -432,6 +432,7 @@ models.User = Backbone.Model.extend({
             link: null,
             emails: [],
             preferredContact: null,
+            networkList: {}
         };
     },
 

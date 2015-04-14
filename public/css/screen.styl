@@ -595,17 +595,31 @@ hr.noshade {
   height: 100%;
   overflow-y: auto;
 
+  .no-padding {
+    padding: 0px;
+  }
+
+  #network-list {
+    margin-bottom: 80px;
+  }
+
+  #presence-user-gutter {
+  }
+
   ul {
     margin: 0px;
     padding: 0px;
   } 
 
   .header {
-    background-color: $primary;
+    background-color: #2e7daa;
     text-align: center;
     color: white;
-    font-weight: bold;
-    margin-top: 2px;
+    font-weight: normal;
+    font-size: 12px;
+    height: 20px;
+    padding: 2px;
+    border-radius: 1px;
 
     .fa-user {
       margin-left: 3px;
@@ -648,7 +662,7 @@ hr.noshade {
   }
 }
 
-user-size = 45px
+user-size = 50px
 user-border-size = 1px
 user-admin-border-size = 2px
 
@@ -1330,6 +1344,60 @@ user-admin-border-size = 2px
       background-color: yellow
     }
   }
+
+  .btn-network {
+    color: #2e7daa;
+    background-color: white;
+  }
+}
+
+/* Atname Popover Styles*/
+
+.popover {
+
+  .popover-title {
+    img {
+      width: 50px;
+      padding: 0px;
+      border-radius: 5px;
+    }
+
+    p {
+      position: absolute;
+      top: 10px;
+      left: 75px;
+      font-size: 15px;
+      margin-right: 10px;
+      color: #2e7daa;
+    }
+  }
+
+  .popover-content {
+    padding: 0px;
+    min-width: 194px;
+
+    .no-padding {
+      padding: 0px;
+    }
+
+    p {
+      margin: 10px;
+      margin-left: 14px;
+      margin-right: 14px;
+      color: #444;
+    }
+
+    .list-item:hover {
+      background-color: #2e7daa;
+      color: white;
+    }
+
+    .list-item:hover p {
+      color: white;
+    }
+
+  }
+
 }
 
 #global {

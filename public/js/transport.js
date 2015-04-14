@@ -169,12 +169,12 @@ _.extend(Transport.prototype, Backbone.Events, {
         var path = _.clone(args.path);
         var model = this.stateModels[path.shift()];
         if (!model) {
-            return logger.info("Update for unknown model", msg);
+            return logger.info("Update for unknown model", args);
         }
         while (path.length > 1) {
             model = model.get(path.shift());
             if (!model) {
-                return logger.info("Update for unknown model", msg);
+                return logger.info("Update for unknown model", args);
             }
         }
 
