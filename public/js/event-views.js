@@ -1295,7 +1295,8 @@ views.AtNamePopover = Backbone.View.extend({
       if (this.user) {
         this.listenTo(this.user, "change:networkList", this.render);
       }
-      $(document).on("click", this.handlePopovers.bind(this));
+      _.bindAll(this, "handlePopovers");
+      $(document).on("click", this.handlePopovers);
   },
   remove: function() {
       $(document).off("click", this.handlePopovers);
