@@ -17,9 +17,9 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "validate", "match", "logger", "models", "auth", "client-utils",
+   "underscore", "backbone", "video", "validate", "atname", "logger", "models", "auth", "client-utils",
    "backbone.marionette", "underscore-template-config", "jquery.autosize"
-], function(_, Backbone, video, validate, match, logging, models, auth, utils) {
+], function(_, Backbone, video, validate, atname, logging, models, auth, utils) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -1293,71 +1293,131 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
     }
 });
 
+views.AtNamePopover = Backbone.View.extend({
+  tagName: 'span',
+  template: _.template($('#chat-atname-template').html()),
+  popoverContentTemplate: _.template($("#chat-atname-popover-content-template").html()),
+
+  initialize: function(options) {
+      this.user = options.user;
+      this.mentioned = options.mentioned;
+      this.event = options.event;
+      this.linkText = options.linkText
+      this.transport = options.transport;
+      this.listenTo(this.user, "change:networkList", this.render);
+      $(document).on("click", this.handlePopovers.bind(this));
+  },
+  remove: function() {
+      $(document).off("click", this.handlePopovers);
+      Backbone.View.prototype.remove.apply(this, arguments);
+  },
+  handlePopovers: function(event) {
+      // We use this rather than a regular "events" Backbone listener for two
+      // reasons:
+      // 1. We want to clear popovers on any click outside.
+      // 2. We want to draw the popover at the body context, so that it shows
+      // above other elements like the nav bar. Consequently, it's out of scope
+      // of this.$.
+      if (this._popoverOpen) {
+        if ($(event.target).is(".add-remove-network")) {
+          this.addRemoveNetwork(event);
+        }
+        this.$("[data-toggle='popover'][aria-describedby]").popover('hide');
+        this._popoverOpen = false;
+      }
+  },
+  isInNetwork: function() {
+      var networkList = (this.user.get("networkList") || {})[this.event.id];
+      return !!(networkList && _.contains(networkList, this.mentioned.id));
+  },
+  render: function() {
+    var context = {
+      isMe: this.user.id === this.mentioned.id,
+      inNetwork: this.isInNetwork(),
+      linkText: this.linkText,
+      mentioned: this.mentioned.toJSON()
+    };
+    context.popoverContent = this.popoverContentTemplate(context);
+    this.$el.html(this.template(context))
+    this.$("[data-toggle='popover']").popover({
+      trigger: "click",
+      container: "body",
+      placement: "top",
+      html: true
+    }).on("shown.bs.popover", function() {
+      this._popoverOpen = true;
+    }.bind(this));
+  },
+  addRemoveNetwork: function(event) {
+    event.preventDefault();
+    var userId = $(event.target).attr("data-user-id");
+    this.transport.send("change-networklist", {
+      roomId: this.event.getRoomId(),
+      atNameUserId: userId
+    });
+  }
+});
+
 // The view for an individual chat message.
 views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     template: '#chat-message-template',
-    atnameTemplate: _.template($("#chat-atname-template").html()),
     className: 'chat-message',
     tagName: 'li',
-
     initialize: function() {
         Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments);
         var msg = _.escape(this.model.get("text"));
         msg = utils.linkify(msg);
-        msg = this.atify(msg);
-        this.model.set("text", msg);
+        // Get a list of dom elements that include popover handling for @-names
+        var contents = this.atify(msg);
+        this.model.set("contents", contents);
+    },
+    atify: function(msg) {
+      var selfMentioned = false;
+
+      var contents = atname.mapAtNames(msg, this.options.users, _.bind(function(part, mentioned) {
+        if (mentioned === null) {
+          return "<span>" + part + "</span>";
+        }
+        if (mentioned.id === auth.USER_ID) {
+          selfMentioned = true;
+        }
+
+        // Construct a popover
+        var popoverViewArgs = {
+          user: this.options.users.get(auth.USER_ID),
+          linkText: part,
+          mentioned: mentioned,
+          event: this.options.event,
+          transport: this.options.transport
+        };
+        var popoverView = new views.AtNamePopover(popoverViewArgs);
+        popoverView.render();
+
+        return popoverView.el;
+
+      }, this));
+
+      if (selfMentioned) {
+        this.flashTitleBar();
+      }
+
+      return contents;
     },
 
-    atify: function(msg) {
-
-      var matches = match.atMessages(msg);
-      var selfName = match.normalize(auth.USER_NAME);
-
-      var users = this.options.users;
-
-      _.each(matches, _.bind(function(arr) {
-        // Is it referring to ourselves?
-        var atname = match.normalize(arr[1]);
-
-        if (selfName.indexOf(atname) !== -1) {
-
-          msg = match.replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
-            isMe: true,
-            displayName: auth.USER_NAME
-          })));
-
-          var text = "✉ Message! ";
-
-          var interval = setInterval(function() {
-            if (document.title.indexOf(text) === 0) {
-              document.title = document.title.replace(text, "");
-            } else {
-              document.title = text + document.title;
-            }
-          }, 500);
-
-          setTimeout(function() {
-            document.title = document.title.replace(text, "");
-            clearTimeout(interval);
-
-          }, 5000);
-
+    flashTitleBar: function() {
+      var text = "✉ Message! ";
+      var interval = setInterval(function() {
+        if (document.title.indexOf(text) === 0) {
+          document.title = document.title.replace(text, "");
         } else {
-          var user = users.find(function(user) {
-            return match.normalize(user.get("displayName")).indexOf(atname) !== -1;
-          });
-
-          if (user) {
-            msg = match.replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
-              isMe: false,
-              user: user
-            })));
-
-          }
-        
+          document.title = text + document.title;
         }
-      }, this));
-      return msg;
+      }, 500);
+
+      setTimeout(function() {
+        document.title = document.title.replace(text, "");
+        clearTimeout(interval);
+      }, 5000);
     },
 
     // We want to use shortNames so we intercept this process to make the short
@@ -1365,7 +1425,6 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     // call object methods during that process.
     serializeData: function() {
         var model = this.model.toJSON();
-
         // if we have a user object (ie if we're not a system generated
         // message) then convert its name to the short display name.
         if(this.model.has("user")) {
@@ -1380,48 +1439,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
-
-        var transport = this.options.transport;
-        var event = this.options.event;
-
-        //Me and Atname Popover definition
-        this.$el.find('.me').popover({html: true});
-
-        this.$el.find('.atname-network').popover({
-            html: true,
-            placement: 'top',
-            content: '<a class="btn btn-network" id="add-remove-network">Add To My Network</a>'
-
-        }).on('shown.bs.popover', function() {
-            atName = $(this).html();
-        }).parent().on('click', '#add-remove-network', function() {
-
-            var users = event.get("connectedUsers");
-
-            var atNameUser = users.find(function(user) {
-                if(user.get("displayName").indexOf(atName)) {
-                    return user;
-                }
-            });
-
-
-            var addRemoveNetworkBtn = $(this).html();
-
-            if(addRemoveNetworkBtn === "Add To My Network") {
-                $(this).html("Remove From My Network");
-            } else {
-                $(this).html("Add To My Network");
-            }
-
-            transport.send("change-networklist", {
-                roomId: event.getRoomId(),
-                atNameUser: atNameUser,
-            });
-
-
-        });
-
-
+        this.$(".contents").html(this.model.get("contents"));
         if (!this.model.has("user")) {
             // mark this chat message as a system message, so we can
             // display it differently.
@@ -1429,7 +1447,6 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
         } else if (this.options.isAdmin && this.model.get("postAsAdmin")) {
             this.$el.find(".from").addClass("admin");
         }
-
 
         if (this.model.get("past")) {
             this.$el.addClass("past");
