@@ -200,7 +200,7 @@ describe("CHAT", function() {
         });
         browser.waitForSelector("b.atname.me");
         browser.byCss("b.atname.me").getAttribute("data-original-title").then(function(title) {
-            expect(title).to.be("Regular1 Mock");
+            expect(title.trim()).to.be("Regular1 Mock");
         });
         browser.then(function() {
             done();
