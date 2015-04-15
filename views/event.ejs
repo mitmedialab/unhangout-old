@@ -318,20 +318,19 @@
 </script>
 
 <script type="text/template" id="chat-atname-template">
-    {{ if (isMe) { }}   
+    <b class='atname {{- isMe ? "me" : "atname-network" }}'
+       data-toggle='popover'
+       title='{{- title }}'
+       data-content="{{- popoverContent }}"
+      >{{= linkText }}</b>
+</script>
 
-        <b class='atname me'
-           data-toggle='popover'
-           title='{{- mentioned.displayName }}'
-           data-content="{{- popoverContent }}">{{= linkText }}</b>
-
+<script type="text/template" id='chat-atname-popover-title-template'>
+    {{ if (isMe) { }}
+        {{- mentioned.displayName }}
     {{ } else { }}
-
-        <b class='atname atname-network' 
-           data-toggle='popover'
-           title="&lt;img src=&quot;{{- mentioned.picture }}&quot; style=&quot;max-width: 128px; max-height: 128px;&quot; /&gt; &lt;p&gt; {{- mentioned.displayName }} &lt;/&gt;"
-           data-content="{{- popoverContent }}"
-           >{{= linkText }}</b>
+        <img src='{{- mentioned.picture }}' style='max-width: 128px; max-height: 128px;' />
+        <p>{{- mentioned.displayName }}</p>
     {{ } }}
 </script>
 

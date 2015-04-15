@@ -1042,17 +1042,15 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
     id: "network-list",
 
     initialize: function(options) {
-        this.listenTo(options.event.get("connectedUsers"), 'change add remove', function(model) {
-            if (model.id === auth.USER_ID) {
-              if (!this.registered) {
-                this.listenTo(model, "change:networkList", this.render, this);
-                this.registered = true;
-                this.update();
-              }
+        this.listenTo(options.event.get("connectedUsers"), 'change add remove', function(model, coll, ops) {
+            if (!this.registered && ops.add && model.id === auth.USER_ID) {
+              this.listenTo(model, "change:networkList", this.render, this);
+              this.registered = true;
+              this.update();
             }
             var users = _.map(this.getMyNetworkList(), function(id) {
               var user = this.options.event.get("connectedUsers").get(id);
-              return user ? user.toJSON() : null;
+              return user ? user : null;
             }.bind(this));
             users = _.without(users, null);
             this.collection.reset(users);
@@ -1088,7 +1086,6 @@ views.NetworkListView = Backbone.Marionette.CompositeView.extend({
         } else {
           this.$el.hide(); 
         }
-
     }
 });
 
@@ -1285,6 +1282,7 @@ views.AtNamePopover = Backbone.View.extend({
   tagName: 'span',
   template: _.template($('#chat-atname-template').html()),
   popoverContentTemplate: _.template($("#chat-atname-popover-content-template").html()),
+  popoverTitleTemplate: _.template($("#chat-atname-popover-title-template").html()),
 
   initialize: function(options) {
       this.user = options.user;
@@ -1328,6 +1326,7 @@ views.AtNamePopover = Backbone.View.extend({
       mentioned: this.mentioned.toJSON()
     };
     context.popoverContent = this.popoverContentTemplate(context);
+    context.title = this.popoverTitleTemplate(context);
     this.$el.html(this.template(context))
     this.$("[data-toggle='popover']").popover({
       trigger: "click",
