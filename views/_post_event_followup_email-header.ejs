@@ -1,0 +1,27 @@
+<h1 style="margin: 0px; font-size:24px; font-weight: 500;"><%= event.get("title") %></h1>
+
+<h2 style="font-size:18px; font-weight: 500;">
+Dear <%= recipient.user.getShortDisplayName() %>,
+<br />
+</h2>
+
+<p>Thanks for participating in the <%= event.get("title") %>
+Unhangout. We hope that you had a good experience and met some new peers!
+
+<% if(recipient.users.length > 0) { %>  
+
+	<% for(var i=0; i < recipient.users.length; i++) { %>
+
+		<% if(recipient.users[i].get("preferredContact").noShare == false ) { %>
+			
+			<br/><br/>
+			Below you’ll find the names of the participants you met in the breakout room, as well as their preferred methods of contact. <br/> <br/>
+			So go ahead and say hello!
+
+			<% break %>
+		<% } %>
+	<% } %>
+
+<% } %>
+
+</p>

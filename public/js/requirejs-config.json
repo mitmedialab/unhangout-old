@@ -42,8 +42,9 @@
         "admin-users.js": { "include": "admin-users" },
         "admin-event.js": { "include": "admin-event" },
         "myevents.js": { "include": "myevents" },
-        "peramlink.js": { "include": "permalink" },
+        "permalink.js": { "include": "permalink" },
         "permalink-intro.js": { "include": "permalink-intro" },
+        "post_event_followup_email_preview.js": { "include": "post_event_followup_email_preview" },
         "facilitator.js": { "include": "facilitator" }
     }
 }

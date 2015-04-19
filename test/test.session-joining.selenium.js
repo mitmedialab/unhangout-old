@@ -51,13 +51,15 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Updates session participant list when not present in the event", function(done) {
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         var sock;
         var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         var ready = false;
         browser.mockAuthenticate("regular1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "regular1");
-        browser.byCsss("#presence-gutter .user").then(function(els) {
+        browser.byCsss("#presence-user-gutter .user").then(function(els) {
             expect(els.length).to.be(1);
         });
         // We should have an empty session participant list.
@@ -97,6 +99,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
     it("Updates session participant list when present in the event", function(done) {
         var sock1, sock2;
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+        
         var participantList = "#session-list .session[data-session-id='" + session.id + "'] li";
         browser.mockAuthenticate("regular1");
         // Connect the browser to the event page, then connect a socket
@@ -114,7 +118,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // Two sockets should show up on the event page -- the browser, and the
         // bare socket.
         browser.waitWithTimeout(function() {
-            return browser.byCsss("#presence-gutter .user").then(function(els) {
+            return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                 return els.length === 2;
             });
         });
@@ -124,7 +128,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         });
         // Have the socket leave the event page, but not the participant list.
         browser.waitWithTimeout(function() {
-            return browser.byCsss("#presence-gutter .user").then(function(els) {
+            return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                 return els.length == 1;
             });
         });
@@ -153,6 +157,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         // We'll use 3 sockets --- s1, s2, s3 in the session.
         var s1, s2, s3;
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
         var u3 = common.server.db.users.findWhere({"sock-key": "admin1"});
@@ -212,6 +218,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Limits participants to the join cap", function(done) {
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         var joinButtonText = "[data-session-id='" + session.id + "'] .attend .text";
         session.set("joinCap", 2);
         browser.mockAuthenticate("admin1");
@@ -282,6 +290,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Handles stop conditions when session has been deleted", function(done) {
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         browser.mockAuthenticate("admin1");
         // Visit the session to "start" it.
         browser.get(common.URL + "/test/hangout/" + session.id + "/");
@@ -370,7 +380,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
             });
         });
         browser.waitWithTimeout(function() {
-            return browser.byCsss("#presence-gutter .user").then(function(els) {
+            return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                 return els.length == 2;
             });
         }).then(function() {
@@ -394,7 +404,7 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                     return event.get("connectedUsers").length === 1;
                 });
                 browser.waitWithTimeout(function() {
-                    return browser.byCsss("#presence-gutter .user").then(function(els) {
+                    return browser.byCsss("#presence-user-gutter .user").then(function(els) {
                         return els.length === 1;
                     })
                 });
@@ -430,6 +440,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
         browser.mockAuthenticate("regular1");
         var sock;
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         browser.get(common.URL + "/test/hangout/" + session.id + "/")
         browser.waitForHangoutReady(session, "regular1");
         browser.then(function() {
@@ -460,6 +472,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Warns you when you're in the wrong hangout", function(done) {
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         var button = "document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementsByTagName('iframe')[0].contentWindow" +
                      ".document.getElementById('wrong-hangout-url')"
@@ -485,6 +499,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Doesn't clear hangout URL immediately, but rather after a delay.", function(done) {
         var session = event.get("sessions").at(1);
+        session.set("approved", true);
+
         session.set("hangout-url", null);
         common.authedSock("regular1", session.getRoomId()).then(function(sock) {
             sock.on("data", function(message) {
@@ -520,6 +536,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Doesn't set connected participants if URL is invalid.", function(done) {
         var session = event.get("sessions").at(1);
+        session.set("approved", true);
+
         var participants = [{id: "p1", displayName: "P1", picture: ""},
                             {id: "p2", displayName: "P2", picture: ""},
                             {id: "0", displayName: "Regular1 Mock", picture: ""}];
@@ -554,6 +572,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
 
     it("Adds joining participant UI", function(done) {
         var session = event.get("sessions").at(0);
+        session.set("approved", true);
+
         var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
         var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
 

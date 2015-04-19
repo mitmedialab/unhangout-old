@@ -1,0 +1,131 @@
+<% include _header.ejs %>
+
+<div class="container">
+    <div class="col-lg-2"></div>
+
+    <div class="col-lg-8 email-preview-container">
+        
+        <!-- EMAIL PREVIEW TEMPLATE STARTS  -->
+        <div class="col-lg-12 no-padding">
+            <h3 class="email-preview-title">EMail Preview Mode</h3>
+        </div>
+
+        <div class="col-lg-12 email-preview-fields-container no-padding">
+
+            <div class="form-group">
+                <label class="control-label col-lg-2" for="email-to">To</label>
+
+                <div class="col-lg-10 email-to">
+                  <label class="control-label field-input" for="email-to"> <%= recipient.user.get("emails")[0].value %> </label>
+                </div>
+
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-lg-2" for="email-from">From</label>
+
+                <div class="col-lg-10 email-from">
+                   <label class="control-label field-input" for="email-from"><%= fromEmail %></label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label col-lg-2" for="email-sub">Subject</label>
+
+                <div class="col-lg-10 email-sub">
+                   <label class="control-label field-input" for="email-sub">Following up from the Unhangout</label>
+                </div>
+            </div>
+
+            <table border="0" cellpadding="0" cellspacing="0">
+
+                <tr>
+
+                    <td align="left" valign="top" style="border: 30px solid #f2f2f2" >
+                        <div class="email-body"> 
+
+                            <div class="email-header">
+                                <% include _post_event_followup_email-header.ejs %>
+                            </div>
+
+                            <div class="breakout-info">
+                                <% include _post_event_followup_email-content.ejs %>
+                            </div>
+
+                            <div class="email-footer">
+                                <% include _post_event_followup_email-footer.ejs %>
+                            </div>
+
+                        </div>
+                    </td>
+                </tr>
+
+            </table>
+        </div>
+
+        <!-- EMAIL PREVIEW TEMPLATE ENDS-->
+
+        <div class="col-lg-12 nav-button-row">
+
+            <div class="col-xs-3 no-padding">
+                <button id="send-email-to-all" class="btn btn-primary">Send Email to All</button>
+            </div>
+
+            <div class="col-xs-offset-2 col-xs-3 no-padding">
+                <p>Showing <%= participantIndex + 1 %> of <%= totalUsers %>  results </p>
+            </div>
+
+            <div class="col-xs-offset-2 col-xs-1 nav-controls">
+                <% if (participantIndex > 0) { %>
+                    <a class='btn btn-primary previous'
+                       href='<%= "/followup/event/" + event.id + "/participant_" + (participantIndex - 1) %>'>
+                        <i class="fa fa-chevron-left white-text"></i>
+                    </a>
+                <% } %>
+            </div>
+
+            <div class="col-xs-1 nav-controls">
+                <% if (participantIndex < totalUsers - 1) { %>
+                    <a class='btn btn-primary next'
+                       href='<%= "/followup/event/" + event.id + "/participant_" + (participantIndex + 1) %>'>
+                        <i class='fa fa-chevron-right white-text'></i>
+                    </a>
+                <% } %>
+            </div>
+        
+        </div>
+
+    </div>
+
+    <div class="col-lg-2"></div>
+
+    </div>
+
+    <div class="modal fade send-email-dialog" id="send-email-dialog" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Prepare for launch</h4>
+                </div>
+
+                <div class="modal-body">
+                    <p>You are about to send a campaign to participants of <b><%= event.get("title") %></b></p> 
+                    <p> Total <b><%= totalUsers %> participants</b>.</p> 
+                    
+                </div>
+
+                <div class="modal-footer">
+                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+
+                     <button id="send-now-button" type="button" class="btn btn-primary" data-dismiss="modal">Send Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
+    var participantIndex = <%= participantIndex %>; 
+</script>
+
+<%- requireScripts("/public/js/post_event_followup_email_preview.js") %>

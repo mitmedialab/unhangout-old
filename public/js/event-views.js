@@ -17,9 +17,9 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "logger", "models", "auth", "client-utils",
+   "underscore", "backbone", "video", "validate", "atname", "logger", "models", "auth", "client-utils",
    "backbone.marionette", "underscore-template-config", "jquery.autosize"
-], function(_, Backbone, video, logging, models, auth, utils) {
+], function(_, Backbone, video, validate, atname, logging, models, auth, utils) {
 
 var views = {};
 var logger = new logging.Logger("event-views");
@@ -30,18 +30,26 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     template: '#session-template',
     className: 'session',
     firstUserView: null,
+
     ui: {
         attend: '.attend',
         start:'.start',
+        unapprove: '.unapprove',
         deleteButton: '.delete',        // delete is reserved word
-        hangoutUsers: '.hangout-users'
+        hangoutUsers: '.hangout-users',
+        proposeeDetails: '.proposee-details',
+        userDetails: '#user-details'
     },
 
     events: {
         'click .attend':'attend',
         'click .start':'start',
+        'click .unapprove':'unapprove',
         'click .delete':'delete',
-        'click h3':'headerClick'
+        'click h3':'headerClick',
+        'click .btn-edit-session': 'invokeEditSessionInput',
+        'change #edit-title':'editSessionTitle',
+        'keypress #edit-title':'callEditSessionTitle',
     },
 
     initialize: function() {
@@ -49,6 +57,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // re-render to show them.
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
@@ -56,20 +65,64 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // they get the next unused slot, and their "preference" is updated.
         this.userSlotPreference = {};
         this.userSlots = {};
+
+        this.listenTo(this.model, 'change:approved', this.render, this);
+        this.listenTo(this.model, 'change:title', this.render, this);
     },
 
     onRender: function() {
-        var start = new Date().getTime();
+        var start = new Date().getTime();  
+
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
-        this.$el.addClass("live");
+        this.$el.removeClass("live");
+        this.$el.removeClass("hide");
+
+        if (this.model.get("approved")) {
+            this.$el.addClass("live");
+        } else {
+            this.$el.addClass("hide");
+        }
+
+        //Show delete button only for admins  
+        if(IS_ADMIN) {
+            this.ui.deleteButton.show();
+        } else {
+            this.ui.deleteButton.hide();
+        }
+
+        //When proposed field is empty for a session (most likely it 
+        //will happen for previous sessions where we didn't store 
+        //proposedBy field) add and remove bottom padding to 
+        //user details div
+
+        if(this.model.get("proposedBy")) {
+            this.ui.userDetails.addClass("bottom-padding");
+        } else {
+            this.ui.userDetails.removeClass("bottom-padding");
+        }
+
+        //Hide unapprove UI if admin proposed session mode
+        if(this.options.event.get("adminProposedSessions")) {
+            this.ui.unapprove.hide();
+            this.ui.proposeeDetails.hide(); 
+
+            if(IS_ADMIN) {
+                this.ui.deleteButton.removeClass("top-margin");
+            } 
+            
+        } else {
+            this.ui.unapprove.show();
+            this.ui.proposeeDetails.show();
+            this.ui.deleteButton.addClass("top-margin");
+        }
+
 
         // remove the toggle-ness of the button once the event starts.
         this.ui.attend.attr("data-toggle", "");
         this.ui.attend.removeClass("btn-info");
         this.ui.attend.removeClass("active");
-        this.ui.attend.addClass("btn-success");
 
         var numAttendees = this.model.getNumConnectedParticipants() + this.model.get("joiningParticipants").length;
 
@@ -155,7 +208,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         // Now add the fragment to the layout and display it
         this.ui.hangoutUsers.html(fragment);
-        this.ui.hangoutUsers.show();
 
         if (!this.options.event.get("sessionsOpen") || numAttendees >= this.model.get("joinCap")) {
             this.ui.attend.find(".lock").show();
@@ -193,11 +245,227 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         window.open(url);
     },
 
-    "delete": function() {
+    delete: function() {
+        //Hide tooltip without rendering the view
+        $(".tooltip").hide();
+
         this.options.transport.send("delete-session", {
             id: this.model.id, roomId: this.options.event.getRoomId()
         });
-    }
+    },
+
+    vote: function() {
+        this.options.transport.send("vote-session", {
+            id: this.model.id, roomId: this.options.event.getRoomId()
+        });
+    },
+
+    unapprove: function() {
+        this.options.transport.send("approve-session", {
+            id: this.model.id,
+            roomId: this.options.event.getRoomId(),
+            approve: false
+        });
+    },
+
+    callEditSessionTitle: function(event) {
+        var code = (event.keyCode ? event.keyCode : event.which);
+        
+        if (code == 13) { //Enter keycode                        
+            event.preventDefault();
+
+            this.editSessionTitle();
+        }
+    },
+
+    invokeEditSessionInput: function() {
+        this.$el.find("#edit-title").val(this.model.get("title"));
+        this.$el.find(".session-title-container").hide();
+
+        this.$el.find(".edit-session-title").removeClass('hide');
+        this.$el.find(".edit-session-title").addClass('show');
+    },
+
+    editSessionTitle: function() {
+        var title = this.$el.find("#edit-title").val();
+
+        if(title.length > 80) {    
+
+            this.$el.find(".edit-session-warning").removeClass('hide');
+            this.$el.find(".edit-session-warning").addClass('show');
+
+            this.$el.find(".edit-session-warning", scope).text("Title should be less than 80 characters");
+           
+            return;
+        } else {
+
+            this.options.transport.send("edit-session", {
+                title: title,
+                id: this.model.id,
+                roomId: this.options.event.getRoomId(),
+            });
+
+            this.$el.find(".edit-session-warning").removeClass('show');
+            this.$el.find(".edit-session-warning").addClass('hide');
+
+            this.$el.find(".edit-session-title").removeClass('show');
+            this.$el.find(".edit-session-title").addClass('hide');
+
+            this.$el.find(".session-title").text("");
+            this.$el.find(".session-title").text(title);
+            this.$el.find(".session-title-container").show();
+        }
+    },
+});
+
+
+// View for not approved sessions
+views.TopicView = Backbone.Marionette.ItemView.extend({
+    template: '#topic-template',
+    className: 'topic',
+    firstUserView: null,
+
+    ui: {
+        vote: '.btn-vote',
+        approve: '.approve',
+        deleteButton: '.delete',        // delete is reserved word
+        userDetails: '#user-details'
+    },
+
+    events: {
+        'click .btn-vote':'vote',
+        'click .approve':'approve',
+        'click .delete':'delete',
+        'click h3':'headerClick',
+        'click .btn-edit-topic': 'invokeEditTopicInput',
+        'change #edit-topic':'editTopicTitle',
+        'keypress #edit-topic':'callEditTopicTitle'
+    },
+
+    initialize: function() {
+        this.listenTo(this.model, 'change:approved', this.render, this);
+        this.listenTo(this.model, 'change:votes', this.render, this);
+        this.listenTo(this.model, 'change:title', this.render, this);
+    },
+
+    onRender: function() {
+        $('.tooltip').hide();
+        $('[data-toggle="tooltip"]').tooltip();
+
+        var start = new Date().getTime();
+
+        this.$el.attr("data-session-id", this.model.id);
+        // mostly just show/hide pieces of the view depending on
+        // model state.
+        this.$el.removeClass("live");
+        this.$el.removeClass("hide");
+
+        if (!this.model.get("approved")) {
+            this.$el.addClass("live");
+        } else {
+            this.$el.addClass("hide");
+        }
+
+        //When proposed field is empty for a session (most likely it 
+        //will happen for previous sessions where we didn't store 
+        //proposedBy field) add and remove bottom padding to 
+        //user details div
+
+        if(this.model.get("proposedBy")) {
+            this.ui.userDetails.addClass("bottom-padding");
+        } else {
+            this.ui.userDetails.removeClass("bottom-padding");
+        }
+
+        //For participants who proposed a session, show delete button 
+        //, hide approve button from the topic template and position
+        // delete button
+
+        if(!IS_ADMIN && (this.model.get("proposedBy") && 
+                USER.id === this.model.get("proposedBy").id)) {
+            this.ui.approve.hide();
+            this.ui.deleteButton.addClass("pos-admin-delete");
+        }
+
+        this.ui.vote.find(".text").text(this.model.get("votes"));
+
+    },
+
+    destroy: function() {
+        this.model.destroy();
+    },
+
+    delete: function() {
+        //Hide tooltip without rendering the view
+        $(".tooltip").hide();
+
+        this.options.transport.send("delete-session", {
+            id: this.model.id, roomId: this.options.event.getRoomId()
+        });
+    },
+
+    vote: function() {
+        this.options.transport.send("vote-session", {
+            id: this.model.id, 
+            roomId: this.options.event.getRoomId(),
+            vote: parseInt(this.model.get("votes")) + 1,
+        });
+
+    },
+
+    approve: function() {
+        this.options.transport.send("approve-session", {
+            id: this.model.id,
+            roomId: this.options.event.getRoomId(),
+            approve: true
+        });
+    },
+
+    callEditTopicTitle: function(event) {
+        var code = (event.keyCode ? event.keyCode : event.which);
+        
+        if (code == 13) { //Enter keycode                        
+            event.preventDefault();
+
+            this.editTopicTitle();
+        }
+    },
+
+    invokeEditTopicInput: function() {
+        this.$el.find("#edit-topic").val(this.model.get("title"));
+
+        this.$el.find(".topic-title-container").hide();
+        this.$el.find(".edit-topic-title").addClass('show');
+    },
+
+    editTopicTitle: function() {
+        var title = this.$el.find("#edit-topic").val();
+
+        if(title.length > 80) {    
+            this.$el.find(".edit-topic-warning").removeClass('hide');
+            this.$el.find(".edit-topic-warning").addClass('show');
+            this.$el.find(".edit-topic-warning").text("Title cannot be left blank");
+            return;
+        } else {
+
+            this.options.transport.send("edit-session", {
+                title: title,   
+                id: this.model.id,
+                roomId: this.options.event.getRoomId(),
+            });
+
+            this.$el.find(".edit-topic-warning").removeClass('show');
+            this.$el.find(".edit-topic-warning").addClass('hide');
+
+            this.$el.find(".edit-topic-title").removeClass('show');
+            this.$el.find(".edit-topic-title").addClass('hide');
+
+            this.$el.find(".topic-title").text("");
+            this.$el.find(".topic-title").text(title);
+            this.$el.find(".topic-title-container").show();
+
+        }
+    },
 });
 
 // The list view contains all the individual session views. We don't
@@ -207,16 +475,68 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     template: "#session-list-template",
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
+    participantProposedSession: _.template($("#session-participant-proposed-template").html()),
+
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
+
     id: "session-list",
 
-    itemViewOptions: function() {
-        return {event: this.options.event, transport: this.options.transport};
+    initialize: function() {
+        this.renderControls();
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+    },
+
+    itemViewOptions: function() {        
+        return {
+            event: this.options.event, transport: this.options.transport
+        };
+    }, 
+    
+    renderControls: function() {    
+        this.$el.html(this.participantProposedSession());
+    },
+
+    onRender: function() { 
+        if(this.options.event.get("adminProposedSessions")) {
+            $("#btn-propose-session").addClass('hide');
+            $("#btn-propose-session").removeClass('show');
+        } else {
+            $("#btn-propose-session").addClass('show');
+            $("#btn-propose-session").removeClass('hide');
+        }
     }
 });
 
+// The list view contains all the individual topic views
+views.TopicListView = Backbone.Marionette.CollectionView.extend({
+    template: "#topic-list-template",
+    itemView: views.TopicView,
+    itemViewContainer: '#topic-list-container',
+
+    id: "topic-list",
+
+    initialize: function() {
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+    },
+
+    itemViewOptions: function() {
+        return {
+            event: this.options.event, transport: this.options.transport
+        };
+    },
+
+    onRender: function() {
+
+        if(this.options.event.get("adminProposedSessions")) {
+            $("#topic-list").hide();
+        } else {
+            $("#topic-list").show();
+        }
+    },
+
+});
 
 // UserViews are the little square profile pictures that we use throughout
 // the app to represent users.
@@ -237,6 +557,7 @@ views.UserView = Backbone.Marionette.ItemView.extend({
 
     onRender: function() {
         // add in the tooltip attributes
+
         if(this.model.isAdminOf(this.options.event)) {
              this.$el.addClass("admin");
         }
@@ -285,8 +606,14 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click .add-url-to-message': 'addUrlToSessionMessage',
         'change #session_message': 'updateSessionMessage',
         'keydown #session_message': 'updateSessionMessage',
-        'keyup #session_message': 'updateSessionMessage'
+        'keyup #session_message': 'updateSessionMessage',
+        'click #send-email-button': 'sendFollowupEmail',
+        'click #submit-contact-info': 'submitContactInfo',
+        'click #btn-propose-session': 'proposeSessionDialog',
+        'click #propose': 'proposeSession', 
+        'input .input-topic-title': 'fillTopicPreview',
     },
+
     addUrlToSessionMessage: function(event) {
         event.preventDefault();
         var el = $("#message-sessions-modal textarea");
@@ -299,6 +626,84 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             _.escape(formatSessionMessage($("#session_message").val()))
         );
     },
+
+    fillTopicPreview: function(event) {
+        event.preventDefault();
+
+        var title = $(".input-topic-title").val();
+        var scope = $("#propose-session-modal");
+
+        if(title.length > 80 || title.length === 0 || title === "") {    
+            scope.modal('show');
+            $(".proposed-title-validate-error", scope).addClass('show');
+            $(".proposed-title-validate-error", scope).removeClass('hide');
+
+            if(title.length > 80)
+                $(".proposed-title-validate-error", scope).text("Title should be less than 80 characters");
+            else if (title.length === 0 || title === "")
+                $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
+
+            return;
+        } 
+
+        $(".title-preview").text("");
+        $(".title-preview").text(title);
+        $(".proposed-title-validate-error", scope).removeClass('show');
+        $(".proposed-title-validate-error", scope).addClass('hide');
+
+    },
+
+    proposeSession: function(event) {
+        event.preventDefault();
+        
+        var scope = $("#propose-session-modal");
+        var title = $(".input-topic-title").val();
+
+        if(title.length > 80 || title.length === 0 || title === "") {    
+            scope.modal('show');
+
+            $(".proposed-title-validate-error", scope).removeClass('hide');
+            $(".proposed-title-validate-error", scope).addClass('show');
+
+            if(title.length > 80) {
+                $(".proposed-title-validate-error", scope).text("Title should be less than 80 characters");
+            }
+
+            else if (title.length === 0 || title === "") {
+                $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
+            }
+
+            return;
+        } 
+
+        //Force sessions type to be "simple"
+        var activities = [];
+        activities.push({type: "about", autoHide: true});
+
+        this.options.transport.send("create-session", {
+            title: title,
+            description:"",
+            activities: activities,
+            roomId: this.options.event.getRoomId(),
+            approved: false,
+        });
+
+        scope.modal('hide');
+
+        $(".title-preview").text("Your title will appear here");
+        $(".input-topic-title").val("");
+        $(".proposed-title-validate-error", scope).addClass('hide');
+        $(".proposed-title-validate-error", scope).removeClass('show');
+    },
+
+    closeDisconnected: function() {
+        $("#disconnected-modal").modal('hide');
+    },
+
+    proposeSessionDialog: function() {
+        $("#propose-session-dialog").modal('show');
+    },
+
     sendSessionMessage: function(event) {
         event.preventDefault();
         var val = $("#session_message").val();
@@ -327,6 +732,72 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 break;
         }
     },
+
+    submitContactInfo: function(event) {
+        event.preventDefault(); 
+        
+        var pc = {}; //Making an object for preferred contact 
+
+        var noShare = false;
+        var scope = $("#my-contact-info-modal");
+        pc.emailInfo = $("[name=email_info]", scope).val();
+        pc.twitterHandle = $("[name=twitter_handle]", scope).val();
+        pc.linkedinURL = $("[name=linkedin_url]", scope).val();
+        pc.noShare = $("[name=no-share]", scope).is(':checked');
+
+        if(!pc.emailInfo && !pc.twitterHandle && !pc.linkedinURL && !pc.noShare) {
+            $(".empty-contact-info-error", scope).addClass('show');
+            scope.modal('show');
+            return;
+        }
+
+        if (pc.emailInfo && !validate.validateEmail(pc.emailInfo)) {
+            $('#email_info', scope).addClass('contact-invalid-error');
+            scope.modal('show');
+            $(".email-validate-error", scope).addClass('show');
+            return;
+        }
+        if (pc.twitterHandle && !validate.validateTwitterHandle(pc.twitterHandle)) {
+            $('#twitter_handle', scope).addClass('contact-invalid-error');
+            scope.modal('show');
+            $(".twitter-validate-error", scope).addClass('show');
+            return;
+        }
+        if (pc.linkedinURL && !validate.validateLinkedIn(pc.linkedinURL)) {
+            $('#linkedin_url', scope).addClass('contact-invalid-error');
+            scope.modal('show');
+            $(".linkedin-validate-error", scope).addClass('show');
+            return;
+        }
+
+        if (validate.preferredContact(pc)) {
+            this.options.transport.send("store-contact", {
+                preferredContact: pc,
+                roomId: this.options.event.getRoomId()
+            });
+        } else {
+            alert("Error submitting details");
+        }
+
+        //Hiding and showing the error classes
+        $(".empty-contact-info-error", scope).removeClass('show');
+        $(".empty-contact-info-error", scope).addClass('hide');
+
+        $(".email-validate-error", scope).removeClass('show');
+        $(".email-validate-error", scope).addClass('hide');
+
+        $(".twitter-validate-error", scope).removeClass('show');
+        $(".twitter-validate-error", scope).addClass('hide');
+
+        $(".linkedin-validate-error", scope).removeClass('show');
+        $(".linkedin-validate-error", scope).addClass('hide');
+
+        $('.contact-control', scope).removeClass('contact-invalid-error');
+
+        scope.modal('hide');
+
+    },
+
     createSession: function(event) {
         event.preventDefault();
         var scope = $("#create-session-modal");
@@ -338,6 +809,20 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             $(".join-cap-error", scope).show();
             return;
         }
+
+        if(title.length > 80 || title.length === 0 || title === "") {    
+            scope.modal('show');
+            $(".session-title-validate-error", scope).addClass('show');
+            $(".session-title-validate-error", scope).removeClass('hide');
+            
+            if(title.length > 80)
+                $(".session-title-validate-error", scope).text("Title should be less than 80 characters");
+            else if (title.length === 0 || title == "")
+                $(".session-title-validate-error", scope).text("Title cannot be left blank");
+
+            return;
+
+        } 
 
         var activities = [];
         switch (type) {
@@ -371,12 +856,29 @@ views.DialogView = Backbone.Marionette.Layout.extend({
             description:"",
             activities: activities,
             joinCap: joinCap,
-            roomId: this.options.event.getRoomId()
+            roomId: this.options.event.getRoomId(),
+            approved: true,
         });
+
         $("input[type=text]", scope).val("");
         $(".yt-error, .url-error, .join-cap-error", scope).hide();
         $(".error", scope).removeClass(".error");
         scope.modal('hide');
+
+        $(".session-title-validate-error", scope).addClass('hide');
+        $(".session-title-validate-error", scope).removeClass('show');
+    },
+
+    sendFollowupEmail: function(jqevt) {
+        jqevt.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: "/followup/event/" + this.options.event.id + "/"
+        }).fail(function(err) {
+            logger.error(err);
+            alert("Server error!");
+        });
     },
 
     closeDisconnected: function() {
@@ -397,7 +899,9 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #close-sessions':'closeSessions',
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
-        'click #admin-start-event': 'startEvent'
+        'click #admin-start-event': 'startEvent',
+        'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
+        'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
     },
 
     openSessions: function(jqevt) {
@@ -418,11 +922,13 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         jqevt.preventDefault();
         this._startStopEvent("start");
     },
+
     stopEvent: function(jqevt) {
         jqevt.preventDefault();
         this._startStopEvent("stop");
     },
-    _startStopEvent: function(action) {
+
+    _startStopEvent: function(action) { 
         $.ajax({
             type: 'POST',
             url: "/admin/event/" + this.options.event.id + "/" + action
@@ -432,17 +938,35 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         });
     },
 
+    disableParticipantProposedMode: function(jqevt) {
+        jqevt.preventDefault();
+        this.changeSessionsProposedMode(true);
+    },
+
+    enableParticipantProposedMode: function(jqevt) {
+        jqevt.preventDefault();
+        this.changeSessionsProposedMode(false);
+    },
+
+    changeSessionsProposedMode: function(action) {
+        this.options.transport.send("admin-proposed", {
+            roomId: this.options.event.getRoomId(),
+            isAdminSessionsOnly: action
+        });
+    },
+
     messageSessions: function(jqevt) {
         jqevt.preventDefault();
         $("#message-sessions-modal").modal('show');
-
     },
 
     serializeData: function() {
         return {
             event: this.options.event,
         };
-    }
+    },
+
+
 });
 
 // The UserColumn is the gutter on the right that shows who's connected to the
@@ -511,6 +1035,60 @@ views.UserListView = Backbone.Marionette.CompositeView.extend({
     }
 });
 
+views.NetworkListView = Backbone.Marionette.CompositeView.extend({
+    template: '#network-list-template',
+    itemView: views.UserView,
+    itemViewContainer: "#network-list-container",
+    id: "network-list",
+
+    initialize: function(options) {
+        this.listenTo(options.event.get("connectedUsers"), 'change add remove', function(model, coll, ops) {
+            if (!this.registered && ops.add && model.id === auth.USER_ID) {
+              this.listenTo(model, "change:networkList", this.render, this);
+              this.registered = true;
+              this.update();
+            }
+            var users = _.map(this.getMyNetworkList(), function(id) {
+              var user = this.options.event.get("connectedUsers").get(id);
+              return user ? user : null;
+            }.bind(this));
+            users = _.without(users, null);
+            this.collection.reset(users);
+        }.bind(this));
+    },
+
+    getMyNetworkList: function() {
+        var me = this.options.event.get("connectedUsers").get(auth.USER_ID);
+        var myList = me && me.get("networkList");
+        var thisEventList = myList && myList[this.options.event.id];
+        var withoutMe = _.without(thisEventList || [], auth.USER_ID);
+        return withoutMe;
+    },
+
+    itemViewOptions: function() {        
+        return {
+            event: this.options.event,
+            transport: this.options.transport
+        };
+    }, 
+    serializeData: function() {
+        var data = this.collection.toJSON();
+        data.numUsers = data.length;
+        return data;
+    },
+    update: function() {
+        this.render();
+    },
+
+    onRender: function() {
+        if(this.getMyNetworkList().length > 0) {
+          this.$el.show();
+        } else {
+          this.$el.hide(); 
+        }
+    }
+});
+
 // Manages chat message display. The layout piece sets up the differnt chat zones:
 // the area where we show messages, the space where we put users, and the space
 // where chat messages are entered.
@@ -521,7 +1099,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
     regions: {
         whiteboard: '#chat-whiteboard',
         chat:'#chat-messages',
-        presence: '#presence-gutter',
+        presenceNetworkGutter: '#presence-network-gutter',
+        presenceUserGutter: '#presence-user-gutter',
         chatInput: '#chat-input-region'
     },
 
@@ -532,26 +1111,37 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
             transport: this.options.transport,
             messages: this.options.messages
         });
+
         this.chatView = new views.ChatView({
             collection: this.options.messages,
             users: this.options.users,
-            event: this.options.event
+            event: this.options.event,
+            transport: this.options.transport
         });
+
         this.userListView = new views.UserListView({
             collection: this.options.users,
             event: this.options.event
         });
+
+        this.networkListView = new views.NetworkListView({
+            collection: new models.UserList,
+            event: this.options.event
+        });
+
         this.chatInputView = new views.ChatInputView({
             event: this.options.event,
-            transport: this.options.transport
+            transport: this.options.transport    
         });
+
     },
 
     onRender: function() {
         this.whiteboard.show(this.whiteboardView);
         this.chat.show(this.chatView);
-        this.presence.show(this.userListView);
-        this.chatInput.show(this.chatInputView);
+        this.presenceNetworkGutter.show(this.networkListView);
+        this.presenceUserGutter.show(this.userListView); 
+        this.chatInput.show(this.chatInputView); 
     }
 });
 
@@ -662,11 +1252,13 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
         var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
+
             this.options.transport.send("chat", {
                 text: msg,
                 postAsAdmin: postAsAdmin,
                 roomId: this.options.event.getRoomId()
             });
+
             this.ui.chatInput.val("");
         }
 
@@ -686,79 +1278,136 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
     }
 });
 
+views.AtNamePopover = Backbone.View.extend({
+  tagName: 'span',
+  template: _.template($('#chat-atname-template').html()),
+  popoverContentTemplate: _.template($("#chat-atname-popover-content-template").html()),
+  popoverTitleTemplate: _.template($("#chat-atname-popover-title-template").html()),
+
+  initialize: function(options) {
+      this.user = options.user;
+      this.mentioned = options.mentioned;
+      this.event = options.event;
+      this.linkText = options.linkText
+      this.transport = options.transport;
+      if (this.user) {
+        this.listenTo(this.user, "change:networkList", this.render);
+      }
+      _.bindAll(this, "handlePopovers");
+      $(document).on("click", this.handlePopovers);
+  },
+  remove: function() {
+      $(document).off("click", this.handlePopovers);
+      Backbone.View.prototype.remove.apply(this, arguments);
+  },
+  handlePopovers: function(event) {
+      // We use this rather than a regular "events" Backbone listener for two
+      // reasons:
+      // 1. We want to clear popovers on any click outside.
+      // 2. We want to draw the popover at the body context, so that it shows
+      // above other elements like the nav bar. Consequently, it's out of scope
+      // of this.$.
+      if (this._popoverOpen) {
+        if ($(event.target).is(".add-remove-network")) {
+          this.addRemoveNetwork(event);
+        }
+        this.$("[data-toggle='popover'][aria-describedby]").popover('hide');
+        this._popoverOpen = false;
+      }
+  },
+  isInNetwork: function() {
+      var networkList = this.user && (this.user.get("networkList") || {})[this.event.id];
+      return !!(networkList && _.contains(networkList, this.mentioned.id));
+  },
+  render: function() {
+    var context = {
+      isMe: this.user && this.user.id === this.mentioned.id,
+      inNetwork: this.isInNetwork(),
+      linkText: this.linkText,
+      mentioned: this.mentioned.toJSON()
+    };
+    context.popoverContent = this.popoverContentTemplate(context);
+    context.title = this.popoverTitleTemplate(context);
+    this.$el.html(this.template(context))
+    this.$("[data-toggle='popover']").popover({
+      trigger: "click",
+      container: "body",
+      placement: "top",
+      html: true
+    }).on("shown.bs.popover", function() {
+      this._popoverOpen = true;
+    }.bind(this));
+  },
+  addRemoveNetwork: function(event) {
+    event.preventDefault();
+    var userId = $(event.target).attr("data-user-id");
+    this.transport.send("change-networklist", {
+      roomId: this.event.getRoomId(),
+      atNameUserId: userId
+    });
+  }
+});
+
 // The view for an individual chat message.
 views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     template: '#chat-message-template',
-    atnameTemplate: _.template($("#chat-atname-template").html()),
     className: 'chat-message',
     tagName: 'li',
-
     initialize: function() {
         Backbone.Marionette.ItemView.prototype.initialize.apply(this, arguments);
         var msg = _.escape(this.model.get("text"));
         msg = utils.linkify(msg);
-        msg = this.atify(msg);
-        this.model.set("text", msg);
+        // Get a list of dom elements that include popover handling for @-names
+        var contents = this.atify(msg);
+        this.model.set("contents", contents);
     },
     atify: function(msg) {
-      function matchAll(regex, string) {
-        if (!regex.global) {
-          throw new Error("RegEx must have global flag to use matchAll");
-        }
-        var match = null;
-        var matches = [];
-        while (match = regex.exec(string)) {
-          matches.push(match);
-        }
-        return matches;
-      };
-      function normalize(name) {
-        return name.replace(/\s/g, "").toLowerCase();
-      };
-      function quoteRegExp(pattern) {
-        return pattern.replace(/([.?*+^$[\]\\(){}|-])/g, "\\$1");
-      };
-      function replaceAtName(msg, atname, replacement) {
-        return msg.replace(new RegExp("(" + quoteRegExp(atname) + ")", "gi"),
-                           replacement);
-      };
+      var selfMentioned = false;
 
-      var matches = matchAll(/@([a-zA-Z0-9]+)/g, msg);
-      var selfName = normalize(auth.USER_NAME);
-      var users = this.options.users;
-      _.each(matches, _.bind(function(match) {
-        // Is it referring to ourselves?
-        var atname = normalize(match[1]);
-        if (selfName.indexOf(atname) !== -1) {
-          msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
-            isMe: true,
-            displayName: auth.USER_NAME
-          })));
-          var text = "✉ Message! ";
-          var interval = setInterval(function() {
-            if (document.title.indexOf(text) === 0) {
-              document.title = document.title.replace(text, "");
-            } else {
-              document.title = text + document.title;
-            }
-          }, 500);
-          setTimeout(function() {
-            document.title = document.title.replace(text, "");
-            clearTimeout(interval);
-          }, 5000);
-        } else {
-          var user = users.find(function(user) {
-            return normalize(user.get("displayName")).indexOf(atname) !== -1;
-          });
-          if (user) {
-            msg = replaceAtName(msg, "@" + atname, $.trim(this.atnameTemplate({
-              isMe: false,
-              user: user
-            })));
-          }
+      var contents = atname.mapAtNames(msg, this.options.users, _.bind(function(part, mentioned) {
+        if (mentioned === null) {
+          return "<span>" + part + "</span>";
         }
+        if (mentioned.id === auth.USER_ID) {
+          selfMentioned = true;
+        }
+
+        // Construct a popover
+        var popoverViewArgs = {
+          user: this.options.users.get(auth.USER_ID),
+          linkText: part,
+          mentioned: mentioned,
+          event: this.options.event,
+          transport: this.options.transport
+        };
+        var popoverView = new views.AtNamePopover(popoverViewArgs);
+        popoverView.render();
+
+        return popoverView.el;
+
       }, this));
-      return msg;
+
+      if (selfMentioned) {
+        this.flashTitleBar();
+      }
+
+      return contents;
+    },
+
+    flashTitleBar: function() {
+      var text = "✉ Message! ";
+      var interval = setInterval(function() {
+        if (document.title.indexOf(text) === 0) {
+          document.title = document.title.replace(text, "");
+        } else {
+          document.title = text + document.title;
+        }
+      }, 500);
+
+      setTimeout(function() {
+        document.title = document.title.replace(text, "");
+        clearTimeout(interval);
+      }, 5000);
     },
 
     // We want to use shortNames so we intercept this process to make the short
@@ -766,7 +1415,6 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     // call object methods during that process.
     serializeData: function() {
         var model = this.model.toJSON();
-
         // if we have a user object (ie if we're not a system generated
         // message) then convert its name to the short display name.
         if(this.model.has("user")) {
@@ -781,7 +1429,7 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
-
+        this.$(".contents").html(this.model.get("contents"));
         if (!this.model.has("user")) {
             // mark this chat message as a system message, so we can
             // display it differently.
@@ -792,10 +1440,9 @@ views.ChatMessageView = Backbone.Marionette.ItemView.extend({
 
         if (this.model.get("past")) {
             this.$el.addClass("past");
-        }
-        this.$el.find("[data-toggle='popover']").popover({html: true});
-        console.log
-    }
+        }      
+    },
+
 });
 
 // This view contains all the ChatMessageViews and handles scrolling for them.
@@ -823,7 +1470,9 @@ views.ChatView = Backbone.Marionette.CompositeView.extend({
         return {
             model: model,
             isAdmin: new models.User(model.get("user")).isAdminOf(this.options.event),
-            users: this.options.users
+            users: this.options.users,
+            transport: this.options.transport,
+            event: this.options.event
         };
     },
     onBeforeItemAdded: function() {
