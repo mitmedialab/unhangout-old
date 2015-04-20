@@ -11,8 +11,8 @@
 
   <% for(var i=0; i < networkUsers.length; i++) { %>
 
-  <% var pc = networkUsers[i] && networkUsers[i].get("preferredContact"); %>
-  <% if(pc && !pc.noShare) { %>      
+  <% var nu = networkUsers[i] && networkUsers[i].get("preferredContact"); %>
+  <% if(nu && !nu.noShare) { %>      
       <br/><br/>
 
       Below you’ll find the names of the participants you chatted with in the lobby, as well as their preferred methods of contact. 
@@ -29,5 +29,5 @@
   <% _.each(networkUsers || {}, function(otherUser, index) { %>
   <% include _post_event_followup_email-otherparticipantsinfo.ejs %>
   <% }) %>
-  
+
 </table>
