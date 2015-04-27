@@ -91,9 +91,11 @@
                   <small>Type: <%= type %>, URL: <a href='<%= url %>'><%= url %></a></small>
                   <% } %>
               </div>
+              <% if (description) { %>
               <div>
                   <small><%= description %></small>
               </div>
+              <% } %>
           </div>
       <% }); %>
     <% } %>
