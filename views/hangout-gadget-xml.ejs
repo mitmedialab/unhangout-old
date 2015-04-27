@@ -61,10 +61,11 @@
                 }
                 this.error = prefixLogger(prefix, console.error, console);
             };
-            var logger = new Logger("GADGET", "error");
+            var log_level = (typeof(MOCK_DATA) == 'object') && "debug" || "error";
+            var logger = new Logger("GADGET", log_level);
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
-            var version = 10;
+            var version = 11;
             logger.info("Unhangout Facilitator version " + version);
             var load = function(event) {
                 if (event && !event.isApiReady) { return; }
@@ -84,6 +85,9 @@
                     logger.debug("Session ID from gapi.hangout.data:", sessionId);
                 }
                 var url = "<%= unhangoutBaseUrl %>/facilitator/" + sessionId + "/";
+                logger.debug("BASE URL", "<%= unhangoutBaseUrl %>");
+                logger.debug("FACILITATOR URL", url);
+
                 // Create the session iframe which will handle the rest.
                 iframe.src = url;
                 iframe.width = "100%";
@@ -106,6 +110,8 @@
                     userId: userId,
                     youtubeId: gapi.hangout.onair.getYouTubeLiveId()
                 };
+                logger.debug("URL ARGS", urlArgs);
+
                 var pollCount = 0;
 
                 // Poll the inner iframe with our data until it ack's.
