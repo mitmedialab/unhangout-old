@@ -26,7 +26,6 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
         /* Mock Mandrill's API here */
 
         mandrill.Mandrill = function(apiKey) {
-
             this.messages = {
                 send: function(messageObj) {
                     outbox.push(messageObj.message);
@@ -51,77 +50,8 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
     });
 
 
-    // Set up the event with history and user profile settings for testing
-    // followup emails
-    function prepareEventAndUsers(event) {           
-        var session = event.get("sessions").at(0);
-        var session2 = event.get("sessions").at(1);
-        session.set("approved", true);
-        session2.set("approved", true);
-
-        var users = {};
-        users.noShare = common.server.db.users.get(0);
-        users.noShare.set({
-          displayName: "NoShareUser",
-          picture: "http://pldb.media.mit.edu/face/srishti",
-          preferredContact: {
-            noShare: true,
-            emailInfo: "dontshareme@example.com",
-            twitterHandle: "dontshareme",
-            linkedinURL: "http://linkedin/dontshareme"
-          }
-        });
-
-        users.emailOnly = common.server.db.users.get(1);
-        users.emailOnly.set({
-          displayName: "EmailOnlyUser",
-          picture: "https://lh3.googleusercontent.com/-OP7MAxbSCvs/AAAAAAAAAAI/AAAAAAAAAEA/js2MqRDWiJk/photo.jpg",
-          preferredContact: {
-            emailInfo: "unhangout.developer@gmail.com",
-          }
-        });
-
-        users.emailAndTwitter = common.server.db.users.get(2);
-        users.emailAndTwitter.set({ 
-          displayName: "EmailAndTwitterUser",
-          picture: "http://lh4.googleusercontent.com/-8NHi4O5-AF0/AAAAAAAAAAI/AAAAAAAAAAA/8kJJNYEwztM/s32-c/photo.jpg",
-          preferredContact: {
-            emailInfo: "jules.schmulz@gmail.com",
-            twitterHandle: "JulesSchmulz",
-          }
-        });
-
-        users.linkedInOnly = common.server.db.users.get(3);
-        users.linkedInOnly.set({
-          displayName: "LinkedInOnlyUser",
-          preferredContact: {
-            linkedinURL: "https://www.linkeedin.com/doesanyonereallyusethis"
-          }
-        });
-
-        users.superuser1 = common.server.db.users.findWhere({"sock-key": "superuser1"});
-
-        // Set up event history such that users shared sessions with each other.
-        var history = {event: {}, sessions: {}};
-        history.event[users.noShare.id] = {start: 0, total: 1000};
-        history.event[users.emailOnly.id] = {start: 0, total: 1000};
-        history.event[users.emailAndTwitter.id] = {start: 0, total: 1000};
-        history.event[users.linkedInOnly.id] = {start: 0, total: 1000};
-        history.event[users.superuser1.id] = {start: 0, total: 1000};
-        var sessHist = history.sessions[session.id] = {};
-        sessHist[users.noShare.id] = {start: 0, total: 2345};
-        sessHist[users.emailOnly.id] = {start: 0, total: 2345};
-        sessHist[users.linkedInOnly.id] = {start: 0, total: 2345};
-        var sessHist2 = history.sessions[session2.id] = {};
-        sessHist[users.emailAndTwitter.id] = {start: 0, total: 2345};
-        sessHist[users.noShare.id] = {start: 0, total: 2345};
-
-        event.set("history", history);
-        return users;
-    };
-
     it("Is prompted to login when unauthenticated", function(done) {
-        var users = prepareEventAndUsers(event);
+        var users = common.prepareFollowupEventAndUsers(event);
         var url = common.URL + "/followup/event/" + event.id + "/participant_0";
 
         browser.get(url);
@@ -158,7 +88,7 @@ describe("POST EVENT FOLLOWUP EMAIL (BROWSER)", function() {
     });
 
     it("Super User sends followup emails", function(done) {
-        var users = prepareEventAndUsers(event);
+        var users = common.prepareFollowupEventAndUsers(event);
         
         browser.mockAuthenticate("superuser1");
         //Superuser goes to the event page.
