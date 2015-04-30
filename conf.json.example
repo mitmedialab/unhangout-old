@@ -35,5 +35,8 @@
     "TESTING_SELENIUM_PATH": "bin/selenium-server-standalone.jar",
     "TESTING_SELENIUM_VERBOSE": false,
     "TESTING_FIREFOX_BIN": null,
-    "MANDRILL_API_KEY": "...mandrill api key..."
+    "MANDRILL_API_KEY": "...mandrill api key...",
+
+    "CUSTOM_CSS_FILES": [],
+    "CUSTOM_FACILITATOR_CSS_FILES": []
 }

@@ -133,6 +133,11 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
   - ``TESTING_SELENIUM_PATH``: The path to "selenium-server-standalone.jar",
     required to run tests with selenium.
 
+  - ``CUSTOM_CSS_FILES`` and ``CUSTOM_FACILITATOR_CSS_FILES``: An array of
+    paths to any custom CSS to include for both the main site and the
+    hangout facilitator gadget, respectively. Each path is injected into the
+    "href" attribute of a CSS declaration following the default declarations.
+
 E. Making changes to the codebase
 ---------------------------------
 

@@ -1,5 +1,10 @@
 <% include _header.ejs %>
 <link rel='stylesheet' type='text/css' href='/public/css/facilitator.css' />
+<% if (customFacilitatorCssFiles) { %>
+<% customFacilitatorCssFiles.forEach(function(file) { %>
+    <link href="<%= file %>" media="screen, projection" rel="stylesheet" type="text/css">
+<% }); %>
+<% } %>
 
 <% if (!session) { %>
     <h2>Unhangout Facilitator</h2>
