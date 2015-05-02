@@ -4,7 +4,7 @@ Setting up the development environment
 Unhangout is an un-conference style platform for organizing Google hangout sessions. Following are the steps for 
 setting up the development environment on Ubuntu/Debian machine.
 
-A. Installing node.js (any version)
+A. Installing node.js on Debian (any version)
 -----------------------------------
 
 Update your system
@@ -43,7 +43,8 @@ To check if the node is installed properly
 
     $ node -v 
     $ v0.9.9
-     
+
+Note that many Linux distributions have package managers that can take care of all this for you with one command, see the [node.js wiki page](https://github.com/joyent/node/wiki/Installing-Node.js-via-package-manager) for more information.
     
 B. Cloning the Repository.
 --------------------------
@@ -57,7 +58,11 @@ C. Install prerequisites.
 
 Install redis:
 
+On Debian/Ubuntu and variants:
     $ sudo apt-get install redis-server 
+
+On CentOS/RHEL and variants:
+    $ sudo yum install redis
     
 Install the required dependencies in local node_modules folder
 
@@ -93,7 +98,10 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
   - ``UNHANOGUT_REDIS_DB`` is an index number pointing to the redis database to
     use. By default, we use 0 for production.  The unit tests use 1, and will
     destroy data there.
-  - ``UNHANGOUT_HANGOUT_APP_ID`` is the Google app ID for our hangout gadget.
+  - ``UNHANGOUT_HANGOUT_APP_ID`` The default is the Google app ID for our
+    hangout gadget -- if you're rolling your own installation, you'll need to
+    create your own Google Hangout app and provide the ID here -- see the
+    *Hangout Plugins* section of [DEVELOPMENT.md](DEVELOPMENT.md).
   - ``UNHANGOUT_USE_SSL``: if true, the server will run with SSL.  We strongly
     recommend running the unhangout server with SSL, even in development (you
     can use ``https://localhost:7777/``).  Google Hangouts are always run over
@@ -101,18 +109,20 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
     to refuse to send requests, which causes a number of insidious issues. 
   - ``UNHANGOUT_PRIVATE_KEY`` and ``UNHANGOUT_CERTIFICATE`` are the private key
     and certificate to use for SSL.  For development purposes, a self-signed
-    certificate will work fine. These instructions from Heroku are quite good:
-    https://devcenter.heroku.com/articles/ssl-certificate-self If you follow
-    those instructions, you will have two resulting files:
+    certificate will work fine.
+    [These instructions from Heroku](https://devcenter.heroku.com/articles/ssl-certificate-self) are quite good:
+    If you follow those instructions, you will have two resulting files:
       - server.key is your private key, move it to `ssl/` and set the path to that file in UNHANGOUT_PRIVATE_KEY
       - server.crt is your certificate, move it to `ssl/` and set the path to that file in UNHANGOUT_CERTIFICATE
 
     For production purposes, you will need to obtain a certificate signed by a
-    known certificate authority. Some providers (such as StartSSL) offer free
-    SSL certificates that are recognized by major browsers.  The Heroku
-    instructions for SSL certificates will show you how to generate a
-    certificate signing request, which you will provide to an SSL issuer:
-    https://devcenter.heroku.com/articles/ssl-endpoint#acquire-ssl-certificate
+    known certificate authority. Some providers (such as
+    [StartSSL](http://www.startssl.com)) offer free
+    SSL certificates that are recognized by major browsers.  The [Heroku
+    instructions for SSL certificates](https://devcenter.heroku.com/articles/ssl-endpoint#acquire-ssl-certificate)
+    will show you how to generate a certificate signing request, which you
+    will provide to an SSL issuer.
+
 
   - ``HANGOUT_REDIRECT_HTTP``: This will start a separate HTTP server that will
     redirect any requests to their HTTPS equivalent. This presumes that you're
@@ -165,7 +175,7 @@ Make desired changes in the code base and push them to github <br>
 
     $ git add file-name
     $ git commit -m "commit-message"
-    $ git push origin branch-name
+    $ git push -u origin branch-name
 
 Go to github and send a pull request. 
 
