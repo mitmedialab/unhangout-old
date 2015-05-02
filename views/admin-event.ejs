@@ -2,7 +2,11 @@
 <% include _navbar.ejs %>
 
 <div class="container create-unhangout-container">
-    <h2>Create an Unhangout <small>It's free and always will be.</small></h2>
+    <% if (event.id) { %>
+        <h2>Update <%= event.get("title") %></h2>
+    <% } else { %>
+        <h2>Create an Unhangout <small>It's free and always will be.</small></h2>
+    <% } %>
 
     <div class="event-form-container">
     <br/>
