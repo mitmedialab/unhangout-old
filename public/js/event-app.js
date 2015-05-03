@@ -179,6 +179,9 @@ $(document).ready(function() {
         // obviously this is not secure, but any admin requests are re-authenticated on
         // the server. Showing the admin UI is harmless if a non-admin messes with it.
         if(IS_ADMIN) {
+            if (NUM_HANGOUT_URLS_WARNING > 0 && NUM_HANGOUT_URLS_AVAILABLE < NUM_HANGOUT_URLS_WARNING) {
+                $("#no-urls-warning").modal('show');
+            }
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, transport: trans
             });

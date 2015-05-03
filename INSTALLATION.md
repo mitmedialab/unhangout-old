@@ -140,6 +140,11 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
     writeable by the user running the Node process. Relative paths will be
     appended to the application root. Default is ``logs``.
 
+  - ``UNHANGOUT_HANGOUT_URLS_WARNING``: Throw a warning dialog on event pages
+    when the number of farmed Hangout URLs available (as detailed in
+    [DEVELOPMENT.md](DEVELOPMENT.md), Hangout Creation section) falls below
+    this number. Default is 10, set to 0 to disable the warning.
+
   - ``TESTING_SELENIUM_PATH``: The path to "selenium-server-standalone.jar",
     required to run tests with selenium.
 

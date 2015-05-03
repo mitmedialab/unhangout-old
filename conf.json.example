@@ -32,6 +32,7 @@
 
     "EMAIL_LOG_RECIPIENTS": ["sysadmin1@example.com"],
     "UNHANGOUT_LOG_DIR": "logs",
+    "UNHANGOUT_HANGOUT_URLS_WARNING": 10,
     "TESTING_SELENIUM_PATH": "bin/selenium-server-standalone.jar",
     "TESTING_SELENIUM_VERBOSE": false,
     "TESTING_FIREFOX_BIN": null,
