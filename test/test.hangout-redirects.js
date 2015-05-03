@@ -47,11 +47,19 @@ describe("HANGOUT REDIRECTS", function() {
     afterEach(common.standardShutdown);
 
     function checkRedirect(expected, user, done) {
+        // Set node environment to production.  In development/testing
+        // environments, redirects point to our mocked hangout rather than the
+        // real thing.  Here, we want to check the real thing.
+        var origNodeEnv = process.env.NODE_ENV;
+        process.env.NODE_ENV = "production";
         request.get(common.URL + session.getParticipationLink())
             .timeout(models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT + 2)
             .set("x-mock-user", user)
             .redirects(0)
             .end(function(res) {
+                // Restore node environment so we don't mess up the rest of the
+                // tests.
+                process.env.NODE_ENV = origNodeEnv;
                 expect(res.status).to.be(302);
                 expect(res.headers.location).to.be(expected);
                 done();
