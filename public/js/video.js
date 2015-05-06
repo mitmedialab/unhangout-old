@@ -76,7 +76,13 @@ video.YoutubeVideo = Backbone.View.extend({
                     onReady: this.onPlayerReady,
                     onStateChange: this.onPlayerStateChange
                 },
-                playerVars: { wmode: "transparent" }
+                playerVars: {
+                  wmode: "transparent",
+                  controls: 0,
+                  showinfo: 0,
+                  rel: 0,
+                  modestbranding: 1
+                }
             }
         });
         // Check if the YouTube API has loaded yet.  Load it if not.
