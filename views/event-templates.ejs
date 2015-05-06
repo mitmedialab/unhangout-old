@@ -1,7 +1,7 @@
 <% include _header.ejs %>
 <% include _navbar.ejs %>
 
-<div class="container" id="event-template-container">
+<div class="container event-template-container" id="event-template">
 
     <% while (data = flash.shift()) { %>
     <div class="alert alert-<%= data.type %>">
