@@ -1,6 +1,8 @@
 unhangout
 =========
 
+[![Join the chat at https://gitter.im/unhangout/unhangout](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/unhangout/unhangout?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A platform for running large scale online un-conference-style events using Google Hangouts for many simultaneous small sessions..
 
 You can read more about the vision and motivation for this project here: http://dmlcentral.net/blog/philipp-schmidt/unhangouts
