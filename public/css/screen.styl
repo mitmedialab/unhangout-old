@@ -2505,6 +2505,61 @@ user-admin-border-size = 2px
   position: absolute;
 }
 
+/* ------------------------- FAQ CONTAINER --------------------------- */
+
+.faq-container {
+  padding-top: 30px;
+  padding-bottom: 30px;
+
+  .faq-list-item {
+    font-size: 1.3em;
+    line-height: 0.5em;
+  }
+
+  .faq-question-title {
+    font-size: 1.5em;
+  }
+
+  h3 {
+    font-weight: 400;
+    font-size: 28px;
+    color: #444;
+  }
+
+  .anchor {
+      display: block;
+      position: relative;
+      top: -80px;
+      visibility: hidden;
+  }
+
+  a {
+    text-decoration: none;
+    color: #444;
+  }
+
+  a:hover {
+    color: $event-links;
+  }
+
+  p {
+    font-size: 1.2em;
+    line-height: 1.4em;
+
+    font-family: "open sans",arial,sans-serif;
+
+    a {
+      color: $event-links;
+      text-decoration:none;
+    }
+
+    a:hover,a:focus {
+      text-decoration:underline;
+    }
+  }
+
+}
+
 /*-------------------------- PERMALINKS -------------------------------*/
 
 .permalink-footer {
