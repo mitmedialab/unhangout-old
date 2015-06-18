@@ -2712,26 +2712,46 @@ user-admin-border-size = 2px
     display: inline-block;
     position: relative;
     box-sizing: border-box;
-    width: 100px;
-    height: 100px;
+    width: 125px;
+    height: 125px;
+
     img {
       box-sizing: border-box;
       width: 100%;
       height: 100%;
       border: 1px $navbar solid;
-      border-radius: 5px;
+      border-radius: 1px;
     }
-    .overlay {
+
+    .overlay-small {
       box-sizing: border-box;
       position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 100px;
+      top: 120px;
+      width: 125px;
+      height: 30px;
+      padding-top: 5px;
+      padding-left: 10px;
       color: white;
-      text-align: center;
+      text-align: left;
       background-color: $navbar;
       border-radius: 0px 0px 3px 3px;
     }
+
+    .overlay-large {
+      box-sizing: border-box;
+      position: absolute;
+      top: 100px;
+      width: 125px;
+      height: 50px;
+      padding-top: 5px;
+      padding-left: 10px;
+      color: white;
+      text-align: left;
+      background-color: $navbar;
+      border-radius: 0px 0px 3px 3px;
+
+    }
+
   }
 }
 
