@@ -2706,9 +2706,11 @@ user-admin-border-size = 2px
   border-top: 1px #DfDfDf solid;
 }
 
-.participant-info {
+.team-info {
+
   position: relative;
-  .participant {
+
+  .team-member {
     display: inline-block;
     position: relative;
     box-sizing: border-box;
@@ -2723,35 +2725,29 @@ user-admin-border-size = 2px
       border-radius: 1px;
     }
 
-    .overlay-small {
-      box-sizing: border-box;
+    .overlay {
+      background-color: #2e7daa;
       position: absolute;
-      top: 120px;
-      width: 125px;
-      height: 30px;
-      padding-top: 5px;
-      padding-left: 10px;
-      color: white;
-      text-align: left;
-      background-color: $navbar;
-      border-radius: 0px 0px 3px 3px;
+      top: 0px;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+
+      .member-name {
+        margin: 10px;
+        font-size: 1.2em;        
+        font-weight: 400;
+        color: white;
+        letter-spacing: 0.01rem;
+        line-height: 1.2em;
+      }
     }
 
-    .overlay-large {
-      box-sizing: border-box;
-      position: absolute;
-      top: 100px;
-      width: 125px;
-      height: 50px;
-      padding-top: 5px;
-      padding-left: 10px;
-      color: white;
-      text-align: left;
-      background-color: $navbar;
-      border-radius: 0px 0px 3px 3px;
+  }
 
-    }
-
+  .team-member:hover .overlay {
+    color: white;
+    opacity: 1;
   }
 }
 
