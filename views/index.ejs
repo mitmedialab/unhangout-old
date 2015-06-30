@@ -132,28 +132,57 @@
 
                   <p>Currently only admin users can create new Unhangouts. We are a teeny tiny team, but if you let us know what you have in mind, we’ll see if we can help you make it happen.<br/><br/></p>
 
-                  <div class="form-group">
-                    <label class="control-label col-lg-3" for="title">Event Title</label>
+                    <div class="form-group">
+                        <label class="control-label col-lg-3" for="title">Event Title</label>
 
-                    <div class="col-lg-9 event-title">
-                      <input type="text" class="form-control" name="title" id="title">
+                        <div class="col-lg-9 event-title">
+                        <input type="text" class="form-control" name="title" id="title">
+                        </div>
+
                     </div>
 
-                  </div>
+                    <div class="form-group">
 
-                  <div class="form-group">
+                        <div class="col-lg-offset-3">
+
+                            <div class="alert alert-danger alert-dismissible event-title-validate-error hide" role="alert">
+
+                                <button type="button" class="close" data-dismiss="alert"><span class="sr-only">Close</span></button>
+                                
+                                Please enter at least 5 characters for event title
+
+                            </div> 
+                        </div> 
+                    </div>
+
+                    <div class="form-group">
                         <label class="control-label col-lg-3" for="description">Event Description</label>
 
                         <div class="col-lg-9 event-description">
                             <textarea class="form-control" name="description" id="description" rows="4"></textarea>
                         </div>
-                   </div>
+                    </div>
 
-                  <div class="modal-footer">
-                      <button class="btn btn-default" data-dismiss=
-                        "modal">Close</button>
-                      <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
-                  </div>
+                    
+                    <div class="form-group">
+
+                        <div class="col-lg-offset-3">
+
+                            <div class="alert alert-danger alert-dismissible event-desc-validate-error hide" role="alert">
+
+                                <button type="button" class="close" data-dismiss="alert"><span class="sr-only">Close</span></button>
+                                
+                                Please enter at least 100 characters for event description
+
+                            </div> 
+                        </div> 
+                    </div>
+
+                      <div class="modal-footer">
+                          <button class="btn btn-default" data-dismiss=
+                            "modal">Close</button>
+                          <button type="submit" id="submit-button" class="btn btn-primary">Submit</button>
+                      </div>
 
               </form>
             </div>
