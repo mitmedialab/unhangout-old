@@ -482,6 +482,8 @@ a.dropdown-toggle {
   background-color: $navbar;
 }
 
+
+
   
 /* ----------------COMMON ELEMENTS AND UTILITIES------------*/
 
@@ -2708,6 +2710,54 @@ user-admin-border-size = 2px
       width: 50%;
     }
   }
+
+
+  .participant-info {
+
+    position: relative;
+
+    .participant {
+      display: inline-block;
+      position: relative;
+      box-sizing: border-box;
+      width: 125px;
+      height: 125px;
+
+      img {
+        box-sizing: border-box;
+        width: 100%;
+        height: 100%;
+        border: 1px $navbar solid;
+        border-radius: 1px;
+      }
+
+      .overlay {
+        background-color: #2e7daa;
+        position: absolute;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+
+        .name {
+          margin: 10px;
+          font-size: 1.2em;        
+          font-weight: 400;
+          color: white;
+          letter-spacing: 0.01rem;
+          line-height: 1.2em;
+        }
+      }
+
+    }
+
+    .participant:hover .overlay {
+      color: white;
+      opacity: 1;
+    }
+}
+
+
 }
 
 .line {

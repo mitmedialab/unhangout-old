@@ -63,9 +63,9 @@
     <% _.each(session.get("connectedParticipants"), function(udata) { %>
         <div class='participant'>
             <% if (udata.link) { %><a href="<%= udata.link %>" target="blank"><% } %>
-            <img style='width: 100px; height: 100px' src="<%= udata.picture %>" alt='profile image' />
+            <img src="<%= udata.picture %>" alt='profile image' />
             <% if (udata.link) { %></a><% } %>
-            <span class="overlay"><%= udata.displayName %></span>
+            <div class="overlay"> <h4 class="name"><%= udata.displayName %></h4> </div>
         </div>
     <% }); %>
 
