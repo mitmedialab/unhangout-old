@@ -6,7 +6,7 @@ require([
 
 $(document).ready(function() {
 
-var users = new models.UserList(USER_DATA);
+var users = new models.ClientUserList(USER_DATA);
 var events = new models.EventList(EVENT_DATA);
 
 var UserRowView = Backbone.Marionette.ItemView.extend({
@@ -159,7 +159,7 @@ var UserTableView = Backbone.Marionette.CompositeView.extend({
         // Clone users so we can manipulate it later.
         this.limit = 20;
         this.filter = {};
-        this.collection = new models.UserList();
+        this.collection = new models.ClientUserList();
         this.applyFilters();
     },
     serializeData: function() {
