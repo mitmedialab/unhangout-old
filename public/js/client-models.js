@@ -26,6 +26,20 @@ models.ClientEvent = models.Event.extend({
     },
 });
 
+models.ClientUserList = models.UserList.extend({
+
+    initialize: function(options) {
+        models.UserList.prototype.initialize.call(this, options);
+    },
+
+    comparator: function(a, b) {
+        // Sort by displayName.
+        var a_name = a.get('displayName');
+        var b_name = b.get('displayName');
+        return a_name > b_name ? 1 : a_name < b_name ? -1 : 0;
+    }
+});
+
 return models;
 
 });
