@@ -96,6 +96,7 @@ models.Event = models.BaseModel.extend({
             organizer: "",
             shortName: null, // use this as a slug for nicer urls
             description: "",
+            imageURL: null,
             whiteboard: {message: null},
             open: false,
             connectedUsers: null,

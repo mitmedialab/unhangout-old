@@ -123,6 +123,17 @@
            
         </div>
 
+        <div class="form-group">
+            <label class="col-lg-2 control-label" for="inputImageURL">Event Image URL</label>
+
+            <div class="col-lg-9">
+                <input class="form-control" type="text" id="inputImageURL"
+                   placeholder="Enter an Image URL"
+                   name="imageURL"
+                   value="<%= event.get("imageURL") || "" %>"">
+            </div>
+        </div>
+
         <% if (user.isSuperuser()) { %>
             <div class="form-group<%= errors.overflowUserCap ? " error" : "" %>">
                 <label class="col-lg-2 control-label" for="overflowUsersCap">Overflow User Capacity</label>
