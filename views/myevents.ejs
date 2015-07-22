@@ -9,26 +9,42 @@
     <div class="row">
         <div id="events">
             <% events.forEach(function(event) { %>
-                <div class='myevents-event-row'>
-                    <div class='title'>
+                <div class='myevents-event-row col-xs-12'>
+                    
+                    <div class='title col-lg-1 col-md-2 col-sm-2 col-xs-4'>
+                        
                         <h4 style='display: inline;'>
                             <a href="/event/<%= event.id %>">
                                 <%= event.get("title").trim() || "[untitled]" %>
                             </a>
                         </h4>
 
-                        <% var date = event.get("dateAndTime"); %>
-                        <% if (date) { %>
+                    </div>
 
-                            <span class='date'>
-                                <%= moment(date).format("D MMM YYYY") %>
-                            </span>
-                        <% } %>
-                    </diV>
+                    <% var date = event.get("dateAndTime"); %>
+
+                    <% if (date) { %>
+
+                        <div class='date col-lg-1 col-xs-4'>
+                            <%= moment(date).format("D MMM YYYY") %>
+                        </div>
+
+                    <% } %>
+
+                    <div class='col-lg-offset-6 col-lg-4'>
+                        <a href="/admin/event/<%= event.id %>">
+                            <button class="btn btn-primary btn-edit-title col-lg-2"><i class="fa fa-pencil-square-o"></i></button>
+                        </a>
+
+                        <button class="btn btn-primary btn-add-admin col-lg-2"><i class="fa fa-plus"></i></button> 
+
+                    </div>
 
                 </div>
+
             <% }); %>
-        </div>
+
+        </div> 
 
         <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="myevents-create-new-event">Create an Unhangout</a></h3>
 
@@ -46,6 +62,7 @@
         <% } %>
 
     </div>
+
 </div>
 
 <%- requireScripts("/public/js/myevents.js") %>
