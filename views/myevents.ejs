@@ -5,8 +5,55 @@
 <div class='container myevents-container'>
     
     <h3>My Events</h3>
+
+    <div id='app'>
+        <div id='main'></div>
+    </div>
+
+    <script type='text/template' id='event-table'>
+
+        <table style='width: 100%;' class='event-table'>
+            <tbody></tbody>
+        </table>
+
+    </script>
+
+    <script type='text/template' id='event-row'>
+        <td> 
+            <div class='myevents-event-row col-xs-12'>
+                <div class='title col-lg-1 col-md-2 col-sm-2 col-xs-4'>
+                            
+                    <h4 style='display: inline;'>
+                        <a href="/event/{{- id }}">
+                            {{- title }} 
+                        </a>
+                    </h4>
+
+                </div>  
+
+                <div class='date col-lg-1 col-xs-4'>
+                    {{- dateAndTime }}
+                </div>
+
+                <div class='col-lg-offset-6 col-lg-4'>
+                    <a href="/admin/event/{{- id }}">
+                        <button class="btn btn-primary btn-edit-title col-lg-2"><i class="fa fa-pencil-square-o"></i></button>
+                    </a>
+
+                    <a href="">
+                        <button class="btn btn-primary btn-add-admin col-lg-2"><i class="fa fa-plus"></i></button> 
+                    </a>
+                </div>  
+
+            </div>      
+
+        </td>
+
+    </script>
+
+    <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="myevents-create-new-event">Create an Unhangout</a></h3>
        
-    <div class="row">
+    <!-- <div class="row">
         <div id="events">
             <% events.forEach(function(event) { %>
                 <div class='myevents-event-row col-xs-12'>
@@ -49,7 +96,7 @@
 
         <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="myevents-create-new-event">Create an Unhangout</a></h3>
 
-        <br/>
+        <br/> -->
         
         <% if (permalinkSessions) { %>
           <div>
