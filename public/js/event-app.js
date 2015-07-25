@@ -227,6 +227,8 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
+        this.adminButtonView.setEventStatusIndicator();
+
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {
