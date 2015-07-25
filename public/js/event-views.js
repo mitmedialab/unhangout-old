@@ -967,7 +967,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
 
     setEventStatusIndicator: function(jqevt) {
       var open = this.options.event.get('open');
-      var statusIndicator = $('#admin-button .status');
+      var statusIndicator = this.$el.find('.status');
       if (open) {
         statusIndicator.addClass('open');
         statusIndicator.removeClass('closed');
@@ -977,6 +977,10 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         statusIndicator.removeClass('open');
       }
       statusIndicator.show();
+    },
+
+    onRender: function() {
+      this.setEventStatusIndicator();
     },
 
     serializeData: function() {

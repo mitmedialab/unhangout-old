@@ -182,7 +182,6 @@ $(document).ready(function() {
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, transport: trans
             });
-            this.adminButtonView.setEventStatusIndicator();
 
             this.admin.show(this.adminButtonView);
         }
