@@ -182,6 +182,7 @@ $(document).ready(function() {
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, transport: trans
             });
+            this.adminButtonView.setEventStatusIndicator();
 
             this.admin.show(this.adminButtonView);
         }
@@ -226,8 +227,6 @@ $(document).ready(function() {
         $("#twitter_handle").val(USER.preferredContact.twitterHandle);
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
-
-        this.adminButtonView.setEventStatusIndicator();
 
     }, app);
 
