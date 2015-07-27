@@ -35,14 +35,20 @@
                     {{- dateAndTime }}
                 </div>
 
-                <div class='col-lg-offset-6 col-lg-4'>
+                <div class="col-lg-4 col-xs-4">
+                    {{ _.each(admins, function(admin) { }}
+                      <button class="btn btn-primary">{{- admin.id }} </button>
+                    {{ }); }}
+                </div>
+
+                <div class='col-lg-offset-2 col-lg-4'>
+
                     <a href="/admin/event/{{- id }}">
                         <button class="btn btn-primary btn-edit-title col-lg-2"><i class="fa fa-pencil-square-o"></i></button>
                     </a>
 
-                    <a href="">
-                        <button class="btn btn-primary btn-add-admin col-lg-2"><i class="fa fa-plus"></i></button> 
-                    </a>
+                    <button class="btn btn-primary add-remove-admin col-lg-2"><i class="fa fa-plus"></i></button> 
+                    
                 </div>  
 
             </div>      
@@ -117,33 +123,34 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Add admin</h4>
+                <h4 class="modal-title">Add/ Remove an admin from <font color="#2e7daa">{{- event.get("title") }} </font> event</h4>
             </div>
-            
+
             <div class="modal-body">
-                <form class="form-horizontal">
+                <form class='form-horizontal' action>
+            
                     <div class="form-group">
-                        <label class="control-group col-lg-8">
-                            Choose an event for {{- user.get("displayName") }} to administrate:
-                        </label>
-                        <div class="col-lg-4">
-                            <select name='event' class="form-control">
-                                {{ events.each(function(event) { }}
-                                    <option value='{{- event.id }}'>{{- event.get("title") }}</option>
-                                {{ }); }}
-                            </select>
+                    
+                        <div class="col-lg-9">
+                            <input class='filter-email form-control' type='text' placeholder='Enter the email address of an admin' value="" />
                         </div>
+
                     </div>
                 </form>
+
             </div>
 
             <div class='modal-footer'>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                
+                <button type="button" class="btn btn-primary remove" data-dismiss="modal">Remove</button>
+
                 <button type="button" class="btn btn-primary add" data-dismiss="modal">Add</button>
             </div>
-        </div>  
+        </div>
     </div>
 </script>
+
 
 <script type='text/javascript'>
     var USER_DATA = <%- JSON.stringify(users) %>;

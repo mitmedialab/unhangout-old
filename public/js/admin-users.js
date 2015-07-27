@@ -11,7 +11,7 @@ var events = new models.EventList(EVENT_DATA);
 
 var UserRowView = Backbone.Marionette.ItemView.extend({
     tagName: 'tr',
-    template: '#user-row',
+    template: '#user-row',  
     events: {
         'click input.superuser': 'setSuperuser',
         'click .add-event': 'addEvent',
@@ -187,7 +187,9 @@ var UserTableView = Backbone.Marionette.CompositeView.extend({
                 }
             }
             if (this.filter.name) {
+
                 var tokens = this.filter.name.toLowerCase().split(" ");
+
                 var search = (user.get("displayName") + " " +
                     _.pluck(user.get("emails"), "value").join(" ")).toLowerCase();
 
@@ -207,9 +209,11 @@ var UserTableView = Backbone.Marionette.CompositeView.extend({
             }
             return true;
         }, this));
+
         this.totalCount = models.length;
         this.collection.reset(models.slice(0, this.limit));
     },
+    
     onAfterItemAdded: function() {
         this.renderCounts();
     },
