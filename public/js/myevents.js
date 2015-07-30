@@ -1,20 +1,20 @@
 require([
-   "jquery", "underscore", "backbone", "client-models", "auth",
+   "jquery", "underscore", "backbone", "validate", "client-models", "auth",
    // plugins
    "backbone.marionette", "bootstrap", "underscore-template-config"
-], function($, _, Backbone, models, auth) {
+], function($, _, Backbone, validate, models, auth) {
 
 $(document).ready(function() { 
 
 	var users = new models.UserList(USER_DATA);
 	var events = new models.EventList(EVENT_DATA);
-	
+
 	var EventRowView = Backbone.Marionette.ItemView.extend({
 	    tagName: 'tr',
 	    template: '#event-row', 
 
 	    events: {
-	        'click .add-remove-admin': 'addRemoveAdmin'
+	        'click .add-remove-admin': 'invokeAddRemoveAdminModal'
     	},
 
     	modelEvents: {
@@ -25,7 +25,7 @@ $(document).ready(function() {
 	    	var userFilter = [];
 	    },
 
-    	addRemoveAdmin: function(jqevt) {
+    	invokeAddRemoveAdminModal: function(jqevt) {
 
     		jqevt.preventDefault();
 
@@ -35,66 +35,60 @@ $(document).ready(function() {
 	        modal.render();
 
 	        modal.on("add", _.bind(function(email) {
-	           	this.getUserForEmailFilter(email); 	
-
-	           	var user = users.find(function(user) {
-					if(user.get("id") ==  userFilter.get("id") ) {
-						return user;
-					}
-				});
-
-				var userId = user.get("id");
-
-	           	this.postUserData({
-	                action: "add-event-admin",
-	                userId: userId
-	            }, function() {
-	                event.addAdmin(userFilter);
-	                userFilter.trigger("change", userFilter);
-	            }, function(error) {
-	                alert("Server error");
-	                console.error(error);
-	            });
-
+	        	this.addRemoveAdmin(email, "add-event-admin");
 	    	}, this)); //add function
 
 	    	modal.on("remove", _.bind(function(email) {
-	           	this.getUserForEmailFilter(email); 	
-
-	           	var user = users.find(function(user) {
-					if(user.get("id") ==  userFilter.get("id") ) {
-						return user
-					} 
-				});
-
-				var userId = user.get("id");
-
-	           	this.postUserData({
-	                action: "remove-event-admin",
-	                userId: userId, 
-	            }, function() {
-	                event.removeAdmin(userFilter);
-	                userFilter.trigger("change", userFilter);
-	            }, function(error) {
-	                alert("Server error");
-	                console.error(error);
-	            });
-
+	           	this.addRemoveAdmin(email, "remove-event-admin");
 	    	}, this)); //remove function
     	},
 
-    	postUserData: function(data, success, error) {
-    		var post = _.extend({eventId: this.model.id}, data);
-	        
-	        $.ajax({
-	            type: 'POST',
-	            url: '/myevents/',
-	            data: post,
-	            success: success,
-	            error: error
-	        });
-    	},
+    	addRemoveAdmin: function(email, action) {  
 
+    		if(!email || !validate.validateEmail(email)) {
+    			$(".email-validate-error").addClass("show");
+
+    			if(email == "") {
+    				$(".email-validate-error").text("Email cannot be left blank");
+    			} else if (!validate.validateEmail(email)) {
+    				$(".email-validate-error").text("Please enter a valid email address");
+    			}	
+
+    			modal.addClass("show");
+    			return; 
+    		}
+
+    		var event = this.model;
+
+           	this.getUserForEmailFilter(email); 	
+
+           	var user = users.find(function(user) {
+				if(user.get("id") ==  userFilter.get("id") ) {
+					return user;
+				}
+			});
+
+			var userId = user.get("id");
+
+           	this.postUserData({
+                action: action,
+                userId: userId
+            }, function() {
+
+            	if(action == "add-event-admin") {
+                	event.addAdmin(userFilter);
+            	} else if (action == "remove-event-admin") {
+            		event.removeAdmin(userFilter);
+            	}
+
+                userFilter.trigger("change", userFilter);
+
+            }, function(error) {
+                alert("Server error");
+                console.error(error);
+            });
+    	},
+    	
     	getUserForEmailFilter: function(email) {
 
     		_.filter(users.models, _.bind(function(user) {
@@ -118,6 +112,19 @@ $(document).ready(function() {
 
         	); //models
     	},
+
+    	postUserData: function(data, success, error) {
+    		var post = _.extend({eventId: this.model.id}, data);
+	        
+	        $.ajax({
+	            type: 'POST',
+	            url: '/myevents/',
+	            data: post,
+	            success: success,
+	            error: error
+	        });
+    	},
+
 
     	onRender: function() {
 
@@ -216,5 +223,7 @@ $(document).ready(function() {
 
 $("[rel=popover]").popover({container: "body", placement: "left"});
 $("[title]").not("[rel=popover]").tooltip({container: "body"});
+
+
 
 });

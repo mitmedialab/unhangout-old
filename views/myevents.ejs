@@ -21,34 +21,33 @@
     <script type='text/template' id='event-row'>
         <td> 
             <div class='myevents-event-row col-xs-12'>
-                <div class='title col-lg-1 col-md-2 col-sm-2 col-xs-4'>
-                            
+                
+                <div class='title col-lg-2 col-md-2 col-sm-2 col-xs-4'>
+                    <a href="/admin/event/{{- id }}">
+                        <button class="btn btn-primary btn-edit-title col-lg-3"><i class="fa fa-pencil-square-o"></i></button>
+                    </a>
+                </div>
+
+                <div class='col-lg-6 col-md-2 col-sm-2 col-xs-4'>
                     <h4 style='display: inline;'>
                         <a href="/event/{{- id }}">
                             {{- title }} 
                         </a>
                     </h4>
 
-                </div>  
+                </div> 
 
-                <div class='date col-lg-1 col-xs-4'>
-                    {{- dateAndTime }}
-                </div>
-
-                <div class="col-lg-4 col-xs-4">
+                <!--<div class="col-lg-3 col-xs-4">
                     {{ _.each(admins, function(admin) { }}
+                      
                       <button class="btn btn-primary">{{- admin.id }} </button>
+
                     {{ }); }}
-                </div>
 
-                <div class='col-lg-offset-2 col-lg-4'>
+                </div> -->
 
-                    <a href="/admin/event/{{- id }}">
-                        <button class="btn btn-primary btn-edit-title col-lg-2"><i class="fa fa-pencil-square-o"></i></button>
-                    </a>
-
-                    <button class="btn btn-primary add-remove-admin col-lg-2"><i class="fa fa-plus"></i></button> 
-                    
+                <div class='col-lg-4 pull-right'>
+                    <button class="btn btn-primary add-remove-admin col-lg-8"> Add or remove an admin</button> 
                 </div>  
 
             </div>      
@@ -120,7 +119,7 @@
 </div>
 
 <script type='text/template' id='event-admin-adder'>
-    <div class="modal-dialog">
+    <div class="modal-dialog event-admin-adder">
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Add/ Remove an admin from <font color="#2e7daa">{{- event.get("title") }} </font> event</h4>
@@ -136,6 +135,17 @@
                         </div>
 
                     </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-9 alert alert-danger alert-dismissible email-validate-error hide" role="alert">
+
+                            <button type="button" class="close" data-dismiss="alert"><span class="sr-only">Close</span></button>
+                            
+                            Please enter a valid email
+
+                        </div>
+                    </div>
+
                 </form>
 
             </div>
