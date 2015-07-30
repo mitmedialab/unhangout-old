@@ -45,42 +45,34 @@ $(document).ready(function() {
 
     	addRemoveAdmin: function(email, action) {  
 
-    		if(!email || !validate.validateEmail(email)) {
-    			$(".email-validate-error").addClass("show");
+    		// check if the email is blank 
+    		if(email == "") {
+    			var message = "Email cannot be left blank"; 
+    			this.showInputErrors(message); 
+    		}
 
-    			if(email == "") {
-    				$(".email-validate-error").text("Email cannot be left blank");
-    			} else if (!validate.validateEmail(email)) {
-    				$(".email-validate-error").text("Please enter a valid email address");
-    			}	
-
-    			$(".filter-email").addClass("error");
-    			$(".filter-email").removeClass("success");
-
-    			modal.addClass("show");
-    			
-    			return; 
+    		// check if the email is an invalid address 
+    		if(email && !validate.validateEmail(email)) {
+    			var message = "Please enter a valid email address";
+    			this.showInputErrors(message);
     		}
 
     		var event = this.model;
 
            	this.getUserForEmailFilter(email); 	
 
-           	if(userFilter == "") {
-           		$(".email-validate-error").removeClass("hide");
-           		$(".email-validate-error").addClass("show");
+           	// check if the user for the email address does not 
+           	// exists in the user directory 
 
-    			$(".email-validate-error").text('We could not find a user ' + 
+           	if(userFilter == "") {
+
+           		var message = 'We could not find a user ' + 
     				'with this email address in our directory. Please ' + 
     				'ask them to login to the platform. ' +  
     				'Then come back here ' + 
-    				'to add them as an admin.'); 
-    			
-    			$(".filter-email").addClass("error");
-    			$(".filter-email").removeClass("success");
+    				'to add them as an admin.';
 
-    			modal.addClass("show");
-    			return; 
+           		this.showInputErrors(message);
            	} 
 
            	var user = users.find(function(user) {
@@ -88,6 +80,12 @@ $(document).ready(function() {
 					return user;
 				}
 			});
+
+			// check if the user is already an admin 
+			if(event.userIsAdmin(user)) {
+				var message = 'User with this email address is already an admin';
+				this.showInputErrors(message);
+			};
 
 			var userId = user.get("id");
 
@@ -112,8 +110,10 @@ $(document).ready(function() {
     	
     	getUserForEmailFilter: function(email) {
 
+    		userFilter = [];
+
     		_.filter(users.models, _.bind(function(user) {
-	           		
+
            		if(email) {
            			var tokens = email.toLowerCase().split(" ");
 
@@ -122,17 +122,15 @@ $(document).ready(function() {
 
 	                for (var i = 0; i < tokens.length; i++) {
 
-	                    if (search.indexOf(tokens[i]) == -1) {
-	                    	userFilter = [];
-	                        return false;
+	                    if (search.indexOf(tokens[i]) >= -1) {
+	                    	userFilter = user;
+	                    	return; 
 	                    }
+	                   
 	                }
+	             
            		}
 
-
-
-           		userFilter = user;
-           		return true;
            	})
 
         	); //models
@@ -150,8 +148,20 @@ $(document).ready(function() {
 	        });
     	},
 
-    	onRender: function() {
+    	showInputErrors: function(msg) {
+    		$(".email-validate-error").removeClass("hide");
+       		$(".email-validate-error").addClass("show");
 
+			$(".email-validate-error").text(msg); 
+			
+			$(".filter-email").addClass("error");
+			$(".filter-email").removeClass("success");
+
+			modal.addClass("show");
+			return; 
+    	},
+
+    	onRender: function() {
   
 	    },
     });
