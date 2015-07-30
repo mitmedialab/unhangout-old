@@ -66,7 +66,7 @@ describe("CREATE EVENT", function() {
         }).then(function() {
             var event = common.server.db.events.get(eventId);
             browser.get(common.URL + "/myevents/")
-            browser.byCss("#events a[href='/event/" + eventId + "']").getText().then(
+            browser.byCss(".myevents-container a[href='/event/" + eventId + "']").getText().then(
                 function(text) {
                     expect(text).to.be("Test Title");
                 }
