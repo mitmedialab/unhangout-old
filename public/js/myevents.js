@@ -35,11 +35,11 @@ $(document).ready(function() {
 	        modal.render();
 
 	        modal.on("add", _.bind(function(email) {
-	        	this.addRemoveAdmin(email, "add-event-admin");
+	        	this.addRemoveAdmin(email, "add-event-admin"); 
 	    	}, this)); //add function
 
 	    	modal.on("remove", _.bind(function(email) {
-	           	this.addRemoveAdmin(email, "remove-event-admin");
+	           	this.addRemoveAdmin(email, "remove-event-admin"); 
 	    	}, this)); //remove function
     	},
 
@@ -63,7 +63,6 @@ $(document).ready(function() {
 
            	// check if the user for the email address does not 
            	// exists in the user directory 
-
            	if(userFilter == "") {
 
            		var message = 'We could not find a user ' + 
@@ -81,11 +80,14 @@ $(document).ready(function() {
 				}
 			});
 
-			// check if the user is already an admin 
-			if(event.userIsAdmin(user)) {
-				var message = 'User with this email address is already an admin';
-				this.showInputErrors(message);
-			};
+			// check if the user is already an admin only if 
+			// the action is add-event-admin
+			if(action == "add-event-admin") {
+				if(event.userIsAdmin(user)) {
+					var message = 'User with this email address is already an admin';
+					this.showInputErrors(message);
+				};
+			}
 
 			var userId = user.get("id");
 
@@ -122,9 +124,9 @@ $(document).ready(function() {
 
 	                for (var i = 0; i < tokens.length; i++) {
 
-	                    if (search.indexOf(tokens[i]) >= -1) {
+	                    if (search.indexOf(tokens[i]) >= 0) { //matched
 	                    	userFilter = user;
-	                    	return; 
+	                    	return false;
 	                    }
 	                   
 	                }
