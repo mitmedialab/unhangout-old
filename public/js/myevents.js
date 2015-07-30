@@ -14,7 +14,7 @@ $(document).ready(function() {
 	    template: '#event-row', 
 
 	    events: {
-	        'click .add-remove-admin': 'invokeAddRemoveAdminModal'
+	        'click .add-remove-admin': 'invokeAddRemoveAdminModal',
     	},
 
     	modelEvents: {
@@ -54,13 +54,34 @@ $(document).ready(function() {
     				$(".email-validate-error").text("Please enter a valid email address");
     			}	
 
+    			$(".filter-email").addClass("error");
+    			$(".filter-email").removeClass("success");
+
     			modal.addClass("show");
+    			
     			return; 
     		}
 
     		var event = this.model;
 
            	this.getUserForEmailFilter(email); 	
+
+           	if(userFilter == "") {
+           		$(".email-validate-error").removeClass("hide");
+           		$(".email-validate-error").addClass("show");
+
+    			$(".email-validate-error").text('We could not find a user ' + 
+    				'with this email address in our directory. Please ' + 
+    				'ask them to login to the platform. ' +  
+    				'Then come back here ' + 
+    				'to add them as an admin.'); 
+    			
+    			$(".filter-email").addClass("error");
+    			$(".filter-email").removeClass("success");
+
+    			modal.addClass("show");
+    			return; 
+           	} 
 
            	var user = users.find(function(user) {
 				if(user.get("id") ==  userFilter.get("id") ) {
@@ -100,11 +121,15 @@ $(document).ready(function() {
                     _.pluck(user.get("emails"), "value").join(" ")).toLowerCase();
 
 	                for (var i = 0; i < tokens.length; i++) {
+
 	                    if (search.indexOf(tokens[i]) == -1) {
+	                    	userFilter = [];
 	                        return false;
 	                    }
 	                }
            		}
+
+
 
            		userFilter = user;
            		return true;
@@ -125,7 +150,6 @@ $(document).ready(function() {
 	        });
     	},
 
-
     	onRender: function() {
 
   
@@ -138,7 +162,8 @@ $(document).ready(function() {
 	    events: {
 	        'click .close, .cancel': 'close',
 	        'click .add': 'add',
-	        'click .remove': 'remove'
+	        'click .remove': 'remove',
+	        'keydown .filter-email': 'removeInputErrors'
 	    },
 
 	    ui: {
@@ -173,6 +198,14 @@ $(document).ready(function() {
 	        this.trigger("remove", email);
 	        this.close();
 	    },
+
+	    removeInputErrors: function() {
+    		$(".filter-email").addClass("success");
+    		$(".filter-email").removeClass("error");
+
+    		$(".email-validate-error").addClass("hide");
+           	$(".email-validate-error").removeClass("show");
+    	},
 
 	    close: function() {
 	        this.$el.on("hidden", this.remove);
