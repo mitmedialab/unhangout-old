@@ -561,14 +561,18 @@
         <div class="col-lg-8">
             <p class='title'>{{= title }}</p>
         </div>
+    </a>
+</script>
 
+<!--
+        TODO: Add this back to the previous-video-details-template once YouTube
+        v3 API call is implemented.
         <div class="col-lg-1">
             <p class='duration'>
                 {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
             </p>
         </div>
-    </a>
-</script>
+-->
 
 <script type="text/template" id="admin-button-template">
     <div class="dropdown">
