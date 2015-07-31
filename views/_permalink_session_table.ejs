@@ -3,18 +3,22 @@
         <% _.each(sessions || [], function(session) { %>
           
             <% if (session.get("isPermalinkSession")) { %>
-                <div class="admin-event-row">
-                    <div class="title">
-                        <h4>
+                <div class="permalink-session-event-row col-lg-12">
+                    <div class="title col-lg-12">
+                        <h4 class="col-lg-6">
                             <a class="permalink-session-link" href="/h/<%= session.get("shortCode") %>">
                             <%= session.get("shortCode") %>
                             </a>
                         </h4>
                     </div>
+
+                    <div class="col-lg-6 permalink-hr">
+                        <hr class="td-hr">
+                    </div>
                 </div>
             <% } else { %>
-                <div class="admin-event-row">
-                    <div class="title">
+                <div class="permalink-session-event-row">
+                    <div class="title col-lg-3">
                         <h4>
                             <a class="permalink-session-link" href="/event/<%= session.collection.event.id %>">
                             <%= session.get("title").trim() || "[untitled]" %>

@@ -14,7 +14,7 @@ $(document).ready(function() {
 	    template: '#event-row', 
 
 	    events: {
-	        'click .add-remove-admin': 'invokeAddRemoveAdminModal',
+	        'click .btn-add-remove-admin': 'invokeAddRemoveAdminModal',
     	},
 
     	modelEvents: {
@@ -175,7 +175,6 @@ $(document).ready(function() {
 
   			var drawAdmin = _.bind(function (admin) {
 	            imgEl = document.createElement("img");
-	            imgEl.className = "empty";
 	            var user = event.findAdminAsUser(admin, users); 
 	            imgEl.src = user.get("picture"); 
 	            fragment.appendChild(imgEl);

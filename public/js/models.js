@@ -112,7 +112,7 @@ models.Event = models.BaseModel.extend({
     },
 
     initialize: function() {
-        // these are the main sub-collections of this model.
+        // these are the matching sub-collections of this model.
         this.set("sessions", new models.SessionList(null, this));
         this.set("connectedUsers", new models.UserList());
         this.initializeSubEvents();
@@ -137,7 +137,7 @@ models.Event = models.BaseModel.extend({
                 this.registerSubEvents("hoa");
                 hoa.eventsRegisteredFor = this;
             }
-        }, this));
+        }, this));  
         this.on("change:youtubeEmbed", _.bind(function(event, ytId) {
             // Prepend the current embed (if any) to the list of previous embeds
             // (if it's not already there), and set the current embed to the given

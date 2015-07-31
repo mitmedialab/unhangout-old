@@ -1722,35 +1722,75 @@ user-admin-border-size = 2px
   padding-top: 30px;
   padding-bottom: 30px; 
 
-  .row {
-    margin-left: 0px;
-    margin-right: 0px;
-  }
 
-  .admin-event-row {
-    margin-bottom: 3px;
-    background-color: #eee;
-    border-radius: 5px;
-    padding: 10px;
-    padding-left: 20px;
-  }
-
-  #myevents-create-new-event {
+  #btn-create-new-event {
     margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
   }
 
+  .th-my-events {
+    color: #999;
+  }
+
+  .th-hr {
+    border-bottom: 1px solid #e9e9e9;
+    margin-bottom: 0px;
+    margin-top: 10px;
+  }
+
+  .th-edit {
+    padding: 0px;
+  }
+
+  .th-title {
+    padding: 0px;
+  }
+
+  .th-admins {
+    padding: 0px;
+  }
+
+  .th-add-remove-admin {
+    text-align: right;
+    padding: 0px;
+  }
+
+  .td-hr {
+    margin-bottom: 0px;
+    margin-top: 0px;
+    width: 100%;
+  } 
+
+  /* Admin Event Row Styles for Permalinks */ 
+  .permalink-sessions-container {
+    margin-top: 50px;
+  }
+
+  .permalink-session-event-row {
+      padding: 0px;
+      
+      .title {
+        padding: 0px;
+      }
+
+      h4 {
+        padding: 0px;
+      }
+
+      .permalink-hr {
+        padding: 0px;
+      }
+    
+    }
 }
 
 .myevents-event-row {
-  margin-bottom: 3px;
-  background-color: #eee;
-  border-radius: 5px;
-  padding: 20px;
-  margin-right: 10px;
+  padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
 
   .edit-event {
-    width: 30px;
-    height: 30px;
     padding: 0px;
   }
 
@@ -1759,21 +1799,12 @@ user-admin-border-size = 2px
     width: 34px;
   }
 
-  .title {
+  .event-title {
     padding: 0px;
-  }
-
-  .date {
-    padding: 0px;
-    color: #999;
-    font-size: smaller;
-  } 
-
-  .add-remove-admin {
-    margin-left:145px;
   }
 
   .event-admins {
+    padding: 0px;
 
     img {
       width: 34px; 
@@ -1785,10 +1816,16 @@ user-admin-border-size = 2px
 
   }
 
+  .add-remove-admin {
+    padding: 0px;
+
+    .btn-add-remove-admin {
+      width: 60px;
+    }
+  }
 }
 
 .event-admin-adder {
-  width: 40%;
 
   .error {
     border: 1px solid #D44950;
