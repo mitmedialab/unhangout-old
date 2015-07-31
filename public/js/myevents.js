@@ -21,6 +21,10 @@ $(document).ready(function() {
 	        'change': 'render'
 	    },	
 
+	    ui: {
+	    	eventAdmins: '.event-admins',
+	    },
+
 	    initialize: function() {
 	    	var userFilter = [];
 	    },
@@ -164,7 +168,27 @@ $(document).ready(function() {
     	},
 
     	onRender: function() {
-  
+  			var event = this.model; 
+
+  			//Build the list of event admins 
+  			var fragment = document.createDocumentFragment();
+
+  			var drawAdmin = _.bind(function (admin) {
+	            imgEl = document.createElement("img");
+	            imgEl.className = "empty";
+	            var user = event.findAdminAsUser(admin, users); 
+	            imgEl.src = user.get("picture"); 
+	            fragment.appendChild(imgEl);
+
+	        }, this);  //drawAdmin 
+
+        	_.each(this.model.get("admins"), function(admin) { 
+        		drawAdmin(admin); 
+        	});
+
+        	//Now add the fragment to the layout and display it
+        	this.ui.eventAdmins.html(fragment);
+
 	    },
     });
 
