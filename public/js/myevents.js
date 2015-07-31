@@ -23,6 +23,7 @@ $(document).ready(function() {
 
 	    ui: {
 	    	eventAdmins: '.event-admins',
+	    	eventDate: '.event-date',
 	    },
 
 	    initialize: function() {
@@ -170,14 +171,28 @@ $(document).ready(function() {
     	onRender: function() {
   			var event = this.model; 
 
+  			//Building the date and time 
+  			var dateFragment = document.createDocumentFragment();
+
+  			var date = event.get("dateAndTime");
+
+  			if(date) {
+  				dateP = document.createElement("p");
+  				dateP.innerHTML = moment(date).format("D MMM YYYY"); ; 
+  				dateFragment.appendChild(dateP);
+  			}
+
+  			//Now add the event date fragment to the layout and display it
+        	this.ui.eventDate.html(dateFragment);
+
   			//Build the list of event admins 
-  			var fragment = document.createDocumentFragment();
+  			var adminFragment = document.createDocumentFragment();
 
   			var drawAdmin = _.bind(function (admin) {
 	            imgEl = document.createElement("img");
 	            var user = event.findAdminAsUser(admin, users); 
 	            imgEl.src = user.get("picture"); 
-	            fragment.appendChild(imgEl);
+	            adminFragment.appendChild(imgEl);
 
 	        }, this);  //drawAdmin 
 
@@ -185,8 +200,8 @@ $(document).ready(function() {
         		drawAdmin(admin); 
         	});
 
-        	//Now add the fragment to the layout and display it
-        	this.ui.eventAdmins.html(fragment);
+        	//Now add the event admins fragment to the layout and display it
+        	this.ui.eventAdmins.html(adminFragment);
 
 	    },
     });
