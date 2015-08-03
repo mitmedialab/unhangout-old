@@ -27,7 +27,7 @@ var keysQuery = function(pattern) {
             logger.warn(format("No redis data for %s", pattern));
         }
         else {
-            console.log(JSON.stringify(modelKeys, null, 4));
+            console.log(JSON.stringify(modelKeys.sort(), null, 4));
         }
         process.exit();
     });
@@ -43,7 +43,11 @@ var getQuery = function(id) {
         }
         else {
             var json = JSON.parse(model);
-            console.log(JSON.stringify(json, null, 4));
+            const sorted = {};
+            Object.keys(json).sort().forEach(function(key) {
+              sorted[key] = json[key];
+            });
+            console.log(JSON.stringify(sorted, null, 4));
         }
         process.exit();
     });
