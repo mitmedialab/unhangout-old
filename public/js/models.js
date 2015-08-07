@@ -490,12 +490,10 @@ models.User = Backbone.Model.extend({
     },
 
     setPerm: function(perm, val, options) {
-        if (!this.get("perms")) {
-            this.set("perms", {}, {silent: true});
-        }
-        this.get("perms")[perm] = val;
-        if (!(options && options.silent)) {
-            this.trigger("change:perms");
+        var perms = _.clone(this.get("perms") || {});
+        if (perms[perm] !== val) {
+            perms[perm] = val;
+            this.set("perms", perms, {silent: options && options.silent});
         }
     },
 
