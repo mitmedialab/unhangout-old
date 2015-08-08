@@ -206,7 +206,7 @@ _.extend(Transport.prototype, Backbone.Events, {
         // Execute operations on the model.
         switch (args.op) {
             case "set":
-                if (name === null) {
+                if (_.isEmpty(name)) {
                     model.set(value);
                 } else {
                     model.set(name, value);
@@ -214,7 +214,7 @@ _.extend(Transport.prototype, Backbone.Events, {
                 break;
 
             case "unset":
-                if (name !== null) {
+                if (!_.isEmpty(name)) {
                     model.unset(name);
                 } else {
                     return logger.error("Cannot unset a null name");
