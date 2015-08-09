@@ -551,6 +551,12 @@ models.UserList = Backbone.Collection.extend({
         return this.find(function(u) {
             return _.contains(_.pluck(u.get("emails"), "value"), email);
         });
+    },
+    comparator: function(a, b) {
+        // Default sorting by displayName.
+        var a_name = a.get('displayName');
+        var b_name = b.get('displayName');
+        return a_name > b_name ? 1 : a_name < b_name ? -1 : 0;
     }
 });
 
