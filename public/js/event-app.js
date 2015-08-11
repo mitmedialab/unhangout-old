@@ -205,8 +205,6 @@ $(document).ready(function() {
         maybeMute();
 
         logger.log("Initialized app.");
-
-        $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         
         $("#superuser-page-for-followupemail").attr("href", "/followup/event/" 
             + curEvent.id + "/participant_0");
