@@ -928,6 +928,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
               (extra == 1 || extra == 2) && numToCreateDefault--;
               break;
           }
+          $("#total_connected_users_reference").html(userPool);
           $("#sessions_to_create").val(numToCreateDefault);
         }
         $("#session_template_select_details").html(details);
