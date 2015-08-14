@@ -902,8 +902,9 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var details = ""
         if (!isNaN(templateId)) {
           var template = this.options.eventSessionTemplates.get(templateId);
+          var limit = template.get("limit");
           // NOTE: Bad form to put HTML here, and, good enough for now.
-          details += "<strong># Participants:</strong> " + template.get("limit") + ", <strong>Session type:</strong> " + template.get("type");
+          details += "<strong># Participants:</strong> " + limit + ", <strong>Session type:</strong> " + template.get("type");
           var url = template.get("url");
           if (!_.isEmpty(url)) {
             details += ", <strong>URL:</strong> <a href='" + url + "' target='_blank'>" + url + "</a>"
@@ -912,6 +913,22 @@ views.DialogView = Backbone.Marionette.Layout.extend({
           if (!_.isEmpty(description)) {
             details += "<div><small>" + description + "</small></div>"
           }
+          // Make a reasonable guess at the number of sessions to create.
+          // The assumption is that there are two event facilitators, so
+          // pair sessions can leave one person out, and other sessions
+          // can leave two people out.
+          var userPool = this.options.event.get("connectedUsers").length;
+          var extra = userPool % limit;
+          var numToCreateDefault = Math.ceil(userPool / limit);
+          switch (limit) {
+            case 2:
+              extra == 1 && numToCreateDefault--;
+              break;
+            default:
+              (extra == 1 || extra == 2) && numToCreateDefault--;
+              break;
+          }
+          $("#sessions_to_create").val(numToCreateDefault);
         }
         $("#session_template_select_details").html(details);
     },
