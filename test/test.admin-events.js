@@ -306,7 +306,7 @@ describe('HTTP ADMIN EVENTS API', function() {
                 expect(evt).to.not.be(undefined);
                 expect(evt.get("dateAndTime")).to.eql("2014-11-12T04:32:00+00:00");
                 expect(evt.get("timeZoneValue")).to.eql("America/New_York");
-                expect(evt.formatDate()).to.eql("Tuesday Nov 11, 2014 11:32pm EST");
+                expect(evt.formatDate()).to.eql("Tuesday Nov 11, 2014 11:32 pm EST");
                 done();
 
             });
