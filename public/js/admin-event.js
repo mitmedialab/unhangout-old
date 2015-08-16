@@ -6,7 +6,16 @@ require([
 var event = new models.Event(EVENT_DATA); // EVENT_DATA from template.
 
 $(document).ready(function(){
-    var options = {
+    if (!event.id) {
+        var oneWeekAfter = moment()
+            .add('days', 7)
+            .second(0)
+            .minute(0)
+            .format(event.DATE_DISPLAY_FORMAT);
+        $("#dateAndTime").val(oneWeekAfter);
+    }
+    // Using http://www.malot.fr/bootstrap-datetimepicker/
+    $(".form_datetime").datetimepicker({
         // NOTE: the parser fails if there isn't whitespace or punctuation
         // between each component.  You can't do "H:iip", it has to be
         // "H:ii p".  Also note: this should be identical to
@@ -16,24 +25,8 @@ $(document).ready(function(){
         forceParse: true,
         pickerPosition: 'bottom-left',
         viewSelect: 'decade',
-        todayBtn: true,
-        todayHighlight: true,
-        autoclose: true,
-    }
-    if (!event.id) {
-        var oneWeekAfter = moment()
-            .add('days', 7)
-            .second(0)
-            .minute(0)
-            .format(event.DATE_DISPLAY_FORMAT);
-        $("#dateAndTime").val(oneWeekAfter);
-        // New events probably shouldn't start in the past. Using -1d allows
-        // for timezone differences.
-        options.startDate = '-1d';
-    }
-
-    // Using http://www.malot.fr/bootstrap-datetimepicker/
-    $(".form_datetime").datetimepicker(options);
+        todayBtn: true
+    });
 
     // Append timezones to option box.
     var zones = _.map(moment.tz.zones(), function(z) { return z.displayName; });

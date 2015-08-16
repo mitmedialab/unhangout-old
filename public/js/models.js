@@ -88,7 +88,7 @@ models.BaseModel = Backbone.Model.extend({
 models.Event = models.BaseModel.extend({
     idRoot: "event",
     urlRoot: "event",
-    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
+    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm[]a",
 
     defaults: function() {
         return {
