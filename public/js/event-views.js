@@ -929,10 +929,15 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     },
 
     _startStopEvent: function(action) { 
+        var self = this;
         $.ajax({
             type: 'POST',
             url: "/admin/event/" + this.options.event.id + "/" + action
-        }).fail(function(err) {
+        })
+        .done(function(data) {
+          self.setEventStatusIndicator();
+        })
+        .fail(function(err) {
             logger.error(err);
             alert("Server error!");
         });
@@ -958,6 +963,24 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     messageSessions: function(jqevt) {
         jqevt.preventDefault();
         $("#message-sessions-modal").modal('show');
+    },
+
+    setEventStatusIndicator: function(jqevt) {
+      var open = this.options.event.get('open');
+      var statusIndicator = this.$el.find('.status');
+      if (open) {
+        statusIndicator.addClass('open');
+        statusIndicator.removeClass('closed');
+      }
+      else {
+        statusIndicator.addClass('closed');
+        statusIndicator.removeClass('open');
+      }
+      statusIndicator.show();
+    },
+
+    onRender: function() {
+      this.setEventStatusIndicator();
     },
 
     serializeData: function() {
