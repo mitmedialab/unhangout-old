@@ -124,7 +124,7 @@
     <div class="modal-dialog event-admin-adder">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Add or Remove an admin from <font color="#2e7daa">{{- event.get("title") }} </font> event</h4>
+                <h4 class="modal-title">Add an admin to <font color="#2e7daa">{{- event.get("title") }} </font> event</h4>
             </div>
 
             <div class="modal-body">
@@ -134,6 +134,13 @@
                     
                         <div class="col-lg-12">
                             <input class='filter-email form-control success' type='text' placeholder='Enter the email address of an admin' value="" />
+                        </div>
+
+                        <div class="col-lg-12 alert alert-info send-invite hide">
+                            <p>We couldn't find a user with this email address in our directory. Would you like to send them an email invite?  
+                            </p>
+
+                            <button class="btn btn-primary pull-right">Send Invite </button>
                         </div>
 
                     </div>

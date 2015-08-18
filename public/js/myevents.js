@@ -135,6 +135,9 @@ $(document).ready(function() {
 
     		$(".email-validate-error").addClass("hide");
            	$(".email-validate-error").removeClass("show");
+
+           	$(".send-invite").removeClass("show");
+       		$(".send-invite").addClass("hide");
     	},
 
 	    close: function() {
@@ -149,7 +152,6 @@ $(document).ready(function() {
 	    events: {
 	        'click .close, .cancel': 'close',
 	        'click .remove': 'remove',
-	        'keydown .filter-email': 'removeInputErrors'
 	    },
 
 	    initialize: function(options) {
@@ -360,14 +362,8 @@ $(document).ready(function() {
        	// check if the user for the email address does not 
        	// exists in the user directory 
        	if(userFilter == "") {
-
-       		var message = 'We could not find a user ' + 
-				'with this email address in our directory. Please ' + 
-				'ask them to login to the platform. ' +  
-				'Then come back here ' + 
-				'to add them as an admin.';
-
-       		showInputErrors(message);
+       		$(".send-invite").addClass("show");
+       		$(".send-invite").removeClass("hide");
        	} 
 
        	var user = users.find(function(user) {
