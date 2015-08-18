@@ -174,6 +174,11 @@ $(document).ready(function() {
 	    render: function() {
 	        this.$el.addClass("modal fade");
 
+	        //Initially show the remove class and modal body
+	        this.$el.find(".modal-body").html("");
+	        this.$el.find(".remove").removeClass("hide");
+        	this.$el.find(".remove").addClass("show");
+
 	        this.$el.html(this.template({
 	            event: this.event,
 	        }));
@@ -255,6 +260,12 @@ $(document).ready(function() {
         	});
 
         	this.$el.find(".event-admins").html(adminFragment);
+
+        	if(this.event.get("admins").length == 0) {
+        		this.$el.find(".modal-body").html("<b>Currently, there are no admins for this event</b>");
+        		this.$el.find(".remove").addClass("hide");
+        		this.$el.find(".remove").removeClass("show");
+        	}
 	    },
 	});
 
@@ -276,7 +287,8 @@ $(document).ready(function() {
 	        this.$el.html(this.template({
 	            event: this.event,
 	        }));
-
+	       
+	        this.$el.find(".confirm-del-msg").text("Are you sure you would like to remove " + adminsToBeRemoved.length + " admin(s)?");
 	        this.$el.modal("show");
 	    },
 
