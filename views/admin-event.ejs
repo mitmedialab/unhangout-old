@@ -12,7 +12,7 @@
     <br/>
 
         <form class="form-horizontal"
-              action="/admin/event/<%= event.id || "new" %>"
+              action="/admin/event/<%= event.id && event.id + "?destination=" + encodeURIComponent(destination) || "new" %>"
               method="post" encoding="application/x-www-form-urlencoded">
 
 
