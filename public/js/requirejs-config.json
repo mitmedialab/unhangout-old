@@ -6,6 +6,7 @@
     "optimize": "uglify2",
     "paths": {
         "jquery": "../vendor/jquery-2.0.0",
+        "jquery.hotkeys": "../vendor/jquery.hotkeys",
         "jquery.validate": "../vendor/jquery.validate.min",
         "jquery.autosize": "../vendor/jquery.autosize.min",
         "jquery-ui": "../vendor/jquery-ui-1.10.3.custom.min",
@@ -23,6 +24,7 @@
     "shim": {
         "jquery": { "exports": "jQuery" },
         "jquery-ui": { "deps": ["jquery"], "exports": "jQuery.fn.ui" },
+        "jquery.hotkeys": { "deps": ["jquery"] },
         "jquery.validate": { "deps": ["jquery"], "exports": "jQuery.fn.validate" },
         "jquery.autosize": { "deps": ["jquery"], "exports": "jQuery.fn.autosize" },
         "underscore": { "exports": "_" },
