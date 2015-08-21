@@ -218,9 +218,29 @@
     </div>
 </script>
 
+<!-- Post invite send dialog -->
+<div class="modal fade" role="dialog" aria-hidden="true" id="invite-sent-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Invitation Sent!!!</h4>
+            </div>
+
+            <div class="modal-body">
+                <p>All you have to do now is to wait till the admin get back to you</p>    
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-primary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script type='text/javascript'>
     var USER_DATA = <%- JSON.stringify(users) %>;
     var EVENT_DATA = <%- JSON.stringify(events) %>;
+    var USER = <%- JSON.stringify(user) %>;
 </script>
 
 <%- requireScripts("/public/js/myevents.js") %>

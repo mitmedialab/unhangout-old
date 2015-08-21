@@ -33,10 +33,6 @@ $(document).ready(function() {
 	    	eventDate: '.event-date',
 	    },
 
-	    initialize: function() {
-	    	var userFilter = [];
-	    },
-
     	invokeAddAdminModal: function(jqevt) {
     		jqevt.preventDefault();
 
@@ -100,7 +96,8 @@ $(document).ready(function() {
 	    events: {
 	        'click .close, .cancel': 'close',
 	        'click .add': 'add',
-	        'keydown .filter-email': 'removeInputErrors'
+	        'keydown .filter-email': 'removeInputErrors', 
+	        'click .send-invite': 'sendLoginInvite'
 	    },
 
 	    ui: {
@@ -108,18 +105,8 @@ $(document).ready(function() {
 	    },
 
 	    initialize: function(options) {
-	        _.bindAll(this, "add", "close", "render", "remove");
+	        _.bindAll(this, "add", "close", "render");
 	        this.event = options.event; 
-	    },
-
-	    render: function() {
-	        this.$el.addClass("modal fade");
-	        this.$el.html(this.template({
-	            event: this.event,
-	        }));
-
-	        this.$el.modal("show");
-	       
 	    },
 
 	    add: function() {
@@ -127,6 +114,33 @@ $(document).ready(function() {
 	    	addAdminToEvent(email, this.event);
 
 	        this.close();
+	    },
+
+	    sendLoginInvite: function() {
+	    	var adminInviteeEmail = this.$el.find(".filter-email").val(); 
+	    	var adminInviterName  = USER.displayName;
+	    	var eventTitle = this.event.get("title");
+ 
+	    	$.ajax({
+                url:"/myevents/admin-login-invite/",
+                type:"POST",
+                data: {adminInviterName: adminInviterName, 
+						eventTitle: eventTitle, adminInviteeEmail: adminInviteeEmail}
+            }).done(function() {
+            	this.$el.modal("hide");
+            
+                //content changes for this modal later
+                $('#invite-sent-modal').modal('show');
+ 
+            }).fail(function() {
+                alert("Server error.. please try later.");
+            });
+
+	    },
+
+	    close: function() {
+	        this.$el.on("hidden", this.remove);
+	        this.$el.modal("hide");
 	    },
 
 	    removeInputErrors: function() {
@@ -140,10 +154,15 @@ $(document).ready(function() {
        		$(".send-invite").addClass("hide");
     	},
 
-	    close: function() {
-	        this.$el.on("hidden", this.remove);
-	        this.$el.modal("hide");
-	    }
+	    render: function() {
+	        this.$el.addClass("modal fade");
+	        this.$el.html(this.template({
+	            event: this.event,
+	        }));
+
+	        this.$el.modal("show");
+	       
+	    },
 	});
 	
 	var EventAdminRemover = Backbone.View.extend({
@@ -357,13 +376,16 @@ $(document).ready(function() {
 			showInputErrors(message);
 		}
 
-       	getUserForEmailFilter(email); 	
+       	var userFilter = getUserForEmailFilter(email); 	
 
        	// check if the user for the email address does not 
        	// exists in the user directory 
        	if(userFilter == "") {
        		$(".send-invite").addClass("show");
        		$(".send-invite").removeClass("hide");
+
+       		modalAdminAdder.addClass("show");
+			return; 
        	} 
 
        	var user = users.find(function(user) {
@@ -460,6 +482,8 @@ $(document).ready(function() {
      		})
 
      	);
+
+     	return userFilter; 
     }
 
 	function showInputErrors(msg) {
