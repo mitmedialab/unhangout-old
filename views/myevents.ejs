@@ -24,6 +24,9 @@
                                 <%= moment(date).format("D MMM YYYY") %>
                             </span>
                         <% } %>
+                        <a href="/admin/event/<%=event.id + '?destination=' + encodeURIComponent(destination)%>" class="btn btn-small">
+                            <i class='fa fa-pencil' title='Edit'></i> edit
+                        </a>
                     </diV>
 
                 </div>
