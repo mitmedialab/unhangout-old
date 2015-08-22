@@ -171,6 +171,8 @@ $(document).ready(function() {
 	    events: {
 	        'click .close, .cancel': 'close',
 	        'click .remove': 'remove',
+	        'click .close-alert': 'closeAlert',
+	        'click .confirm-removal': 'confirmAdminRemoval'
 	    },
 
 	    initialize: function(options) {
@@ -178,18 +180,30 @@ $(document).ready(function() {
 	        this.event = options.event; 
 	    },
 
-	    remove: function() {
-	    	this.$el.show();
+	    remove: function(jqevt) {
+	    	jqevt.preventDefault();
 
-	    	modalConfirmAdminRemoval = new EventConfirmAdminRemoval({event: this.event});
-	        modalConfirmAdminRemoval.render();
+	    	$(".alert-confirm-removal").removeClass("hide");
+       		$(".alert-confirm-removal").addClass("show");
 
-	        modalConfirmAdminRemoval.css('z-index', 1040);	        
+       		$(".alert-confirm-removal").find("p").text("Are you sure you would \
+       			like to remove " + adminsToBeRemoved.length+ " admin(s)?");
+	    },
+
+	    closeAlert: function(jqevt) {
+	    	jqevt.preventDefault(); 
+
+	    	$(".alert-confirm-removal").removeClass("show");
+       		$(".alert-confirm-removal").addClass("hide");
 	    },
 
 	    close: function() {
 	        this.$el.on("hidden", this.remove);
 	        this.$el.modal("hide");
+	    },
+
+	    confirmAdminRemoval: function() {
+	    	removeAdminFromEvent(this.event);
 	    },
 
 	    render: function() {
@@ -199,6 +213,8 @@ $(document).ready(function() {
 	        this.$el.find(".modal-body").html("");
 	        this.$el.find(".remove").removeClass("hide");
         	this.$el.find(".remove").addClass("show");
+        	$(".alert-confirm-removal").removeClass("show");
+       		$(".alert-confirm-removal").addClass("hide");
 
 	        this.$el.html(this.template({
 	            event: this.event,
@@ -223,7 +239,7 @@ $(document).ready(function() {
 
 	            pElName = document.createTextNode(user.get("displayName"));
 	            pElEmail = document.createElement("span");
-	            pElEmail.innerHTML = "&nbsp; <a href='mailto:" + user.get("emails")[0].value + "'>" + user.get("emails")[0].value +  "</a>";
+	            pElEmail.innerHTML = "&nbsp; <span class='link'>" + user.get("emails")[0].value +  "</span>";
 	            
 	            imgEl.src = user.get("picture"); 
 	            divEl.id = user.get("id");
@@ -288,40 +304,6 @@ $(document).ready(function() {
         		this.$el.find(".remove").removeClass("show");
         	}
 	    },
-	});
-
-	var EventConfirmAdminRemoval = Backbone.View.extend({
-		template: _.template($('#event-confirm-admin-removal').html()),
-
-		initialize: function(options) {
-			this.event = options.event; 
-		},
-
-		events: {
-	        'click .btn-close': 'close',
-	        'click .btn-confirm': 'confirmAdminRemoval'
-	    },
-
-		render: function() {
-	        this.$el.addClass("modal fade");
-	        
-	        this.$el.html(this.template({
-	            event: this.event,
-	        }));
-	       
-	        this.$el.find(".confirm-del-msg").text("Are you sure you would like to remove " + adminsToBeRemoved.length + " admin(s)?");
-	        this.$el.modal("show");
-	    },
-
-	    confirmAdminRemoval: function() {
-	    	removeAdminFromEvent(this.event);
-	    	modalAdminRemover.close();
-	    },
-
-	    close: function() {
-	    	modalAdminRemover.close();
-	    }
-
 	});
 
 	var EventTableView = Backbone.Marionette.CompositeView.extend({
@@ -417,7 +399,6 @@ $(document).ready(function() {
 	}
 
 	function removeAdminFromEvent(event) {
-
        	postUserData({
             action: "remove-event-admin",
             admins: adminsToBeRemoved,
@@ -439,6 +420,8 @@ $(document).ready(function() {
         }, function(error) {
             alert("Server error");
             console.error(error);
+        }, function(success) {
+        	console.log("success");
         });
 
 	}
