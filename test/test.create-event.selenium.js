@@ -43,7 +43,7 @@ describe("CREATE EVENT", function() {
         browser.mockAuthenticate("superuser1");
 
         // Create a new event.
-        browser.get(common.URL + "/myevents/");
+        browser.get(common.URL + "/admin/");
         browser.waitForSelector("a#admin-create-new-event");
         browser.byCss("a#admin-create-new-event").click();
        // browser.byLinkText("new").click();
