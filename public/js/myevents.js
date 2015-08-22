@@ -75,7 +75,11 @@ $(document).ready(function() {
 	            imgEl = document.createElement("img");
 	            var user = event.findAdminAsUser(admin, users); 
 	            imgEl.src = user.get("picture"); 
+	            imgEl.dataset.id = user.get("id");
+	            imgEl.dataset.name = user.get("displayName");
 	            adminFragment.appendChild(imgEl);
+	            imgEl.onmouseover = showUsernameTooltip;
+	            imgEl.alt = user.get("displayName");
 
 	        }, this);  //drawAdmin 
 
@@ -86,6 +90,14 @@ $(document).ready(function() {
         	//Now add the event admins fragment to the layout 
         	//and display it
         	this.ui.eventAdmins.html(adminFragment);
+
+        	function showUsernameTooltip() {
+        		console.log(this.dataset.id);
+
+        		$(this).attr("data-toggle", "tooltip")
+        			   .attr("title", this.dataset.name)
+        			   .tooltip("show"); 
+        	}
 
 	    },
     });
@@ -242,7 +254,7 @@ $(document).ready(function() {
 	            pElEmail.innerHTML = "&nbsp; <span class='link'>" + user.get("emails")[0].value +  "</span>";
 	            
 	            imgEl.src = user.get("picture"); 
-	            divEl.id = user.get("id");
+	            divEl.dataset.id = user.get("id");
 
 	            divEl.appendChild(imgEl);
 	            divEl.appendChild(pElName)
@@ -256,19 +268,19 @@ $(document).ready(function() {
 	            		$(this).addClass("admin-row-selected");	
 	            		$(this).removeClass("admin-row-unselected");
 
-	            		listOfAdminsForRemoval(this.id, "add");
+	            		listOfAdminsForRemoval(this.dataset.id, "add");
 
 	            	} else if(this.className == "admin-row-selected") {
 	            		$(this).addClass("admin-row-unselected");
 	            		$(this).removeClass("admin-row-selected");
 
-	            		listOfAdminsForRemoval(this.id, "remove");
+	            		listOfAdminsForRemoval(this.dataset.id, "remove");
 
 	            	} else if (this.className == "admin-row-unselected") {
 	            		$(this).addClass("admin-row-selected");
 	            		$(this).removeClass("admin-row-unselected");
 
-	            		listOfAdminsForRemoval(this.id, "add");
+	            		listOfAdminsForRemoval(this.dataset.id, "add");
 	            	}
 	            }
 
