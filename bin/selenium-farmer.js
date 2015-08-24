@@ -19,7 +19,9 @@
 */
 
 var common = require("../test/common.js"),
-    farmConf = require("../farmingConf.json");
+    farmConf = require("../farmingConf.json"),
+    logger = require("../lib/logging").getLogger(),
+    util = require("util");
 
 function run(callback) {
     common.getSeleniumBrowser(function(browser) {
@@ -27,6 +29,7 @@ function run(callback) {
         browser.get(farmConf.serverUrl);
         browser.byLinkText("Login").click();
         browser.byCss("#Email").sendKeys(farmConf.email);
+        browser.byCss("#next").click();
         browser.byCss("#Passwd").sendKeys(farmConf.password);
         browser.byCss("#signIn").click();
         browser.getCurrentUrl().then(function(url) {
@@ -60,6 +63,7 @@ function run(callback) {
             var count = parseInt(match[1]);
             for (var i = count; i < farmConf.count; i++) {
                 browser.byLinkText("CLICK ME").click();
+                logger.debug(util.format("Farmed %s of %s", i + 1, farmConf.count));
                 browser.waitTime(5000);
             };
             browser.then(function() {
