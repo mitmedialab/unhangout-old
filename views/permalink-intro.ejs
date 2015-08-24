@@ -9,24 +9,24 @@
     <p>Google Hangouts are great, but it can be tricky to figure out how to create a hangout and send a link around to people. There are some work arounds (<a href="https://support.google.com/calendar/answer/2690797?hl=en">this trick with Google Calendar</a> is particularly useful) but at the end of the day, Hangout just doesn't behave like a first class citizen of the web because its URLs are unreliable. Having a single URL makes it easy to make a habit of meeting in the same "place." Think of it like a conference call extension or even like a physical meeting room.</p>
     <p>This service creates a permalink for a Hangout - a single URL with a Join Hangout button that take anyone who clicks it to the same hangout. As an added bonus, you can see whether other people are already in the hangout before you join it.</p>
     <p>These Hangout Permalinks are super easy to create - just go to:</p>
-    <pre>http://unhangout.media.mit.edu/h/<i>anything-you-like</i></pre>
+    <pre><%= baseUrl %>/h/<i>anything-you-like</i></pre>
 
     <p>That's it - your hangout permalink is created! Share it whenever and however you like!</p>
 
     <br>
 
     <form class="form-horizontal" id="permalink-create">
-        <div class="form-group> 
+        <div class="form-group">
 
-            <div class="col-lg-3">
-                <label class="col-lg-3 control-label" for="permalink">http://unhangout.media.mit.edu/h/</label>
+            <div class="label-wrapper col-lg-5">
+                <label class="control-label" for="permalink"><%= baseUrl %>/h/</label>
             </div>
             
-            <div class="col-lg-5">
+            <div class="input-wrapper col-lg-4">
                 <input class="form-control" type="text" id="permalink-title" class="permalink-title" placeholder="permalink">
             </div>
 
-            <div class="col-lg-2">
+            <div class="button-wrapper col-lg-1">
                 <button class="btn btn-primary" id="permalink-create-submit">CREATE</button>
 
                 <span class='help-block alert-error' style='display: none;'>The permalink can only have letters, numbers, dashes, and underscores. Suggestion: <a href='#' class='suggestion'></a></span>
