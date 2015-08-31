@@ -98,6 +98,11 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
   - ``UNHANOGUT_REDIS_DB`` is an index number pointing to the redis database to
     use. By default, we use 0 for production.  The unit tests use 1, and will
     destroy data there.
+  - ``UNHANOGUT_DB_DRIVER`` Which database driver to use for storing Unhangout
+    data. Currently supported drivers are 'redis' and 'couchdb'. Using the
+    couchdb driver requires installing [CouchDB](http://couchdb.apache.org)
+    and configuring the UNHANGOUT_COUCHDB_* settings. Note that session data
+    will always be stored in redis regardless of the driver used.
   - ``UNHANGOUT_HANGOUT_APP_ID`` The default is the Google app ID for our
     hangout gadget -- if you're rolling your own installation, you'll need to
     create your own Google Hangout app and provide the ID here -- see the
