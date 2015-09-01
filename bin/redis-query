@@ -1,0 +1,90 @@
+#!/usr/bin/node
+
+// This is a quick and dirty query tool for visualizing the stored JSON data
+// in the Redis database. Run without arguments for usage.
+
+var path = require('path');
+var util = require('util');
+var format = util.format;
+
+var args = process.argv.slice(1);
+var program = path.basename(args.shift());
+
+var redis;
+
+var _ = require('underscore'),
+    logger = require('../lib/logging.js').getLogger(),
+    options = require('../lib/options.js'),
+    redis_lib = require('redis');
+
+var keysQuery = function(pattern) {
+    pattern = pattern ? pattern : "*";
+    redis.keys(pattern, function(err, modelKeys) {
+        if (err) {
+            logger.error(format("Error fetching keys: %s", err));
+        }
+        else if (modelKeys.length == 0) {
+            logger.warn(format("No redis data for %s", pattern));
+        }
+        else {
+            console.log(JSON.stringify(modelKeys.sort(), null, 4));
+        }
+        process.exit();
+    });
+}
+
+var getQuery = function(id) {
+    redis.get(id, function(err, model) {
+        if (err) {
+            logger.error(format("Error fetching id %s: %s", id, err));
+        }
+        else if (_.isNull(model)) {
+            logger.warn(format("No model found for ID: %s", id));
+        }
+        else {
+            var json = JSON.parse(model);
+            const sorted = {};
+            Object.keys(json).sort().forEach(function(key) {
+              sorted[key] = json[key];
+            });
+            console.log(JSON.stringify(sorted, null, 4));
+        }
+        process.exit();
+    });
+}
+
+var id = args.shift();
+
+if (id) {
+  redis = redis_lib.createClient(
+      parseInt(options.UNHANGOUT_REDIS_PORT),
+      options.UNHANGOUT_REDIS_HOST
+  );
+  redis.auth(options.UNHANGOUT_REDIS_PASSWORD);
+  redis.once("ready", function(err) {
+      if (err) {
+          logger.error(format("Error connecting to redis: %s", err));
+          process.exit();
+      }
+      redis.select(options.UNHANGOUT_REDIS_DB, function() {
+          if (id == "keys") {
+              var pattern = args.shift();
+              keysQuery(pattern);
+          }
+          else {
+              getQuery(id);
+          }
+      });
+  });
+}
+else {
+    console.log(format("Usage: %s [keys [pattern] | id]\n", program));
+    console.log("  pattern: Any pattern used with the redis-cli 'keys' command");
+    console.log("           If left empty, all keys will be listed");
+    console.log("  id: Any model id as it is stored in redis\n");
+    console.log("Returns a formatted JSON object.");
+    process.exit();
+}
+
+
+// vi: ft=javascript
