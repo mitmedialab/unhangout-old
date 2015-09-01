@@ -15,6 +15,11 @@
     <link href="/public/vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.css" type="text/css" rel="stylesheet">
 
     <link href="/public/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+    <% if (customCssFiles) { %>
+    <% customCssFiles.forEach(function(file) { %>
+        <link href="<%= file %>" media="screen, projection" rel="stylesheet" type="text/css">
+    <% }); %>
+    <% } %>
 
     <script type="text/javascript">
         /*

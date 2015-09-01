@@ -1,7 +1,11 @@
 <!-- Optimization: pre-load the facilitator.js script for faster hangout startup. -->
+<% var facilitatorPath = "/public/build/facilitator.js" %>
+<% if (nodeEnv !== 'production') { %>
+<% facilitatorPath = "/public/js/facilitator.js" %>
+<% } %>
 <script type='text/javascript'>
     var request = new XMLHttpRequest();
-    request.open("GET", "/public/build/facilitator.js", true);
+    request.open("GET", "<%= facilitatorPath %>", true);
     request.onload = function() {
         window.console && console.log && console.log("facilitator.js pre-loaded..");
     };
