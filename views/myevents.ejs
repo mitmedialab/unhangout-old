@@ -24,6 +24,9 @@
                                 <%= moment(date).format("D MMM YYYY") %>
                             </span>
                         <% } %>
+                        <a href="/admin/event/<%=event.id + '?destination=' + encodeURIComponent(destination)%>" class="btn btn-small">
+                            <i class='fa fa-pencil' title='Edit'></i> edit
+                        </a>
                     </diV>
 
                 </div>
@@ -41,7 +44,7 @@
             <% include _permalink_session_table.ejs %>
           </div>
 
-          <h3><a href="/admin/event/new" class="btn btn-lg btn-primary" id="admin-create-new-event">Create a Permalink</a></h3>
+          <h3><a href="/h" class="btn btn-lg btn-primary" id="admin-create-new-permalink">Create a Permalink</a></h3>
 
         <% } %>
 

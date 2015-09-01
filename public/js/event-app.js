@@ -11,7 +11,8 @@ require([
     "jquery", "underscore", "backbone", "logger", "client-models",
     "event-views", "auth", "transport", 
     // plugins
-    "bootstrap", "backbone.marionette", "underscore-template-config"
+    "bootstrap", "backbone.marionette", "underscore-template-config",
+    "jquery.hotkeys"
 ], function($, _, Backbone, logging, models, eventViews, auth, transport) {
 
 var curEvent, messages;
@@ -156,6 +157,16 @@ $(document).ready(function() {
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
 
+        $('#message-sessions-modal').on('shown.bs.modal', function (e) {
+            $('#session_message').focus();
+        });
+        $('#admin-hotkeys-help-modal').on('shown.bs.modal', function (e) {
+            $('#admin-hotkeys-help-modal .btn-default').focus();
+        });
+        $('#create-session-modal').on('shown.bs.modal', function (e) {
+            $('#session_name').focus();
+        });
+
         //On page reload show and hide topic list
         //according to the current mode
         if(!curEvent.get("adminProposedSessions")) {
@@ -176,6 +187,144 @@ $(document).ready(function() {
         // to do it.
         $(this.bar.el).hide();
 
+        this.initHotkeys = function() {
+            // These allow the hotkeys to work even when an input has the
+            // focus. Given the ctrl+shift prefix, this seems reasonable
+            // and safe, and avoids inconsistencies when using the hotkeys.
+            $.hotkeys.options.filterInputAcceptingElements = false;
+            $.hotkeys.options.filterContentEditable = false;
+            $.hotkeys.options.filterTextInputs = false;
+
+            var makeHotkey = function(key) {
+                var hotkey = 'ctrl+shift+' + key;
+                return hotkey;
+            }
+
+            // This allows use of the existing event handlers in
+            // adminButtonView.
+            // TODO: Abstract adminButtonViews functions more to separate the
+            // functionality we need here from the event callbacks.
+            var dummyEvent = {
+                preventDefault: function() {},
+            }
+
+            var hotkeysLog = function(event, funcName) {
+                logger.log(event.data.keys + ' hotkey pressed, calling: ' + funcName);
+            }
+
+            var help = function(data) {
+                hotkeysLog(data, 'help');
+                $('#admin-hotkeys-help-modal').modal('show');
+            }
+
+            var startStopEvent = function(data) {
+                if (curEvent.get('open')) {
+                    hotkeysLog(data, 'stopEvent');
+                    this.adminButtonView.stopEvent(dummyEvent);
+                }
+                else {
+                    hotkeysLog(data, 'startEvent');
+                    this.adminButtonView.startEvent(dummyEvent);
+                }
+            }
+
+            var editEvent = function(data) {
+                hotkeysLog(data, 'editEvent');
+                // jQuery's click() only deals with firing the click event, so
+                // use lower-level functionality.
+                // This approach allows the link itself to be configured to
+                // open in the same window or a new window.
+                document.getElementById("admin-page-for-event").click()
+            }
+
+            var createSession = function(data) {
+                hotkeysLog(data, 'createSession');
+                $('#create-session-modal').modal('show');
+            }
+
+            var openSessions = function(data) {
+                hotkeysLog(data, 'openSessions');
+                this.adminButtonView.openSessions(dummyEvent);
+            }
+
+            var closeSessions = function(data) {
+                hotkeysLog(data, 'closeSessions');
+                this.adminButtonView.closeSessions(dummyEvent);
+            }
+
+            var messageSessions = function(data) {
+                hotkeysLog(data, 'messageSessions');
+                this.adminButtonView.messageSessions(dummyEvent);
+            }
+
+            var enableDisableParticipantProposedMode = function(data) {
+                if (curEvent.get('adminProposedSessions')) {
+                    hotkeysLog(data, 'enableParticipantProposedMode');
+                    this.adminButtonView.enableParticipantProposedMode(dummyEvent);
+                }
+                else {
+                    hotkeysLog(data, 'disableParticipantProposedMode');
+                    this.adminButtonView.disableParticipantProposedMode(dummyEvent);
+                }
+            }
+
+            var focusChatMessage = function(data) {
+                hotkeysLog(data, 'focusChatMessage');
+                $("#chat-input").focus();
+            }
+
+            var highlightChatMessage = function(data) {
+                hotkeysLog(data, 'highlightChatMessage');
+                $("[name='chat-as-admin']").click();
+            }
+
+            var editWhiteboard = function(data) {
+                hotkeysLog(data, 'editWhiteboard');
+                $("#whiteboard-buttons .edit-whiteboard").click();
+            }
+
+            var bindings = {
+                '/': help,
+                s: startStopEvent,
+                e: editEvent,
+                c: createSession,
+                o: openSessions,
+                w: closeSessions,
+                m: messageSessions,
+                p: enableDisableParticipantProposedMode,
+                a: focusChatMessage,
+                h: highlightChatMessage,
+                b: editWhiteboard,
+            }
+
+            var boundFunctions = {};
+
+            var bindingsCallback = function(func, key) {
+                var boundFunc = _.bind(func, this);
+                boundFunctions[key] = boundFunc;
+            }
+            _.each(bindings, _.bind(bindingsCallback, this));
+
+            var activate = function(el) {
+                var callback = function(func, key) {
+                    el.bind('keydown', makeHotkey(key), func);
+                }
+                _.each(boundFunctions, callback);
+            }
+
+            var deactivate = function(el) {
+                var callback = function(func, key) {
+                    el.unbind('keydown', func);
+                }
+                _.each(boundFunctions, callback);
+            }
+
+            return {
+              activate: activate,
+              deactivate: deactivate,
+            }
+        }
+
         // obviously this is not secure, but any admin requests are re-authenticated on
         // the server. Showing the admin UI is harmless if a non-admin messes with it.
         if(IS_ADMIN) {
@@ -184,6 +333,8 @@ $(document).ready(function() {
             });
 
             this.admin.show(this.adminButtonView);
+            this.hotkeys = this.initHotkeys();
+            this.hotkeys.activate($(document));
         }
 
         var maybeMute = function() {
@@ -205,8 +356,6 @@ $(document).ready(function() {
         maybeMute();
 
         logger.log("Initialized app.");
-
-        $("#admin-page-for-event").attr("href", "/admin/event/" + curEvent.id);
         
         $("#superuser-page-for-followupemail").attr("href", "/followup/event/" 
             + curEvent.id + "/participant_0");

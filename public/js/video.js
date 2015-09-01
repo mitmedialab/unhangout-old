@@ -3,7 +3,7 @@ define([
    "underscore-template-config"
 ], function(_, $, Backbone, logger, extractYoutubeId) {
 
-var DATA_API_URL = "https://gdata.youtube.com/feeds/api/videos/{id}?v=2&alt=json-in-script&callback=?",
+var DATA_API_URL = "/youtube/video-data/{id}",
     IFRAME_API_URL = "https://www.youtube.com/iframe_api",
     video = {};
 
@@ -25,14 +25,16 @@ video.getVideoDetails = function(id, callback) {
     if (id in VIDEO_DETAILS_CACHE) {
         return callback(VIDEO_DETAILS_CACHE[id]);
     }
+    // TODO: Rewrite this for server side processing with v3 of the the YouTube
+    // API.
     $.getJSON(
         DATA_API_URL.replace("{id}", id)
     ).done(function(data) {
         VIDEO_DETAILS_CACHE[id] = {
             id: id,
-            title: data.entry.title.$t,
-            duration: parseInt(data.entry.media$group.yt$duration.seconds),
-            thumbnail: data.entry.media$group.media$thumbnail[0]
+            title: data.title,
+            //duration: parseInt(data.entry.media$group.yt$duration.seconds),
+            thumbnail: data.image
         };
     }).fail(function() {
         VIDEO_DETAILS_CACHE[id] = null;

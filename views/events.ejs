@@ -2,6 +2,11 @@
 <% include _navbar.ejs %>
 
 <div class="container event-container" id='events-list' data-spreadsheet-key="<%= spreadsheetKey %>">
+
+      <% if (user && user.isSuperuser()) { %>
+          <a href="https://docs.google.com/spreadsheets/d/<%= spreadsheetKey %>" target="_blank" class="manage-calendar"><button class="btn btn-lg btn-primary">Manage Events</button></a>
+      <% } %>
+
       <h3 class="upcomingEventsTitle">Upcoming Events</h3> 
       <div class="row" id="upcomingEvents"></div> 
  
@@ -13,11 +18,23 @@
 <script type='text/template' id='event-listing'>
     <div class='event-box col-lg-3 col-md-4 col-sm-6'>
       <div class='container event-box-content'>
-        <a href='{{= link }}'>
-            <img class='img-responsive event-image' src='{{= image }}'/>
-        </a>
-        <h4><a href='{{= link }}'>{{= title }}</a></h4>
-        <p class='date'>{{= date.format("MMM D, YYYY, h:mm a [GMT]Z")}}</p>
+        {{ if (image) { }}
+            {{ if (link) { }}
+                <a href='{{= link }}'>
+                    <img class='img-responsive event-image' src='{{= image }}'/>
+                </a>
+            {{ } else { }}
+                <img class='img-responsive event-image' src='{{= image }}'/>
+            {{ } }}
+        {{ } }}
+        {{ if (link) { }}
+            <h4><a href='{{= link }}'>{{= title }}</a></h4>
+        {{ } else { }}
+            <h4>{{= title }}</h4>
+        {{ } }}
+        {{ if (date) { }}
+            <p class='date'>{{= date.format("MMM D, YYYY, h:mm a [GMT]Z")}}</p>
+        {{ } }}
     </div>
     </div>
 </script>

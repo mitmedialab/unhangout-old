@@ -561,16 +561,21 @@
         <div class="col-lg-8">
             <p class='title'>{{= title }}</p>
         </div>
+    </a>
+</script>
 
+<!--
+        TODO: Add this back to the previous-video-details-template once YouTube
+        v3 API call is implemented.
         <div class="col-lg-1">
             <p class='duration'>
                 {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
             </p>
         </div>
-    </a>
-</script>
+-->
 
 <script type="text/template" id="admin-button-template">
+    <span class="status"></span>
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
            id='event-settings-label'> 
@@ -605,11 +610,13 @@
                 <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
                     <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
                 </a>
-                
-                <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
+
+                <a role="menuitem" href="/admin/event/{{= event.id }}" role="button" id="admin-page-for-event" target="_blank">
+
                     <i class="fa fa-pencil-square-o fa-lg fa-fw"></i>
                     Edit Event Info
                 </a>
+                
                 {{ if (event.get("sessionsOpen")) { }}
                     <a role="menuitem" tabindex="-1" id="close-sessions" href='#'>
                         <i class="fa fa-lock fa-lg fa-fw"></i>
@@ -827,6 +834,66 @@
                 </div>
             </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Admin hotkeys help dialog -->
+    <div id="admin-hotkeys-help-modal" class="modal fade" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Hotkeys help</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+?:</span>
+                        <span class="hotkey-description">This help menu</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+S:</span>
+                        <span class="hotkey-description">Start/Stop event</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+E:</span>
+                        <span class="hotkey-description">Edit event</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+C:</span>
+                        <span class="hotkey-description">Create session</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+O:</span>
+                        <span class="hotkey-description">Open sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+W:</span>
+                        <span class="hotkey-description">Close sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+M:</span>
+                        <span class="hotkey-description">Send message to sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+P:</span>
+                        <span class="hotkey-description">Toggle participant proposed sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+A:</span>
+                        <span class="hotkey-description">Cursor to chat message box</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+H:</span>
+                        <span class="hotkey-description">Highlight/unhighlight chat message</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+B:</span>
+                        <span class="hotkey-description">Edit whiteboard</span>
+                    </div>
+                </div>
+                <div class='modal-footer'>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 

@@ -38,28 +38,28 @@ require(['jquery', 'events-spreadsheet', 'jquery.validate', 'bootstrap', "auth",
         });
 
         $('#contact-form').validate({
-            rules: {
-                title: {
-                    required: true
-                },
-                description: {
-                    required: true
-                }
-            },
-
-            highlight: function(element) {
-                $(element).closest('.form-group').removeClass('success').addClass('error');
-            },
-
-            success: function(element) {
-                element
-                .addClass('valid')
-                .closest('.form-group').removeClass('error').addClass('success');
-            },
+        
             submitHandler: function(form) {
                 var eventTitle = $("#title").val();
                 var eventDescription = $("#description").val();
 
+                $(".event-title-validate-error").removeClass('show');
+                $(".event-title-validate-error").addClass('hide');
+                $(".event-desc-validate-error").removeClass('show');
+                $(".event-desc-validate-error").addClass('hide');
+
+                if(eventTitle.length < 5) {
+                    $(".event-title-validate-error").removeClass('hide');
+                    $(".event-title-validate-error").addClass('show');
+                    return;
+                }
+
+                if(eventDescription.length < 100) {
+                    $(".event-desc-validate-error").removeClass('hide');
+                    $(".event-desc-validate-error").addClass('show');   
+                    return; 
+                }
+ 
                 $.ajax({
                     url:"/admin-request/",
                     type:"POST",
@@ -72,7 +72,6 @@ require(['jquery', 'events-spreadsheet', 'jquery.validate', 'bootstrap', "auth",
                 }).fail(function() {
                     alert("Server error.. please try later.");
                 });
-
 
             }
         });

@@ -55,6 +55,7 @@
     "nib": "1.0.2",
     "node-uuid": "1.4.1",
     "nodemailer": "0.6.1",
+    "open-graph": "0.1.5",
     "passport": "0.2.0",
     "passport-google-oauth": "0.1.5",
     "redis": "0.10.1",

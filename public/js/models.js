@@ -88,7 +88,7 @@ models.BaseModel = Backbone.Model.extend({
 models.Event = models.BaseModel.extend({
     idRoot: "event",
     urlRoot: "event",
-    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm[]a",
+    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
 
     defaults: function() {
         return {
@@ -206,7 +206,7 @@ models.Event = models.BaseModel.extend({
     // Add the given user -- either a full user model, or an object with an
     // "email" key -- to the list of admins, if not already present.
     addAdmin: function(user) {
-        var admins = this.get("admins");
+        var admins = _.clone(this.get("admins"));
         var exists = _.any(admins, _.bind(function(admin) {
             return this.adminMatchesUser(admin, user);
         }, this));
@@ -229,15 +229,13 @@ models.Event = models.BaseModel.extend({
             }
             if (changed) {
                 this.set("admins", admins);
-                this.trigger("change:admins", this, admins);
-                this.trigger("change", this);
             }
         }
     },
     // Remove the given user -- either a full user model, or an object with an
     // "email" key -- from the list of admins, if present.
     removeAdmin: function(user) {
-        var admins = this.get("admins");
+        var admins = _.clone(this.get("admins"));
         var changed;
         admins = _.reject(admins, _.bind(function(admin) {
             if (this.adminMatchesUser(admin, user)) {
@@ -248,8 +246,6 @@ models.Event = models.BaseModel.extend({
         }, this));
         if (changed) {
             this.set("admins", admins);
-            this.trigger("change:admins", this, admins);
-            this.trigger("change", this);
         }
     },
     // "admins" is a list of Admin objects, which refer to a user.  However,
