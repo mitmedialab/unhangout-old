@@ -427,8 +427,11 @@ models.User = Backbone.Model.extend({
             displayName: "[unknown]",
             link: null,
             emails: [],
-            preferredContact: null,
-            networkList: {}
+            preferredContact: {},
+            networkList: {},
+            picture: "",
+            createdViaHangout: false // this field is set in situations where the user doesn't actually log in with us, but
+                                 // instead shows up in a participants message from an instrumented hangout.
         };
     },
 
