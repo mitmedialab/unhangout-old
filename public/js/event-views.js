@@ -977,17 +977,25 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         }
 
         var countTitle;
+        var timeout;
+        var createSession = function(title) {
+            this.options.transport.send("create-session", {
+                title: title,
+                description:"",
+                activities: activities,
+                joinCap: joinCap,
+                roomId: roomId,
+                approved: true,
+            });
+        }
         for (var i = 1; i <= numSessions; i++) {
+          // Spread out these requests a bit, it's still quite fast to create
+          // many sessions, and helps to avoid race conditions with overlapping
+          // requests.
+          timeout = (i - 1) * 50;
           // Number multiple sessions.
           countTitle = numSessions === 1 ? title : title + " #" + i;
-          this.options.transport.send("create-session", {
-              title: countTitle,
-              description:"",
-              activities: activities,
-              joinCap: joinCap,
-              roomId: roomId,
-              approved: true,
-          });
+          setTimeout(_.bind(createSession, this, countTitle), timeout);
         }
 
         // TODO: Is there some modal open event that can be used to do this
