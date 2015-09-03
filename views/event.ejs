@@ -588,12 +588,12 @@
             <li role="presentation">
                 {{ if (event.get("open")) { }}
                     <p role="menuitem">
-                        This event is currently <font color="#5CB85C">OPEN</font>
+                        This event is currently <span id="event-status-text" class="open">OPEN</span>
                         <hr/>
                     </p>                    
                 {{ } else { }}
                     <p role="menuitem">
-                        This event is currently <font color="#D9524F">CLOSED</font>
+                        This event is currently <span id="event-status-text" class="closed">CLOSED</span>
                         <hr/>
                     </p> 
                 {{ } }} 
