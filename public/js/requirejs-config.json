@@ -9,7 +9,7 @@
         "jquery.hotkeys": "../vendor/jquery.hotkeys",
         "jquery.validate": "../vendor/jquery.validate.min",
         "jquery.autosize": "../vendor/jquery.autosize.min",
-        "jquery-ui": "../vendor/jquery-ui-1.10.3.custom.min",
+        "jquery-ui": "../vendor/jquery-ui/jquery-ui-1.10.4.custom.min",
         "underscore": "../vendor/underscore",
         "backbone": "../vendor/backbone",
         "backbone.marionette": "../vendor/backbone.marionette",
