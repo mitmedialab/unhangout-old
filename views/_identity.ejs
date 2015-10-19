@@ -12,15 +12,21 @@
             </a>
 
             <ul class="dropdown-menu" role="menu" aria-labelledby="user-menu-label">
-                <% if (user.isSuperuser() || user.isAdminOfSomeEvent()) { %>
-                    <li role="presentation">
-                        <a role="menuitem" tabindex="-1" href="/myevents/">My Events</a>
-                    </li>
+                
+                <% if(user.isSuperuser()) { %>
                     <li role="presentation">
                         <a role="menuitem" tabindex="-1" href="/admin/">Event/Session overview</a>
                     </li>
                     <li role="presentation" class="divider"></li>
                 <% } %>
+
+                <% if (user.isSuperuser() || user.isAdminOfSomeEvent()) { %>
+                    <li role="presentation">
+                        <a role="menuitem" tabindex="-1" href="/myevents/">My Events</a>
+                    </li>
+                    <li role="presentation" class="divider"></li>
+                <% } %>
+
                 <li role="presentation">
                     <a role="menuitem" tabindex="-1" href="/logout">Logout</a>
                 </li>
