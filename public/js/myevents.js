@@ -92,7 +92,6 @@ $(document).ready(function() {
         	this.ui.eventAdmins.html(adminFragment);
 
         	function showUsernameTooltip() {
-        		console.log(this.dataset.id);
 
         		$(this).attr("data-toggle", "tooltip")
         			   .attr("title", this.dataset.name)
@@ -106,7 +105,7 @@ $(document).ready(function() {
 	    template: _.template($('#event-admin-adder').html()),
 	    
 	    events: {
-	        'click .close, .cancel': 'close',
+	        'click .close': 'close',
 	        'click .add': 'add',
 	        'keydown .filter-email': 'removeInputErrors', 
 	        'click .send-invite': 'sendLoginInvite'
@@ -140,8 +139,6 @@ $(document).ready(function() {
 						eventTitle: eventTitle, adminInviteeEmail: adminInviteeEmail}
             }).done(function() {
             	this.$el.modal("hide");
-            
-                //content changes for this modal later
                 $('#invite-sent-modal').modal('show');
  
             }).fail(function() {
@@ -172,7 +169,7 @@ $(document).ready(function() {
 	            event: this.event,
 	        }));
 
-	        this.$el.modal("show");
+	        this.$el.modal("show"); 
 	       
 	    },
 	});
@@ -181,9 +178,9 @@ $(document).ready(function() {
 	    template: _.template($('#event-admin-remover').html()),
 	    
 	    events: {
-	        'click .close, .cancel': 'close',
+	        'click .close': 'close',
 	        'click .remove': 'remove',
-	        'click .close-alert': 'closeAlert',
+	        'click .okay, .close-alert' : 'closeAlert',
 	        'click .confirm-removal': 'confirmAdminRemoval'
 	    },
 
@@ -195,11 +192,50 @@ $(document).ready(function() {
 	    remove: function(jqevt) {
 	    	jqevt.preventDefault();
 
-	    	$(".alert-confirm-removal").removeClass("hide");
-       		$(".alert-confirm-removal").addClass("show");
+	    	//iterate through the admins list to see if an admin is a 
+	    	//logged in user 
+	    	var admins = this.event.get("admins");
+	    	var noOfAdmins = admins.length;
+	    	var noOfAdminsToBeRemoved = adminsToBeRemoved.length
+	    	var authUserIsAdmin = false; 
 
-       		$(".alert-confirm-removal").find("p").text("Are you sure you would \
-       			like to remove " + adminsToBeRemoved.length+ " admin(s)?");
+	    	this.showAlert();
+
+	    	for(var c = 0; c< noOfAdminsToBeRemoved; c++) {
+	    		if(auth.USER_ID == adminsToBeRemoved[c]) {
+	    			authUserIsAdmin = true;
+	    			break;
+	    		}
+	    	}
+
+	    	if(noOfAdminsToBeRemoved >= noOfAdmins) {
+	    		$(".alert-confirm-removal").find("p").text("You will not be able \
+	    		to proceed with your current selection, as it will leave this event \
+	    		without an admin.");
+
+	    		this.hideBtnYesNo();
+	    		this.showBtnOk();
+   	
+	    	} else if (authUserIsAdmin) {
+
+	    		$(".alert-confirm-removal").find("p").text("If you remove \
+       					yourself as an admin, you will no longer have access to \
+       					this event's settings. Would you like to continue?");
+
+	    		this.showBtnYesNo();
+	    		this.hideBtnOk();
+
+
+	    	} else {
+
+	    		$(".alert-confirm-removal").find("p").text("Are you sure you want \
+       			to remove " + noOfAdminsToBeRemoved + " admin(s)?");
+
+	    		this.showBtnYesNo();
+	    		this.hideBtnOk();
+
+	    	}
+
 	    },
 
 	    closeAlert: function(jqevt) {
@@ -207,6 +243,33 @@ $(document).ready(function() {
 
 	    	$(".alert-confirm-removal").removeClass("show");
        		$(".alert-confirm-removal").addClass("hide");
+	    },
+
+	    showAlert: function() {
+
+	    	$(".alert-confirm-removal").removeClass("hide");
+       		$(".alert-confirm-removal").addClass("show");
+	    },
+
+	    showBtnOk: function() {
+	    	$(".btn-ok").removeClass("hide");
+	    	$(".btn-ok").addClass("show");
+	    },
+
+	    hideBtnOk: function() {
+			$(".btn-ok").removeClass("show");
+	    	$(".btn-ok").addClass("hide");
+
+	    },
+
+	    showBtnYesNo: function() {
+	    	$(".btn-yes-no").addClass("show");
+	    	$(".btn-yes-no").removeClass("hide");
+	    },
+
+	    hideBtnYesNo: function() {
+	    	$(".btn-yes-no").addClass("hide");
+	    	$(".btn-yes-no").removeClass("show");
 	    },
 
 	    close: function() {
@@ -249,7 +312,10 @@ $(document).ready(function() {
 	          
 	            var user = this.event.findAdminAsUser(admin, users); 
 
-	            pElName = document.createTextNode(user.get("displayName"));
+	            pElName = document.createElement("span"); 
+	            pElName.innerHTML = "&nbsp; <span class='name'>" + user.get("displayName") +  "</span>";
+
+	            //pElName = document.createTextNode(user.get("displayName"));
 	            pElEmail = document.createElement("span");
 	            pElEmail.innerHTML = "&nbsp; <span class='link'>" + user.get("emails")[0].value +  "</span>";
 	            
@@ -311,7 +377,9 @@ $(document).ready(function() {
         	this.$el.find(".event-admins").html(adminFragment);
 
         	if(this.event.get("admins").length == 0) {
-        		this.$el.find(".modal-body").html("<b>Currently, there are no admins for this event</b>");
+        		this.$el.find(".modal-body").html("<b>Currently, there are no admins \
+        		 for this event</b>");
+
         		this.$el.find(".remove").addClass("hide");
         		this.$el.find(".remove").removeClass("show");
         	}
@@ -415,7 +483,7 @@ $(document).ready(function() {
             action: "remove-event-admin",
             admins: adminsToBeRemoved,
             eventId: event.get("id"),
-        }, function() {
+        }, function() {	
 
         	for(var i = 0; i < adminsToBeRemoved.length; i++) {
         		var user = users.find(function(user) {
