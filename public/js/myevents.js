@@ -108,7 +108,7 @@ $(document).ready(function() {
 	        'click .close': 'close',
 	        'click .add': 'add',
 	        'keydown .filter-email': 'removeInputErrors', 
-	        'click .send-invite': 'sendLoginInvite'
+	        'click .btn-send-invite': 'sendLoginInvite'
 	    },
 
 	    ui: {
@@ -128,23 +128,25 @@ $(document).ready(function() {
 	    },
 
 	    sendLoginInvite: function() {
-	    	var adminInviteeEmail = this.$el.find(".filter-email").val(); 
+	    	var adminInviteeEmail = this.$el.find(".filter-email").val();
+	    	var adminInviterEmail =  USER.emails[0].value;
 	    	var adminInviterName  = USER.displayName;
 	    	var eventTitle = this.event.get("title");
- 
+ 			
 	    	$.ajax({
                 url:"/myevents/admin-login-invite/",
                 type:"POST",
-                data: {adminInviterName: adminInviterName, 
-						eventTitle: eventTitle, adminInviteeEmail: adminInviteeEmail}
-            }).done(function() {
-            	this.$el.modal("hide");
-                $('#invite-sent-modal').modal('show');
- 
-            }).fail(function() {
-                alert("Server error.. please try later.");
-            });
+                
+                data: {
+                	adminInviterName: adminInviterName, 
+					eventTitle: eventTitle, 
+					adminInviteeEmail: adminInviteeEmail,
+					adminInviterEmail: adminInviterEmail
+				}
 
+			}).done(function() {
+				console.log("Admin invite has been sent successfully!");
+			});
 	    },
 
 	    close: function() {
