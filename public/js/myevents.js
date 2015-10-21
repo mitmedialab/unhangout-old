@@ -142,10 +142,19 @@ $(document).ready(function() {
 					eventTitle: eventTitle, 
 					adminInviteeEmail: adminInviteeEmail,
 					adminInviterEmail: adminInviterEmail
-				}
+				},
 
-			}).done(function() {
-				console.log("Admin invite has been sent successfully!");
+			}).success(function(res) {
+				$("#invite-sent-modal").modal("show");
+				$("#invite-sent-modal").find(".modal-title").text("Awesome!");
+				$("#invite-sent-modal").find("p").text(res);
+				
+			}).error(function(res) {
+				if(res.status == 500) {
+					$("#invite-sent-modal").modal("show");
+					$("#invite-sent-modal").find(".modal-title").text("Oh no!");
+					$("#invite-sent-modal").find("p").text(res.responseText);
+				}
 			});
 	    },
 
@@ -481,13 +490,14 @@ $(document).ready(function() {
 	}
 
 	function removeAdminFromEvent(event) {
+
        	postUserData({
             action: "remove-event-admin",
             admins: adminsToBeRemoved,
             eventId: event.get("id"),
         }, function() {	
-
         	for(var i = 0; i < adminsToBeRemoved.length; i++) {
+
         		var user = users.find(function(user) {
 					if(user.get("id") ==  adminsToBeRemoved[i] ) {
 						return user;
@@ -501,9 +511,8 @@ $(document).ready(function() {
 
         }, function(error) {
             alert("Server error");
-            console.error(error);
         }, function(success) {
-        	console.log("success");
+        	alert("Success!");
         });
 
 	}
