@@ -127,6 +127,15 @@ describe("ADMIN MYEVENTS SELENIUM", function() {
         browser.waitForSelector(".btn-send-invite");
 
         browser.byCss(".btn-send-invite").click().then(function() {
+            expect(outbox.length).to.be(1);
+
+            var msg = outbox[0];
+            expect(msg.subject).to.eql("Invitation to use Unhangout");
+            expect(msg.to[0].email).to.eql("unhangout.developer@gmail.com");
+            expect(msg.headers["Reply-To"]).to.eql(user1.get("emails")[0].value);
+
+            // Clear outbox.
+            outbox.length = 0;
             done();
         });
 
