@@ -71,6 +71,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
+        $('.tooltip').hide();
         var start = new Date().getTime();  
 
         this.$el.attr("data-session-id", this.model.id);
@@ -225,6 +226,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.attend.removeAttr("disabled");
             this.ui.attend.removeClass("disabled");
         }
+        this.$el.find('[data-toggle="tooltip"]').tooltip({'placement':'right'});
     },
 
     destroy: function() {
@@ -350,7 +352,6 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     onRender: function() {
         $('.tooltip').hide();
-        $('[data-toggle="tooltip"]').tooltip();
 
         var start = new Date().getTime();
 
@@ -388,7 +389,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         }
 
         this.ui.vote.find(".text").text(this.model.get("votes"));
-
+        this.$el.find('[data-toggle="tooltip"]').tooltip({'placement':'right'});
     },
 
     destroy: function() {
