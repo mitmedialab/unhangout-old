@@ -113,7 +113,8 @@ $(document).ready(function() {
 	    	var adminInviterEmail =  USER.emails[0].value;
 	    	var adminInviterName  = USER.displayName;
 	    	var eventTitle = this.event.get("title");
- 			
+	    	var eventID = this.event.get("id");
+
 	    	$.ajax({
                 url:"/myevents/admin-login-invite/",
                 type:"POST",
@@ -121,7 +122,8 @@ $(document).ready(function() {
                 	adminInviterName: adminInviterName, 
 					eventTitle: eventTitle, 
 					adminInviteeEmail: adminInviteeEmail,
-					adminInviterEmail: adminInviterEmail
+					adminInviterEmail: adminInviterEmail,
+					eventID: eventID
 				},
 
 			}).success(function(res) {
