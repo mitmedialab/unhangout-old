@@ -5,12 +5,9 @@ require([
 ], function($, _, Backbone, validate, models, auth) {
 
 $(document).ready(function() { 
-
 	var users = new models.UserList(USER_DATA);
 	var events = new models.EventList(EVENT_DATA);
-
 	var adminsToBeRemoved = [];
-	
 	var modalAdminAdder;
 	var modalAdminRemover;
 	var modalConfirmAdminRemoval;
@@ -18,16 +15,13 @@ $(document).ready(function() {
 	var EventRowView = Backbone.Marionette.ItemView.extend({
 	    tagName: 'tr',
 	    template: '#event-row', 
-
 	    events: {
 	        'click .btn-add-admin': 'invokeAddAdminModal',
 	        'click .btn-remove-admin': 'invokeRemoveAdminModal'
     	},
-
     	modelEvents: {
 	        'change': 'render'
 	    },	
-
 	    ui: {
 	    	eventAdmins: '.event-admins',
 	    	eventDate: '.event-date',
@@ -35,28 +29,22 @@ $(document).ready(function() {
 
     	invokeAddAdminModal: function(jqevt) {
     		jqevt.preventDefault();
-
 	        var event = this.model;
-	       
 	        modalAdminAdder = new EventAdminAdder({event: event});
 	        modalAdminAdder.render();
     	},
 
     	invokeRemoveAdminModal: function(jqevt) {
 	    	jqevt.preventDefault();
-
 	        var event = this.model;
-	       
 	        modalAdminRemover = new EventAdminRemover({event: event});
 	        modalAdminRemover.render();
 	    },
 
     	onRender: function() {
   			var event = this.model; 
-
   			//Building the date and time 
-  			var dateFragment = document.createDocumentFragment();
-
+  			var dateFragment = document.createDocumentFragment(); 
   			var date = event.get("dateAndTime");
 
   			if(date) {
@@ -67,7 +55,6 @@ $(document).ready(function() {
 
   			//Now add the event date fragment to the layout and display it
         	this.ui.eventDate.html(dateFragment);
-
   			//Build the list of event admins 
   			var adminFragment = document.createDocumentFragment();
 
@@ -80,7 +67,6 @@ $(document).ready(function() {
 	            adminFragment.appendChild(imgEl);
 	            imgEl.onmouseover = showUsernameTooltip;
 	            imgEl.alt = user.get("displayName");
-
 	        }, this);  //drawAdmin 
 
         	_.each(this.model.get("admins"), function(admin) { 
@@ -92,25 +78,21 @@ $(document).ready(function() {
         	this.ui.eventAdmins.html(adminFragment);
 
         	function showUsernameTooltip() {
-
         		$(this).attr("data-toggle", "tooltip")
         			   .attr("title", this.dataset.name)
         			   .tooltip("show"); 
         	}
-
 	    },
     });
 
     var EventAdminAdder = Backbone.View.extend({
 	    template: _.template($('#event-admin-adder').html()),
-	    
 	    events: {
 	        'click .close': 'close',
 	        'click .add': 'add',
 	        'keydown .filter-email': 'removeInputErrors', 
 	        'click .btn-send-invite': 'sendLoginInvite'
 	    },
-
 	    ui: {
 	        'filterEmail': 'input.filter-email',
 	    },
@@ -123,7 +105,6 @@ $(document).ready(function() {
 	    add: function() {
 	    	var email = this.$el.find(".filter-email").val();
 	    	addAdminToEvent(email, this.event);
-
 	        this.close();
 	    },
 
@@ -136,7 +117,6 @@ $(document).ready(function() {
 	    	$.ajax({
                 url:"/myevents/admin-login-invite/",
                 type:"POST",
-                
                 data: {
                 	adminInviterName: adminInviterName, 
 					eventTitle: eventTitle, 
@@ -148,7 +128,6 @@ $(document).ready(function() {
 				$("#invite-sent-modal").modal("show");
 				$("#invite-sent-modal").find(".modal-title").text("Awesome!");
 				$("#invite-sent-modal").find("p").text(res);
-				
 			}).error(function(res) {
 				if(res.status == 500) {
 					$("#invite-sent-modal").modal("show");
@@ -166,10 +145,8 @@ $(document).ready(function() {
 	    removeInputErrors: function() {
     		$(".filter-email").addClass("success");
     		$(".filter-email").removeClass("error");
-
     		$(".email-validate-error").addClass("hide");
            	$(".email-validate-error").removeClass("show");
-
            	$(".send-invite").removeClass("show");
        		$(".send-invite").addClass("hide");
     	},
@@ -179,15 +156,12 @@ $(document).ready(function() {
 	        this.$el.html(this.template({
 	            event: this.event,
 	        }));
-
 	        this.$el.modal("show"); 
-	       
 	    },
 	});
 	
 	var EventAdminRemover = Backbone.View.extend({
 	    template: _.template($('#event-admin-remover').html()),
-	    
 	    events: {
 	        'click .close': 'close',
 	        'click .remove': 'remove',
@@ -202,14 +176,12 @@ $(document).ready(function() {
 
 	    remove: function(jqevt) {
 	    	jqevt.preventDefault();
-
 	    	//iterate through the admins list to see if an admin is a 
 	    	//logged in user 
 	    	var admins = this.event.get("admins");
 	    	var noOfAdmins = admins.length;
 	    	var noOfAdminsToBeRemoved = adminsToBeRemoved.length
 	    	var authUserIsAdmin = false; 
-
 	    	this.showAlert();
 
 	    	for(var c = 0; c< noOfAdminsToBeRemoved; c++) {
@@ -223,41 +195,29 @@ $(document).ready(function() {
 	    		$(".alert-confirm-removal").find("p").text("You will not be able \
 	    		to proceed with your current selection, as it will leave this event \
 	    		without an admin.");
-
 	    		this.hideBtnYesNo();
 	    		this.showBtnOk();
-   	
 	    	} else if (authUserIsAdmin) {
-
 	    		$(".alert-confirm-removal").find("p").text("If you remove \
        					yourself as an admin, you will no longer have access to \
        					this event's settings. Would you like to continue?");
-
 	    		this.showBtnYesNo();
 	    		this.hideBtnOk();
-
-
 	    	} else {
-
 	    		$(".alert-confirm-removal").find("p").text("Are you sure you want \
        			to remove " + noOfAdminsToBeRemoved + " admin(s)?");
-
 	    		this.showBtnYesNo();
 	    		this.hideBtnOk();
-
 	    	}
-
 	    },
 
 	    closeAlert: function(jqevt) {
 	    	jqevt.preventDefault(); 
-
 	    	$(".alert-confirm-removal").removeClass("show");
        		$(".alert-confirm-removal").addClass("hide");
 	    },
 
 	    showAlert: function() {
-
 	    	$(".alert-confirm-removal").removeClass("hide");
        		$(".alert-confirm-removal").addClass("show");
 	    },
@@ -270,7 +230,6 @@ $(document).ready(function() {
 	    hideBtnOk: function() {
 			$(".btn-ok").removeClass("show");
 	    	$(".btn-ok").addClass("hide");
-
 	    },
 
 	    showBtnYesNo: function() {
@@ -294,7 +253,6 @@ $(document).ready(function() {
 
 	    render: function() {
 	        this.$el.addClass("modal fade");
-
 	        //Initially show the remove class and modal body
 	        this.$el.find(".modal-body").html("");
 	        this.$el.find(".remove").removeClass("hide");
@@ -307,9 +265,7 @@ $(document).ready(function() {
 	        }));
 		
 	        this.$el.modal("show");
-
 	        adminsToBeRemoved = [];
-
 	        //remove the admin row select classes
 	        $(this).removeClass("admin-row-selected");	
 	        $(this).removeClass("admin-row-unselected");
@@ -320,13 +276,11 @@ $(document).ready(function() {
   			var drawAdminRow = _.bind(function (admin) {
   				divEl = document.createElement("div");
 	            imgEl = document.createElement("img");
-	          
+	            
 	            var user = this.event.findAdminAsUser(admin, users); 
-
+	            
 	            pElName = document.createElement("span"); 
 	            pElName.innerHTML = "&nbsp; <span class='name'>" + user.get("displayName") +  "</span>";
-
-	            //pElName = document.createTextNode(user.get("displayName"));
 	            pElEmail = document.createElement("span");
 	            pElEmail.innerHTML = "&nbsp; <span class='link'>" + user.get("emails")[0].value +  "</span>";
 	            
@@ -344,19 +298,14 @@ $(document).ready(function() {
 	            	if(this.className == undefined || this.className == "") {
 	            		$(this).addClass("admin-row-selected");	
 	            		$(this).removeClass("admin-row-unselected");
-
 	            		listOfAdminsForRemoval(this.dataset.id, "add");
-
 	            	} else if(this.className == "admin-row-selected") {
 	            		$(this).addClass("admin-row-unselected");
 	            		$(this).removeClass("admin-row-selected");
-
 	            		listOfAdminsForRemoval(this.dataset.id, "remove");
-
 	            	} else if (this.className == "admin-row-unselected") {
 	            		$(this).addClass("admin-row-selected");
 	            		$(this).removeClass("admin-row-unselected");
-
 	            		listOfAdminsForRemoval(this.dataset.id, "add");
 	            	}
 	            }
@@ -373,10 +322,8 @@ $(document).ready(function() {
 	            					break;
 	            				}
 	            			}
-
 	            		}
 	            	}
-
 	            }
 
 	        }, this);  //drawAdmin 
@@ -390,7 +337,6 @@ $(document).ready(function() {
         	if(this.event.get("admins").length == 0) {
         		this.$el.find(".modal-body").html("<b>Currently, there are no admins \
         		 for this event</b>");
-
         		this.$el.find(".remove").addClass("hide");
         		this.$el.find(".remove").removeClass("show");
         	}
@@ -398,7 +344,6 @@ $(document).ready(function() {
 	});
 
 	var EventTableView = Backbone.Marionette.CompositeView.extend({
-
 	    template: '#event-table',
 	    itemView: EventRowView,
 	    itemViewContainer: 'tbody',
@@ -409,7 +354,6 @@ $(document).ready(function() {
 
 	    serializeData: function() {
 	    	var context = Backbone.Marionette.CompositeView.prototype.serializeData.apply(this);
-	        
 	        context.adminEvents = [];
 
 	        events.each(function(event) {
@@ -456,7 +400,6 @@ $(document).ready(function() {
        	if(userFilter == "") {
        		$(".send-invite").addClass("show");
        		$(".send-invite").removeClass("hide");
-
        		modalAdminAdder.addClass("show");
 			return; 
        	} 
@@ -490,37 +433,30 @@ $(document).ready(function() {
 	}
 
 	function removeAdminFromEvent(event) {
-
        	postUserData({
             action: "remove-event-admin",
             admins: adminsToBeRemoved,
             eventId: event.get("id"),
         }, function() {	
         	for(var i = 0; i < adminsToBeRemoved.length; i++) {
-
         		var user = users.find(function(user) {
 					if(user.get("id") ==  adminsToBeRemoved[i] ) {
 						return user;
 					}
 				});
-
 				event.removeAdmin(user);
 				user.trigger("change", user);
-
         	}
-
         }, function(error) {
             alert("Server error");
         }, function(success) {
         	alert("Success!");
         });
-
 	}
 
 	function postUserData(data, success, error) {
-
 		var post = _.extend({eventId: data.eventId}, data);
-        
+
         $.ajax({
             type: 'POST',
             url: '/myevents/',
@@ -531,51 +467,37 @@ $(document).ready(function() {
 	}
 
 	function getUserForEmailFilter(email) {
-
 		userFilter = [];
 
 		_.filter(users.models, _.bind(function(user) {
-
        		if(email) {
        			var tokens = email.toLowerCase().split(" ");
-
        			var search = (user.get("displayName") + " " +
                 _.pluck(user.get("emails"), "value").join(" ")).toLowerCase();
 
                 for (var i = 0; i < tokens.length; i++) {
-
                     if (search.indexOf(tokens[i]) >= 0) { //matched
                     	userFilter = user;
                     	return false;
                     }
-                   
                 }
-             
        		}
-
      		})
-
      	);
-
      	return userFilter; 
     }
 
 	function showInputErrors(msg) {
 		$(".email-validate-error").removeClass("hide");
    		$(".email-validate-error").addClass("show");
-
-		$(".email-validate-error").text(msg); 
-		
+		$(".email-validate-error").text(msg);
 		$(".filter-email").addClass("error");
 		$(".filter-email").removeClass("success");
-
 		modalAdminAdder.addClass("show");
 		return; 
     }
 
 }); //document ready 
-
 $("[rel=popover]").popover({container: "body", placement: "left"});
 $("[title]").not("[rel=popover]").tooltip({container: "body"});
-
 });
