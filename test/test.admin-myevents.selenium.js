@@ -6,15 +6,14 @@ var expect = require('expect.js'),
 describe("ADMIN MYEVENTS SELENIUM", function() {
     var browser = null,
         event = null;
-
     if (process.env.SKIP_SELENIUM_TESTS) {
         return;
     }
+
     this.timeout(60000); // Extra long timeout for selenium :(
 
     before(function(done) {
         this.timeout(240000);
-
         /* Mock Mandrill's API here */
         mandrill.Mandrill = function(apiKey) {
             this.messages = {
@@ -23,7 +22,6 @@ describe("ADMIN MYEVENTS SELENIUM", function() {
                 }
             }
         };
-
         common.getSeleniumBrowser(function (theBrowser) {
             browser = theBrowser;
             common.standardSetup(done);
@@ -83,19 +81,14 @@ describe("ADMIN MYEVENTS SELENIUM", function() {
     it("Makes a user an event admin", function(done) {
         //do some event setup for testing this function
         event = common.server.db.events.findWhere({shortName: "writers-at-work"});
- 
         var user1 = common.server.db.users.findWhere({"sock-key": "admin1"});
         user1.set("picture", "https://pbs.twimg.com/profile_images/623000402351517696/NvrZQSuB_400x400.jpg");
-
         var user2 = common.server.db.users.findWhere({"sock-key": "admin2"});
         user2.set("picture", "https://lh3.googleusercontent.com/-_7XMV9dfvU0/AAAAAAAAAAI/AAAAAAAAAAA/GtrLqI8WLqo/photo.jpg");
-        
         event.addAdmin(user1);
-
         browser.mockAuthenticate("admin1");
         browser.get(common.URL + "/myevents/");
         browser.byCss(".btn-add-admin").click(); 
-
         browser.waitForSelector(".filter-email");
         browser.byCss(".filter-email").sendKeys(user2.get("emails")[0].value);
         browser.byCss(".add").click();
@@ -104,67 +97,52 @@ describe("ADMIN MYEVENTS SELENIUM", function() {
             expect(user2.isAdminOf(event)).to.be(true);
             done();
         });
-
     });
 
     it("Sends an admin invite to user if not in the directory", function(done) {
         //do some event setup for testing this function
         event = common.server.db.events.findWhere({shortName: "writers-at-work"});
- 
         var user1 = common.server.db.users.findWhere({"sock-key": "admin1"});
         user1.set("picture", "https://pbs.twimg.com/profile_images/623000402351517696/NvrZQSuB_400x400.jpg");
-        
         event.addAdmin(user1);
-
         browser.mockAuthenticate("admin1");
         browser.get(common.URL + "/myevents/");
         browser.byCss(".btn-add-admin").click(); 
-
         browser.waitForSelector(".filter-email");
         browser.byCss(".filter-email").sendKeys("unhangout.developer@gmail.com");
         browser.byCss(".add").click();
-
         browser.waitForSelector(".btn-send-invite");
-
         browser.byCss(".btn-send-invite").click().then(function() {
             expect(outbox.length).to.be(1);
-
             var msg = outbox[0];
-            expect(msg.subject).to.eql("Invitation to use Unhangout");
+            expect(msg.subject).to.eql("unhangout administrator account");
             expect(msg.to[0].email).to.eql("unhangout.developer@gmail.com");
             expect(msg.headers["Reply-To"]).to.eql(user1.get("emails")[0].value);
-
             // Clear outbox.
             outbox.length = 0;
             done();
         });
-
     });
 
     it("Removes an admin", function(done) {
         //do some event setup for testing this function
         event = common.server.db.events.findWhere({shortName: "writers-at-work"});
- 
         var user1 = common.server.db.users.findWhere({"sock-key": "admin1"});
         user1.set("picture", "https://pbs.twimg.com/profile_images/623000402351517696/NvrZQSuB_400x400.jpg");
-
         var user2 = common.server.db.users.findWhere({"sock-key": "admin2"});
-        user2.set("picture", "https://lh3.googleusercontent.com/-_7XMV9dfvU0/AAAAAAAAAAI/AAAAAAAAAAA/GtrLqI8WLqo/photo.jpg");
-        
+        user2.set("picture", "https://lh3.googleusercontent.com/-_7XMV9dfvU0/AAAAAAAAAAI/AAAAAAAAAAA/GtrLqI8WLqo/photo.jpg");    
         event.addAdmin(user1);
         event.addAdmin(user2);
-
         browser.mockAuthenticate("admin1");
         browser.get(common.URL + "/myevents/");
         browser.byCss(".btn-remove-admin").click(); 
-
         var selector = "div[data-id='" + user2.id + "']";
-
         browser.waitForSelector(selector);
         browser.byCss(selector).click();  
         browser.waitForSelector(".remove");
         browser.byCss(".remove").click();
         browser.waitForSelector(".confirm-removal");
+
         browser.byCss(".confirm-removal").click().then(function() {
             expect(user2.isAdminOf(event)).to.be(false);
             done();
