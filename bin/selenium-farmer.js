@@ -27,6 +27,8 @@ function run(callback) {
         browser.get(farmConf.serverUrl);
         browser.byLinkText("Login").click();
         browser.byCss("#Email").sendKeys(farmConf.email);
+        browser.byCss("[name=signIn]").click();
+        browser.waitForSelector("#Passwd");
         browser.byCss("#Passwd").sendKeys(farmConf.password);
         browser.byCss("#signIn").click();
         browser.getCurrentUrl().then(function(url) {

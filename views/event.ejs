@@ -6,6 +6,8 @@
     var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
     var IS_SUPERUSER = <%= event && user.isSuperuser() %>;
     var USER = <%- JSON.stringify(user) %>;
+    var NUM_HANGOUT_URLS_AVAILABLE = <%= numHangoutUrlsAvailable %>;
+    var NUM_HANGOUT_URLS_WARNING = <%= numHangoutUrlsWarning %>;
 
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
@@ -561,16 +563,21 @@
         <div class="col-lg-8">
             <p class='title'>{{= title }}</p>
         </div>
+    </a>
+</script>
 
+<!--
+        TODO: Add this back to the previous-video-details-template once YouTube
+        v3 API call is implemented.
         <div class="col-lg-1">
             <p class='duration'>
                 {{= parseInt(duration/60) }}:{{= (duration%60) < 10 ? "0" + (duration%60) : (duration%60) }}
             </p>
         </div>
-    </a>
-</script>
+-->
 
 <script type="text/template" id="admin-button-template">
+    <span class="status"></span>
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
            id='event-settings-label'> 
@@ -581,12 +588,12 @@
             <li role="presentation">
                 {{ if (event.get("open")) { }}
                     <p role="menuitem">
-                        This event is currently <font color="#5CB85C">OPEN</font>
+                        This event is currently <span id="event-status-text" class="open">OPEN</span>
                         <hr/>
                     </p>                    
                 {{ } else { }}
                     <p role="menuitem">
-                        This event is currently <font color="#D9524F">CLOSED</font>
+                        This event is currently <span id="event-status-text" class="closed">CLOSED</span>
                         <hr/>
                     </p> 
                 {{ } }} 
@@ -605,11 +612,13 @@
                 <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
                     <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
                 </a>
-                
-                <a role="menuitem" href="/admin/event/" role="button" id="admin-page-for-event">
+
+                <a role="menuitem" href="/admin/event/{{= event.id }}" role="button" id="admin-page-for-event" target="_blank">
+
                     <i class="fa fa-pencil-square-o fa-lg fa-fw"></i>
                     Edit Event Info
                 </a>
+                
                 {{ if (event.get("sessionsOpen")) { }}
                     <a role="menuitem" tabindex="-1" id="close-sessions" href='#'>
                         <i class="fa fa-lock fa-lg fa-fw"></i>
@@ -827,6 +836,66 @@
                 </div>
             </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Admin hotkeys help dialog -->
+    <div id="admin-hotkeys-help-modal" class="modal fade" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Hotkeys help</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+?:</span>
+                        <span class="hotkey-description">This help menu</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+S:</span>
+                        <span class="hotkey-description">Start/Stop event</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+E:</span>
+                        <span class="hotkey-description">Edit event</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+C:</span>
+                        <span class="hotkey-description">Create session</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+O:</span>
+                        <span class="hotkey-description">Open sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+W:</span>
+                        <span class="hotkey-description">Close sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+M:</span>
+                        <span class="hotkey-description">Send message to sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+P:</span>
+                        <span class="hotkey-description">Toggle participant proposed sessions</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+A:</span>
+                        <span class="hotkey-description">Cursor to chat message box</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+H:</span>
+                        <span class="hotkey-description">Highlight/unhighlight chat message</span>
+                    </div>
+                    <div class="hotkey-help-item">
+                        <span class="hotkey-key">CTRL+SHIFT+B:</span>
+                        <span class="hotkey-description">Edit whiteboard</span>
+                    </div>
+                </div>
+                <div class='modal-footer'>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1097,17 +1166,20 @@
         </div>
     </div>
 
-    <div id="no-urls-warning" class="modal hide fade">
-        <div class="modal-header"><h3>NO HANGOUT URLS AVAILABLE</h3></div>
-        <div class="modal-body">
-            <p>There are currently no hangout urls available on the server. Sessions started when there are no urls available will fall back to the callback method of hangout starting, which requires the first person to join a session to create the hangout. This is not desireable; we strongly recommend you farm some hangout urls by clicking "farm" below. For this process to work, your google acount must have "create video calls for events" set in your google calendar account settings.
-        </div>
-        <div class="modal-footer">
-            <a class="btn btn-success" id="farm-urls" href="/hangout-farming" target="_blank">Farm</a>
-            <a href="#" class="btn btn-primary" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
+    <div class="modal fade" id="no-urls-warning" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>NO HANGOUT URLS AVAILABLE</h3>
+            </div>
+            <div class="modal-body alert alert-danger">
+                    <p>There are currently <strong><%= numHangoutUrlsAvailable %></strong> Hangout urls available on the server. Sessions started when there are no urls available will fall back to the callback method of hangout starting, which requires the first person to join a session to create the hangout. This is not desireable; we strongly recommend you farm some hangout urls by clicking "farm" below. For this process to work, your google acount must have "create video calls for events" set in your google calendar account settings.
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" id="farm-urls" href="/hangout-farming" target="_blank">Farm</a>
+                <a href="#" class="btn btn-default" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
+            </div>
         </div>
     </div>
-
     
 </script>
 

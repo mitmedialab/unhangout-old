@@ -88,7 +88,7 @@ models.BaseModel = Backbone.Model.extend({
 models.Event = models.BaseModel.extend({
     idRoot: "event",
     urlRoot: "event",
-    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm[]a",
+    DATE_DISPLAY_FORMAT: "dddd MMM D, YYYY h:mm a",
 
     defaults: function() {
         return {
@@ -206,7 +206,7 @@ models.Event = models.BaseModel.extend({
     // Add the given user -- either a full user model, or an object with an
     // "email" key -- to the list of admins, if not already present.
     addAdmin: function(user) {
-        var admins = this.get("admins");
+        var admins = _.clone(this.get("admins"));
         var exists = _.any(admins, _.bind(function(admin) {
             return this.adminMatchesUser(admin, user);
         }, this));
@@ -229,15 +229,13 @@ models.Event = models.BaseModel.extend({
             }
             if (changed) {
                 this.set("admins", admins);
-                this.trigger("change:admins", this, admins);
-                this.trigger("change", this);
             }
         }
     },
     // Remove the given user -- either a full user model, or an object with an
     // "email" key -- from the list of admins, if present.
     removeAdmin: function(user) {
-        var admins = this.get("admins");
+        var admins = _.clone(this.get("admins"));
         var changed;
         admins = _.reject(admins, _.bind(function(admin) {
             if (this.adminMatchesUser(admin, user)) {
@@ -248,8 +246,6 @@ models.Event = models.BaseModel.extend({
         }, this));
         if (changed) {
             this.set("admins", admins);
-            this.trigger("change:admins", this, admins);
-            this.trigger("change", this);
         }
     },
     // "admins" is a list of Admin objects, which refer to a user.  However,
@@ -431,8 +427,11 @@ models.User = Backbone.Model.extend({
             displayName: "[unknown]",
             link: null,
             emails: [],
-            preferredContact: null,
-            networkList: {}
+            preferredContact: {},
+            networkList: {},
+            picture: "",
+            createdViaHangout: false // this field is set in situations where the user doesn't actually log in with us, but
+                                 // instead shows up in a participants message from an instrumented hangout.
         };
     },
 
@@ -490,12 +489,10 @@ models.User = Backbone.Model.extend({
     },
 
     setPerm: function(perm, val, options) {
-        if (!this.get("perms")) {
-            this.set("perms", {}, {silent: true});
-        }
-        this.get("perms")[perm] = val;
-        if (!(options && options.silent)) {
-            this.trigger("change:perms");
+        var perms = _.clone(this.get("perms") || {});
+        if (perms[perm] !== val) {
+            perms[perm] = val;
+            this.set("perms", perms, {silent: options && options.silent});
         }
     },
 
@@ -552,6 +549,12 @@ models.UserList = Backbone.Collection.extend({
         return this.find(function(u) {
             return _.contains(_.pluck(u.get("emails"), "value"), email);
         });
+    },
+    comparator: function(a, b) {
+        // Default sorting by displayName.
+        var a_name = a.get('displayName');
+        var b_name = b.get('displayName');
+        return a_name > b_name ? 1 : a_name < b_name ? -1 : 0;
     }
 });
 

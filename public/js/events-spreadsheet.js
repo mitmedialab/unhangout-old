@@ -15,7 +15,13 @@ define(["jquery", "underscore", "moment", "underscore-template-config"], functio
       cell = data.feed.entry[i];
       col = cell.title.$t.substring(0, 1);
       if (col === 'A') {
-        entry = {};
+        entry = {
+          title: "[No title]",
+          description: null,
+          image: null,
+          date: null,
+          link: null
+        };
         rows.push(entry);
       }
       entry[mapping[col]] = cell.content.$t;

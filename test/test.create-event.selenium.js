@@ -2,6 +2,7 @@ var expect      = require('expect.js'),
     common      = require('./common'),
     moment      = require('moment'),
     request     = require("superagent"),
+    webdriver = require("selenium-webdriver"),
     Promise     = require("bluebird");
 
 describe("CREATE EVENT", function() {
@@ -100,6 +101,13 @@ describe("CREATE EVENT", function() {
             browser.byCss(".admin-button").click();
             browser.waitForSelector("#admin-page-for-event");
             browser.byCss("#admin-page-for-event").click();
+            browser.waitTime(1000);
+            // Switch to the event admin window.
+            browser.schedule(
+                new webdriver.Command(webdriver.CommandName.GET_WINDOW_HANDLES)
+            ).then(function(handles) {
+                browser.switchTo().window(handles[1]);
+            });
             browser.waitForSelector("option[value='Europe/Zurich']");
             // Ensure event stuff is there
             browser.executeScript("return {" +

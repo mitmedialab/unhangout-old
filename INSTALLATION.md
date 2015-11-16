@@ -140,8 +140,18 @@ Create a file and copy the contents of conf.json.example file in it. Name this f
     writeable by the user running the Node process. Relative paths will be
     appended to the application root. Default is ``logs``.
 
+  - ``UNHANGOUT_HANGOUT_URLS_WARNING``: Throw a warning dialog on event pages
+    when the number of farmed Hangout URLs available (as detailed in
+    [DEVELOPMENT.md](DEVELOPMENT.md), Hangout Creation section) falls below
+    this number. Default is 10, set to 0 to disable the warning.
+
   - ``TESTING_SELENIUM_PATH``: The path to "selenium-server-standalone.jar",
     required to run tests with selenium.
+
+  - ``CUSTOM_CSS_FILES`` and ``CUSTOM_FACILITATOR_CSS_FILES``: An array of
+    paths to any custom CSS to include for both the main site and the
+    hangout facilitator gadget, respectively. Each path is injected into the
+    "href" attribute of a CSS declaration following the default declarations.
 
 E. Making changes to the codebase
 ---------------------------------

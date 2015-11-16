@@ -71,6 +71,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     },
 
     onRender: function() {
+        $('.tooltip').hide();
         var start = new Date().getTime();  
 
         this.$el.attr("data-session-id", this.model.id);
@@ -225,6 +226,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.attend.removeAttr("disabled");
             this.ui.attend.removeClass("disabled");
         }
+        this.$el.find('[data-toggle="tooltip"]').tooltip({'placement':'right'});
     },
 
     destroy: function() {
@@ -350,7 +352,6 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     onRender: function() {
         $('.tooltip').hide();
-        $('[data-toggle="tooltip"]').tooltip();
 
         var start = new Date().getTime();
 
@@ -388,7 +389,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         }
 
         this.ui.vote.find(".text").text(this.model.get("votes"));
-
+        this.$el.find('[data-toggle="tooltip"]').tooltip({'placement':'right'});
     },
 
     destroy: function() {
@@ -929,10 +930,15 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     },
 
     _startStopEvent: function(action) { 
+        var self = this;
         $.ajax({
             type: 'POST',
             url: "/admin/event/" + this.options.event.id + "/" + action
-        }).fail(function(err) {
+        })
+        .done(function(data) {
+          self.setEventStatusIndicator();
+        })
+        .fail(function(err) {
             logger.error(err);
             alert("Server error!");
         });
@@ -958,6 +964,24 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     messageSessions: function(jqevt) {
         jqevt.preventDefault();
         $("#message-sessions-modal").modal('show');
+    },
+
+    setEventStatusIndicator: function(jqevt) {
+      var open = this.options.event.get('open');
+      var statusIndicator = this.$el.find('.status');
+      if (open) {
+        statusIndicator.addClass('open');
+        statusIndicator.removeClass('closed');
+      }
+      else {
+        statusIndicator.addClass('closed');
+        statusIndicator.removeClass('open');
+      }
+      statusIndicator.show();
+    },
+
+    onRender: function() {
+      this.setEventStatusIndicator();
     },
 
     serializeData: function() {

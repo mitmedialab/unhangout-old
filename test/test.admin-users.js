@@ -274,8 +274,10 @@ describe("HTTP ADMIN USERS API", function() {
     });
 
     it("Perms: returns false for undefined perms", function() {
-        var user = common.server.db.users.findWhere({perms: undefined, superuser: false});
-        expect(user.get("perms")).to.be(undefined);
+        var user = common.server.db.users.find(function(u) {
+          return Object.keys(u.get("perms")).length === 0 && u.get("superuser") === false;
+        });
+        expect(user.get("perms")).to.eql({});
         expect(user.hasPerm("createEvents")).to.be(false);
     });
 

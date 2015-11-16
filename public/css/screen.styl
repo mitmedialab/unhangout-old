@@ -546,6 +546,33 @@ hr.noshade {
   }
 }
 
+#admin-button {
+  .status {
+    display: none;
+    float: left;
+    margin-top: 7px;
+    border-radius: 50%;
+    width: 8px;
+    height: 8px;
+  }
+  .status.open {
+    background: #5CB85C;
+  }
+  .status.closed {
+    background: #D9524F;
+  }
+}
+
+#event-status-text {
+  font-weight: bold;
+  &.open {
+    color: #5CB85C;
+  }
+  &.closed {
+    color: #D9524F;
+  }
+}
+
 .event-page-container {
   margin-top: 0px;
   height: 100%;
@@ -2245,6 +2272,11 @@ user-admin-border-size = 2px
     margin-bottom: 20px;
   }
 
+  .manage-calendar {
+    float:right;
+    margin-top: 50px;
+  }
+
   .upcomingEventsTitle{
     margin-top: 40px;
   }
@@ -2536,6 +2568,22 @@ user-admin-border-size = 2px
   }
 }
 
+/*-------------------------- HOTKEYS -----------------------*/
+
+
+.hotkey-help-item {
+  padding-left: 15px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.hotkey-key {
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.hotkey-description {
+}
 
 /*-------------------------- STATIC EVENT PAGE -----------------------*/
 
@@ -2949,6 +2997,21 @@ user-admin-border-size = 2px
 }
 
 
+}
+
+#permalink-create {
+  .label-wrapper {
+    padding-right: 0px;
+    margin-right: 2px;
+    .control-label {
+      float: right;
+      margin-right: 0px;
+    }
+  }
+  .input-wrapper {
+    padding-left: 0px;
+    margin-left: 2px;
+  }
 }
 
 .line {

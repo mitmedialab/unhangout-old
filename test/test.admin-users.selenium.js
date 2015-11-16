@@ -89,7 +89,7 @@ describe("ADMIN USERS SELENIUM", function() {
         var event = common.server.db.events.findWhere({shortName: "writers-at-work"});
         var eventUrl = common.URL + "/admin/event/" + event.id;
         var addSelector = "tr[data-user-id='" + user.id + "'] .add-event";
-        var removeSelector = "[data-event-id='" + event.id + "'].remove-event";
+        var removeSelector = "[data-event-id='" + event.id + "'][data-user-id='" + user.id + "'].remove-event";
 
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/admin/users/")
