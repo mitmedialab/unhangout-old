@@ -1,6 +1,7 @@
 var expect = require('expect.js'),
     common = require('./common'),
     mandrill = require("mandrill-api"),
+    request = require("superagent"),
     outbox = [];
 
 describe("ADMIN MYEVENTS SELENIUM", function() {
@@ -76,6 +77,32 @@ describe("ADMIN MYEVENTS SELENIUM", function() {
             expect(url).to.eql(common.URL + "/myevents/");
             done();
         });
+    });
+
+    it("REJECT request if an admin who is not an admin of an event is trying to add admins to it", 
+        function(done) {
+        event1 = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        event2 = common.server.db.events.findWhere({shortName: "test-event-2"});
+        
+        var user1 = common.server.db.users.findWhere({"sock-key": "admin1"});
+        var user2 = common.server.db.users.findWhere({"sock-key": "admin2"});
+
+        expect(user1).to.not.be(undefined);
+        expect(user1.isAdminOf(event1)).to.be(true);
+
+        expect(user2).to.not.be(undefined);
+        expect(user2.isAdminOf(event1)).to.be(false);
+
+        request.post(common.URL + '/myevents/')
+            .set("x-mock-user", "admin1")
+            .send({eventId: event2.get("id")}) 
+            .redirects(0)
+            .end(function(res) {
+                console.log(res.status.text);
+                expect(res.status).to.be(400);
+                done();
+            });
+
     });
 
     it("Makes a user an event admin", function(done) {
