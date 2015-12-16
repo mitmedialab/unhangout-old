@@ -75,7 +75,7 @@
                    <% if (!event.get("dateAndTime")) { %>
                        value=""
                    <% } else { %>
-                       value="<%= moment(event.get("dateAndTime")).format(event.DATE_DISPLAY_FORMAT) %>"
+                       value="<%= moment(event.get("dateAndTime")).tz(event.get("timeZoneValue")).format(event.DATE_DISPLAY_FORMAT) %>"
                    <% } %>
                    name="dateAndTime" id="dateAndTime" readonly>
 
