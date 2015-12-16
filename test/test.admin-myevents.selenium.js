@@ -79,18 +79,21 @@ describe("ADMIN MYEVENTS SELENIUM", function() {
         });
     });
 
-    it("REJECT request if an admin who is not an admin of an event is trying to add admins to it", 
+    it("REJECT request if an admin who is not an admin of an event is trying to add admins to it or send admin invite to a user", 
         function(done) {
-        event1 = common.server.db.events.findWhere({shortName: "writers-at-work"});
-        event2 = common.server.db.events.findWhere({shortName: "test-event-2"});
+        var event1 = common.server.db.events.findWhere({shortName: "writers-at-work"});
+        var event2 = common.server.db.events.findWhere({shortName: "test-event-2"});
         
         var user1 = common.server.db.users.findWhere({"sock-key": "admin1"});
         var user2 = common.server.db.users.findWhere({"sock-key": "admin2"});
 
         expect(user1).to.not.be(undefined);
+        event1.addAdmin(user1);
+        event1.removeAdmin(user2);
         expect(user1.isAdminOf(event1)).to.be(true);
-
         expect(user2).to.not.be(undefined);
+        event2.removeAdmin(user1);
+        event2.addAdmin(user2);
         expect(user2.isAdminOf(event1)).to.be(false);
 
         request.post(common.URL + '/myevents/')
@@ -98,10 +101,17 @@ describe("ADMIN MYEVENTS SELENIUM", function() {
             .send({eventId: event2.get("id")}) 
             .redirects(0)
             .end(function(res) {
-                console.log(res.status.text);
+                expect(res.status).to.be(400);
+        });
+
+        request.post(common.URL + '/myevents/admin-login-invite/')
+            .set("x-mock-user", "admin1")
+            .send({eventId: event2.get("id")}) 
+            .redirects(0)
+            .end(function(res) {
                 expect(res.status).to.be(400);
                 done();
-            });
+        }); 
 
     });
 
