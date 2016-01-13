@@ -657,6 +657,15 @@
 
                 {{ } }}
 
+                {{ if (IS_SUPERUSER) { }}
+
+                <a role="menuitem" id="auto-close-event" href="#" target="_blank" data-toggle="modal">
+                    <i class="fa fa-power-off fa-lg fa-fw"></i>
+                   Auto Close Event
+                </a>
+
+                {{ } }}
+
             </li>
         </ul>
     </div>

@@ -903,6 +903,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #admin-start-event': 'startEvent',
         'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
         'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
+        'click #auto-close-event': 'autoCloseEvent'
     },
 
     openSessions: function(jqevt) {
@@ -922,6 +923,14 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
     startEvent: function(jqevt) {
         jqevt.preventDefault();
         this._startStopEvent("start");
+    },
+
+    autoCloseEvent: function(jqevt) {
+        jqevt.preventDefault();
+
+        this.options.transport.send("auto-close", {
+            roomId: this.options.event.getRoomId()
+        });
     },
 
     stopEvent: function(jqevt) {
