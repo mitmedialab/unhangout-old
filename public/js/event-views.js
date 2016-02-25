@@ -1567,7 +1567,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         'click .clear-previous-videos': 'clearPreviousVideos',
         'click .play-for-all': 'playForAll',
         'click .remove-hoa': 'removeHoA',
-        'click .remove-one-previous-video': 'removeOnePreviousVideo'
+        'click .remove-one-previous-video': 'removeOnePreviousVideo',
+        'click .embed-ls': 'embedLivestream'
     },
 
     player: null,
@@ -1639,6 +1640,11 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.model.set("hoa", null);
         this.options.transport.send("remove-hoa", {
             roomId: this.model.getRoomId()
+        });
+    },
+    embedLivestream: function() {
+        this.options.transport.send("embed-livestream", {
+            channel: 'unhangout', roomId: this.model.getRoomId()
         });
     },
     playForAll: function(jqevt) {

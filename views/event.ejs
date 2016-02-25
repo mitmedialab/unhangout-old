@@ -546,6 +546,12 @@
             </div>
         
         {{ } }}
+
+        <div class="col-xs-12 btn-embed-ls">
+            <button class="btn btn-default embed-ls">
+                <i class='fa fa-users'></i> Embed Livestream
+            </button>
+        </div>
       
     </div>
     
@@ -1075,6 +1081,53 @@
                 <div class="modal-footer">
                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                      <button type="button" id="send-email-button" class="btn btn-primary default" data-dismiss="modal">Send Email</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal embed-livestream-modal" id="embed-livestream-modal" role="dialog" aria-hidden="true">
+
+        <div class="modal-dialog">
+            
+            <div class="modal-content">
+                
+                <div class="modal-header">
+                    <h4 class="modal-title">Embed a Livestream</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row modal-row">
+                        <div class="col-lg-12 no-padding">
+                            <div class="col-lg-12 no-padding">
+                                <div class="form-group">
+                                    <label class="col-lg-3 control-label no-padding channel-title-label" for="channel_title">Channel Name</label>
+
+                                    <div class="col-lg-9 no-padding">
+                                        <input class="form-control input-channel-title" type="text" name="channel_title" placeholder="Enter your livestream channel name"value="" id="channel_title">
+                                    </div>
+                                </div>
+
+                                <br/>
+
+                                <div class="form-group">
+                                    <label class="col-lg-3 control-label no-padding clip-id-label" for="clip_id">Clip ID</label>
+
+                                    <div class="col-lg-9 no-padding">
+                                        <input class="form-control input-clip-id" type="text" name="clip_id" placeholder="Enter a clip id (optional)"value="" id="clip_id">
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    <button type="button" class="btn btn-primary" class="embed-stream" id="btn-embed-stream" data-dismiss="modal">Embed</button>
                 </div>
 
             </div>

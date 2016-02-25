@@ -22,7 +22,6 @@ var logger = new logging.Logger("event-app");
 
 $(document).ready(function() {
     logger.log("Starting app!");
-
     // The *_ATTRS constants come from the event.ejs file. They are the way
     // that the server communicates the initial state of the event to the
     // client - in big JSON blobs. Subsequent updates all happen over the
