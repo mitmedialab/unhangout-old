@@ -17,7 +17,7 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "validate", "atname", "logger", "models", "auth", "client-utils",
+   "underscore", "backbone", "video", "validate", "atname", "logger", "models", "auth", "client-utils", 
    "backbone.marionette", "underscore-template-config", "jquery.autosize"
 ], function(_, Backbone, video, validate, atname, logging, models, auth, utils) {
 
@@ -1568,7 +1568,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         'click .play-for-all': 'playForAll',
         'click .remove-hoa': 'removeHoA',
         'click .remove-one-previous-video': 'removeOnePreviousVideo',
-        'click .embed-ls': 'embedLivestream'
+        'click .embed-ls': 'embedLSPlayer'
     },
 
     player: null,
@@ -1583,6 +1583,9 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             }
             this.renderControls();
         }, this);
+
+        this.listenTo(this.model, "change:livestreamChannel", this.changeLivestream, this);
+
         this.listenTo(this.model, "hoa:change:connectedParticipants " +
                                   "hoa:change:joiningParticipants " + 
                                   "hoa:change:hangout-url " +
@@ -1593,6 +1596,11 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         // that's not a big deal, it doesn't happen at high velocity.
         this.listenTo(this.model, "change:previousVideoEmbeds", this.renderControls);
     },
+
+    changeLivestream: function() {
+        //do something here
+    }, 
+
     serializeData: function() {
         var context = this.model.toJSON();
         context.hoa = null;
@@ -1642,11 +1650,35 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             roomId: this.model.getRoomId()
         });
     },
-    embedLivestream: function() {
-        this.options.transport.send("embed-livestream", {
-            channel: 'unhangout', roomId: this.model.getRoomId()
+    embedLSPlayer: function() {
+        // this.options.transport.send("embed-livestream", {
+        //     channel: 'unhangout23', roomId: this.model.getRoomId()
+        // });
+        this.ls = new video.LivestreamVideo({
+            lsChannel: this.model.get("livestreamChannel"),
         });
+        this.$(".ls-player").html(this.ls.el);
+        if(this.model.get("livestreamChannel")) {
+            this.ls.render(); 
+        }
+        swfobject.embedSWF(
+            "http://cdn.livestream.com/chromelessPlayer/v20/playerapi.swf", 
+            "livestreamPlayer", 
+            "480", "340", "9.0.0", 
+            "expressInstall.swf", 
+            { channel: 'unhangout'}, {AllowScriptAccess: 'always'});
+        setTimeout(_.bind(this.loadLiveStream, this), 100);
     },
+
+    loadLiveStream: function() {
+        player = document.getElementById("livestreamPlayer");
+        player.setDevKey(LIVESTREAM_API_KEY);
+        player.load('unhangout');
+        player.startPlayback();
+        this.$(".video-player").removeClass('hide');
+        this.$(".video-player").addClass('hide');
+    },
+
     playForAll: function(jqevt) {
         this.yt.playForEveryone(jqevt);
     },
@@ -1717,6 +1749,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             permitGroupControl: IS_ADMIN,
             showGroupControls: false // We're doing our own controls on event pages.
         });
+
         if (IS_ADMIN) {
             this.yt.on("renderControls", _.bind(function() {
                 this.renderControls();
@@ -1727,7 +1760,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             this.options.transport.send("control-video", args);
         }, this));
 
-        this.$(".video-player").html(this.yt.el);
+        this.$(".video-player").html(this.yt.el); 
 
         this.setPlayerVisibility(!!this.model.get("youtubeEmbed"));
 

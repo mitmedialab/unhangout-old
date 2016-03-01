@@ -8,6 +8,7 @@
     var USER = <%- JSON.stringify(user) %>;
     var NUM_HANGOUT_URLS_AVAILABLE = <%= numHangoutUrlsAvailable %>;
     var NUM_HANGOUT_URLS_WARNING = <%= numHangoutUrlsWarning %>;
+    var LIVESTREAM_API_KEY = <%- JSON.stringify(livestreamAPIKey) %>;
 
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
@@ -427,6 +428,7 @@
 </script>
 
 <script type="text/template" id="video-embed-template">
+    <div class='ls-player'></div>
     <div class='video-player'></div>
     <div class='video-controls row'></div>
 </script>

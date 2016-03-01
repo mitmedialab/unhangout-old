@@ -37,6 +37,7 @@
     "TESTING_SELENIUM_VERBOSE": false,
     "TESTING_FIREFOX_BIN": null,
     "MANDRILL_API_KEY": "...mandrill api key...",
+    "LIVESTREAM_API_KEY": "...livestream api key...",
 
     "CUSTOM_CSS_FILES": [],
     "CUSTOM_FACILITATOR_CSS_FILES": []

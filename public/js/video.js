@@ -1,5 +1,5 @@
 define([
-   "underscore", "jquery", "backbone", "logger", "extract-youtube-id",
+   "underscore", "jquery", "backbone", "logger", "extract-youtube-id", 
    "underscore-template-config"
 ], function(_, $, Backbone, logger, extractYoutubeId) {
 
@@ -378,6 +378,20 @@ video.YoutubeVideo = Backbone.View.extend({
     isPlayingForEveryone: function() {
         return this.ctrl && this.ctrl.state === "playing";
     }
+});
+
+video.LivestreamVideo = Backbone.View.extend({ 
+    tagName: "div",
+    template: _.template($("#livestream-video").html()),
+    id: "livestreamPlayer", 
+
+    initialize: function(options) {
+        this.lsChannel = options.lsChannel;
+    },
+
+    render: function() {
+        this.$el.html(this.template()); 
+    },
 });
 
 return video;
