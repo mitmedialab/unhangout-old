@@ -611,6 +611,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #send-email-button': 'sendFollowupEmail',
         'click #submit-contact-info': 'submitContactInfo',
         'click #btn-propose-session': 'proposeSessionDialog',
+        'click #set-ls-channel': 'setLsChannel',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
     },
@@ -703,6 +704,20 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     proposeSessionDialog: function() {
         $("#propose-session-dialog").modal('show');
+    },
+
+    setLsChannel: function(event) {
+        event.preventDefault();
+        var channelName = $(".input-channel-title").val();
+        var clipId = $(".input-clip-id").val();
+        if(!channelName) {
+            return;
+        }
+        var args = {
+            channel: channelName,
+            roomId: this.options.event.getRoomId()
+        };
+        this.options.transport.send("embed-livestream", args);
     },
 
     sendSessionMessage: function(event) {
@@ -1568,7 +1583,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         'click .play-for-all': 'playForAll',
         'click .remove-hoa': 'removeHoA',
         'click .remove-one-previous-video': 'removeOnePreviousVideo',
-        'click .embed-ls': 'embedLSPlayer'
+        /* 'click .embed-ls': 'embedLSPlayer' */
     },
 
     player: null,
@@ -1598,7 +1613,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     },
 
     changeLivestream: function() {
-        //do something here
+        this.embedLSPlayer();
     }, 
 
     serializeData: function() {
@@ -1650,10 +1665,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             roomId: this.model.getRoomId()
         });
     },
-    embedLSPlayer: function() {
-        // this.options.transport.send("embed-livestream", {
-        //     channel: 'unhangout23', roomId: this.model.getRoomId()
-        // });
+    embedLSPlayer: function(channel) {
         this.ls = new video.LivestreamVideo({
             lsChannel: this.model.get("livestreamChannel"),
         });
@@ -1666,14 +1678,15 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             "livestreamPlayer", 
             "480", "340", "9.0.0", 
             "expressInstall.swf", 
-            { channel: 'unhangout'}, {AllowScriptAccess: 'always'});
+            null, {AllowScriptAccess: 'always'});
         setTimeout(_.bind(this.loadLiveStream, this), 100);
     },
 
     loadLiveStream: function() {
+        var channel = this.model.get("livestreamChannel");
         player = document.getElementById("livestreamPlayer");
         player.setDevKey(LIVESTREAM_API_KEY);
-        player.load('unhangout');
+        player.load(channel);
         player.startPlayback();
         this.$(".video-player").removeClass('hide');
         this.$(".video-player").addClass('hide');

@@ -550,9 +550,12 @@
         {{ } }}
 
         <div class="col-xs-12 btn-embed-ls">
-            <button class="btn btn-default embed-ls">
-                <i class='fa fa-users'></i> Embed Livestream
-            </button>
+            <a target="_blank"
+                    href="#embed-livestream-modal" data-toggle="modal">
+                <button class="btn btn-default embed-ls">
+                    <i class='fa fa-users'></i> Embed Livestream
+                </button>
+            </a>
         </div>
       
     </div>
@@ -1129,7 +1132,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-                    <button type="button" class="btn btn-primary" class="embed-stream" id="btn-embed-stream" data-dismiss="modal">Embed</button>
+                    <button type="button" class="btn btn-primary" class="embed-stream" id="set-ls-channel" data-dismiss="modal">Embed</button>
                 </div>
 
             </div>
