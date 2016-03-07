@@ -32,7 +32,6 @@
         "backbone.marionette": { "deps": ["backbone"], "exports": "Backbone.Marionette" },
         "bootstrap": { "deps": ["jquery"], "exports": "jQuery.fn.tooltip" },
         "bootstrap-datetimepicker": { "deps": ["bootstrap"], "exports": "jQuery.fn.datetimepicker" },
-        "jstz": { "exports": "jstz" },
         "sockjs": { "exports": "sockjs" }
     },
     "modules": {
