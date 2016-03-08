@@ -175,10 +175,6 @@ describe("CREATE HOA", function() {
         });
         hasHoA(false).then(function() {
             hoa.set("hangout-url", "http://example.com/hoa");
-        });
-        hasHoA(true);
-        browser.byCss(".remove-hoa").click();
-        hasHoA(false).then(function() {
             done();
         });
     });
