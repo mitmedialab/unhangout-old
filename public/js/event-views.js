@@ -1577,29 +1577,28 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     events: {
         'click .set-video': 'setVideo',
         'click .enqueue-video': 'enqueueVideo',
-        'click .remove-video': 'removeVideo',
+        'click .remove-video': 'removeVideoEmbed',
         'click .restore-previous-video': 'restorePreviousVideo',
         'click .clear-previous-videos': 'clearPreviousVideos',
         'click .play-for-all': 'playForAll',
-        'click .remove-hoa': 'removeHoA',
         'click .remove-one-previous-video': 'removeOnePreviousVideo',
-        /* 'click .embed-ls': 'embedLSPlayer' */
     },
 
     player: null,
 
     initialize: function() {
         this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
-            if (youtubeEmbed) {
-                this.setPlayerVisibility(true);
+            if (youtubeEmbed) {  
                 this.yt.setVideoId(this.model.get("youtubeEmbed"));
-            } else {
-                this.setPlayerVisibility(false);
-            }
+            } 
+            this.setPlayerVisibility();
             this.renderControls();
         }, this);
 
-        this.listenTo(this.model, "change:livestreamChannel", this.changeLivestream, this);
+        this.listenTo(this.model, "change:livestreamChannel", function() {
+            this.embedLSPlayer();
+            this.renderControls();
+        }, this);
 
         this.listenTo(this.model, "hoa:change:connectedParticipants " +
                                   "hoa:change:joiningParticipants " + 
@@ -1611,11 +1610,6 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         // that's not a big deal, it doesn't happen at high velocity.
         this.listenTo(this.model, "change:previousVideoEmbeds", this.renderControls);
     },
-
-    changeLivestream: function() {
-        this.embedLSPlayer();
-    }, 
-
     serializeData: function() {
         var context = this.model.toJSON();
         context.hoa = null;
@@ -1647,25 +1641,46 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
                 ytId: ytId, roomId: this.model.getRoomId()
             });
         }
-
+        this.removeLSChannel();
     },
-    removeVideo: function(jqevt) {
+    removeVideoEmbed: function(jqevt) {
         jqevt.preventDefault();
-        this.model.set("youtubeEmbed", null);
-        this.options.transport.send("embed", {
-            ytId: null, roomId: this.model.getRoomId()
-        });
+        this.removeYouTubeEmbed();
+        this.removeHoA();
+        this.removeLSChannel();
     },
-    removeHoA: function(jqevt) {
-        jqevt.preventDefault();
-        // ensure hangout-broadcast-id is null, even if other things are
-        // incongruent.
-        this.model.set("hoa", null);
-        this.options.transport.send("remove-hoa", {
-            roomId: this.model.getRoomId()
-        });
+    removeYouTubeEmbed: function() {
+        if(this.model.get("youtubeEmbed")) {
+            this.model.set("youtubeEmbed", null);
+            this.options.transport.send("embed", {
+                ytId: null, roomId: this.model.getRoomId()
+            });
+        }
     },
-    embedLSPlayer: function(channel) {
+    removeHoA: function() {
+        if(this.model.get("hoa")) {
+            this.model.set("hoa", null);
+            this.options.transport.send("remove-hoa", {
+                roomId: this.model.getRoomId()
+            });
+        }
+    },
+    removeLSChannel: function() {
+        if(this.model.get("livestreamChannel").length > 0) {
+            this.model.set("livestreamChannel", "");
+            this.options.transport.send("embed-livestream", {
+                channel: "",
+                roomId: this.model.getRoomId()
+            });
+        }  
+    },
+    embedLSPlayer: function() {
+        this.removeYouTubeEmbed();
+        this.removeHoA();
+        if(this.model.get("livestreamChannel").length == 0) {
+            $("#livestreamPlayer").remove();
+            return;
+        }
         this.ls = new video.LivestreamVideo({
             lsChannel: this.model.get("livestreamChannel"),
         });
@@ -1673,25 +1688,24 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         if(this.model.get("livestreamChannel")) {
             this.ls.render(); 
         }
+        setTimeout(_.bind(this.loadSwfObject, this), 100);
+        setTimeout(_.bind(this.loadLiveStream, this), 500);
+    },
+    loadSwfObject: function() {
         swfobject.embedSWF(
             "http://cdn.livestream.com/chromelessPlayer/v20/playerapi.swf", 
             "livestreamPlayer", 
             "480", "340", "9.0.0", 
             "expressInstall.swf", 
             null, {AllowScriptAccess: 'always'});
-        setTimeout(_.bind(this.loadLiveStream, this), 100);
     },
-
     loadLiveStream: function() {
         var channel = this.model.get("livestreamChannel");
         player = document.getElementById("livestreamPlayer");
         player.setDevKey(LIVESTREAM_API_KEY);
         player.load(channel);
         player.startPlayback();
-        this.$(".video-player").removeClass('hide');
-        this.$(".video-player").addClass('hide');
     },
-
     playForAll: function(jqevt) {
         this.yt.playForEveryone(jqevt);
     },
@@ -1702,6 +1716,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             ytId: ytId,
             roomId: this.model.getRoomId()
         });
+        this.removeLSChannel();
     },
     clearPreviousVideos: function(jqevt) {
         jqevt.preventDefault();
@@ -1718,7 +1733,13 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             roomId: this.model.getRoomId()
         });
     },
-    setPlayerVisibility: function(visible) {
+    setPlayerVisibility: function() {
+        yt_embed = this.model.get("youtubeEmbed");
+        ls_channel = this.model.get("livestreamChannel");
+        visible = true;
+        if(yt_embed == null || ls_channel.length > 0) {
+            visible = false;
+        } 
         // Display player if it's visible.
         this.ui.player.toggle(visible);
         // Show a placeholder ("video goes here") if video is not visible and
@@ -1757,8 +1778,11 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }, this));
     },
     onRender: function() {
+        youtubeEmbed = this.model.get("youtubeEmbed");
+        lsChannel = this.model.get("livestreamChannel");
+
         this.yt = new video.YoutubeVideo({
-            ytID: this.model.get("youtubeEmbed"),
+            ytID: youtubeEmbed,
             permitGroupControl: IS_ADMIN,
             showGroupControls: false // We're doing our own controls on event pages.
         });
@@ -1768,16 +1792,20 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
                 this.renderControls();
             }, this));
         }
+
         this.yt.on("control-video", _.bind(function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
             this.options.transport.send("control-video", args);
         }, this));
 
         this.$(".video-player").html(this.yt.el); 
+        this.setPlayerVisibility();
 
-        this.setPlayerVisibility(!!this.model.get("youtubeEmbed"));
+        if(lsChannel.length > 0) {
+            this.embedLSPlayer(this.model.get("livestreamChannel"));
+        } 
 
-        if (this.model.get("youtubeEmbed")) {
+        if (youtubeEmbed) {
             this.yt.render();
         } else {
             this.renderControls();

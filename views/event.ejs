@@ -435,7 +435,7 @@
 
 <script type='text/template' id="video-embed-controls-template">
         <div class='row youtube-video-controls'>
-            {{ if (youtubeEmbed) { }}
+            {{ if (youtubeEmbed || livestreamChannel.length > 0) { }}
             <div class="row video-play-trash-row">
                 <div class='col-lg-7 col-xs-6 btn-play-pause'>
                     <div class='current-video-controls'>
@@ -1108,15 +1108,6 @@
                                 </div>
 
                                 <br/>
-
-                                <div class="form-group">
-                                    <label class="col-lg-3 control-label no-padding clip-id-label" for="clip_id">Clip ID</label>
-
-                                    <div class="col-lg-9 no-padding">
-                                        <input class="form-control input-clip-id" type="text" name="clip_id" placeholder="Enter a clip id (optional)"value="" id="clip_id">
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
