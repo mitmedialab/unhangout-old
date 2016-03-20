@@ -281,11 +281,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     },
 
     invokeEditSessionInput: function() {
-        this.$el.find("#edit-title").val(this.model.get("title"));
+        var title = this.$el.find("#edit-title");
+        title.val(this.model.get("title"));
         this.$el.find(".session-title-container").hide();
 
         this.$el.find(".edit-session-title").removeClass('hide');
         this.$el.find(".edit-session-title").addClass('show');
+        title.focus();
     },
 
     editSessionTitle: function() {
