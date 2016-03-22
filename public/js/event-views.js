@@ -1689,7 +1689,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         if(this.model.get("iframeEmbedCode")) {
             this.ifV.render(); 
         }
-        setTimeout(_.bind(this.loadIframePlayer, this), 100);
+        setTimeout(_.bind(this.loadIframePlayer, this), 10);
     },
     loadIframePlayer: function() {
         $("#iframePlayer").append(this.model.get("iframeEmbedCode"));
