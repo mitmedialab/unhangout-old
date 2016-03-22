@@ -202,7 +202,8 @@ var buildBrowser = function(callback) {
     }
 };
 
-exports.getSeleniumBrowser = function(callback) {
+exports.getSeleniumBrowser = function(callback, port) {
+    port = port || 4444;
     if (seleniumServer) {
         buildBrowser(callback);
     } else {
@@ -216,7 +217,7 @@ exports.getSeleniumBrowser = function(callback) {
         } else {
             seleniumPath = __dirname + "/../" + conf.TESTING_SELENIUM_PATH;
         }
-        var opts = {port: 4444};
+        var opts = {port: port};
         if (conf.TESTING_SELENIUM_VERBOSE) {
             opts.stdio = "inherit"; // enable verbose logging
         }
@@ -238,7 +239,7 @@ exports.getSeleniumBrowser = function(callback) {
           } else {
             console.log("Error thrown by buildBrowser; retrying.", err);
           }
-          exports.getSeleniumBrowser(callback);
+          exports.getSeleniumBrowser(callback, port + 1);
         });
     }
 };
