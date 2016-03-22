@@ -57,11 +57,13 @@ describe("FACILITATOR EMBEDS", function() {
         });
  
         // Remove the embed.
+        browser.awaitModalDismissal();
         browser.byCss(".activity-settings").click();
         browser.waitForSelector(".remove-embed");
         browser.byCss(".remove-embed").click();
 
         // Ensure 'about' is displayed.
+        browser.awaitModalDismissal();
         browser.waitForSelector(".about-activity");
         browser.waitForScript("$");
         browser.executeScript("return $('.about-activity').text();").then(function(text) {
@@ -77,6 +79,7 @@ describe("FACILITATOR EMBEDS", function() {
         });
 
         // Add a new activity.
+        browser.awaitModalDismissal();
         browser.byCss(".add-activity").click();
         browser.waitForSelector(".add-activity-dialog input[type='text']");
         // Doesn't allow blank URL's.
@@ -97,6 +100,8 @@ describe("FACILITATOR EMBEDS", function() {
             }]);
         });
         // Embeds youtube videos.
+        browser.awaitModalDismissal(".add-activity-dialog");
+        browser.waitTime(1000);
         browser.byCss(".activity-settings").click();
         // Can't seem to get around this hard-coded delay; get occasional
         // "Element is no longer attached to the DOM" errors without it.

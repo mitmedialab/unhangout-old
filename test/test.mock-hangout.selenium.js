@@ -49,7 +49,7 @@ describe("MOCK HANGOUT", function() {
         var url = common.URL + "/test/hangout/" + session.id + "/";
         browser.get(url);
         browser.waitForFunc(function() {
-            return session.getNumConnectedParticipants() == 1;
+            return session.getNumConnectedParticipants() == 1 && session.get("hangout-url") !== null;
         }).then(function() {;
             expect(session.get("hangout-url")).to.eql(url);
             expect(session.get("hangout-id")).to.eql(url + "-id");

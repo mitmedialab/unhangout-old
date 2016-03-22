@@ -77,7 +77,7 @@ describe("CHAT", function() {
         browser.executeScript('$("#chat-container-region .panel-body").scrollTop(100)');
         checkScroll(browser, false)
         browser.byCss("#chat-input").sendKeys("msg " + i + "\n");
-        checkScroll(browser, true).then(function() { done(); });
+        checkScroll(browser, true);
         browser.executeScript('$("#chat-container-region .panel-body").scrollTop(100)').then(function() {;
             // Send a message from another user.
             sock.write(JSON.stringify({
@@ -116,6 +116,9 @@ describe("CHAT", function() {
             }
         });
         checkScroll(browser, false);
+        browser.then(function() {
+            done();
+        });
 
     });
 

@@ -78,6 +78,11 @@ var buildBrowser = function(callback) {
         browser.get(exports.FAST_URL);
         return browser.executeScript("document.cookie = 'mock_user=; path=/';");
     };
+    browser.awaitModalDismissal = function(selector) {
+      return browser.wait(webdriver.until.elementIsNotVisible(
+          browser.findElement(webdriver.By.css(selector || ".modal")))
+      );
+    };
     // This is sugar to wrap selenium's `wait` with a default timeout.  We want
     // to throw exceptions rather than waiting for mocha's timeout so that we
     // can see a stack trace (mocha's timeous don't provide one).

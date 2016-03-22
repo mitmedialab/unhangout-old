@@ -1165,22 +1165,6 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade" id="no-urls-warning" role="dialog" aria-hidden="true">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>NO HANGOUT URLS AVAILABLE</h3>
-            </div>
-            <div class="modal-body alert alert-danger">
-                    <p>There are currently <strong><%= numHangoutUrlsAvailable %></strong> Hangout urls available on the server. Sessions started when there are no urls available will fall back to the callback method of hangout starting, which requires the first person to join a session to create the hangout. This is not desireable; we strongly recommend you farm some hangout urls by clicking "farm" below. For this process to work, your google acount must have "create video calls for events" set in your google calendar account settings.
-            </div>
-            <div class="modal-footer">
-                <a class="btn btn-success" id="farm-urls" href="/hangout-farming" target="_blank">Farm</a>
-                <a href="#" class="btn btn-default" id="dismiss-farming-warning" data-dismiss='modal'>Dismiss</a>
-            </div>
-        </div>
-    </div>
-    
 </script>
 
 <% include _video-templates.ejs %>

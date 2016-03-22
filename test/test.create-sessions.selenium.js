@@ -140,7 +140,8 @@ describe("CREATE SESSIONS", function() {
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("wat");
         browser.byCss("#join_cap").getAttribute("value").then(function(val) {
-            expect(val).to.be("wat");
+            //expect(val).to.be("wat"); // Recent firefox doesn't allow these chars on number input
+            expect(val).to.be("");
         });
         browser.byCss("#create-session").click();
         browser.waitForSelector(".join-cap-error");
