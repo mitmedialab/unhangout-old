@@ -22,7 +22,6 @@ for TEST in test/test.*.selenium.js ; do
     if [ $STATUS -ne 0 ]; then
         EXIT=$STATUS
     fi
-    ps aux | grep 'java -Dwebdriver.firefox.bin' | awk '{ print $2 }' | xargs kill -9 || true
 done
 
 # Exit status is non-zero if any test has failed; zero if all's good.

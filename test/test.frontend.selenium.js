@@ -9,9 +9,11 @@ describe("FRONT PAGE", function() {
 
     before(function(done) {
         this.timeout(240000);
-        common.getSeleniumBrowser(function (theBrowser) {
-            browser = theBrowser;
-            common.standardSetup(done);
+        common.stopSeleniumServer().then(function() {
+          common.getSeleniumBrowser(function (theBrowser) {
+              browser = theBrowser;
+              common.standardSetup(done);
+          });
         });
     });
     after(function(done) {
