@@ -102,7 +102,7 @@ models.Event = models.BaseModel.extend({
             sessions: null,
             hoa: null,
             youtubeEmbed: null,
-            livestreamChannel: "",
+            iframeEmbedCode: "",
             previousVideoEmbeds: [],
             sessionsOpen: false,
             adminProposedSessions: true,

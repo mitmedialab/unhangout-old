@@ -8,7 +8,6 @@
     var USER = <%- JSON.stringify(user) %>;
     var NUM_HANGOUT_URLS_AVAILABLE = <%= numHangoutUrlsAvailable %>;
     var NUM_HANGOUT_URLS_WARNING = <%= numHangoutUrlsWarning %>;
-    var LIVESTREAM_API_KEY = <%- JSON.stringify(livestreamAPIKey) %>;
 
     <% if(!_.isUndefined(event)) { %>
         var EVENT_ATTRS = <%- JSON.stringify(event.toClientJSON()) %>;
@@ -428,14 +427,14 @@
 </script>
 
 <script type="text/template" id="video-embed-template">
-    <div class='ls-player'></div>
+    <div class='iframe-player'></div>
     <div class='video-player'></div>
     <div class='video-controls row'></div>
 </script>
 
 <script type='text/template' id="video-embed-controls-template">
         <div class='row youtube-video-controls'>
-            {{ if (youtubeEmbed || livestreamChannel.length > 0) { }}
+            {{ if (youtubeEmbed || iframeEmbedCode.length > 0) { }}
             <div class="row video-play-trash-row">
                 <div class='col-lg-7 col-xs-6 btn-play-pause'>
                     <div class='current-video-controls'>
@@ -519,11 +518,6 @@
             <button class='btn btn-default set-video'
             type="button">Embed</button>
         </div>
-
-        <div class="col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
-          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
-        </div>
     </div>
     
     <div class="row create-join-hoa">
@@ -547,12 +541,18 @@
 
         <div class="col-lg-5 col-xs-6 btn-embed-ls">
             <a target="_blank"
-                    href="#embed-livestream-modal" data-toggle="modal">
+                    href="#embed-iframe-code-modal" data-toggle="modal">
                 <button class="btn btn-default embed-ls">
-                    <i class='fa fa-video-camera'></i> Embed Livestream
+                    <i class="fa fa-code"></i> Insert Iframe Code
                 </button>
             </a>
         </div>
+
+    </div>
+
+    <div class="col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+      <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
     </div>
 </script>
 
@@ -1085,14 +1085,14 @@
         </div>
     </div>
 
-    <div class="modal embed-livestream-modal" id="embed-livestream-modal" role="dialog" aria-hidden="true">
+    <div class="modal embed-iframe-code-modal" id="embed-iframe-code-modal" role="dialog" aria-hidden="true">
 
         <div class="modal-dialog">
             
             <div class="modal-content">
                 
                 <div class="modal-header">
-                    <h4 class="modal-title">Embed a Livestream</h4>
+                    <h4 class="modal-title">Insert an Iframe Code</h4>
                 </div>
 
                 <div class="modal-body">
@@ -1100,10 +1100,8 @@
                         <div class="col-lg-12 no-padding">
                             <div class="col-lg-12 no-padding">
                                 <div class="form-group">
-                                    <label class="col-lg-3 control-label no-padding channel-title-label" for="channel_title">Channel Name</label>
-
-                                    <div class="col-lg-9 no-padding">
-                                        <input class="form-control input-channel-title" type="text" name="channel_title" placeholder="Enter your livestream channel name"value="" id="channel_title">
+                                    <div class="col-lg-12 no-padding">
+                                        <textarea class="form-control input-iframe-code" rows="3" type="text" name="iframe_code" placeholder="Enter your iframe code here"value="" id="iframe_code"/> 
                                     </div>
                                 </div>
 
@@ -1116,7 +1114,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
 
-                    <button type="button" class="btn btn-primary" class="embed-stream" id="set-ls-channel" data-dismiss="modal">Embed</button>
+                    <button type="button" class="btn btn-primary" class="embed-stream" id="set-iframe-code" data-dismiss="modal">Insert</button>
                 </div>
 
             </div>

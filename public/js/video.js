@@ -380,13 +380,13 @@ video.YoutubeVideo = Backbone.View.extend({
     }
 });
 
-video.LivestreamVideo = Backbone.View.extend({ 
+video.IframeVideo = Backbone.View.extend({ 
     tagName: "div",
-    template: _.template($("#livestream-video").html()),
-    id: "livestreamPlayer", 
+    template: _.template($("#iframe-video").html()),
+    id: "iframePlayer", 
 
     initialize: function(options) {
-        this.lsChannel = options.lsChannel;
+        this.ifCode = options.ifCode;
     },
 
     render: function() {

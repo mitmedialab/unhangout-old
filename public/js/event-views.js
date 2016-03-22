@@ -611,7 +611,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #send-email-button': 'sendFollowupEmail',
         'click #submit-contact-info': 'submitContactInfo',
         'click #btn-propose-session': 'proposeSessionDialog',
-        'click #set-ls-channel': 'setLsChannel',
+        'click #set-iframe-code': 'setIframeCode',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
     },
@@ -706,18 +706,17 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $("#propose-session-dialog").modal('show');
     },
 
-    setLsChannel: function(event) {
+    setIframeCode: function(event) {
         event.preventDefault();
-        var channelName = $(".input-channel-title").val();
-        var clipId = $(".input-clip-id").val();
-        if(!channelName) {
+        var iframeCode = $(".input-iframe-code").val();
+        if(!iframeCode) {
             return;
         }
         var args = {
-            channel: channelName,
+            iframeCode: iframeCode,
             roomId: this.options.event.getRoomId()
         };
-        this.options.transport.send("embed-livestream", args);
+        this.options.transport.send("insert-iframe", args);
     },
 
     sendSessionMessage: function(event) {
@@ -1595,8 +1594,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             this.renderControls();
         }, this);
 
-        this.listenTo(this.model, "change:livestreamChannel", function() {
-            this.embedLSPlayer();
+        this.listenTo(this.model, "change:iframeEmbedCode", function() {
+            this.embedIframePlayer();
             this.renderControls();
         }, this);
 
@@ -1630,10 +1629,12 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         var youtubeInputParent = youtubeInput.parent();
         var youtubeInputError = this.$(".text-warning");
         var ytId = video.extractYoutubeId(youtubeInput.val());
-        if (ytId === null || ytId === undefined) {
+
+        if (ytId === null || ytId === undefined || ytId.length === 0) {
             // Invalid youtube URL/embed code specified.
             youtubeInputError.show();
             youtubeInputParent.addClass("error");
+            return;
         } else {
             youtubeInputParent.removeClass("error");
             youtubeInputError.hide();
@@ -1641,13 +1642,13 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
                 ytId: ytId, roomId: this.model.getRoomId()
             });
         }
-        this.removeLSChannel();
+        this.removeIframeEmbed();
     },
     removeVideoEmbed: function(jqevt) {
         jqevt.preventDefault();
         this.removeYouTubeEmbed();
         this.removeHoA();
-        this.removeLSChannel();
+        this.removeIframeEmbed();
     },
     removeYouTubeEmbed: function() {
         if(this.model.get("youtubeEmbed")) {
@@ -1665,46 +1666,33 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             });
         }
     },
-    removeLSChannel: function() {
-        if(this.model.get("livestreamChannel").length > 0) {
-            this.model.set("livestreamChannel", "");
-            this.options.transport.send("embed-livestream", {
-                channel: "",
+    removeIframeEmbed: function() {
+        if(this.model.get("iframeEmbedCode").length > 0) {
+            this.model.set("iframeEmbedCode", "");
+            this.options.transport.send("insert-iframe", {
+                iframeCode: "",
                 roomId: this.model.getRoomId()
             });
         }  
     },
-    embedLSPlayer: function() {
+    embedIframePlayer: function() {
         this.removeYouTubeEmbed();
         this.removeHoA();
-        if(this.model.get("livestreamChannel").length == 0) {
-            $("#livestreamPlayer").remove();
+        if(this.model.get("iframeEmbedCode").length == 0) {
+            $("#iframePlayer").remove();
             return;
         }
-        this.ls = new video.LivestreamVideo({
-            lsChannel: this.model.get("livestreamChannel"),
+        this.ifV = new video.IframeVideo({
+            ifCode: this.model.get("iframeEmbedCode"),
         });
-        this.$(".ls-player").html(this.ls.el);
-        if(this.model.get("livestreamChannel")) {
-            this.ls.render(); 
+        this.$(".iframe-player").html(this.ifV.el);
+        if(this.model.get("iframeEmbedCode")) {
+            this.ifV.render(); 
         }
-        setTimeout(_.bind(this.loadSwfObject, this), 100);
-        setTimeout(_.bind(this.loadLiveStream, this), 500);
+        setTimeout(_.bind(this.loadIframePlayer, this), 100);
     },
-    loadSwfObject: function() {
-        swfobject.embedSWF(
-            "http://cdn.livestream.com/chromelessPlayer/v20/playerapi.swf", 
-            "livestreamPlayer", 
-            "480", "340", "9.0.0", 
-            "expressInstall.swf", 
-            null, {AllowScriptAccess: 'always'});
-    },
-    loadLiveStream: function() {
-        var channel = this.model.get("livestreamChannel");
-        player = document.getElementById("livestreamPlayer");
-        player.setDevKey(LIVESTREAM_API_KEY);
-        player.load(channel);
-        player.startPlayback();
+    loadIframePlayer: function() {
+        $("#iframePlayer").append(this.model.get("iframeEmbedCode"));
     },
     playForAll: function(jqevt) {
         this.yt.playForEveryone(jqevt);
@@ -1716,7 +1704,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             ytId: ytId,
             roomId: this.model.getRoomId()
         });
-        this.removeLSChannel();
+        this.removeIframeEmbed();
     },
     clearPreviousVideos: function(jqevt) {
         jqevt.preventDefault();
@@ -1735,7 +1723,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     },
     setPlayerVisibility: function() {
         yt_embed = this.model.get("youtubeEmbed");
-        ls_channel = this.model.get("livestreamChannel");
+        ls_channel = this.model.get("iframeEmbedCode");
         visible = true;
         if(yt_embed == null || ls_channel.length > 0) {
             visible = false;
@@ -1779,7 +1767,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     },
     onRender: function() {
         youtubeEmbed = this.model.get("youtubeEmbed");
-        lsChannel = this.model.get("livestreamChannel");
+        lsChannel = this.model.get("iframeEmbedCode");
 
         this.yt = new video.YoutubeVideo({
             ytID: youtubeEmbed,
@@ -1802,7 +1790,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.setPlayerVisibility();
 
         if(lsChannel.length > 0) {
-            this.embedLSPlayer(this.model.get("livestreamChannel"));
+            this.embedIframePlayer(this.model.get("iframeEmbedCode"));
         } 
 
         if (youtubeEmbed) {
