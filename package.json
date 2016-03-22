@@ -74,7 +74,7 @@
     "libxmljs": "git://github.com/gwicke/libxmljs.git#7e1ceaf",
     "mailparser": "~0",
     "mocha": "1.18.2",
-    "selenium-webdriver": "2.44.0",
+    "selenium-webdriver": "2.47.0",
     "should": "3.2.0-beta1",
     "simplesmtp": "~0",
     "sinon": "1.10.3",

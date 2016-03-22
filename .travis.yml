@@ -2,7 +2,7 @@ language: node_js
 node_js:
  - 0.10
 addons:
-  firefox: "28.0"
+  firefox: "38.7.1esr"
 env: DISPLAY=:99.0
 services:
  - redis-server
@@ -11,5 +11,5 @@ before_install:
  - sh -e /etc/init.d/xvfb start
  - cp conf.json.example conf.json
 before_script:
- - curl -L https://selenium-release.storage.googleapis.com/2.43/selenium-server-standalone-2.43.0.jar > bin/selenium-server-standalone.jar
+ - curl -L https://selenium-release.storage.googleapis.com/2.53/selenium-server-standalone-2.53.0.jar > bin/selenium-server-standalone.jar
 script: "npm test"
