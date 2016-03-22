@@ -23,10 +23,7 @@
     "start": "node ./bin/unhangout-server",
     "setup": "source conf.sh",
     "test": "bin/uglytests.sh",
-    "forever-start": "NODE_ENV=production forever start --minUptime 1000 --spinSleepTime 1000 -a -l unhangout.log -o logs/out.log -e logs/err.log bin/unhangout-server",
-    "forever-stop": "forever stop bin/unhangout-server",
-    "forever-restart": "NODE_ENV=production forever restart bin/unhangout-server",
-    "forever-list": "forever list"
+    "noseleniumtest": "NODE_ENV=testing SKIP_SELENIUM_TESTS=1 mocha"
   },
   "main": "./lib/unhangout-server.js",
   "repository": {
