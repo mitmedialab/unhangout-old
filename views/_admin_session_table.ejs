@@ -31,27 +31,12 @@
                     data-trigger='hover'
                     rel='popover'>
                         <div class="hide"><%= JSON.stringify(session) %></div>
-                        <% if (state === "started") { %>
+                        <% if (session.get("connectedParticipants").length > 0) { %>
                             <i class='fa fa-play-circle'></i>
-                        <% } else if (state === "stopped") { %>
+                        <% } else if  { %>
                             &nbsp;
-                        <% } else if (state === "pending") { %>
-                            <i class='fa fa-spinner'></i>
-                        <% } else if (state === "stopping") { %>
-                            <i class='fa fa-sign-out'></i>
-                        <% } else { %>
-                            <i class='fa fa-exclamation-triangle'></i>
                         <% } %>
                 </td>
-                <% if (user.isSuperuser()) { %>
-                    <td>
-                    <% if (session.getState() != "stopped") { %>
-                        <form action="/session/<%- session.id %>/stop" method="post">
-                            <button type="submit" class="btn btn-danger btn-link">reset</submit>
-                        </form>
-                    <% } %>
-                    </td>
-                <% } %>
             </tr>
         <% }); %>
     </table>

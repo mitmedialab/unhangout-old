@@ -37,10 +37,6 @@
         <% } else { %>
             <i class="icon-remove-sign"></i>
         <% } %>
-
-        <h3>
-        <%= session.getState() == "started" ? "Live" : "Offline" %>
-        </h3>
     </div>
 
     <div class="col-lg-12 permalink-desc-row">
@@ -52,7 +48,7 @@
 
 <br><br>
 
-<% if(session.getState() == "started") { %>
+<% if (session.get("connectedParticipants").length > 0) { %>
 
 <h3 class="participants-header">Currently connected particpants</h3>
 <hr class='noshade' size=2 class="line">
@@ -61,6 +57,7 @@
 
 <div class="participant-info">
     <% _.each(session.get("connectedParticipants"), function(udata) { %>
+        <% console.log(udata); %>
         <div class='participant'>
             <% if (udata.link) { %><a href="<%= udata.link %>" target="blank"><% } %>
             <img src="<%= udata.picture %>" alt='profile image' />

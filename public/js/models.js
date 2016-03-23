@@ -350,7 +350,7 @@ models.Session = Backbone.Model.extend({
     },
     addConnectedParticipant: function(user) {
         var participants = _.clone(this.get("connectedParticipants"));
-        if (!_.findWhere(participants, { id: user.id }) && participants.length < 10) {
+        if (!_.findWhere(participants, { id: user.id }) && participants.length < this.MAX_ATTENDEES) {
             participants.push(user);
             return this.setConnectedParticipants(participants);
         }

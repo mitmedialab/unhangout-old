@@ -21,7 +21,6 @@ require([
             this.session.set("activities", [{type: "about", autoHide: true}]);
         }
         this.session.on("change:activities", this.renderActivities);
-
         this.bindSocket();
     },
     bindSocket: function() {
@@ -30,28 +29,6 @@ require([
         this.trans = trans;
 
         trans.registerModel("session", session);
-
-        trans.on("join-ack", _.bind(function() {
-            // Once we have a socket open, acknowledge the hangout gadget
-            // informing us of the hangout URL.
-            window.addEventListener("message",
-                                    this.handleCrossDocumentMessages,
-                                    false);
-        }, this));
-
-        trans.on("session/set-hangout-url-err", _.bind(function(args) {
-            logger.error("BAD HANGOUT URL");
-            new SwitchHangoutsDialog({correctUrl: args.url});
-            // Used by test harness to know we're done with the whole socket
-            // dance.
-            window.FACILITATOR_LOADED = true;
-        }, this));
-
-        trans.on("session/set-hangout-url-ack", function() {
-            // Used by test harness to know we're done with the whole socket
-            // dance.
-            window.FACILITATOR_LOADED = true;
-        });
 
         trans.on("session/control-video", _.bind(function(args) {
             if (this.currentActivity && this.currentActivity.activity.type === "video") {
@@ -68,29 +45,6 @@ require([
         });
         trans.on("back-up", function() {
             window.location.reload();
-        });
- 
-        // Let the server know about changes to the hangout URL.
-        session.on("change:hangout-url", function() {
-            logger.info("Broadcasting new hangout URL", session.get("hangout-url"));
-            trans.send("session/set-hangout-url", {
-                url: session.get("hangout-url"),
-                id: session.get("hangout-id"),
-                sessionId: session.id
-            });
-        });
-        session.on("change:connectedParticipants", function() {
-            trans.send("session/set-connected-participants", {
-                sessionId: session.id,
-                connectedParticipants: session.get("connectedParticipants"),
-                "hangout-url": session.get("hangout-url")
-            });
-        });
-        session.on("change:hangout-broadcast-id", function() {
-            trans.send("session/set-hangout-broadcast-id", {
-                sessionId: session.id,
-                "hangout-broadcast-id": session.get("hangout-broadcast-id")
-            });
         });
     },
     renderActivities: function() {
@@ -265,6 +219,7 @@ var VideoActivity = BaseActivityView.extend({
     },
     onrender: function() {
         this.$el.html(this.yt.el);
+        $(this.yt.el).css("height", "100%");
         this.yt.render();
     },
     controlVideo: function(args) {
