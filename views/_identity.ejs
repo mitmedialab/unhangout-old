@@ -24,7 +24,11 @@
                     <li role="presentation">
                         <a role="menuitem" tabindex="-1" href="/myevents/">My Events</a>
                     </li>
-
+                    <% if (user.isSuperuser()) { %>
+                        <li role="presentation">
+                            <a role="menuitem" tabindex="-1" href="/event-templates/">Event templates</a>
+                        </li>
+                    <% } %>
                     <li role="presentation" class="divider"></li>
                 <% } %>
 

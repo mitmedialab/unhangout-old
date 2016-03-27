@@ -588,6 +588,35 @@ models.ChatMessageList = Backbone.Collection.extend({
     model:models.ChatMessage
 });
 
+models.EventSessionTemplate = Backbone.Model.extend({
+    defaults: function() {
+        return {
+          title: "Session",
+          limit: "2",
+          type: "simple",
+          url: "",
+          description: "",
+        };
+    },
+});
+
+models.EventSessionTemplateList = Backbone.Collection.extend({
+    model:models.EventSessionTemplate
+});
+
+models.EventSessionMessageTemplate = Backbone.Model.extend({
+    defaults: function() {
+        return {
+          title: "Session message",
+          message: "",
+        };
+    },
+});
+
+models.EventSessionMessageTemplateList = Backbone.Collection.extend({
+    model:models.EventSessionMessageTemplate
+});
+
 return models;
 }); // End of define
 

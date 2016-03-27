@@ -611,8 +611,11 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #send-email-button': 'sendFollowupEmail',
         'click #submit-contact-info': 'submitContactInfo',
         'click #btn-propose-session': 'proposeSessionDialog',
-        'click #propose': 'proposeSession', 
+        'click #propose': 'proposeSession',
         'input .input-topic-title': 'fillTopicPreview',
+        'click #create-session-from-template':'createSessionFromTemplate',
+        'change #session_template_select': 'updateSessionTemplateForm',
+        'change #session_message_template': 'updateSessionMessageFromTemplate'
     },
 
     addUrlToSessionMessage: function(event) {
@@ -884,7 +887,128 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     closeDisconnected: function() {
         $("#disconnected-modal").modal('hide');
+    },
+
+    updateSessionMessageFromTemplate: function(event) {
+        event.preventDefault();
+        var el = $("#message-sessions-modal textarea");
+        var message = $("#session_message_template").val();
+        el.val(message);
+        el.change();
+    },
+    updateSessionTemplateForm: function(event) {
+        event.preventDefault();
+        var templateId = parseInt($("#session_template_select").val());
+        var details = ""
+        if (!isNaN(templateId)) {
+          var template = this.options.eventSessionTemplates.get(templateId);
+          var limit = template.get("limit");
+          // NOTE: Bad form to put HTML here, and, good enough for now.
+          details += "<strong># Participants:</strong> " + limit + ", <strong>Session type:</strong> " + template.get("type");
+          var url = template.get("url");
+          if (!_.isEmpty(url)) {
+            details += ", <strong>URL:</strong> <a href='" + url + "' target='_blank'>" + url + "</a>"
+          }
+          var description = template.get("description");
+          if (!_.isEmpty(description)) {
+            details += "<div><small>" + description + "</small></div>"
+          }
+          // Make a reasonable guess at the number of sessions to create.
+          // The assumption is that there are two event facilitators, so
+          // pair sessions can leave one person out, and other sessions
+          // can leave two people out.
+          var userPool = this.options.event.get("connectedUsers").length;
+          var extra = userPool % limit;
+          var numToCreateDefault = Math.ceil(userPool / limit);
+          switch (limit) {
+            case 2:
+              extra == 1 && numToCreateDefault--;
+              break;
+            default:
+              (extra == 1 || extra == 2) && numToCreateDefault--;
+              break;
+          }
+          $("#total_connected_users_reference").html(userPool);
+          $("#sessions_to_create").val(numToCreateDefault);
+        }
+        $("#session_template_select_details").html(details);
+    },
+
+    createSessionFromTemplate: function(event) {
+        event.preventDefault();
+        var scope = $("#create-session-from-template-modal");
+        var templateId = parseInt($("#session_template_select").val());
+        var numSessions = parseInt($.trim($("#sessions_to_create").val()));
+
+        if (isNaN(templateId)) {
+            $(".template-id-error", scope).show();
+            return;
+        }
+
+        if (isNaN(numSessions) || numSessions < 1) {
+            $(".num-sessions-error", scope).show();
+            return;
+        }
+
+        var template = this.options.eventSessionTemplates.get(templateId);
+        if (!template) {
+            $(".template-id-error", scope).show();
+            return;
+        }
+
+        var title = template.get("title");
+        var joinCap = template.get("limit");
+        var type = template.get("type");
+        var url = template.get("url");
+        var ytid = template.get("ytid");
+        var roomId = this.options.event.getRoomId();
+
+        var activities = [];
+        switch (type) {
+            case "simple":
+                activities.push({type: "about", autoHide: true});
+                break;
+            case "video":
+                    activities.push({type: "video", video: {provider: "youtube", id: ytid}});
+                break;
+            case "webpage":
+                    activities.push({type: "webpage", url: url});
+                break;
+        }
+
+        var countTitle;
+        var timeout;
+        var createSession = function(title) {
+            this.options.transport.send("create-session", {
+                title: title,
+                description:"",
+                activities: activities,
+                joinCap: joinCap,
+                roomId: roomId,
+                approved: true,
+            });
+        }
+        for (var i = 1; i <= numSessions; i++) {
+          // Spread out these requests a bit, it's still quite fast to create
+          // many sessions, and helps to avoid race conditions with overlapping
+          // requests.
+          timeout = (i - 1) * 50;
+          // Number multiple sessions.
+          countTitle = numSessions === 1 ? title : title + " #" + i;
+          setTimeout(_.bind(createSession, this, countTitle), timeout);
+        }
+
+        // TODO: Is there some modal open event that can be used to do this
+        // more consistently?
+        $("#session_template_select").val("");
+        $("#sessions_to_create").val("1");
+        $(".template-id-error", scope).hide();
+        $(".num-sessions-error", scope).hide();
+        $("#session_template_select_details").html("# of participants, session type, and any URL will be listed here.");
+        $(".error", scope).removeClass(".error");
+        scope.modal('hide');
     }
+
 });
 
 // Generates the admin menu items.
