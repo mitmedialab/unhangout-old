@@ -70,6 +70,12 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:title', this.render, this);
     },
 
+    serializeData: function() {
+        return _.extend(this.model.toJSON(), {
+            eventAdmin: this.options.currentUser.isAdminOf(this.options.event)
+        });
+    },
+
     onRender: function() {
         $('.tooltip').hide();
         var start = new Date().getTime();  
@@ -87,7 +93,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         }
 
         //Show delete button only for admins  
-        if(IS_ADMIN) {
+        if(this.options.currentUser.isAdminOf(this.options.event)) {
             this.ui.deleteButton.show();
         } else {
             this.ui.deleteButton.hide();
@@ -109,7 +115,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.unapprove.hide();
             this.ui.proposeeDetails.hide(); 
 
-            if(IS_ADMIN) {
+            if(this.options.currentUser.isAdminOf(this.options.event)) {
                 this.ui.deleteButton.removeClass("top-margin");
             } 
             
@@ -350,6 +356,12 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:title', this.render, this);
     },
 
+    serializeData: function() {
+        return _.extend(this.model.toJSON(), {
+            eventAdmin: this.options.currentUser.isAdminOf(this.options.event)
+        });
+    },
+
     onRender: function() {
         $('.tooltip').hide();
 
@@ -382,7 +394,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
         //, hide approve button from the topic template and position
         // delete button
 
-        if(!IS_ADMIN && (this.model.get("proposedBy") && 
+        if(!this.options.currentUser.isAdminOf(this.options.event) && (this.model.get("proposedBy") &&
                 USER.id === this.model.get("proposedBy").id)) {
             this.ui.approve.hide();
             this.ui.deleteButton.addClass("pos-admin-delete");
@@ -491,7 +503,9 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     itemViewOptions: function() {        
         return {
-            event: this.options.event, transport: this.options.transport
+            event: this.options.event,
+            currentUser: this.options.currentUser,
+            transport: this.options.transport
         };
     }, 
     
@@ -524,7 +538,9 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
 
     itemViewOptions: function() {
         return {
-            event: this.options.event, transport: this.options.transport
+            event: this.options.event,
+            currentUser: this.options.currentUser,
+            transport: this.options.transport
         };
     },
 
@@ -1132,6 +1148,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
         Backbone.Marionette.View.prototype.initialize.call(this, options);
         this.whiteboardView = new views.WhiteboardView({
             model: this.options.event,
+            currentUser: this.options.currentUser,
             transport: this.options.transport,
             messages: this.options.messages
         });
@@ -1155,6 +1172,7 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
         this.chatInputView = new views.ChatInputView({
             event: this.options.event,
+            currentUser: this.options.currentUser,
             transport: this.options.transport    
         });
 
@@ -1210,7 +1228,7 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
 
     // Function to toggle the view of the form only if the user is an admin
     toggleForm: function(){
-        if(IS_ADMIN){
+        if(this.options.currentUser.isAdminOf(this.model)){
             this.ui.form.toggle();
             this.ui.buttons.toggle();
             this.ui.message.toggle();
@@ -1234,7 +1252,7 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
             this.ui.message.html(utils.linkify(_.escape(whiteboard.message)));
         } else {
             // If not an admin, we hide the whole whiteboard, else we show an empty whiteboard for admins
-            if(IS_ADMIN){
+            if(this.options.currentUser.isAdminOf(this.model)){
                 this.ui.message.html('')
             } else {
                 this.ui.message.hide();
@@ -1249,7 +1267,8 @@ views.WhiteboardView = Backbone.Marionette.ItemView.extend({
             chatArchiveUrl = this.model.getChatArchiveUrl();
         }
         return _.extend(this.model.toJSON(), {
-            chatArchiveUrl: this.model.getChatArchiveUrl()
+            chatArchiveUrl: this.model.getChatArchiveUrl(),
+            eventAdmin: this.options.currentUser.isAdminOf(this.model)
         });
     }
 });
@@ -1271,9 +1290,15 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
         Backbone.Marionette.View.prototype.initialize.call(this, options);
     },
 
+    serializeData: function() {
+        return {
+            eventAdmin: this.options.currentUser.isAdminOf(this.options.event)
+        };
+    },
+
     chat: function(e) {
         var msg = this.ui.chatInput.val();
-        var postAsAdmin = IS_ADMIN && this.ui.asAdmin.is(":checked");
+        var postAsAdmin = this.options.currentUser.isAdminOf(this.options.event) && this.ui.asAdmin.is(":checked");
 
         if(msg.length>0) {
 
@@ -1598,6 +1623,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         if (this.model.get("hoa")) {
             context.hoa = this.model.get("hoa").toJSON();
         }
+        context.eventAdmin = this.options.currentUser.isAdminOf(this.model);
         return context;
     },
     setVideo: function(jqevt) {
@@ -1672,9 +1698,9 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.ui.player.toggle(visible);
         // Show a placeholder ("video goes here") if video is not visible and
         // the user is an admin.  Non-admins get nothing.
-        this.ui.placeholder.toggle(!visible && IS_ADMIN);
+        this.ui.placeholder.toggle(!visible && this.options.currentUser.isAdminOf(this.model));
         // Always show controls if the user is an admin.
-        this.ui.controls.toggle(IS_ADMIN);
+        this.ui.controls.toggle(this.options.currentUser.isAdminOf(this.model));
     },
     renderControls: function() {
         var hoa = this.model.get("hoa");
@@ -1708,10 +1734,10 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         this.yt = new video.YoutubeVideo({
             ytID: this.model.get("youtubeEmbed"),
-            permitGroupControl: IS_ADMIN,
+            permitGroupControl: this.options.currentUser.isAdminOf(this.model),
             showGroupControls: false // We're doing our own controls on event pages.
         });
-        if (IS_ADMIN) {
+        if (this.options.currentUser.isAdminOf(this.model)) {
             this.yt.on("renderControls", _.bind(function() {
                 this.renderControls();
             }, this));

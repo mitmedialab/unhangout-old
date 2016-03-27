@@ -61,7 +61,7 @@ $(document).ready(function() {
     });
 
     curEvent.on("change:open", function(model, open, options) {
-        if (IS_ADMIN) {
+        if (app.currentUser.isAdminOf(curEvent)) {
             app.chatView.chatInputView.onRender();
         } else if (!open) {
             window.location.reload();
@@ -121,31 +121,65 @@ $(document).ready(function() {
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
+        this.currentUser = new models.User(USER);
+        this.currentUserIsAdmin = (function() {
+          return this.currentUser.isAdminOf(curEvent);
+        }).bind(this);
+
         // create all the basic views
         this.sessionListView = new eventViews.SessionListView({
             collection: curEvent.get("sessions"),
+            currentUser: this.currentUser,
             event: curEvent,
             transport: trans
         });
         this.topicListView = new eventViews.TopicListView({
             collection: curEvent.get("sessions"),
+            currentUser: this.currentUser,
             event: curEvent,
             transport: trans
         });
         this.chatView = new eventViews.ChatLayout({
+            currentUser: this.currentUser,
             messages: messages,
             users: curEvent.get("connectedUsers"),
             event: curEvent,
             transport: trans
         });
         this.youtubeEmbedView = new eventViews.VideoEmbedView({
-            model: curEvent, transport: trans
+            model: curEvent, transport: trans,
+            currentUser: this.currentUser
         });
         this.dialogView = new eventViews.DialogView({
             event: curEvent, transport: trans
         });
 
         this.aboutView = new eventViews.AboutEventView({model: curEvent});
+
+        // Always include this in the DOM for callback support, even if it's
+        // not inserted.
+        this.adminButtonView = new eventViews.AdminButtonView({
+            event: curEvent, transport: trans
+        });
+
+        this.adminChanged = function() {
+          var previousAdmins = _.pluck(curEvent.previous("admins"), "id");
+          var currentAdmins = _.pluck(curEvent.get("admins"), "id");
+          // This user's interface needs to be refreshed if:
+          // 1. The user is in either the previous or current list.
+          // 2. The user isn't in both lists.
+          // Refresh all views that are impacted by admin status.
+          var inPrevious = previousAdmins.indexOf(USER.id) !== -1;
+          var inCurrent = currentAdmins.indexOf(USER.id) !== -1;
+          if ((inPrevious || inCurrent) && !(inPrevious && inCurrent)) {
+            this.setupAdminControls();
+            this.youtubeEmbedView.render();
+            this.sessionListView.render();
+            this.topicListView.render();
+            this.chatView.whiteboardView.render();
+            this.chatView.chatInputView.render();
+          }
+        }
 
         // present the views in their respective regions
         this.right.show(this.chatView);
@@ -178,6 +212,10 @@ $(document).ready(function() {
             $("#btn-propose-session").removeClass('show');
             $("#topic-list").hide();
         }
+
+        curEvent.on("change:admins", _.bind(function() {
+            this.adminChanged();
+        }, this));
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();  
@@ -325,20 +363,23 @@ $(document).ready(function() {
             }
         }
 
-        // obviously this is not secure, but any admin requests are re-authenticated on
-        // the server. Showing the admin UI is harmless if a non-admin messes with it.
-        if(IS_ADMIN) {
-            if (NUM_HANGOUT_URLS_WARNING > 0 && NUM_HANGOUT_URLS_AVAILABLE < NUM_HANGOUT_URLS_WARNING) {
-                console.error("Too few hangout URLS available!", NUM_HANGOUT_URLS_AVAILABLE);
-            }
-            this.adminButtonView = new eventViews.AdminButtonView({
-                event: curEvent, transport: trans
-            });
+        this.hotkeys = this.initHotkeys();
 
-            this.admin.show(this.adminButtonView);
-            this.hotkeys = this.initHotkeys();
-            this.hotkeys.activate($(document));
+        this.setupAdminControls = function() {
+            if(this.currentUserIsAdmin()) {
+                this.admin.show(this.adminButtonView);
+                this.hotkeys.activate($(document));
+            }
+            else {
+                // Marionette requires a view, and there's no need to destroy
+                // the existing admin view, so use a dummy view to hide it.
+                var dummyView = new Backbone.Marionette.ItemView({template: '#dummy-template'});
+                this.admin.show(dummyView);
+                this.hotkeys.deactivate($(document));
+            }
         }
+
+        this.setupAdminControls();
 
         var maybeMute = function() {
             var hoa = curEvent.get("hoa");
