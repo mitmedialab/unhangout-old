@@ -1,0 +1,117 @@
+<% include _header.ejs %>
+<% include _navbar.ejs %>
+
+<div class="container" id="event-template-container">
+
+    <% while (data = flash.shift()) { %>
+    <div class="alert alert-<%= data.type %>">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <% if (data.type == "danger") { %>
+            <strong>ERROR:</strong>
+        <% } %>
+        <%= data.message %>
+    </div>
+    <% } %>
+
+    <h2 class="event-template-title">Event templates<small> - <a href="/event-templates/reload">Reload templates</a></small></h2>
+
+    <div id="event-template-instructions">
+        <p>
+            Event templates allow an admin to pre-load various event-related
+            data for quick use in events.
+        </p>
+        <p>
+            The templates are read from specially formatted Google
+            spreadsheets. Each time the <code>Reload templates</code> link at
+            the top of this page is clicked, the spreadsheets are re-read, and
+            the template data available to events is reconfigured accordingly.
+            <div>
+                <em>
+                  Notes:
+                  <ul>
+                    <li>
+                        Only users with the superuser permission can reload
+                        templates.
+                    </li>
+                    <li>
+                        Open event windows in the browser must be refreshed
+                        after the template reload operation in order for
+                        admins to access the reloaded templates.
+                    </li>
+                  </ul>
+                </em>
+            </div>
+        </p>
+        <p>
+            To build templates for events, create a Google spreadsheet with the
+            listed columns, in order. Be sure to include column headers in the
+            first row. Publish the spreadsheet be selecting
+            <code>File &#8594; Publish to the web...</code> from the Google
+            Spreadsheet menu. Finally, set the value for the appropriate variable
+            in <code>conf.json</code> to the spreadsheet ID for the spreadsheet.
+        </p>
+        <p>
+            The currently available templates are described below, with the
+            necessary columns in order.
+        </p>
+        <p>
+            <strong>Column list for session templates:</strong>
+            <ul>
+                <li>Name of session <em>(required)</em></li>
+                <li># of allowed participants <em>(required)</em></li>
+                <li>Session type (one of 'simple', 'video', 'webpage') <em>(required)</em></li>
+                <li>URL for YouTube or webpage sessions <em>(required for video and webpage types)</em></li>
+                <li>A longer description of the session for admin use</li>
+            </ul>
+        </p>
+        <p>
+            <strong>Column list for session message templates:</strong>
+            <ul>
+                <li>Name of message <em>(required)</em></li>
+                <li>Message <em>(required)</em></li>
+            </ul>
+        </p>
+    </div>
+    <h3 class="event-template-title">Currenly loaded templates</h3>
+
+    <% if (sessionTemplates.length > 0) { %>
+      <h4 class="event-template-title">Sessions<small> - <a href="https://docs.google.com/spreadsheets/d/<%= sessionTemplatesKey %>" target="_blank">edit spreadsheet</a></small></h3>
+      <% sessionTemplates.each(function(model) { %>
+          <% var title = model.get("title") %>
+          <% var limit = model.get("limit") %>
+          <% var type = model.get("type") %>
+          <% var url = model.get("url") %>
+          <% var description = model.get("description") %>
+          <div class='container event-box-content'>
+              <h5><%= title %> (<%= limit %> participants)</h5>
+              <div>
+                  <% if (type === "simple") { %>
+                  <small>Type: <%= type %></small>
+                  <% } else { %>
+                  <small>Type: <%= type %>, URL: <a href='<%= url %>'><%= url %></a></small>
+                  <% } %>
+              </div>
+              <div>
+                  <small><%= description %></small>
+              </div>
+          </div>
+      <% }); %>
+    <% } %>
+    <% if (sessionMessageTemplates.length > 0) { %>
+      <h4 class="event-template-title">Session messages<small> - <a href="https://docs.google.com/spreadsheets/d/<%= sessionMessageTemplatesKey %>" target="_blank">edit spreadsheet</a></small></h3>
+      <% sessionMessageTemplates.each(function(model) { %>
+          <% var title = model.get("title") %>
+          <% var message = model.get("message") %>
+          <div class='container event-box-content'>
+              <h5><%= title %></h5>
+              <div>
+                  <small><%= message %></small>
+              </div>
+          </div>
+      <% }); %>
+    <% } %>
+</div>
+
+<%- requireScripts("/public/js/index.js") %>
+<% include _sponsorship.ejs %>
+<% include _analytics.ejs %>

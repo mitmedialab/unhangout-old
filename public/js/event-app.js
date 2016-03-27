@@ -142,7 +142,9 @@ $(document).ready(function() {
             model: curEvent, transport: trans
         });
         this.dialogView = new eventViews.DialogView({
-            event: curEvent, transport: trans
+            event: curEvent,
+            transport: trans,
+            eventSessionTemplates: new models.EventSessionTemplateList(EVENT_SESSION_TEMPLATES),
         });
 
         this.aboutView = new eventViews.AboutEventView({model: curEvent});

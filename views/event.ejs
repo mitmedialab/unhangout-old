@@ -15,6 +15,7 @@
         var HOA_ATTRS = <%- event.get("hoa") && user.isAdminOf(event) ? JSON.stringify(event.get("hoa").toClientJSON()) : "null" %>;
         var CONNECTED_USERS = <%- JSON.stringify(event.get("connectedUsers").invoke("toClientJSON")) %>
         var RECENT_MESSAGES = <%- JSON.stringify(event.get("recentMessages")) %>;
+        var EVENT_SESSION_TEMPLATES = <%- JSON.stringify(eventSessionTemplates) %>;
     <% } %>
 
 </script>
@@ -612,9 +613,13 @@
                 <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
                     <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
                 </a>
+                <% if (eventSessionTemplates.length > 0) { %>
+                <a role="menuitem" href="#create-session-from-template-modal" data-toggle="modal" id="show-create-session-from-template-modal">
+                    <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session From Template
+                </a>
+                <% } %>
 
                 <a role="menuitem" href="/admin/event/{{= event.id }}" role="button" id="admin-page-for-event" target="_blank">
-
                     <i class="fa fa-pencil-square-o fa-lg fa-fw"></i>
                     Edit Event Info
                 </a>
@@ -666,6 +671,9 @@
         $(".youtube-url").hide();
         $(".webpage-url").hide();
         $(".join-cap-error").hide();
+        $(".template-id-error").hide();
+        $(".num-sessions-error").hide();
+        $("#session_template_select_details").html("# of participants, session type, and any URL will be listed here.");
         $('[data-toggle="tooltip"]').tooltip();
         
     </script>
@@ -792,6 +800,70 @@
 
     </div>
 
+<!-- Create Session From Template Modal Dialog -->
+    <div id="create-session-from-template-modal" class="modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form class="form-horizontal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Create Session From Template</h4>
+                    </div>
+
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label" for="session_template_select">Session Template</label>
+                            <div class="col-lg-9">
+                                <select class="form-control" id="session_template_select">
+                                    <option value=""> -- Select -- </option>
+                                    <% eventSessionTemplates.each(function(model) { %>
+                                    <option value="<%= model.id %>"><%= model.get("title") %></option>
+                                    <% }) %>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-lg-offset-1 col-lg-8 alert alert-warning alert-dismissible template-id-error" role="alert">
+                              <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                              Warning! Please select a template.
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label" for='session_template_select_details'>Details</label>
+                            <div id="session_template_select_details" class="col-lg-4">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-lg-3 control-label" for='sessions_to_create'># To Create</label>
+                            <div class="col-lg-4">
+                                <input class="form-control" type='number' min='1' step='1'
+                                   value='1'
+                                   name='sessions_to_create' id='sessions_to_create' />
+                                <span class='help-inline'>Enter the number of sessions of this type to create, multiple sessions will have a sequential number appended to the title.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-lg-offset-1 col-lg-8 alert alert-warning alert-dismissible num-sessions-error" role="alert">
+                          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                          Warning! Please enter a number greater than zero.
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                      <button type="button" class="btn btn-primary" id="create-session-from-template" value="Create Session">Create Session</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Send messages to session dialog -->
     <div id="message-sessions-modal" class="modal fade" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
@@ -802,6 +874,22 @@
                 </div>
 
                 <div class="modal-body">
+
+                    <% if (eventSessionMessageTemplates.length > 0) { %>
+                    <div class="form-group">
+                        <label for="session_message_template" class="control-label col-lg-3">Message template</label>
+
+                        <div class="col-lg-9">
+                            <select class="form-control" id="session_message_template">
+                                <option value=""> -- Select -- </option>
+                                <% eventSessionMessageTemplates.each(function(model) { %>
+                                <option value="<%= model.get("message") %>"><%= model.get("title") %></option>
+                                <% }) %>
+                            </select>
+                        </div>
+                    </div>
+                    <% } %>
+
                     <div class="form-group">
                         <label for='session_message' class="control-label col-lg-3">Message</label>
 
