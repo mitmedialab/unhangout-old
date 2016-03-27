@@ -3,7 +3,6 @@
 
 <script>
     // Initial data
-    var IS_ADMIN = <%= event && user.isAdminOf(event) %>;
     var IS_SUPERUSER = <%= event && user.isSuperuser() %>;
     var USER = <%- JSON.stringify(user) %>;
     var NUM_HANGOUT_URLS_AVAILABLE = <%= numHangoutUrlsAvailable %>;
@@ -70,7 +69,7 @@
 <script type="text/template" id="session-template">
     <div class="col-xs-12 session-area">
 
-        {{ if(IS_ADMIN) { }}   
+        {{ if(eventAdmin) { }}
             <div class="col-xs-8 session-padding">
 
                 <div class="col-xs-12 session-padding session-title-container">
@@ -145,7 +144,7 @@
 
         </div>
 
-        {{ if(IS_ADMIN) { }}
+        {{ if(eventAdmin) { }}
             <div class="col-xs-1 session-padding left-padding">
                 
                 <div class="col-xs-12 session-padding btn-admin-unapprove-session">
@@ -166,7 +165,7 @@
 <script type="text/template" id="topic-template">
     <div class="col-xs-12 session-area">
 
-        {{ if(IS_ADMIN || (proposedBy && proposedBy.id == USER.id)) { }}
+        {{ if(eventAdmin || (proposedBy && proposedBy.id == USER.id)) { }}
 
             <div class="col-xs-8 topic-padding topic-title-container">
                 <div class="col-xs-1 topic-padding">
@@ -174,7 +173,7 @@
                 </div>
 
                 <div class="col-xs-11 topic-title-padding">
-                    <h3 class="topic-title">{{- title }} </h3> 
+                    <h3 class="topic-title">{{- title }} </h3>
                 </div>
             </div>
 
@@ -214,12 +213,12 @@
 
             <div class="col-xs-12 topic-padding vote-session">
                 <button class="btn btn-primary btn-vote" data-toggle="tooltip" data-placement="bottom" data-container="body" title="" data-original-title="Vote for this topic">
-                    VOTE | {{- votes }} 
+                    VOTE | {{- votes }}
                     </button>
             </div>
         </div>
 
-        {{ if(IS_ADMIN || (proposedBy && proposedBy.id == USER.id)) { }}
+        {{ if(eventAdmin || (proposedBy && proposedBy.id == USER.id)) { }}
         
         <div class="col-xs-1 topic-padding left-padding">
 
@@ -374,7 +373,7 @@
 <script type="text/template" id="chat-whiteboard-template">
     <div id="whiteboard-message"></div>
 
-    {{ if(IS_ADMIN) { }}
+    {{ if(eventAdmin) { }}
         <div id="whiteboard-form">
             <textarea placeholder="whiteboard message here..." rows="1"></textarea>
             <button class='update-whiteboard btn btn-success'>
@@ -400,7 +399,7 @@
 <script type="text/template" id="chat-input-template">
     <form>
         <input type="text" id="chat-input" class="form-control" autocomplete="off" placeholder='Type your message here'></input>
-        {{ if (IS_ADMIN) { }}
+        {{ if (eventAdmin) { }}
             <label class='admin'
                    title='Check to highlight your message.'
                    data-role='tooltip'
@@ -1165,6 +1164,9 @@
             </div>
         </div>
     </div>
+</script>
+
+<script type="text/template" id="dummy-template">
 </script>
 
 <% include _video-templates.ejs %>
