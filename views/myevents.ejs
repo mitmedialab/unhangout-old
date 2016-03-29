@@ -240,9 +240,18 @@
 </div>
 
 <script type='text/javascript'>
-    var USER_DATA = <%- JSON.stringify(users) %>;
-    var EVENT_DATA = <%- JSON.stringify(events) %>;
-    var USER = <%- JSON.stringify(user) %>;
+    var USER_DATA = [
+<% for (var i = 0; i < users.length; i++) { %>
+<%- JSON.stringify(users[i]).replace(/\s+/g, " ") -%>,
+<% } %>
+];
+
+    var EVENT_DATA = [
+<% for (var i = 0; i < events.length; i++) { %>
+<%- JSON.stringify(events[i]).replace(/\s+/g, " ") -%>,
+<% } %>
+];
+    var USER = <%- JSON.stringify(user).replace(/\s+/g, " ") %>;
 </script>
 
 <%- requireScripts("/public/js/myevents.js") %>
