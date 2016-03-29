@@ -712,6 +712,11 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         if(!iframeCode) {
             return;
         }
+        if(!iframeCode.startsWith('<iframe') && 
+            !iframeCode.endsWith('</iframe>') || 
+            !iframeCode.endsWith('>')) {
+            return;
+        };
         var args = {
             iframeCode: iframeCode,
             roomId: this.options.event.getRoomId()
@@ -1572,6 +1577,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         player: ".video-player",
         placeholder: ".video-placeholder",
         controls: ".video-controls",
+        playForAll: ".play-for-all"
     },
     events: {
         'click .set-video': 'setVideo',
@@ -1596,7 +1602,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
 
         this.listenTo(this.model, "change:iframeEmbedCode", function() {
             this.embedIframePlayer();
-            this.renderControls();
+            this.renderControls(); 
         }, this);
 
         this.listenTo(this.model, "hoa:change:connectedParticipants " +
@@ -1750,6 +1756,12 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }
 
         this.ui.controls.html(this.controlsTemplate(context));
+
+        if(this.model.get("iframeEmbedCode").length > 0) {
+            this.$el.find(".play-for-all").addClass('disabled');
+        } else {
+            this.$el.find(".play-for-all").addClass('enabled');
+        }
 
         // We reset the dropdowns because the the previous video embeds dropdown is recreated.
         $('.dropdown-toggle').dropdown();
