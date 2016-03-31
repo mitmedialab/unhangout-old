@@ -1,5 +1,6 @@
 var conf            = require("../lib/options"),
     unhangoutServer = require('../lib/unhangout-server'),
+    farming         = require("../lib/hangout-farming"),
     seed            = require('../bin/seed.js'),
     path            = require("path"),
     redis           = require("redis").createClient(),
@@ -261,6 +262,20 @@ exports.server = null;
 // A list of all open connections to the HTTP server, which we can nuke to
 // allow us to force-restart the server.
 
+function addDummyFarmedUrls(numToAdd, callback) {
+  if (isNaN(numToAdd)) {
+    throw Error("Asked to add NaN urls");
+  }
+  if (numToAdd <= 0) {
+    callback();
+  } else {
+    farming.reuseUrl("http://example.com", function(err) {
+      if (err) { throw err; }
+      addDummyFarmedUrls(numToAdd - 1, callback);
+    });
+  }
+}
+
 exports.standardSetup = function(done, skipSeed) {
     exports.server = new unhangoutServer.UnhangoutServer();
 
@@ -268,7 +283,6 @@ exports.standardSetup = function(done, skipSeed) {
         exports.server.start()
     });
     exports.server.on("started", function() {
-        done();
         // This is a hack to allow us to kill the server while it still has
         // ongoing connections, without terminating the node process.  We use
         // this for simulating server restarts.
@@ -286,6 +300,18 @@ exports.standardSetup = function(done, skipSeed) {
             }
             OPEN_CONNS = [];
         });
+        if (skipSeed) {
+          done();
+        } else {
+          // Ensure there is at least one hangout URL to suppress modal warning
+          // that breaks tests.
+          exports.server.db.redis.llen("global:hangout_urls", function(err, len) {
+            if (err) { throw err; }
+            if (len < conf.UNHANGOUT_HANGOUT_URLS_WARNING) {
+              addDummyFarmedUrls(conf.UNHANGOUT_HANGOUT_URLS_WARNING - len, done);
+            }
+          });
+        }
     });
     if (!skipSeed) {
         exports.seedDatabase(function() {
