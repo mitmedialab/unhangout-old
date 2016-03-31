@@ -19,8 +19,7 @@
         "moment-timezone": "../vendor/moment-timezone.min",
         "moment-timezone-data": "../vendor/timezone-data",
         "jstz": "../vendor/jstz",
-        "sockjs": "../vendor/sockjs-0.3",
-        "swfobject": "../vendor/swfobject"
+        "sockjs": "../vendor/sockjs-0.3"
     },
     "shim": {
         "jquery": { "exports": "jQuery" },
@@ -34,8 +33,7 @@
         "bootstrap": { "deps": ["jquery"], "exports": "jQuery.fn.tooltip" },
         "bootstrap-datetimepicker": { "deps": ["bootstrap"], "exports": "jQuery.fn.datetimepicker" },
         "jstz": { "exports": "jstz" },
-        "sockjs": { "exports": "sockjs" },
-        "swfobject": {"exports": "swfobject"}
+        "sockjs": { "exports": "sockjs" }
     },
     "modules": {
         "index.js": { "include": "index" },

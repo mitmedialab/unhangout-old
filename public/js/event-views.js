@@ -1688,16 +1688,12 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             $("#iframePlayer").remove();
             return;
         }
-        this.ifV = new video.IframeVideo({
-            ifCode: this.model.get("iframeEmbedCode"),
-        });
-        this.$(".iframe-player").html(this.ifV.el);
-        if(this.model.get("iframeEmbedCode")) {
-            this.ifV.render(); 
-        }
         setTimeout(_.bind(this.loadIframePlayer, this), 10);
     },
     loadIframePlayer: function() {
+        var iPEl = document.createElement("div");
+        iPEl.id = "iframePlayer";
+        this.$(".iframe-player").append(iPEl);
         $("#iframePlayer").append(this.model.get("iframeEmbedCode"));
     },
     playForAll: function(jqevt) {
