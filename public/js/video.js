@@ -380,20 +380,6 @@ video.YoutubeVideo = Backbone.View.extend({
     }
 });
 
-video.IframeVideo = Backbone.View.extend({ 
-    tagName: "div",
-    template: _.template($("#iframe-video").html()),
-    id: "iframePlayer", 
-
-    initialize: function(options) {
-        this.ifCode = options.ifCode;
-    },
-
-    render: function() {
-        this.$el.html(this.template()); 
-    },
-});
-
 return video;
 
 });
