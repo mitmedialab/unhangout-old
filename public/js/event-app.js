@@ -330,6 +330,7 @@ $(document).ready(function() {
         if(IS_ADMIN) {
             if (NUM_HANGOUT_URLS_WARNING > 0 && NUM_HANGOUT_URLS_AVAILABLE < NUM_HANGOUT_URLS_WARNING) {
                 console.error("Too few hangout URLS available!", NUM_HANGOUT_URLS_AVAILABLE);
+                $("#no-urls-warning").modal('show');
             }
             this.adminButtonView = new eventViews.AdminButtonView({
                 event: curEvent, transport: trans
