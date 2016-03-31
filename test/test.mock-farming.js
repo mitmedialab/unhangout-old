@@ -70,7 +70,9 @@ describe("FARMING", function() {
             common.server.db.users.findWhere({
                 "sock-key": "regular1"
             }).setPerm("farmHangouts", true);
-            done();
+            farming.popAllUrls(function() {
+              done();
+            });
         });
     });
     afterEach(common.standardShutdown);

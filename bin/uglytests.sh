@@ -1,7 +1,14 @@
 #!/bin/bash
 
+cleanup () {
+  if [ -n "$SELENIUM" ]; then
+      kill -9 $SELENIUM
+  fi
+  exit 1
+}
+
 # Stop everything if we get control-c, even if we aren't done.
-trap "exit 1" SIGINT SIGTERM
+trap cleanup SIGINT SIGTERM INT
 
 # Change to the project root -- one above the current directory.
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
@@ -17,7 +24,7 @@ EXIT=$?
 
 # Run selenium tests, one at a time.
 for TEST in test/test.*.selenium.js ; do
-    NODE_ENV=testing $MOCHA $TEST
+    NODE_ENV=testing $MOCHA $TEST || NODE_ENV=testing $MOCHA $TEST
     STATUS=$?
     if [ $STATUS -ne 0 ]; then
         EXIT=$STATUS

@@ -112,7 +112,7 @@ describe("HANGOUT REDIRECTS", function() {
             checkRedirect(url, "regular1", function() {
                 farming.getNextHangoutUrl(function(err, url) {
                     expect(err).to.be(null);
-                    expect(url).to.be(null);
+                    expect(url).to.not.be("http://example.com/farmed");
                     done();
                 });
             });
@@ -121,9 +121,7 @@ describe("HANGOUT REDIRECTS", function() {
 
     it("Uses button URL when farmed hangout links are unavailable", function(done) {
         // Ensure we have nothing farmed...
-        farming.getNextHangoutUrl(function(err, url) {
-            expect(err).to.be(null);
-            expect(url).to.be(null);
+        farming.popAllUrls(function() {
             var url = "https://plus.google.com/hangouts/_" + suffix("regular1");
             checkRedirect(url, "regular1", function() {
                 expect(session.isHangoutPending()).to.be(true);
@@ -133,23 +131,24 @@ describe("HANGOUT REDIRECTS", function() {
     });
 
     it("Lets a 2nd user be the pending creator if the 1st times out", function(done) {
-        var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
-        var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
-        var url = "https://plus.google.com/hangouts/_" + suffix("regular2");
+        farming.popAllUrls(function() {
+          var u1 = common.server.db.users.findWhere({"sock-key": "regular1"});
+          var u2 = common.server.db.users.findWhere({"sock-key": "regular2"});
+          var url = "https://plus.google.com/hangouts/_" + suffix("regular2");
 
-        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
+          var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
 
-        // u1 is the user with the pending hangout...
-        //session.markHangoutPending(u1);
-        // Second user tries to connect...
-        checkRedirect(url, u2.get("sock-key"), function() {
-            expect(session.get("hangout-pending").userId).to.be(u2.id);
-            clock.restore();
-            done();
+          // u1 is the user with the pending hangout...
+          //session.markHangoutPending(u1);
+          // Second user tries to connect...
+          checkRedirect(url, u2.get("sock-key"), function() {
+              expect(session.get("hangout-pending").userId).to.be(u2.id);
+              clock.restore();
+              done();
+          });
+          // First user never returns -- time advances.
+          clock.tick(models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT + 1);
         });
-        // First user never returns -- time advances.
-        clock.tick(models.ServerSession.prototype.HANGOUT_CREATION_TIMEOUT + 1);
-
     });
 
     it("Retains a farmed url after adding it to a session if someone joins", function(done) {
@@ -171,23 +170,25 @@ describe("HANGOUT REDIRECTS", function() {
     });
 
     it("Times-out a farmed url (without re-using it) after adding it to a session if no one joins", function(done) {
-        var url = "http://example.com/poison-url";
-        var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
-        expect(farming.getNumHangoutsAvailable()).to.be(0);
+        farming.popAllUrls(function(err) {
+            if (err) { return done(err); }
+            var url = "http://example.com/poison-url";
+            var clock = sinon.useFakeTimers(0, "setTimeout", "clearTimeout");
+            expect(farming.getNumHangoutsAvailable()).to.be(0);
 
-        farming.reuseUrl(url, function(err) {
-            expect(err).to.be(null);
-            // We should get the farmed (poison) url...
-            checkRedirect(url + suffix("regular1"), "regular1", function() {
-                // ... but we don't enter the session, and never start it.
-                clock.tick(models.ServerSession.prototype.HANGOUT_CONNECTION_TIMEOUT + 1);
-                expect(session.get("hangout-url")).to.be(null);
-                farming.getNextHangoutUrl(function(err, url) {
-                    expect(err).to.be(null);
-                    expect(url).to.be(null);
-                    clock.restore();
-                    //_.extend(global, timers);
-                    done();
+            farming.reuseUrl(url, function(err) {
+                expect(err).to.be(null);
+                // We should get the farmed (poison) url...
+                checkRedirect(url + suffix("regular1"), "regular1", function() {
+                    // ... but we don't enter the session, and never start it.
+                    clock.tick(models.ServerSession.prototype.HANGOUT_CONNECTION_TIMEOUT + 1);
+                    expect(session.get("hangout-url")).to.be(null);
+                    farming.getNextHangoutUrl(function(err, url) {
+                        expect(err).to.be(null);
+                        expect(url).to.be(null);
+                        clock.restore();
+                        done();
+                    });
                 });
             });
         });

@@ -13,13 +13,15 @@ describe("EVENT SESSION MESSAGES", function() {
 
     beforeEach(function(done) {
         this.timeout(240000);
-        common.getSeleniumBrowser(function (theBrowser) {
-            browser = theBrowser;
-            common.standardSetup(function() {
-                event = common.server.db.events.findWhere({shortName: "writers-at-work"});
-                event.set("open", true);
-                done();
-            });
+        common.stopSeleniumServer().then(function() {
+          common.getSeleniumBrowser(function (theBrowser) {
+              browser = theBrowser;
+              common.standardSetup(function() {
+                  event = common.server.db.events.findWhere({shortName: "writers-at-work"});
+                  event.set("open", true);
+                  done();
+              });
+          });
         });
     });
     afterEach(function(done) {
