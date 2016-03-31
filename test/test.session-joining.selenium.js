@@ -231,6 +231,8 @@ describe("SESSION JOINING PARTICIPANT LISTS", function() {
                 return browser.waitWithTimeout(function() {
                     return browser.byCss(joinButtonText).getText().then(function(txt) {
                         return text === txt;
+                    }).then(null, function(err) {
+                      return false;
                     });
                 });
             });

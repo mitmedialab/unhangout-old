@@ -24,15 +24,11 @@ EXIT=$?
 
 # Run selenium tests, one at a time.
 for TEST in test/test.*.selenium.js ; do
-    java -jar -Djava.util.logging.config.file=bin/selenium.loglevel bin/selenium-server-standalone.jar &
-    SELENIUM=$!
-
     NODE_ENV=testing $MOCHA $TEST || NODE_ENV=testing $MOCHA $TEST
     STATUS=$?
     if [ $STATUS -ne 0 ]; then
         EXIT=$STATUS
     fi
-    kill -9 $SELENIUM
 done
 
 # Exit status is non-zero if any test has failed; zero if all's good.
