@@ -81,7 +81,7 @@ function create(callback) {
                     title: "Load Test Event"
                 });
             }
-            event.save({open: true}, {
+            event.save({open: true, sessionsOpen: true}, {
                 success: function() { done(null, event); },
                 error: function() { done(err); }
             });
@@ -104,7 +104,8 @@ function create(callback) {
                     session = new models.ServerSession({
                         id: sessionId,
                         event: event,
-                        title: "Session " + sessionId
+                        title: "Session " + sessionId,
+                        approved: true
                     });
                     sessions.add(session);
                     session.save({}, {
