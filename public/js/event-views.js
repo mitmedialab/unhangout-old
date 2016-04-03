@@ -18,7 +18,7 @@
 
 define([
    "underscore", "backbone", "video", "validate", "atname", "logger", "models", "auth", "client-utils",
-   "backbone.marionette", "underscore-template-config", "jquery.autosize"
+   "backbone.marionette", "underscore-template-config", "jquery.autosize", "jquery-ui"
 ], function(_, Backbone, video, validate, atname, logging, models, auth, utils) {
 
 var views = {};
@@ -1155,7 +1155,8 @@ views.ChatLayout = Backbone.Marionette.Layout.extend({
 
         this.chatInputView = new views.ChatInputView({
             event: this.options.event,
-            transport: this.options.transport    
+            transport: this.options.transport,
+            users: this.options.users
         });
 
     },
@@ -1259,7 +1260,8 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
     template: '#chat-input-template',
 
     events: {
-        'submit form':'chat'
+        'submit form':'chat',
+        'keyup @ui.chatInput': 'keyAction'
     },
 
     ui: {
@@ -1290,6 +1292,86 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
         return false;
     },
 
+    keyAction: function(e) {
+      var message = this.ui.chatInput.val();
+      var lastChars = !_.isEmpty(message) && message.slice(-2);
+      // Basic detection, is the user wanting to type an atName?
+      if (message === '@' || lastChars === ' @') {
+        this.atNameAutocompleteEnable();
+      }
+    },
+
+    atNameAutocompleteInit: function() {
+      function split(val) {
+        return val.split(/ \s*/);
+      }
+      function extractLast(term) {
+        return split(term).pop();
+      }
+      var choices = _.bind(function() {
+        var userList = [];
+        var buildUserList = function(user) {
+          if (USER.id !== user.id) {
+            var name = user.get("displayName")
+            userList.push('@' + name);
+          }
+        }
+        this.options.users.each(buildUserList);
+        return userList;
+      }, this);
+
+      this.ui.chatInput.autocomplete({
+        appendTo: "#chat-container-region",
+        // The widget is enabled on-the-fly by inspecting key press
+        // events for atname markers.
+        disabled: true,
+        minLength: 0,
+        autoFocus: true,
+        delay: 100,
+        position: {
+          my: "center bottom",
+          at: "center top",
+        },
+        source: function(request, response) {
+          var results = [];
+          var selectionStart = this.element[0].selectionStart;
+          var term = extractLast(request.term.substring(0, selectionStart));
+          if (term.length > 0) {
+            var list = choices();
+            results = $.ui.autocomplete.filter(list, term);
+          }
+          response(results);
+        },
+        focus: function() {
+          return false; // prevent value inserted on focus
+        },
+        select: function(event, ui) {
+          var terms = split(this.value.substring(0, this.selectionStart));
+          terms.pop();  // remove the current input
+          terms.push(ui.item.value);        // add the selected item
+          this.value = $.trim(terms.join(" ") + this.value.substring(this.selectionStart)) + " ";
+          // This allows tab completion of the selected item.
+          if (event.keyCode === $.ui.keyCode.TAB) {
+            event.preventDefault();
+          }
+          return false;
+        },
+        close: _.bind(function (e,ui) {
+          // The widget is disabled upon close to prevent usernames without
+          // the @ at the head from triggering the widget.
+          this.atNameAutocompleteDisable();
+        }, this)
+      });
+    },
+
+    atNameAutocompleteEnable: function() {
+      this.ui.chatInput.autocomplete("enable");
+    },
+
+    atNameAutocompleteDisable: function() {
+      this.ui.chatInput.autocomplete("disable");
+    },
+
     onRender: function() {
         if(!this.options.event.get("open")) {
             this.$el.find("#chat-input").attr("disabled", true);
@@ -1299,6 +1381,7 @@ views.ChatInputView = Backbone.Marionette.ItemView.extend({
             this.$el.find("#chat-input").removeClass("disabled");
         }
         this.$("[data-role='tooltip']").tooltip();
+        this.atNameAutocompleteInit();
     }
 });
 
