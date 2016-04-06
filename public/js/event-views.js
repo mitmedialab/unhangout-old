@@ -503,9 +503,13 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         if(this.options.event.get("adminProposedSessions")) {
             $("#btn-propose-session").addClass('hide');
             $("#btn-propose-session").removeClass('show');
+            $("#btn-create-session").addClass('show');
+            $("#btn-create-session").removeClass('hide');
         } else {
             $("#btn-propose-session").addClass('show');
             $("#btn-propose-session").removeClass('hide');
+            $("#btn-create-session").addClass('hide');
+            $("#btn-create-session").removeClass('show');
         }
     }
 });
@@ -901,6 +905,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
         'click #admin-start-event': 'startEvent',
+        'mouseover #choose-breakout-mode': 'chooseBreakoutSubmenu',
         'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
         'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
     },
@@ -942,6 +947,14 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
             logger.error(err);
             alert("Server error!");
         });
+    },
+
+    chooseBreakoutSubmenu: function(jqevt) {
+        jqevt.preventDefault(); 
+        jqevt.stopPropagation(); 
+        var elem = 'ul.dropdown-menu [data-toggle=dropdown]';
+        $(elem).parent().siblings().removeClass('open');
+        $(elem).parent().toggleClass('open');
     },
 
     disableParticipantProposedMode: function(jqevt) {

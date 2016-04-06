@@ -172,10 +172,14 @@ $(document).ready(function() {
         if(!curEvent.get("adminProposedSessions")) {
             $("#btn-propose-session").addClass('show');
             $("#btn-propose-session").removeClass('hide');
+            $("#btn-create-session").addClass('hide');
+            $("#btn-create-session").removeClass('show');
             $("#topic-list").show();
         } else {
             $("#btn-propose-session").addClass('hide');
             $("#btn-propose-session").removeClass('show');
+            $("#btn-create-session").addClass('show');
+            $("#btn-create-session").removeClass('hide');
             $("#topic-list").hide();
         }
 
@@ -420,7 +424,5 @@ $(document).ready(function() {
     });
 
     logger.log("Setup regions.");
-
 });
-
 });

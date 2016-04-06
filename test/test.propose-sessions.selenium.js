@@ -35,8 +35,11 @@ describe("PROPOSE SESSIONS", function() {
         browser.get(common.URL + "/event/" + event.id)
         browser.waitForEventReady(event, "superuser1");
         browser.byCss(".admin-button").click();
+        browser.waitForSelector('#choose-breakout-mode');
+        browser.executeScript("$('#choose-breakout-mode').mouseover();");
         browser.byCss("#participant-proposed-sessions-mode").click();
         browser.byCss("#btn-propose-session").click();
+
         browser.waitForSelector("#topic_title");
         browser.byCss("#topic_title").sendKeys("My New Topic");
         browser.waitForSelector("#propose");
@@ -54,7 +57,11 @@ describe("PROPOSE SESSIONS", function() {
 
         // Topics disappear when admin only
         browser.byCss(".admin-button").click();
+        browser.waitForSelector('#choose-breakout-mode');
+        browser.executeScript("$('#choose-breakout-mode').mouseover();");
+        browser.waitForSelector("#admin-proposed-sessions-mode");
         browser.byCss("#admin-proposed-sessions-mode").click();
+        
         browser.executeScript("return $('.topic-list').is(':visible');").then(function(viz) {
             expect(viz).to.be(false);
             done();

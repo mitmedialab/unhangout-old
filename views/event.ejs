@@ -263,7 +263,16 @@
                 <i class="fa fa-plus fa-lg fa-lw"></i>
                 PROPOSE A SESSION
                 </button>
-            </a>
+            </a>   
+        </div>
+
+        <div class="col-lg-6 col-xs-7">
+            <a href="#create-session-modal" data-toggle="modal"> 
+                <button class="btn btn-primary hide" id="btn-create-session">
+                <i class="fa fa-plus fa-lg fa-lw"></i>
+                CREATE A SESSION
+                </button>
+            </a>   
         </div>
 
     </div>
@@ -578,6 +587,7 @@
 
 <script type="text/template" id="admin-button-template">
     <span class="status"></span>
+
     <div class="dropdown">
         <a class="dropdown-toggle admin-button" data-toggle="dropdown"
            id='event-settings-label'> 
@@ -609,9 +619,6 @@
                         Start event
                     </a>
                 {{ } }}
-                <a role="menuitem" href="#create-session-modal" data-toggle="modal" id="show-create-session-modal">
-                    <i class="fa fa-plus-square fa-lg fa-fw"></i>&nbsp;Create Session
-                </a>
 
                 <a role="menuitem" href="/admin/event/{{= event.id }}" role="button" id="admin-page-for-event" target="_blank">
 
@@ -641,24 +648,21 @@
                     <i class="fa fa-envelope fa-lg fa-fw"></i>
                     Send Followup Email
                 </a>
-
                 {{ } }}
-
-                {{ if (event.get("adminProposedSessions")) { }}
-                    <a role="menuitem" href="#" role="button" id='participant-proposed-sessions-mode'>
-                        <i class='fa fa-users fa-lg fa-fw'></i> Enable Participant Proposed Sessions 
-                    </a>
-
-                {{ } else { }}
-                    
-                    <a role="menuitem" href="#" role="button" id='admin-proposed-sessions-mode'>
-                        <i class='fa fa-user fa-lg fa-fw'></i> Disable Participant Proposed Sessions
-                    </a>
-
-                {{ } }}
-
             </li>
-        </ul>
+
+            <li class="dropdown dropdown-submenu">
+                <a id="choose-breakout-mode" href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class='fa fa-arrow-right fa-lg fa-fw'></i> Choose Breakout Sessions Mode
+                </a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" role="button" id="admin-proposed-sessions-mode"><i class='fa fa-user fa-lg fa-fw'></i> Admin Proposed Sessions </a></li>
+                    <li><a href="#" role="button" id="participant-proposed-sessions-mode"><i class='fa fa-users fa-lg fa-fw'> </i> Participant Proposed Sessions</a></li>
+                    <li><a href="#"><i class="fa fa-random fa-lg fa-fw"></i> Randomized Sessions</a></li>
+                </ul>
+            </li>
+
+        </ul> 
     </div>
 
     <script type="text/javascript"> 
@@ -680,7 +684,7 @@
 <script type="text/template" id="dialogs-template">
 
     <!-- Create Session Modal Dialog -->
-    <div id="create-session-modal" class="modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div id="create-session-modal" class="create-session-modal modal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <form class="form-horizontal">
         <div class="modal-content">
@@ -1084,7 +1088,7 @@
     <div class="modal propose-session-modal" id="propose-session-modal" role="dialog" aria-hidden="true">
 
         <div class="modal-dialog">
-            
+            sess
             <div class="modal-content">
                 
                 <div class="modal-header">
