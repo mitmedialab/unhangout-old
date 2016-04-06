@@ -58,6 +58,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
@@ -118,7 +119,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.proposeeDetails.show();
             this.ui.deleteButton.addClass("top-margin");
         }
-
 
         // remove the toggle-ness of the button once the event starts.
         this.ui.attend.attr("data-toggle", "");
@@ -487,6 +487,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     initialize: function() {
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -499,7 +500,16 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.$el.html(this.participantProposedSession());
     },
 
-    onRender: function() { 
+    onRender: function() {         
+        if(this.options.event.get("randomizedSessions")) {
+            console.log("event is randomized "); 
+            $("#btn-propose-session").removeClass('show');
+            $("#btn-propose-session").addClass('hide');
+            $("#btn-create-session").removeClass('show');
+            $("#btn-create-session").addClass('hide');
+            return; 
+        } 
+
         if(this.options.event.get("adminProposedSessions")) {
             $("#btn-propose-session").addClass('hide');
             $("#btn-propose-session").removeClass('show');
@@ -908,6 +918,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'mouseover #choose-breakout-mode': 'chooseBreakoutSubmenu',
         'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
         'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
+        'click #randomized-sessions-mode': 'enableRandomizedSessionsMode'
     },
 
     openSessions: function(jqevt) {
@@ -959,18 +970,23 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
 
     disableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
-        this.changeSessionsProposedMode(true);
+        this.changeSessionsProposedMode("adminProposed");
     },
 
     enableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
-        this.changeSessionsProposedMode(false);
+        this.changeSessionsProposedMode("participantProposed");
+    },
+
+    enableRandomizedSessionsMode: function(jqevt) {
+        jqevt.preventDefault();
+        this.changeSessionsProposedMode("randomized"); 
     },
 
     changeSessionsProposedMode: function(action) {
-        this.options.transport.send("admin-proposed", {
+        this.options.transport.send("proposed-mode", {
             roomId: this.options.event.getRoomId(),
-            isAdminSessionsOnly: action
+            mode: action
         });
     },
 
@@ -1002,8 +1018,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
             event: this.options.event,
         };
     },
-
-
 });
 
 // The UserColumn is the gutter on the right that shows who's connected to the
