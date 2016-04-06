@@ -74,7 +74,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         $('.tooltip').hide();
         var start = new Date().getTime();  
-
+        
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
@@ -85,6 +85,17 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("live");
         } else {
             this.$el.addClass("hide");
+        }
+
+        //In the randomized sessions mode show 
+        //only those sessions which were created 
+        //by the random assignment process 
+        if(this.options.event.get("randomizedSessions")) {
+            if(this.model.get("randomized")) {
+                this.$el.addClass("live");
+            } else {
+                this.$el.addClass("hide");
+            }
         }
 
         //Show delete button only for admins  

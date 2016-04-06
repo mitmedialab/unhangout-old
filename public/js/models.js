@@ -337,7 +337,7 @@ models.Session = Backbone.Model.extend({
             approved: false,
             votes: 0,
             votedBy: [],
-            randomizd: false
+            randomized: false
         };
     },
     getRoomId: function() {

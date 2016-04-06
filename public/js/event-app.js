@@ -183,6 +183,14 @@ $(document).ready(function() {
             $("#topic-list").hide();
         }
 
+        if(curEvent.get("randomizedSessions")) {
+            $("#btn-propose-session").removeClass('show');
+            $("#btn-propose-session").addClass('hide');
+            $("#btn-create-session").removeClass('show');
+            $("#btn-create-session").addClass('hide');
+            $("#topic-list").hide();
+        } 
+
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();  
         }, this));
