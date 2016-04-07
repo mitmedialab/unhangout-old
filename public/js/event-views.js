@@ -74,7 +74,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
     onRender: function() {
         $('.tooltip').hide();
         var start = new Date().getTime();  
-        
+
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
@@ -480,6 +480,17 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     },
 });
 
+views.RandomView = Backbone.Marionette.ItemView.extend({
+    template: '#random-template',
+    className: 'random',
+
+    initialize: function() {
+    },
+
+    onRender: function() {
+    },
+});
+
 // The list view contains all the individual session views. We don't
 // manually make the session views - all that is handled by the
 // marionette CollectionView logic.
@@ -487,7 +498,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     template: "#session-list-template",
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
-    participantProposedSession: _.template($("#session-participant-proposed-template").html()),
+    breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
 
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
@@ -498,7 +509,6 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     initialize: function() {
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
-        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -508,18 +518,13 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     }, 
     
     renderControls: function() {    
-        this.$el.html(this.participantProposedSession());
+        this.$el.html(this.breakoutRoomsHeaderTemplate());
     },
 
-    onRender: function() {         
-        if(this.options.event.get("randomizedSessions")) {
-            console.log("event is randomized "); 
-            $("#btn-propose-session").removeClass('show');
-            $("#btn-propose-session").addClass('hide');
-            $("#btn-create-session").removeClass('show');
-            $("#btn-create-session").addClass('hide');
-            return; 
-        } 
+    onRender: function() { 
+        if(!this.options.event.get("randomizedSessions")) {
+            $("#random-list").hide();
+        }
 
         if(this.options.event.get("adminProposedSessions")) {
             $("#btn-propose-session").addClass('hide');
@@ -554,6 +559,9 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     },
 
     onRender: function() {
+        if(!this.options.event.get("randomizedSessions")) {
+            $("#random-list").hide();
+        }
 
         if(this.options.event.get("adminProposedSessions")) {
             $("#topic-list").hide();
@@ -562,6 +570,39 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
         }
     },
 
+});
+
+// The list view contains all the individual random session views
+views.RandomListView = Backbone.Marionette.CollectionView.extend({
+    template: "#random-list-template",
+    itemView: views.RandomView,
+    itemViewContainer: '#random-list-container',
+    breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
+
+    id: "random-list",
+
+    initialize: function() {
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
+    },
+
+    itemViewOptions: function() {
+        return {
+            event: this.options.event, transport: this.options.transport
+        };
+    },
+
+    onRender: function() {
+        if(this.options.event.get("randomizedSessions")) {
+            $("#btn-propose-session").removeClass('show');
+            $("#btn-propose-session").addClass('hide');
+            $("#btn-create-session").removeClass('show');
+            $("#btn-create-session").addClass('hide');
+            $("#random-list").show();
+            $("#topic-list").hide();
+        } else {
+            $("#random-list").hide();
+        }
+    },
 });
 
 // UserViews are the little square profile pictures that we use throughout

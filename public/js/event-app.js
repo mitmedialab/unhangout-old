@@ -104,6 +104,7 @@ $(document).ready(function() {
         main: '#main-left',
         topLeft: '#top-left',
         centerLeft: '#center-left',
+        bottomLeft: '#bottom-left',
         global: '#global',
         dialogs: '#dialogs',
         admin: '#admin-region',
@@ -132,6 +133,11 @@ $(document).ready(function() {
             event: curEvent,
             transport: trans
         });
+        this.randomListView = new eventViews.RandomListView({
+            collection: curEvent.get("sessions"),
+            event: curEvent,
+            transport: trans
+        });
         this.chatView = new eventViews.ChatLayout({
             messages: messages,
             users: curEvent.get("connectedUsers"),
@@ -153,6 +159,7 @@ $(document).ready(function() {
         
         this.centerLeft.show(this.sessionListView);
         this.main.show(this.topicListView);
+        this.bottomLeft.show(this.randomListView);
 
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
@@ -188,8 +195,11 @@ $(document).ready(function() {
             $("#btn-propose-session").addClass('hide');
             $("#btn-create-session").removeClass('show');
             $("#btn-create-session").addClass('hide');
+            $("#random-list").show();
             $("#topic-list").hide();
-        } 
+        } else {
+            $("#random-list").hide();
+        }
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
             this.adminButtonView.render();  
