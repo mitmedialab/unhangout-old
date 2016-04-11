@@ -85,8 +85,17 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         if(this.options.event.get("randomizedSessions")) {
             if(this.model.get("randomized")) {
-                this.$el.css('min-height', '155px');
-                this.$el.addClass("live"); 
+                this.$el.css('min-height', '155px'); 
+                //in randomized mode show all the sessions 
+                //only to admins, and for a user show only
+                //the session which they have been assigned
+                if(IS_ADMIN || 
+                    this.model.get("assignedParticipants").indexOf(USER.id)
+                        >= 0) {
+                    this.$el.addClass("live"); 
+                } else {
+                    this.$el.addClass("hide");
+                }
             } else {
                 this.$el.addClass("hide");
             }
