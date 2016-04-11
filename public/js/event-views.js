@@ -85,11 +85,13 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         if(this.options.event.get("randomizedSessions")) {
             if(this.model.get("randomized")) {
+                this.$el.css('min-height', '155px');
                 this.$el.addClass("live"); 
             } else {
                 this.$el.addClass("hide");
             }
         } else {
+            this.$el.css('min-height', '85px');
             if (this.model.get("approved") && 
                 !this.model.get("randomized")) { 
                 this.$el.addClass("live");
@@ -141,19 +143,26 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.userDetails.removeClass("bottom-padding");
         }
 
-        //Hide unapprove UI if admin proposed session mode
-        if(this.options.event.get("adminProposedSessions")) {
+        //Show unapprove UI only if the session is
+        //in the participant proposed mode
+        if(this.options.event.get("randomizedSessions")) { 
             this.ui.unapprove.hide();
             this.ui.proposeeDetails.hide(); 
-
             if(IS_ADMIN) {
                 this.ui.deleteButton.removeClass("top-margin");
             } 
-            
         } else {
-            this.ui.unapprove.show();
-            this.ui.proposeeDetails.show();
-            this.ui.deleteButton.addClass("top-margin");
+            if(this.options.event.get("adminProposedSessions")) {
+                this.ui.unapprove.hide();
+                this.ui.proposeeDetails.hide(); 
+                if(IS_ADMIN) {
+                    this.ui.deleteButton.removeClass("top-margin");
+                } 
+            } else {
+                this.ui.unapprove.show();
+                this.ui.proposeeDetails.show();
+                this.ui.deleteButton.addClass("top-margin");
+            }
         }
 
         // remove the toggle-ness of the button once the event starts.
@@ -579,6 +588,7 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     id: "topic-list",
     initialize: function() {
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
     },
     itemViewOptions: function() {
         return {
@@ -586,10 +596,14 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
         };
     },
     onRender: function() {
-        if(this.options.event.get("adminProposedSessions")) {
+        if(this.options.event.get("randomizedSessions")) {
             $("#topic-list").hide();
-        } else {
-            $("#topic-list").show();
+        } else {        
+            if(this.options.event.get("adminProposedSessions")) {
+                $("#topic-list").hide();
+            } else {
+                $("#topic-list").show();
+            }
         }
     },
 });
