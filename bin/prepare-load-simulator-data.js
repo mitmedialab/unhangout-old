@@ -15,7 +15,6 @@ var db;
 function init(callback) {
     var options = require("../lib/options");
     options.UNHANGOUT_REDIS_DB = simConf.REDIS_DB_ID;
-    logger.error(options.UNHANGOUT_REDIS_DB);
     db = new UnhangoutDb(options);
     db.init(callback);
 }
@@ -81,7 +80,7 @@ function create(callback) {
                     title: "Load Test Event"
                 });
             }
-            event.save({open: true}, {
+            event.save({open: true, sessionsOpen: true}, {
                 success: function() { done(null, event); },
                 error: function() { done(err); }
             });
@@ -104,7 +103,8 @@ function create(callback) {
                     session = new models.ServerSession({
                         id: sessionId,
                         event: event,
-                        title: "Session " + sessionId
+                        title: "Session " + sessionId,
+                        approved: true
                     });
                     sessions.add(session);
                     session.save({}, {
