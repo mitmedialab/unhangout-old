@@ -104,7 +104,6 @@ $(document).ready(function() {
         main: '#main-left',
         topLeft: '#top-left',
         centerLeft: '#center-left',
-        bottomLeft: '#bottom-left',
         global: '#global',
         dialogs: '#dialogs',
         admin: '#admin-region',
@@ -133,11 +132,6 @@ $(document).ready(function() {
             event: curEvent,
             transport: trans
         });
-        this.randomListView = new eventViews.RandomListView({
-            collection: curEvent.get("sessions"),
-            event: curEvent,
-            transport: trans
-        });
         this.chatView = new eventViews.ChatLayout({
             messages: messages,
             users: curEvent.get("connectedUsers"),
@@ -159,7 +153,6 @@ $(document).ready(function() {
         
         this.centerLeft.show(this.sessionListView);
         this.main.show(this.topicListView);
-        this.bottomLeft.show(this.randomListView);
 
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
@@ -174,31 +167,34 @@ $(document).ready(function() {
             $('#session_name').focus();
         });
 
-        //On page reload show and hide topic list
-        //according to the current mode
-        if(!curEvent.get("adminProposedSessions")) {
-            $("#btn-propose-session").addClass('show');
-            $("#btn-propose-session").removeClass('hide');
-            $("#btn-create-session").addClass('hide');
-            $("#btn-create-session").removeClass('show');
-            $("#topic-list").show();
-        } else {
-            $("#btn-propose-session").addClass('hide');
-            $("#btn-propose-session").removeClass('show');
-            $("#btn-create-session").addClass('show');
-            $("#btn-create-session").removeClass('hide');
-            $("#topic-list").hide();
-        }
-
+        /*
+            When the app loads show or hide the breakout 
+            rooms list view controls accordingly  
+        */
         if(curEvent.get("randomizedSessions")) {
             $("#btn-propose-session").removeClass('show');
             $("#btn-propose-session").addClass('hide');
             $("#btn-create-session").removeClass('show');
             $("#btn-create-session").addClass('hide');
+            $("#btn-group-me").removeClass('hide');
+            $("#btn-group-me").addClass('show');
             $("#random-list").show();
             $("#topic-list").hide();
         } else {
             $("#random-list").hide();
+            if(!curEvent.get("adminProposedSessions")) {
+                $("#btn-propose-session").addClass('show');
+                $("#btn-propose-session").removeClass('hide');
+                $("#btn-create-session").addClass('hide');
+                $("#btn-create-session").removeClass('show');
+                $("#topic-list").show();
+            } else {
+                $("#btn-propose-session").addClass('hide');
+                $("#btn-propose-session").removeClass('show');
+                $("#btn-create-session").addClass('show');
+                $("#btn-create-session").removeClass('hide');
+                $("#topic-list").hide();
+            }
         }
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {

@@ -34,7 +34,6 @@
                 <div id="top-left"></div>
                 <div id="center-left"></div>
                 <div id="main-left"></div> 
-                <div id="bottom-left"></div>
             </div>
 
             <div class="col-lg-7 col-xs-5 event-column-right">
@@ -251,42 +250,6 @@
     <div style='clear: both;'></div>
 </script>
 
-<script type="text/template" id="random-template">
-</script>
-
-<script type="text/template" id="my-group-view">
-    <div class="col-xs-12 random">
-        <div class="col-xs-12 random-area">
-            <div class="col-xs-9 random-padding">
-                <div class="col-xs-12 random-padding random-title-container">
-                    <div class="col-xs-11 random-title-padding">
-                        <h3 class="random-title">Your Breakout Group </h3> 
-                    </div>
-                </div>
-                <div class="col-xs-12 random-padding">
-                    <div class="col-xs-12 random-spots">
-                    <ul class="hangout-users">
-                        <li class="empty"></li>
-                        <li class="empty"></li>
-                        <li class="empty"></li>
-                        <li class="empty"></li>
-                        <li class="empty"></li>
-                        <li class="empty"></li>
-                    </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xs-3 random-padding bottom-padding user-details-left-padding">
-                <div class="col-lg-12 random-padding btn-join-session">
-                    <button class="attend btn btn-primary">
-                        <span class="text"> JOIN</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-</script>
-
 <script type="text/template" id="breakout-rooms-header-template">
     <div id="propose-session" class="col-xs-12 propose-session session-padding">
         <div class="col-lg-6 col-xs-5 session-padding">
@@ -307,6 +270,15 @@
                 <button class="btn btn-primary hide" id="btn-create-session">
                 <i class="fa fa-plus fa-lg fa-lw"></i>
                 CREATE A SESSION
+                </button>
+            </a>   
+        </div>
+
+        <div class="col-lg-6 col-xs-7">
+            <a href="#"> 
+                <button class="btn btn-primary hide" id="btn-group-me">
+                <i class="fa fa-random fa-lg fa-lw"></i>
+                GROUP ME
                 </button>
             </a>   
         </div>

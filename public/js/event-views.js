@@ -58,6 +58,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
@@ -80,10 +81,19 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.$el.removeClass("live");
         this.$el.removeClass("hide");
 
-        if (this.model.get("approved")) {
-            this.$el.addClass("live");
+        if(this.options.event.get("randomizedSessions")) {
+            if(this.model.get("randomized")) {
+                this.$el.addClass("live"); 
+            } else {
+                this.$el.addClass("hide");
+            }
         } else {
-            this.$el.addClass("hide");
+            if (this.model.get("approved") && 
+                !this.model.get("randomized")) { 
+                this.$el.addClass("live");
+            } else {
+                this.$el.addClass("hide");
+            }
         }
 
         //Show delete button only for admins  
@@ -351,9 +361,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     onRender: function() {
         $('.tooltip').hide();
-
         var start = new Date().getTime();
-
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
@@ -468,17 +476,6 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
     },
 });
 
-views.RandomView = Backbone.Marionette.ItemView.extend({
-    template: '#random-template',
-    className: 'random',
-
-    initialize: function() {
-    },
-
-    onRender: function() {
-    },
-});
-
 // The list view contains all the individual session views. We don't
 // manually make the session views - all that is handled by the
 // marionette CollectionView logic.
@@ -487,12 +484,16 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
     breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
-
+    
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
 
     id: "session-list",
+
+    events: {
+        'click #btn-group-me': 'groupUser',
+    },
 
     initialize: function() {
         this.renderControls();
@@ -505,27 +506,41 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
             event: this.options.event, transport: this.options.transport
         };
     }, 
-    
+
+    groupUser: function(jqevt) {
+        jqevt.preventDefault();
+        this.options.transport.send("group-user", {
+            eventId: this.options.event.id,
+        });
+    },
+
     renderControls: function() {    
         this.$el.html(this.breakoutRoomsHeaderTemplate());
     },
-
+    
     onRender: function() {         
-        if(!this.options.event.get("randomizedSessions")) {
-            $("#random-list").hide();
-        }
-
-        if(this.options.event.get("adminProposedSessions")) {
+        if(this.options.event.get("randomizedSessions")) {
+            $("#btn-group-me").addClass('show');
+            $("#btn-group-me").removeClass('hide');
             $("#btn-propose-session").addClass('hide');
             $("#btn-propose-session").removeClass('show');
-            $("#btn-create-session").addClass('show');
-            $("#btn-create-session").removeClass('hide');
-        } else {
-            $("#btn-propose-session").addClass('show');
-            $("#btn-propose-session").removeClass('hide');
             $("#btn-create-session").addClass('hide');
             $("#btn-create-session").removeClass('show');
-        }
+        } else {
+            $("#btn-group-me").addClass('hide');
+            $("#btn-group-me").removeClass('show');
+            if(this.options.event.get("adminProposedSessions")) {
+                $("#btn-propose-session").addClass('hide');
+                $("#btn-propose-session").removeClass('show');
+                $("#btn-create-session").addClass('show');
+                $("#btn-create-session").removeClass('hide');
+            } else {
+                $("#btn-propose-session").addClass('show');
+                $("#btn-propose-session").removeClass('hide');
+                $("#btn-create-session").addClass('hide');
+                $("#btn-create-session").removeClass('show');
+            }
+        }        
     }
 });
 
@@ -534,82 +549,20 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     template: "#topic-list-template",
     itemView: views.TopicView,
     itemViewContainer: '#topic-list-container',
-
     id: "topic-list",
-
     initialize: function() {
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
     },
-
     itemViewOptions: function() {
         return {
             event: this.options.event, transport: this.options.transport
         };
     },
-
     onRender: function() {
-        if(!this.options.event.get("randomizedSessions")) {
-            $("#random-list").hide();
-        }
-
         if(this.options.event.get("adminProposedSessions")) {
             $("#topic-list").hide();
         } else {
             $("#topic-list").show();
-        }
-    },
-
-});
-
-// The list view contains all the individual random session views
-views.RandomListView = Backbone.Marionette.CollectionView.extend({
-    template: "#random-list-template",
-    itemView: views.RandomView,
-    itemViewContainer: '#random-list-container',
-    myGroupView: _.template($("#my-group-view").html()),
-
-    id: "random-list",
-
-    ui: {
-        attend: '.attend',
-    },
-
-    events: {
-        'click .attend':'attend'
-    },
-
-    initialize: function() {
-        this.renderControls();
-        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
-    },
-
-    itemViewOptions: function() {
-        return {
-            event: this.options.event, transport: this.options.transport
-        };
-    },
-
-    renderControls: function() {
-        this.$el.html(this.myGroupView()); 
-    },
-
-    attend: function() {
-        this.options.transport.send("group-user", {
-            eventId: this.options.event.id,
-        });
-    },
-
-    onRender: function() {
-        if(this.options.event.get("randomizedSessions")) {
-            $("#btn-propose-session").removeClass('show');
-            $("#btn-propose-session").addClass('hide');
-            $("#btn-create-session").removeClass('show');
-            $("#btn-create-session").addClass('hide');
-            $("#random-list").show();
-            $("#topic-list").hide();
-            $("#session-list-container").hide();
-        } else {
-            $("#random-list").hide();
         }
     },
 });
