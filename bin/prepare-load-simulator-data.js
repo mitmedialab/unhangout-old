@@ -15,7 +15,6 @@ var db;
 function init(callback) {
     var options = require("../lib/options");
     options.UNHANGOUT_REDIS_DB = simConf.REDIS_DB_ID;
-    logger.error(options.UNHANGOUT_REDIS_DB);
     db = new UnhangoutDb(options);
     db.init(callback);
 }
