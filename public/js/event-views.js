@@ -58,7 +58,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
-        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
@@ -85,17 +84,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.$el.addClass("live");
         } else {
             this.$el.addClass("hide");
-        }
-
-        //In the randomized sessions mode show 
-        //only those sessions which were created 
-        //by the random assignment process 
-        if(this.options.event.get("randomizedSessions")) {
-            if(this.model.get("randomized")) {
-                this.$el.addClass("live");
-            } else {
-                this.$el.addClass("hide");
-            }
         }
 
         //Show delete button only for admins  
@@ -509,6 +497,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     initialize: function() {
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -521,7 +510,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.$el.html(this.breakoutRoomsHeaderTemplate());
     },
 
-    onRender: function() { 
+    onRender: function() {         
         if(!this.options.event.get("randomizedSessions")) {
             $("#random-list").hide();
         }
@@ -577,11 +566,20 @@ views.RandomListView = Backbone.Marionette.CollectionView.extend({
     template: "#random-list-template",
     itemView: views.RandomView,
     itemViewContainer: '#random-list-container',
-    breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
+    myGroupView: _.template($("#my-group-view").html()),
 
     id: "random-list",
 
+    ui: {
+        attend: '.attend',
+    },
+
+    events: {
+        'click .attend':'attend'
+    },
+
     initialize: function() {
+        this.renderControls();
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
     },
 
@@ -589,6 +587,16 @@ views.RandomListView = Backbone.Marionette.CollectionView.extend({
         return {
             event: this.options.event, transport: this.options.transport
         };
+    },
+
+    renderControls: function() {
+        this.$el.html(this.myGroupView()); 
+    },
+
+    attend: function() {
+        this.options.transport.send("group-user", {
+            eventId: this.options.event.id,
+        });
     },
 
     onRender: function() {
@@ -599,6 +607,7 @@ views.RandomListView = Backbone.Marionette.CollectionView.extend({
             $("#btn-create-session").addClass('hide');
             $("#random-list").show();
             $("#topic-list").hide();
+            $("#session-list-container").hide();
         } else {
             $("#random-list").hide();
         }
