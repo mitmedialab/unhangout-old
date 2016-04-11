@@ -68,8 +68,22 @@
 </script>
 
 <script type="text/template" id="session-template">
-    <div class="col-xs-12 session-area">
+    {{ if(randomized) { }}
+        <div class="col-xs-12 group-area">
+            <div class="col-xs-12 group-title">
+                <h3 class="session-title"> Group Members </h3>
+            </div>
+            <div class="col-xs-12 session-spots">
+                <ul class="group-members"></ul>
+            </div>
+            <div class="col-xs-12 group-line">
+                <hr/>
+            </div>
+        </div>
+        
+    {{ } }}
 
+    <div class="col-xs-12 session-area">
         {{ if(IS_ADMIN) { }}   
             <div class="col-xs-8 session-padding">
 

@@ -38,7 +38,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
         proposeeDetails: '.proposee-details',
-        userDetails: '#user-details'
+        userDetails: '#user-details',
+        groupMembers: '.group-members'
     },
 
     events: {
@@ -57,6 +58,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // re-render to show them.
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
+        this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
@@ -71,7 +73,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:title', this.render, this);
     },
 
-    onRender: function() {
+    onRender: function() { 
         $('.tooltip').hide();
         var start = new Date().getTime();  
 
@@ -94,6 +96,31 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             } else {
                 this.$el.addClass("hide");
             }
+        }
+
+        //Build the list of group members
+        if(this.options.event.get("randomizedSessions")) { 
+            var groupMembersFragment = document.createDocumentFragment();
+            var drawGroupMember = _.bind(function (member) {
+                imgEl = document.createElement("img");
+                var user = this.options.event.get("connectedUsers").get(member);
+                imgEl.src = user.get("picture"); 
+                imgEl.dataset.id = user.get("id");
+                imgEl.dataset.name = user.get("displayName");
+                groupMembersFragment.appendChild(imgEl);
+                imgEl.onmouseover = showUsernameTooltip;
+                imgEl.alt = user.get("displayName");
+            }, this);  //draw group member
+            _.each(this.model.get("assignedParticipants"), function(assignee) { 
+                drawGroupMember(assignee); 
+            });
+            this.ui.groupMembers.html(groupMembersFragment);
+        }
+
+        function showUsernameTooltip() {
+            $(this).attr("data-toggle", "tooltip")
+                   .attr("title", this.dataset.name)
+                   .tooltip("show"); 
         }
 
         //Show delete button only for admins  
@@ -517,7 +544,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     renderControls: function() {    
         this.$el.html(this.breakoutRoomsHeaderTemplate());
     },
-    
+
     onRender: function() {         
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-group-me").addClass('show');
