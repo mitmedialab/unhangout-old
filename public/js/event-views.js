@@ -61,6 +61,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
+        this.listenTo(this.options.event.get("connectedUsers"), 'change add remove', 
+                        this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
@@ -108,19 +110,21 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
                 this.$el.addClass("hide");
             }
         }
-
         //Build the list of group members
+        var users = this.options.event.get("connectedUsers");
         if(this.options.event.get("randomizedSessions")) { 
             var groupMembersFragment = document.createDocumentFragment();
             var drawGroupMember = _.bind(function (member) {
                 imgEl = document.createElement("img");
-                var user = this.options.event.get("connectedUsers").get(member);
-                imgEl.src = user.get("picture"); 
-                imgEl.dataset.id = user.get("id");
-                imgEl.dataset.name = user.get("displayName");
-                groupMembersFragment.appendChild(imgEl);
-                imgEl.onmouseover = showUsernameTooltip;
-                imgEl.alt = user.get("displayName");
+                var user = users.get(member);
+                if(user) {
+                    imgEl.src = user.get("picture"); 
+                    imgEl.dataset.id = user.get("id");
+                    imgEl.dataset.name = user.get("displayName");
+                    groupMembersFragment.appendChild(imgEl);
+                    imgEl.onmouseover = showUsernameTooltip;
+                    imgEl.alt = user.get("displayName");
+                }
             }, this);  //draw group member
             _.each(this.model.get("assignedParticipants"), function(assignee) { 
                 drawGroupMember(assignee); 
@@ -548,7 +552,9 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     itemViewOptions: function() {        
         return {
-            event: this.options.event, transport: this.options.transport
+            event: this.options.event, 
+            users: this.options.users,
+            transport: this.options.transport
         };
     }, 
 

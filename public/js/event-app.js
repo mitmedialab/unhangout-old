@@ -125,6 +125,7 @@ $(document).ready(function() {
         this.sessionListView = new eventViews.SessionListView({
             collection: curEvent.get("sessions"),
             event: curEvent,
+            users: curEvent.get("connectedUsers"),
             transport: trans
         });
         this.topicListView = new eventViews.TopicListView({
