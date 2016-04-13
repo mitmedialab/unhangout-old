@@ -110,22 +110,27 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
                 this.$el.addClass("hide");
             }
         }
+        
         //Build the list of group members
         var users = this.options.event.get("connectedUsers");
         if(this.options.event.get("randomizedSessions")) { 
             var groupMembersFragment = document.createDocumentFragment();
             var drawGroupMember = _.bind(function (member) {
-                imgEl = document.createElement("img");
                 var user = users.get(member);
                 if(user) {
+                    imgEl = document.createElement("img");
                     imgEl.src = user.get("picture"); 
                     imgEl.dataset.id = user.get("id");
                     imgEl.dataset.name = user.get("displayName");
                     groupMembersFragment.appendChild(imgEl);
                     imgEl.onmouseover = showUsernameTooltip;
                     imgEl.alt = user.get("displayName");
+                } else {
+                    emptyli = document.createElement("li");
+                    emptyli.className = "empty";
+                    groupMembersFragment.appendChild(emptyli);
                 }
-            }, this);  //draw group member
+            }, this);  //draw group member 
             _.each(this.model.get("assignedParticipants"), function(assignee) { 
                 drawGroupMember(assignee); 
             });
