@@ -65,7 +65,7 @@
             var logger = new Logger("GADGET", log_level);
             // Increment this to be able to immediately tell if google is
             // serving the latest or a cached version.
-            var version = 11;
+            var version = 12;
             logger.info("Unhangout Facilitator version " + version);
             var load = function(event) {
                 if (event && !event.isApiReady) { return; }
@@ -74,8 +74,9 @@
                 logger.info("appData:", appData);
                 var parts = appData.split(":");
                 var sessionId = parts[1];
-                var sockKey = parts[3];
-                var userId = parts[5];
+                var baseUrl = decodeURIComponent(parts[3]);
+                var sockKey = parts[5];
+                var userId = parts[7];
                 // Fall back to gapi.hangout.data if we have no appData.
                 if (sessionId) {
                     gapi.hangout.data.setValue("sessionId", sessionId);
@@ -84,8 +85,8 @@
                     sessionId = gapi.hangout.data.getValue("sessionId");
                     logger.debug("Session ID from gapi.hangout.data:", sessionId);
                 }
-                var url = "<%= unhangoutBaseUrl %>/facilitator/" + sessionId + "/";
-                logger.debug("BASE URL", "<%= unhangoutBaseUrl %>");
+                var url = baseUrl + "/facilitator/" + sessionId + "/";
+                logger.debug("BASE URL", baseUrl);
                 logger.debug("FACILITATOR URL", url);
 
                 // Create the session iframe which will handle the rest.
@@ -119,7 +120,7 @@
                     iframe.contentWindow.postMessage({
                         type: "url",
                         args: urlArgs
-                    }, "<%= unhangoutBaseUrl %>");
+                    }, baseUrl);
                     pollCount += 1;
                 }, 10);
 
@@ -130,7 +131,7 @@
                         iframe.contentWindow.postMessage({
                             type: "participants",
                             args: { participants: gapi.hangout.getParticipants() }
-                        }, "<%= unhangoutBaseUrl %>");
+                        }, baseUrl);
                     }
                 }, 5000);
 
@@ -194,7 +195,7 @@
                 }
 
                 function receiveMessage(event) {
-                    if (event.origin === "<%= unhangoutBaseUrl %>") {
+                    if (event.origin === baseUrl) {
                         switch (event.data.type) {
                             case "url-ack":
                                 clearInterval(tellUrl);
