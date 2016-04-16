@@ -21,6 +21,13 @@
 var common = require("../test/common.js"),
     farmConf = require("../farmingConf.json");
 
+if (process.env.FARMING_SIGN_IN_URL) {
+  farmConf.signInUrl = process.env.FARMING_SIGN_IN_URL;
+}
+if (process.env.FARMING_SERVER_URL) {
+  farmConf.serverUrl = process.env.FARMING_SERVER_URL;
+}
+
 function run(callback) {
     common.getSeleniumBrowser(function(browser) {
         // Authenticate first.
