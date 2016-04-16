@@ -24,8 +24,12 @@ var common = require("../test/common.js"),
 function run(callback) {
     common.getSeleniumBrowser(function(browser) {
         // Authenticate first.
-        browser.get(farmConf.signInUrl || farmConf.serverUrl);
-        browser.byLinkText("Login").click();
+        if (farmConf.signInUrl) {
+          browser.get(farmConf.signInUrl);
+        } else {
+          browser.get(farmConf.serverUrl);
+          browser.byLinkText("Login").click();
+        }
         browser.byCss("#Email").sendKeys(farmConf.email);
         browser.byCss("[name=signIn]").click();
         browser.waitForSelector("#Passwd");
