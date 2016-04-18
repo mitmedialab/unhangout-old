@@ -193,7 +193,9 @@ $(document).ready(function() {
         }
 
         curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
-            this.adminButtonView.render();  
+            if(IS_ADMIN) {
+                this.adminButtonView.render();  
+            }
         }, this));
 
         // this is a little unorthodox, but not sure how else
