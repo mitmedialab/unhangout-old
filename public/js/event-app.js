@@ -172,27 +172,22 @@ $(document).ready(function() {
             rooms list view controls accordingly  
         */
         if(curEvent.get("randomizedSessions")) {
-            $("#btn-propose-session").removeClass('show');
-            $("#btn-propose-session").addClass('hide');
-            $("#btn-create-session").removeClass('show');
-            $("#btn-create-session").addClass('hide');
-            $("#btn-group-me").removeClass('hide');
-            $("#btn-group-me").addClass('show');
+            $("#btn-propose-session").hide();
+            $("#btn-create-session").hide();
+            $("#btn-group-me").show();
             $("#random-list").show();
             $("#topic-list").hide();
         } else {
             $("#random-list").hide();
+            $("#btn-group-me").hide();
+
             if(!curEvent.get("adminProposedSessions")) {
-                $("#btn-propose-session").addClass('show');
-                $("#btn-propose-session").removeClass('hide');
-                $("#btn-create-session").addClass('hide');
-                $("#btn-create-session").removeClass('show');
+                $("#btn-propose-session").show();
+                $("#btn-create-session").hide();
                 $("#topic-list").show();
             } else {
-                $("#btn-propose-session").addClass('hide');
-                $("#btn-propose-session").removeClass('show');
-                $("#btn-create-session").addClass('show');
-                $("#btn-create-session").removeClass('hide');
+                $("#btn-propose-session").hide();
+                $("#btn-create-session").show();
                 $("#topic-list").hide();
             }
         }
