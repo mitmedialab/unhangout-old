@@ -270,17 +270,6 @@ $(document).ready(function() {
                 this.adminButtonView.messageSessions(dummyEvent);
             }
 
-            var enableDisableParticipantProposedMode = function(data) {
-                if (curEvent.get('adminProposedSessions')) {
-                    hotkeysLog(data, 'enableParticipantProposedMode');
-                    this.adminButtonView.enableParticipantProposedMode(dummyEvent);
-                }
-                else {
-                    hotkeysLog(data, 'disableParticipantProposedMode');
-                    this.adminButtonView.disableParticipantProposedMode(dummyEvent);
-                }
-            }
-
             var focusChatMessage = function(data) {
                 hotkeysLog(data, 'focusChatMessage');
                 $("#chat-input").focus();
@@ -304,7 +293,6 @@ $(document).ready(function() {
                 o: openSessions,
                 w: closeSessions,
                 m: messageSessions,
-                p: enableDisableParticipantProposedMode,
                 a: focusChatMessage,
                 h: highlightChatMessage,
                 b: editWhiteboard,
