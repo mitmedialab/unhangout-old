@@ -565,7 +565,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     groupUser: function(jqevt) {
         jqevt.preventDefault();
         var thisEventPref = this.getMySessionPreference();
-        if(thisEventPref && thisEventPref.length > 0) {
+        if(thisEventPref) {
             var scope = $("#regroup-modal");
             scope.modal('show');
         } else {
@@ -592,7 +592,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
             $("#btn-create-session").hide();
             $("#btn-group-me").show();
             var thisEventPref = this.getMySessionPreference();
-            if(thisEventPref && thisEventPref.length > 0) {
+            if(thisEventPref) {
                 $("#btn-group-me").find(".text").text("REGROUP ME");
             } else {
                 $("#btn-group-me").find(".text").text("GROUP ME");
