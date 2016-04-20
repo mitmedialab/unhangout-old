@@ -587,7 +587,8 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
             $("#btn-group-me").show();
-            if(this.getMySessionPreference().length !== 0) {
+            var thisEventPref = this.getMySessionPreference();
+            if(thisEventPref && thisEventPref.length > 0) {
                 $("#btn-group-me").find(".text").text("REGROUP ME");
             } else {
                 $("#btn-group-me").find(".text").text("GROUP ME");

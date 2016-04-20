@@ -385,7 +385,7 @@ $(document).ready(function() {
         var me = curEvent.get("connectedUsers").get(auth.USER_ID);
         var mySessionPref = me && me.get("sessionPreference");
         var thisEventPref = mySessionPref && mySessionPref[curEvent.id];
-        if(thisEventPref.length !== 0) {
+        if(thisEventPref && thisEventPref.length > 0) {
             $("#btn-group-me").find(".text").text("REGROUP ME");
         } else {
             $("#btn-group-me").find(".text").text("GROUP ME");
