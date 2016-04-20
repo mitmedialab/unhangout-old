@@ -64,10 +64,14 @@ describe("CREATE SESSIONS", function() {
         event.set("adminProposedSessions", true);
 
         browser.mockAuthenticate("superuser1");
-        browser.get(common.URL + "/event/" + event.id)
-        browser.waitForEventReady(event, "superuser1");
-        browser.byCss(".admin-button").click();        
-        browser.byCss("#show-create-session-modal").click();
+        browser.get(common.URL + "/event/" + event.id) 
+        browser.waitForEventReady(event, "superuser1"); 
+        browser.byCss(".admin-button").click();    
+        browser.waitForSelector('#choose-breakout-mode');
+        browser.executeScript("$('#choose-breakout-mode').mouseover();");
+        browser.byCss("#admin-proposed-sessions-mode").click();
+        browser.byCss("#btn-create-session").click();
+
         browser.waitForSelector("#session_name");
         browser.byCss("#session_name").sendKeys("My New Session");
         browser.waitForSelector("#create-session");
@@ -98,7 +102,11 @@ describe("CREATE SESSIONS", function() {
         browser.waitForEventReady(event, "superuser1");
         browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
-        browser.byCss("#show-create-session-modal").click();
+        browser.waitForSelector('#choose-breakout-mode');
+        browser.executeScript("$('#choose-breakout-mode').mouseover();");
+        browser.byCss("#admin-proposed-sessions-mode").click();
+        browser.byCss("#btn-create-session").click();
+
         browser.waitForSelector("#session_name");
         browser.byCss("#session_name").sendKeys("Video Session");
         browser.byCss("input[value='video']").click();
@@ -130,8 +138,12 @@ describe("CREATE SESSIONS", function() {
         browser.mockAuthenticate("superuser1");
         browser.get(common.URL + "/event/" + event.id);
         browser.waitForEventReady(event, "superuser1");
+        browser.waitForSelector(".admin-button");
         browser.byCss(".admin-button").click();
-        browser.byCss("#show-create-session-modal").click();
+        browser.waitForSelector('#choose-breakout-mode');
+        browser.executeScript("$('#choose-breakout-mode').mouseover();");
+        browser.byCss("#admin-proposed-sessions-mode").click();
+        browser.byCss("#btn-create-session").click();
         browser.waitForSelector("#join_cap");
 
         // Error for NaN

@@ -38,7 +38,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         deleteButton: '.delete',        // delete is reserved word
         hangoutUsers: '.hangout-users',
         proposeeDetails: '.proposee-details',
-        userDetails: '#user-details'
+        userDetails: '#user-details',
+        groupMembers: '.group-members'
     },
 
     events: {
@@ -57,7 +58,9 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         // re-render to show them.
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
+        this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
@@ -70,7 +73,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:title', this.render, this);
     },
 
-    onRender: function() {
+    onRender: function() { 
         $('.tooltip').hide();
         var start = new Date().getTime();  
 
@@ -80,10 +83,62 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.$el.removeClass("live");
         this.$el.removeClass("hide");
 
-        if (this.model.get("approved")) {
-            this.$el.addClass("live");
+        if(this.options.event.get("randomizedSessions")) {
+            if(this.model.get("randomized")) {
+                this.$el.css('min-height', '155px'); 
+                //in randomized mode show all the sessions 
+                //only to admins, and for a user show only
+                //the session which they have been assigned
+                if(IS_ADMIN || 
+                    this.model.get("assignedParticipants").indexOf(USER.id)
+                        >= 0) {
+                    this.$el.addClass("live"); 
+                } else {
+                    this.$el.addClass("hide");
+                }
+            } else {
+                this.$el.addClass("hide");
+            }
         } else {
-            this.$el.addClass("hide");
+            this.$el.css('min-height', '85px');
+            if (this.model.get("approved") && 
+                !this.model.get("randomized")) { 
+                this.$el.addClass("live");
+            } else {
+                this.$el.addClass("hide");
+            }
+        }
+        
+        //Build the list of group members
+        var users = this.options.event.get("connectedUsers");
+        if(this.options.event.get("randomizedSessions")) { 
+            var groupMembersFragment = document.createDocumentFragment();
+            var drawGroupMember = _.bind(function (member) {
+                var user = users.get(member);
+                if(user) {
+                    imgEl = document.createElement("img");
+                    imgEl.src = user.get("picture"); 
+                    imgEl.dataset.id = user.get("id");
+                    imgEl.dataset.name = user.get("displayName");
+                    groupMembersFragment.appendChild(imgEl);
+                    imgEl.onmouseover = showUsernameTooltip;
+                    imgEl.alt = user.get("displayName");
+                } else {
+                    emptyli = document.createElement("li");
+                    emptyli.className = "empty";
+                    groupMembersFragment.appendChild(emptyli);
+                }
+            }, this);  //draw group member 
+            _.each(this.model.get("assignedParticipants"), function(assignee) { 
+                drawGroupMember(assignee); 
+            });
+            this.ui.groupMembers.html(groupMembersFragment);
+        }
+
+        function showUsernameTooltip() {
+            $(this).attr("data-toggle", "tooltip")
+                   .attr("title", this.dataset.name)
+                   .tooltip("show"); 
         }
 
         //Show delete button only for admins  
@@ -104,21 +159,27 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
             this.ui.userDetails.removeClass("bottom-padding");
         }
 
-        //Hide unapprove UI if admin proposed session mode
-        if(this.options.event.get("adminProposedSessions")) {
+        //Show unapprove UI only if the session is
+        //in the participant proposed mode
+        if(this.options.event.get("randomizedSessions")) { 
             this.ui.unapprove.hide();
             this.ui.proposeeDetails.hide(); 
-
             if(IS_ADMIN) {
                 this.ui.deleteButton.removeClass("top-margin");
             } 
-            
         } else {
-            this.ui.unapprove.show();
-            this.ui.proposeeDetails.show();
-            this.ui.deleteButton.addClass("top-margin");
+            if(this.options.event.get("adminProposedSessions")) {
+                this.ui.unapprove.hide();
+                this.ui.proposeeDetails.hide(); 
+                if(IS_ADMIN) {
+                    this.ui.deleteButton.removeClass("top-margin");
+                } 
+            } else {
+                this.ui.unapprove.show();
+                this.ui.proposeeDetails.show();
+                this.ui.deleteButton.addClass("top-margin");
+            }
         }
-
 
         // remove the toggle-ness of the button once the event starts.
         this.ui.attend.attr("data-toggle", "");
@@ -352,9 +413,7 @@ views.TopicView = Backbone.Marionette.ItemView.extend({
 
     onRender: function() {
         $('.tooltip').hide();
-
         var start = new Date().getTime();
-
         this.$el.attr("data-session-id", this.model.id);
         // mostly just show/hide pieces of the view depending on
         // model state.
@@ -476,37 +535,78 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     template: "#session-list-template",
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
-    participantProposedSession: _.template($("#session-participant-proposed-template").html()),
-
+    breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
+    
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
 
     id: "session-list",
 
+    events: {
+        'click #btn-group-me': 'groupUser',
+    },
+
     initialize: function() {
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
+        this.listenTo(this.options.event.get("connectedUsers"), 'change:sessionPreference', this.render, this);
     },
 
     itemViewOptions: function() {        
         return {
-            event: this.options.event, transport: this.options.transport
+            event: this.options.event, 
+            users: this.options.users,
+            transport: this.options.transport
         };
     }, 
-    
-    renderControls: function() {    
-        this.$el.html(this.participantProposedSession());
+
+    groupUser: function(jqevt) {
+        jqevt.preventDefault();
+        var thisEventPref = this.getMySessionPreference();
+        if(thisEventPref && thisEventPref.length > 0) {
+            var scope = $("#regroup-modal");
+            scope.modal('show');
+        } else {
+            this.options.transport.send("group-user", {
+                eventId: this.options.event.id,
+            });
+        }
     },
 
-    onRender: function() { 
-        if(this.options.event.get("adminProposedSessions")) {
-            $("#btn-propose-session").addClass('hide');
-            $("#btn-propose-session").removeClass('show');
+    renderControls: function() {    
+        this.$el.html(this.breakoutRoomsHeaderTemplate());
+    },
+
+    getMySessionPreference: function() {
+        var me = this.options.event.get("connectedUsers").get(auth.USER_ID);
+        var mySessionPref = me && me.get("sessionPreference");
+        var thisEventPref = mySessionPref && mySessionPref[this.options.event.id];
+        return thisEventPref;
+    },
+
+    onRender: function() {         
+        if(this.options.event.get("randomizedSessions")) {
+            $("#btn-propose-session").hide();
+            $("#btn-create-session").hide();
+            $("#btn-group-me").show();
+            var thisEventPref = this.getMySessionPreference();
+            if(thisEventPref && thisEventPref.length > 0) {
+                $("#btn-group-me").find(".text").text("REGROUP ME");
+            } else {
+                $("#btn-group-me").find(".text").text("GROUP ME");
+            }
         } else {
-            $("#btn-propose-session").addClass('show');
-            $("#btn-propose-session").removeClass('hide');
-        }
+            $("#btn-group-me").hide();
+            if(this.options.event.get("adminProposedSessions")) {
+                $("#btn-propose-session").hide();
+                $("#btn-create-session").show();
+            } else {
+                $("#btn-propose-session").show();
+                $("#btn-create-session").hide();
+            }
+        }        
     }
 });
 
@@ -515,28 +615,27 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     template: "#topic-list-template",
     itemView: views.TopicView,
     itemViewContainer: '#topic-list-container',
-
     id: "topic-list",
-
     initialize: function() {
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
     },
-
     itemViewOptions: function() {
         return {
             event: this.options.event, transport: this.options.transport
         };
     },
-
     onRender: function() {
-
-        if(this.options.event.get("adminProposedSessions")) {
+        if(this.options.event.get("randomizedSessions")) {
             $("#topic-list").hide();
-        } else {
-            $("#topic-list").show();
+        } else {        
+            if(this.options.event.get("adminProposedSessions")) {
+                $("#topic-list").hide();
+            } else {
+                $("#topic-list").show();
+            }
         }
     },
-
 });
 
 // UserViews are the little square profile pictures that we use throughout
@@ -614,6 +713,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #set-iframe-code': 'setIframeCode',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
+        'click #regroup': 'regroupUser'
     },
 
     addUrlToSessionMessage: function(event) {
@@ -653,6 +753,13 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".proposed-title-validate-error", scope).removeClass('show');
         $(".proposed-title-validate-error", scope).addClass('hide');
 
+    },
+
+    regroupUser: function(event) {
+        event.preventDefault();
+        this.options.transport.send("group-user", {
+            eventId: this.options.event.id,
+        });
     },
 
     proposeSession: function(event) {
@@ -920,8 +1027,10 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'click #message-sessions': 'messageSessions',
         'click #admin-stop-event': 'stopEvent',
         'click #admin-start-event': 'startEvent',
+        'mouseover #choose-breakout-mode': 'chooseBreakoutSubmenu',
         'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
         'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
+        'click #randomized-sessions-mode': 'enableRandomizedSessionsMode'
     },
 
     openSessions: function(jqevt) {
@@ -963,20 +1072,33 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         });
     },
 
+    chooseBreakoutSubmenu: function(jqevt) {
+        jqevt.preventDefault(); 
+        jqevt.stopPropagation(); 
+        var elem = 'ul.dropdown-menu [data-toggle=dropdown]';
+        $(elem).parent().siblings().removeClass('open');
+        $(elem).parent().toggleClass('open');
+    },
+
     disableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
-        this.changeSessionsProposedMode(true);
+        this.changeSessionsProposedMode("adminProposed");
     },
 
     enableParticipantProposedMode: function(jqevt) {
         jqevt.preventDefault();
-        this.changeSessionsProposedMode(false);
+        this.changeSessionsProposedMode("participantProposed");
+    },
+
+    enableRandomizedSessionsMode: function(jqevt) {
+        jqevt.preventDefault();
+        this.changeSessionsProposedMode("randomized"); 
     },
 
     changeSessionsProposedMode: function(action) {
-        this.options.transport.send("admin-proposed", {
+        this.options.transport.send("proposed-mode", {
             roomId: this.options.event.getRoomId(),
-            isAdminSessionsOnly: action
+            mode: action
         });
     },
 
@@ -1008,8 +1130,6 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
             event: this.options.event,
         };
     },
-
-
 });
 
 // The UserColumn is the gutter on the right that shows who's connected to the
