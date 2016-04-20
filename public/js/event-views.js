@@ -553,6 +553,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
+        this.listenTo(this.options.event.get("connectedUsers"), 'change:sessionPreference', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -574,11 +575,23 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.$el.html(this.breakoutRoomsHeaderTemplate());
     },
 
+    getMySessionPreference: function() {
+        var me = this.options.event.get("connectedUsers").get(auth.USER_ID);
+        var mySessionPref = me && me.get("sessionPreference");
+        var thisEventPref = mySessionPref && mySessionPref[this.options.event.id];
+        return thisEventPref;
+    },
+
     onRender: function() {         
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
             $("#btn-group-me").show();
+            if(this.getMySessionPreference().length !== 0) {
+                $("#btn-group-me").find(".text").text("REGROUP ME");
+            } else {
+                $("#btn-group-me").find(".text").text("GROUP ME");
+            }
         } else {
             $("#btn-group-me").hide();
             if(this.options.event.get("adminProposedSessions")) {

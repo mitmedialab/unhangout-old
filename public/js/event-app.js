@@ -180,7 +180,6 @@ $(document).ready(function() {
         } else {
             $("#random-list").hide();
             $("#btn-group-me").hide();
-
             if(!curEvent.get("adminProposedSessions")) {
                 $("#btn-propose-session").show();
                 $("#btn-create-session").hide();
@@ -383,6 +382,14 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
+        var me = curEvent.get("connectedUsers").get(auth.USER_ID);
+        var mySessionPref = me && me.get("sessionPreference");
+        var thisEventPref = mySessionPref && mySessionPref[curEvent.id];
+        if(thisEventPref.length !== 0) {
+            $("#btn-group-me").find(".text").text("REGROUP ME");
+        } else {
+            $("#btn-group-me").find(".text").text("GROUP ME");
+        }
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {
