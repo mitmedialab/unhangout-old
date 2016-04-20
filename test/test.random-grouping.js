@@ -64,17 +64,17 @@ describe("RANDOM GROUPING", function() {
         var session = event.get("sessions").get(sessionId);
         expect(session).to.not.be.null;
         expect(session.get("assignedParticipants")).to.deep.equal([user.id]);
-        var pref = {};
-        pref[event.id] = session.id;
-        expect(user.get("sessionPreference")).to.deep.equal(pref);
+        var assign = {};
+        assign[event.id] = session.id;
+        expect(user.get("sessionAssignments")).to.deep.equal(assign);
         // Reassignment
         return group.assignRandomizedSession(event.id, user.id).then(function(sessionId2) {
           expect(sessionId2).to.not.equal(sessionId);
           var session2 = event.get("sessions").get(sessionId2);
           expect(session.get("assignedParticipants")).to.deep.equal([]);
           expect(session2.get("assignedParticipants")).to.deep.equal([user.id]);
-          pref[event.id] = session2.id;
-          expect(user.get("sessionPreference")).to.deep.equal(pref);
+          assign[event.id] = session2.id;
+          expect(user.get("sessionAssignments")).to.deep.equal(assign);
         });
       });
     });
@@ -111,20 +111,9 @@ describe("RANDOM GROUPING", function() {
     });
   });
 
-//  it("", function(done) {
-//    var user = common.server.db.users.findWhere({"sock-key": "regular1"});
-//    user.setSessionPreference(eventId, null);
-//    var userId = user.get("id");
-//
-//    request.get(common.URL + "/event/" + eventId)
-//      .set("x-mock-user", "regular1")
-//      .redirects(0)
-//      .end(function(res) {
-//        group.assignGroupToUser(userId, eventId).then(function() {
-//          //TODO
-//        });
-//        expect(res.status).to.be(200);
-//        done();
-//      });
+//  describe("Sockets", function() {
+//    it("Assigns randomized session on socket message", function() {
+//      var sock = comm
+//    });
 //  });
 });

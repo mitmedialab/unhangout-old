@@ -551,7 +551,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
-        this.listenTo(this.options.event.get("connectedUsers"), 'change:sessionPreference', this.render, this);
+        this.listenTo(this.options.event.get("connectedUsers"), 'change:sessionAssignments', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -564,12 +564,12 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     groupUser: function(jqevt) {
         jqevt.preventDefault();
-        var thisEventPref = this.getMySessionPreference();
-        if(thisEventPref) {
+        var thisEventAssign = this.getMySessionAssignment();
+        if(thisEventAssign) {
             var scope = $("#regroup-modal");
             scope.modal('show');
         } else {
-            this.options.transport.send("group-user", {
+            this.options.transport.send("assign-randomized-session", {
                 eventId: this.options.event.id,
             });
         }
@@ -579,11 +579,11 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.$el.html(this.breakoutRoomsHeaderTemplate());
     },
 
-    getMySessionPreference: function() {
+    getMySessionAssignment: function() {
         var me = this.options.event.get("connectedUsers").get(auth.USER_ID);
-        var mySessionPref = me && me.get("sessionPreference");
-        var thisEventPref = mySessionPref && mySessionPref[this.options.event.id];
-        return thisEventPref;
+        var mySessionAssign = me && me.get("sessionAssignments");
+        var thisEventAssign = mySessionAssign && mySessionAssign[this.options.event.id];
+        return thisEventAssign;
     },
 
     onRender: function() {         
@@ -591,8 +591,8 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
             $("#btn-group-me").show();
-            var thisEventPref = this.getMySessionPreference();
-            if(thisEventPref) {
+            var thisEventAssign = this.getMySessionAssignment();
+            if(thisEventAssign) {
                 $("#btn-group-me").find(".text").text("REGROUP ME");
             } else {
                 $("#btn-group-me").find(".text").text("GROUP ME");
@@ -756,7 +756,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     regroupUser: function(event) {
         event.preventDefault();
-        this.options.transport.send("group-user", {
+        this.options.transport.send("assign-randomized-session", {
             eventId: this.options.event.id,
         });
     },

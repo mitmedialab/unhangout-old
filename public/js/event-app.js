@@ -383,9 +383,9 @@ $(document).ready(function() {
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
         var me = curEvent.get("connectedUsers").get(auth.USER_ID);
-        var mySessionPref = me && me.get("sessionPreference");
-        var thisEventPref = mySessionPref && mySessionPref[curEvent.id];
-        if(thisEventPref) {
+        var mySessionAssign = me && me.get("sessionAssignments");
+        var thisEventAssign = mySessionAssign && mySessionAssign[curEvent.id];
+        if(thisEventAssign) {
             $("#btn-group-me").find(".text").text("REGROUP ME");
         } else {
             $("#btn-group-me").find(".text").text("GROUP ME");
