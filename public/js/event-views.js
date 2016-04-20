@@ -564,9 +564,15 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     groupUser: function(jqevt) {
         jqevt.preventDefault();
-        this.options.transport.send("group-user", {
-            eventId: this.options.event.id,
-        });
+        var thisEventPref = this.getMySessionPreference();
+        if(thisEventPref && thisEventPref.length > 0) {
+            var scope = $("#regroup-modal");
+            scope.modal('show');
+        } else {
+            this.options.transport.send("group-user", {
+                eventId: this.options.event.id,
+            });
+        }
     },
 
     renderControls: function() {    
@@ -706,6 +712,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #btn-propose-session': 'proposeSessionDialog',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
+        'click #regroup': 'regroupUser'
     },
 
     addUrlToSessionMessage: function(event) {
@@ -745,6 +752,13 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $(".proposed-title-validate-error", scope).removeClass('show');
         $(".proposed-title-validate-error", scope).addClass('hide');
 
+    },
+
+    regroupUser: function(event) {
+        event.preventDefault();
+        this.options.transport.send("group-user", {
+            eventId: this.options.event.id,
+        });
     },
 
     proposeSession: function(event) {
