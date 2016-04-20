@@ -61,8 +61,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
-        this.listenTo(this.options.event.get("connectedUsers"), 'change add remove', 
-                        this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
         // can render people in consistent-ish places in the list.
         // The idea is that each user gets a "slotPreference", which is either
