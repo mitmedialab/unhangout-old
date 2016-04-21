@@ -45,6 +45,14 @@ body {
   overflow: hidden;
 }
 
+.btn:focus,.btn:active {
+  outline: none !important;
+}
+
+a:focus,a:active {
+  outline: none !important;
+}
+
 a.dropdown-toggle {
   cursor: pointer;
 }
@@ -1552,6 +1560,12 @@ user-admin-border-size = 2px
  *  Video
  */
 
+#iframePlayer {
+  iframe {
+    width: 480px  
+  }
+}
+
 #video-embed {
 
   .current-video-controls {
@@ -1592,7 +1606,6 @@ user-admin-border-size = 2px
   }
 
   & > .video-controls {
-
     background-color: #f3bd71;   
     border-radius: 0px 0px 5px 5px;
     padding: 10px;
@@ -1601,32 +1614,47 @@ user-admin-border-size = 2px
     border-right: 3px dashed #f90;
     border-bottom: 3px dashed #f90;
 
-    
     .video-play-trash-row {
       margin: 0;
-      padding-bottom: 25px;
+      padding-top: 5px;
+      padding-bottom: 10px;
 
       .btn-play-pause {
         padding: 0;
       }
 
       .btn-video-trash {
-        float:right;
-        padding: 0px;
+        padding-right: 0px;
+        padding-left: 10px;
+      }
+
+      .remove-video {
+        width: 100%;
+        font-size: 1em;
+        letter-spacing: 0.06em;
+        line-height: 1.5em;
+        font-weight: 300;
       }
     }
 
     .youtube-video-controls {
       margin: 0;
-
       .set-video {
         width: 100%;
       }
-
     }
 
     .input-video-field {
       padding: 0px;
+    }
+
+    .btn-enqueue {
+      padding-left: 10px;
+      padding-right: 10px;
+
+      .enqueue-video {
+        width: 100%;
+      }
     }
 
     .text-warning {
@@ -1639,50 +1667,48 @@ user-admin-border-size = 2px
       padding: 0px;
     }
 
-    .btn-hoa {
-      padding: 0;
+    .btn-embed-ls {
+      padding-right: 0px;
+      padding-left: 10px;
 
       a {
         width: 100%;
       }
-    }
 
-    .btn-join-hoa {
-      padding: 0px;
-      padding-right: 5px;
-
-      .hoa {
+      .embed-ls {
         width: 100%;
       }
     }
 
-    .btn-remove-hoa {
-      padding: 0px;
-      padding-left: 5px;
+    .create-join-hoa {
+      margin: 0px;
+      padding-top: 5px;
 
-      .remove-hoa {
-        width: 100%;
+      .btn-hoa {
+        padding: 0;
+
+        a {
+          width: 100%;
+        }
       }
-    }
 
-     .OR-field {
-      padding-left: 48%;
+      .btn-join-hoa {
+        padding: 0px;
 
-      p {
-        margin: 0px;
-        color: white;
-        font-size: 1.5em;
-        font-weight: 400;
+        .hoa {
+          width: 100%;
+        }
       }
     }
   }
 
   .dropdown-toggle {
-    width: 50px;
+    width: 40px;
     position: absolute;
     top: 0px;
     right: 0px;
     background-color: #eee;
+    padding-left: 10px;
   }
 
   /* ====================== PREVIOUS VIDEO UL ========================*/
@@ -1691,10 +1717,27 @@ user-admin-border-size = 2px
     width: 450px;
   }
 
+  .video-list {
+    background-color: #eee;
+    margin: 0px;
+    margin-top: -5px;
+    padding: 10px;
+  }
+
+  .list-div {
+    margin-top: 5px;
+    padding-left: 5px;
+  }
+
+  .clear-list-btn-div {
+    padding-left: 25px;
+  }
+
   .previous-video-item {
     padding: 0px;
     margin-top: 5px;
     margin-bottom: 5px;
+    min-height: 48px;
   }
 
   .previous-video-item:hover {
@@ -1703,16 +1746,32 @@ user-admin-border-size = 2px
 
   .previous-video-details {
     padding: 0px;
+    margin-right: -5px;
+
+    a {
+      color: #2f3732;
+      font-weight: normal;
+      font-size: 1em;
+    }
+
+    img {
+      display: block;
+      max-width: 64px;
+      max-height: 48px;
+      width: auto;
+      height: auto;
+    }
   }
   
   .restore-previous-video {
 
     &.header {
       background-color: #eee;
-      padding: 1em;
-      font-size: 1.0em; 
+      font-size: 1.0em;
       font-weight: 400;
       letter-spacing: 0.04em;
+      color: black;
+      text-decoration: none;
     }
 
     .title {
@@ -1720,12 +1779,13 @@ user-admin-border-size = 2px
       vertical-align: middle;
       text-overflow: ellipsis;
       width: 100%;
-      margin: 10px 0px 0px 20px;
-      font-size: 12px;
-      line-height: 1.2em;
+      margin: 0px 0px 0px 10px;
+      color: #2f3732;
+      font-weight: normal;
+      font-size: 1em;
       text-overflow: ellipsis;
       display: -webkit-box;
-      -webkit-line-clamp: 2;
+      -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
     }
 
@@ -1736,7 +1796,6 @@ user-admin-border-size = 2px
       display: inline-block;
       margin: 10px 0px 0px 10px;
     }
-    
   }
 
   .btn-del-previous-video {
@@ -1756,12 +1815,10 @@ user-admin-border-size = 2px
   .clear-previous-videos {
     text-align: center;
     cursor: pointer;
-
-    background-color: #f0ad4e;  
-    padding: 1em;
     font-size: 1.0em; 
     font-weight: 400;
     letter-spacing: 0.04em; 
+    border-radius: 2px;
   }
 }
 
@@ -2601,6 +2658,12 @@ user-admin-border-size = 2px
   .session-title-validate-error {
     margin-top: 10px;
   }
+}
+
+#embed-iframe-code-modal {
+  .modal-dialog {
+    width: 40%
+  }  
 }
 
 #propose-session-modal {

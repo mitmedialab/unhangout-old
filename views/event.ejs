@@ -457,63 +457,76 @@
 </script>
 
 <script type="text/template" id="video-embed-template">
+    <div class='iframe-player'></div>
     <div class='video-player'></div>
     <div class='video-controls row'></div>
 </script>
 
 <script type='text/template' id="video-embed-controls-template">
-    {{ if (youtubeEmbed) { }}
-        <div class="row video-play-trash-row">
-            <div class='col-xs-7 btn-play-pause'>
-                <div class='current-video-controls'>
-                    <button class='btn btn-success play-for-all'>
-                        {{ if (isPlayingForEveryone) { }}
-                            <i class='fa fa-pause'></i> Pause for All
-                        {{ } else if (isAwaitingStart) { }}
-                            <i class='fa fa-clock-o'></i> Awaiting Start
-                        {{ } else { }}
-                            <i class='fa fa-play'></i> Play for All
-                        {{ } }}
-                        <span class='button-time-indicator'></span>
-                    </button> 
+        <div class='row youtube-video-controls'>
+            {{ if (youtubeEmbed || iframeEmbedCode.length > 0) { }}
+            <div class="row video-play-trash-row">
+                <div class='col-lg-7 col-xs-6 btn-play-pause'>
+                    <div class='current-video-controls'>
+                        <button class='btn btn-success play-for-all'>
+                            {{ if (isPlayingForEveryone) { }}
+                                <i class='fa fa-pause'></i> Pause for All
+                            {{ } else if (isAwaitingStart) { }}
+                                <i class='fa fa-clock-o'></i> Awaiting Start
+                            {{ } else { }}
+                                <i class='fa fa-play'></i> Play for All
+                            {{ } }}
+                            <span class='button-time-indicator'></span>
+                        </button> 
+                    </div>
                 </div>
+
+                <div class="col-lg-5 col-xs-6 btn-video-trash">
+                    <button class='btn btn-danger remove-video'>
+                        <i class='fa fa-remove'></i>
+                        Remove Video
+                    </button>
+                </div>
+
             </div>
-
-            <div class="col-xs-1 btn-video-trash">
-                <button class='btn btn-danger remove-video' title="Remove video embed">
-                    <i class='fa fa-trash-o'></i>
-                </button>
-            </div>
-
-        </div>
-    {{ } }}
-
-    <div class='row youtube-video-controls'>
+        {{ } }}
 
         <div class="col-lg-7 col-xs-6 input-video-field">
-            <input class="form-control" type="text" name="youtube_id" value="" placeholder="Paste Youtube URL Here" />
+            <input class="form-control" type="text" name="youtube_id" value="" placeholder="YouTube URL" />
 
             {{ if (previousVideoEmbeds.length > 0) { }}
                
                     <button class='btn btn-default dropdown-toggle' data-toggle="dropdown">
-                        <i class='fa fa-list'></i>
+                        <i class='fa fa-bars'></i>
                         <i class='fa fa-caret-down'></i>
                     </button>
 
                     <ul class="dropdown-menu previous-videos" role="menu">
-                        <li><a class='restore-previous-video header'>Previous videos</a></li>
+                        <li>
+                            <div class="row video-list">
+                                <div class="col-lg-8 col-xs-6 list-div">
+                                    <a class='restore-previous-video header'>Video List</a>
+                                </div>
+
+                                <div class="col-lg-4 col-xs-6 clear-list-btn-div">
+                                    <button class='btn btn-danger clear-previous-videos'>
+                                    <i class='fa fa-trash-o'></i> Remove All
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
 
                         {{ _.each(previousVideoEmbeds, function(vid) { }}
 
                             <li role="presentation">
-                                <div class="col-lg-12 previous-video-item">
-                                    <div class="col-lg-11 previous-video-details">
+                                <div class="col-lg-12 col-xs-11 previous-video-item">
+                                    <div class="col-lg-11 col-xs-10 previous-video-details">
                                         <a role="menuitem" class='restore-previous-video'
                                         data-youtube-id='{{= vid.youtubeId }}'>{{= vid.youtubeId }}  
                                         </a>
                                     </div>
 
-                                    <div class="col-lg-1 btn-del-previous-video">
+                                    <div class="col-lg-1 col-xs-1 btn-del-previous-video">
                                         <button class='btn btn-danger remove-one-previous-video'
                                     data-youtube-id='{{= vid.youtubeId }}'><i class='fa fa-trash'></i></button>
                                     </div>
@@ -521,10 +534,6 @@
                                 
                             </li>
                         {{ }); }}
-
-                        <li><a class='clear-previous-videos'>
-                            <i class='fa fa-trash-o'></i> Clear list
-                        </a></li>
                     </ul>
                
             {{ } }}
@@ -539,20 +548,11 @@
             <button class='btn btn-default set-video'
             type="button">Embed</button>
         </div>
-
-        <div class="col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
-          <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
-        </div>
-
-        <div class="col-xs-12 OR-field">
-            <p>OR</p>
-        </div>
-        
-      
+    </div>
+    
+    <div class="row create-join-hoa">
         {{ if (hoaParticipationLink) { }}
-           
-            <div class="col-xs-6 btn-join-hoa">
+            <div class="col-lg-7 col-xs-6 btn-join-hoa">
                 <a class="join-hoa" target='_blank'
                     href="{{= hoaParticipationLink }}">
                     <button class="btn btn-default hoa">
@@ -560,37 +560,43 @@
                     </button>
                 </a>
             </div>
-
-            <div class="col-xs-6 btn-remove-hoa">
-                <button class='btn btn-danger remove-hoa'>Remove Hangout-on-Air
-                </button>
-            </div>
-            
         {{ } else { }}
-            
-            <div class="col-xs-12 btn-hoa">
+            <div class="col-lg-7 col-xs-6 btn-hoa">
                 <a class="btn btn-default create-hoa hoa" target="_blank"
                     href='/event/{{- id }}/create-hoa/'>
                 <i class='fa fa-users'></i> Create Hangout-on-Air
                 </a>
             </div>
-        
         {{ } }}
-      
+
+        {{ if (IS_SUPERUSER) { }}
+        <div class="col-lg-5 col-xs-6 btn-embed-ls">
+            <a target="_blank"
+                    href="#embed-iframe-code-modal" data-toggle="modal">
+                <button class="btn btn-default embed-ls">
+                    <i class="fa fa-code"></i> Insert Iframe Code
+                </button>
+            </a>
+        </div>
+        {{ } }}
+
     </div>
-    
+
+    <div class="col-xs-12 alert alert-warning alert-dismissible text-warning" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+      <strong>Warning!</strong> Unrecognized youtube URL! Please try again.
+    </div>
 </script>
 
 <script type='text/template' id="previous-video-details-template">
     <a tabindex='-1' href='#' class='restore-previous-video'
-       title='{{= title }}'
        data-youtube-id='{{= id }}'>
         
-        <div class="col-lg-2">
-            <img src='{{= thumbnail.url }}' style='width: 64px; height: 48px' alt='thumbnail'>
+        <div class="col-lg-2 col-xs-3">
+            <img src='{{= thumbnail.url }}'>
         </div>
 
-        <div class="col-lg-8">
+        <div class="col-lg-8 col-xs-8">
             <p class='title'>{{= title }}</p>
         </div>
     </a>
@@ -1096,6 +1102,42 @@
                 <div class="modal-footer">
                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                      <button type="button" id="send-email-button" class="btn btn-primary default" data-dismiss="modal">Send Email</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="modal embed-iframe-code-modal" id="embed-iframe-code-modal" role="dialog" aria-hidden="true">
+
+        <div class="modal-dialog">
+            
+            <div class="modal-content">
+                
+                <div class="modal-header">
+                    <h4 class="modal-title">Insert an Iframe Code</h4>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row modal-row">
+                        <div class="col-lg-12 no-padding">
+                            <div class="col-lg-12 no-padding">
+                                <div class="form-group">
+                                    <div class="col-lg-12 no-padding">
+                                        <textarea class="form-control input-iframe-code" rows="3" type="text" name="iframe_code" placeholder="Enter your iframe code here"value="" id="iframe_code"/> 
+                                    </div>
+                                </div>
+
+                                <br/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    <button type="button" class="btn btn-primary" class="embed-stream" id="set-iframe-code" data-dismiss="modal">Insert</button>
                 </div>
 
             </div>

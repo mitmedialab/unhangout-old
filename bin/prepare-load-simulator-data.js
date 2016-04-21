@@ -8,14 +8,14 @@ var models = require("../lib/server-models"),
     simConf = require("../simulatorConf.js").SERVER,
     UnhangoutDb = require("../lib/unhangout-db"),
     async = require("async"),
-    _ = require("underscore");
+    _ = require("underscore"),
+    Promise = require("bluebird");
 
 
 var db;
 function init(callback) {
     var options = require("../lib/options");
     options.UNHANGOUT_REDIS_DB = simConf.REDIS_DB_ID;
-    logger.error(options.UNHANGOUT_REDIS_DB);
     db = new UnhangoutDb(options);
     db.init(callback);
 }
@@ -31,6 +31,7 @@ function destroy(callback) {
         logger.error("Event " + simConf.EVENT_ID + " not found.");
         return callback();
     }
+    models = models.concat(event.getRandomizedSessions());
     var sessions = event.get("sessions");
     for (var i = simConf.SESSION_RANGE[0]; i < simConf.SESSION_RANGE[1]; i++) {
         models.push(sessions.get("loadSession" + i));
@@ -72,21 +73,42 @@ function create(callback) {
         // Create event
         function(done) {
             var event = db.events.get(simConf.EVENT_ID);
+            var sessionMode = simConf.SESSION_MODE || "admin";
             if (event) {
                 logger.info("Event " + simConf.EVENT_ID + " already exists.");
             } else {
                 logger.info("Creating Event " + simConf.EVENT_ID);
                 event = new models.ServerEvent({
                     id: simConf.EVENT_ID,
-                    title: "Load Test Event"
+                    title: "Load Test Event",
                 });
             }
-            event.save({open: true, sessionsOpen: true}, {
+            event.save({
+                open: true,
+                sessionsOpen: true,
+                adminProposedSessions: sessionMode === "admin",
+                randomizedSessions: sessionMode === "randomized",
+                history: {},
+            }, {
                 success: function() { done(null, event); },
                 error: function() { done(err); }
             });
         },
-        // Create sessions
+        // Delete stale sessions
+        function(event, done) {
+            if (event.get("randomizedSessions")) {
+                Promise.all(_.map(event.getRandomizedSessions(), function(sess) {
+                    return new Promise(function(resolve, reject) {
+                        sess.destroy({success: resolve, error: reject});
+                    });
+                }))
+                .then(function() { done(null, event); })
+                .catch(function(err) { done(err, event); });
+            } else {
+              done(null, event);
+            }
+        },
+        // Create new sessions
         function(event, done) {
             var sessionIds = [];
             var sessions = event.get("sessions");
@@ -153,7 +175,8 @@ function create(callback) {
         }
     ], function(err) {
         if (err) {
-            logger.error(err)
+            logger.error(err);
+            callback(err);
         } else {
             logger.info("Done.");
             callback();

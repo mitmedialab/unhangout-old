@@ -95,13 +95,15 @@ function AuthSock(options) {
     this.state = "disconnected";
     this.userId = options.userId;
     this.sockKey = models.generateSockKey(this.userId);
-    this.sock = sock_client.create(simConf.SERVER_URL + "/sock");
     this.init();
 }
 
 AuthSock.prototype = _.extend({
     init: function() {
         _.bindAll(this, "onerror", "write");
+        var url = simConf.SERVER_URL + "/sock";
+        this.sock = sock_client.create(url);
+        this.sock.on("error", this.onerror);
 
         this.sock.on("connection", _.bind(function() {
             this.write("auth", {key: this.sockKey, id: this.userId});
@@ -192,11 +194,10 @@ AuthSock.prototype = _.extend({
             }
             this.emit("data", msg);
         }, this));
-        this.sock.on("error", this.onerror);
     },
     onerror: function(err) {
-        logger.error(this.userId + " error", err);
-
+        logger.error(this.userId + " error " + err.message);
+        this.init();
     },
     write: function(type, args) {
         this.messagesSent += 1;
