@@ -21,11 +21,22 @@
 var common = require("../test/common.js"),
     farmConf = require("../farmingConf.json");
 
+if (process.env.FARMING_SIGN_IN_URL) {
+  farmConf.signInUrl = process.env.FARMING_SIGN_IN_URL;
+}
+if (process.env.FARMING_SERVER_URL) {
+  farmConf.serverUrl = process.env.FARMING_SERVER_URL;
+}
+
 function run(callback) {
     common.getSeleniumBrowser(function(browser) {
         // Authenticate first.
-        browser.get(farmConf.serverUrl);
-        browser.byLinkText("Login").click();
+        if (farmConf.signInUrl) {
+          browser.get(farmConf.signInUrl);
+        } else {
+          browser.get(farmConf.serverUrl);
+          browser.byLinkText("Login").click();
+        }
         browser.byCss("#Email").sendKeys(farmConf.email);
         browser.byCss("[name=signIn]").click();
         browser.waitForSelector("#Passwd");

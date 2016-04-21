@@ -17,7 +17,7 @@
 // state.
 
 define([
-   "underscore", "backbone", "video", "validate", "atname", "logger", "models", "auth", "client-utils",
+   "underscore", "backbone", "video", "validate", "atname", "logger", "models", "auth", "client-utils", 
    "backbone.marionette", "underscore-template-config", "jquery.autosize"
 ], function(_, Backbone, video, validate, atname, logging, models, auth, utils) {
 
@@ -722,6 +722,7 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #send-email-button': 'sendFollowupEmail',
         'click #submit-contact-info': 'submitContactInfo',
         'click #btn-propose-session': 'proposeSessionDialog',
+        'click #set-iframe-code': 'setIframeCode',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
         'click #regroup': 'regroupUser'
@@ -822,6 +823,24 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     proposeSessionDialog: function() {
         $("#propose-session-dialog").modal('show');
+    },
+
+    setIframeCode: function(event) {
+        event.preventDefault();
+        var iframeCode = $(".input-iframe-code").val();
+        if(!iframeCode) {
+            return;
+        }
+        if(!iframeCode.startsWith('<iframe') && 
+            !iframeCode.endsWith('</iframe>') || 
+            !iframeCode.endsWith('>')) {
+            return;
+        };
+        var args = {
+            iframeCode: iframeCode,
+            roomId: this.options.event.getRoomId()
+        };
+        this.options.transport.send("insert-iframe", args);
     },
 
     sendSessionMessage: function(event) {
@@ -1690,30 +1709,34 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         player: ".video-player",
         placeholder: ".video-placeholder",
         controls: ".video-controls",
+        playForAll: ".play-for-all"
     },
     events: {
         'click .set-video': 'setVideo',
         'click .enqueue-video': 'enqueueVideo',
-        'click .remove-video': 'removeVideo',
+        'click .remove-video': 'removeVideoEmbed',
         'click .restore-previous-video': 'restorePreviousVideo',
         'click .clear-previous-videos': 'clearPreviousVideos',
         'click .play-for-all': 'playForAll',
-        'click .remove-hoa': 'removeHoA',
-        'click .remove-one-previous-video': 'removeOnePreviousVideo'
+        'click .remove-one-previous-video': 'removeOnePreviousVideo',
     },
 
     player: null,
 
     initialize: function() {
         this.listenTo(this.model, "change:youtubeEmbed", function(model, youtubeEmbed) {
-            if (youtubeEmbed) {
-                this.setPlayerVisibility(true);
+            if (youtubeEmbed) {  
                 this.yt.setVideoId(this.model.get("youtubeEmbed"));
-            } else {
-                this.setPlayerVisibility(false);
-            }
+            } 
+            this.setPlayerVisibility();
             this.renderControls();
         }, this);
+
+        this.listenTo(this.model, "change:iframeEmbedCode", function() {
+            this.embedIframePlayer();
+            this.renderControls(); 
+        }, this);
+
         this.listenTo(this.model, "hoa:change:connectedParticipants " +
                                   "hoa:change:joiningParticipants " + 
                                   "hoa:change:hangout-url " +
@@ -1744,10 +1767,12 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         var youtubeInputParent = youtubeInput.parent();
         var youtubeInputError = this.$(".text-warning");
         var ytId = video.extractYoutubeId(youtubeInput.val());
-        if (ytId === null || ytId === undefined) {
+
+        if (ytId === null || ytId === undefined || ytId.length === 0) {
             // Invalid youtube URL/embed code specified.
             youtubeInputError.show();
             youtubeInputParent.addClass("error");
+            return;
         } else {
             youtubeInputParent.removeClass("error");
             youtubeInputError.hide();
@@ -1755,23 +1780,53 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
                 ytId: ytId, roomId: this.model.getRoomId()
             });
         }
-
+        this.removeIframeEmbed();
     },
-    removeVideo: function(jqevt) {
+    removeVideoEmbed: function(jqevt) {
         jqevt.preventDefault();
-        this.model.set("youtubeEmbed", null);
-        this.options.transport.send("embed", {
-            ytId: null, roomId: this.model.getRoomId()
-        });
+        this.removeYouTubeEmbed();
+        this.removeHoA();
+        this.removeIframeEmbed();
     },
-    removeHoA: function(jqevt) {
-        jqevt.preventDefault();
-        // ensure hangout-broadcast-id is null, even if other things are
-        // incongruent.
-        this.model.set("hoa", null);
-        this.options.transport.send("remove-hoa", {
-            roomId: this.model.getRoomId()
-        });
+    removeYouTubeEmbed: function() {
+        if(this.model.get("youtubeEmbed")) {
+            this.model.set("youtubeEmbed", null);
+            this.options.transport.send("embed", {
+                ytId: null, roomId: this.model.getRoomId()
+            });
+        }
+    },
+    removeHoA: function() {
+        if(this.model.get("hoa")) {
+            this.model.set("hoa", null);
+            this.options.transport.send("remove-hoa", {
+                roomId: this.model.getRoomId()
+            });
+        }
+    },
+    removeIframeEmbed: function() {
+        if(this.model.get("iframeEmbedCode").length > 0) {
+            this.model.set("iframeEmbedCode", "");
+            this.options.transport.send("insert-iframe", {
+                iframeCode: "",
+                roomId: this.model.getRoomId()
+            });
+        }  
+    },
+    embedIframePlayer: function() {
+        this.removeYouTubeEmbed();
+        this.removeHoA();
+        if(this.model.get("iframeEmbedCode").length == 0) {
+            $("#iframePlayer").remove();
+            return;
+        }
+        setTimeout(_.bind(this.loadIframePlayer, this), 10);
+    },
+    loadIframePlayer: function() {
+        var iPEl = document.createElement("div");
+        iPEl.id = "iframePlayer";
+        this.$(".iframe-player").append(iPEl);
+        $("#iframePlayer").append(this.model.get("iframeEmbedCode"));
     },
     playForAll: function(jqevt) {
         this.yt.playForEveryone(jqevt);
@@ -1783,6 +1838,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             ytId: ytId,
             roomId: this.model.getRoomId()
         });
+        this.removeIframeEmbed();
     },
     clearPreviousVideos: function(jqevt) {
         jqevt.preventDefault();
@@ -1799,7 +1855,13 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
             roomId: this.model.getRoomId()
         });
     },
-    setPlayerVisibility: function(visible) {
+    setPlayerVisibility: function() {
+        yt_embed = this.model.get("youtubeEmbed");
+        ls_channel = this.model.get("iframeEmbedCode");
+        visible = true;
+        if(yt_embed == null || ls_channel.length > 0) {
+            visible = false;
+        } 
         // Display player if it's visible.
         this.ui.player.toggle(visible);
         // Show a placeholder ("video goes here") if video is not visible and
@@ -1823,6 +1885,12 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
 
         this.ui.controls.html(this.controlsTemplate(context));
 
+        if(this.model.get("iframeEmbedCode").length > 0) {
+            this.$el.find(".play-for-all").addClass('disabled');
+        } else {
+            this.$el.find(".play-for-all").addClass('enabled');
+        }
+
         // We reset the dropdowns because the the previous video embeds dropdown is recreated.
         $('.dropdown-toggle').dropdown();
 
@@ -1838,26 +1906,34 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }, this));
     },
     onRender: function() {
+        youtubeEmbed = this.model.get("youtubeEmbed");
+        lsChannel = this.model.get("iframeEmbedCode");
+
         this.yt = new video.YoutubeVideo({
-            ytID: this.model.get("youtubeEmbed"),
+            ytID: youtubeEmbed,
             permitGroupControl: IS_ADMIN,
             showGroupControls: false // We're doing our own controls on event pages.
         });
+
         if (IS_ADMIN) {
             this.yt.on("renderControls", _.bind(function() {
                 this.renderControls();
             }, this));
         }
+
         this.yt.on("control-video", _.bind(function(args) {
             _.extend(args, {roomId: this.model.getRoomId()});
             this.options.transport.send("control-video", args);
         }, this));
 
-        this.$(".video-player").html(this.yt.el);
+        this.$(".video-player").html(this.yt.el); 
+        this.setPlayerVisibility();
 
-        this.setPlayerVisibility(!!this.model.get("youtubeEmbed"));
+        if(lsChannel.length > 0) {
+            this.embedIframePlayer(this.model.get("iframeEmbedCode"));
+        } 
 
-        if (this.model.get("youtubeEmbed")) {
+        if (youtubeEmbed) {
             this.yt.render();
         } else {
             this.renderControls();

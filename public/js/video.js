@@ -1,5 +1,5 @@
 define([
-   "underscore", "jquery", "backbone", "logger", "extract-youtube-id",
+   "underscore", "jquery", "backbone", "logger", "extract-youtube-id", 
    "underscore-template-config"
 ], function(_, $, Backbone, logger, extractYoutubeId) {
 

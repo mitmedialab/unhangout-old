@@ -32,6 +32,7 @@ describe("HANGOUT REDIRECTS", function() {
                         sess = sess || session;
                         var user = common.server.db.users.findWhere({"sock-key": sockKey});
                         return "?gid=rofl&gd=sessionId:" + sess.id +
+                            ":baseUrl:" + encodeURIComponent(encodeURIComponent(common.URL)) +
                             ":sockKey:" + sockKey + ":userId:" + user.id;
                     }
                     return true;
