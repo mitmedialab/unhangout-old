@@ -331,7 +331,7 @@ models.Session = Backbone.Model.extend({
             // State
             connectedParticipants: [],
             joiningParticipants: [],
-            assignedParticipants: [], // denormalized to user.sessionAssignments
+            assignedParticipants: [],
             activities: [],
             joinCap: this.MAX_ATTENDEES,
             approved: false,
@@ -433,8 +433,6 @@ models.User = Backbone.Model.extend({
             preferredContact: {},
             networkList: {},
             picture: "",
-            // Denormalization of Session.assignedParticipants
-            sessionAssignments: {},
             createdViaHangout: false // this field is set in situations where the user doesn't actually log in with us, but
                                  // instead shows up in a participants message from an instrumented hangout.
         };

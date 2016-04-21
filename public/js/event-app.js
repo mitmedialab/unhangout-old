@@ -191,11 +191,11 @@ $(document).ready(function() {
             }
         }
 
-        curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
-            if(IS_ADMIN) {
+        if(IS_ADMIN) {
+            curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
                 this.adminButtonView.render();  
-            }
-        }, this));
+            }, this));
+        }
 
         // this is a little unorthodox, but not sure how else
         // to do it.
@@ -382,9 +382,9 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
-        var me = curEvent.get("connectedUsers").get(auth.USER_ID);
-        var mySessionAssign = me && me.get("sessionAssignments");
-        var thisEventAssign = mySessionAssign && mySessionAssign[curEvent.id];
+        var thisEventAssign = curEvent.get("sessions").find(function(sess) {
+          return sess.get("assignedParticipants").indexOf(auth.USER_ID) !== -1;
+        });
         if(thisEventAssign) {
             $("#btn-group-me").find(".text").text("REGROUP ME");
         } else {

@@ -551,7 +551,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
-        this.listenTo(this.options.event.get("connectedUsers"), 'change:sessionAssignments', this.render, this);
+        this.listenTo(this.options.event.get("sessions"), 'change:assignedUsers', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -580,10 +580,9 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     },
 
     getMySessionAssignment: function() {
-        var me = this.options.event.get("connectedUsers").get(auth.USER_ID);
-        var mySessionAssign = me && me.get("sessionAssignments");
-        var thisEventAssign = mySessionAssign && mySessionAssign[this.options.event.id];
-        return thisEventAssign;
+        return this.options.event.get("sessions").find(function(sess) {
+            return sess.get("assignedParticipants").indexOf(auth.USER_ID) !== -1;
+        });
     },
 
     onRender: function() {         

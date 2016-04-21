@@ -66,7 +66,6 @@ describe("RANDOM GROUPING", function() {
         expect(session.get("assignedParticipants")).to.deep.equal([user.id]);
         var assign = {};
         assign[event.id] = session.id;
-        expect(user.get("sessionAssignments")).to.deep.equal(assign);
         // Reassignment
         return group.assignRandomizedSession(event.id, user.id).then(function(sessionId2) {
           expect(sessionId2).to.not.equal(sessionId);
@@ -74,7 +73,6 @@ describe("RANDOM GROUPING", function() {
           expect(session.get("assignedParticipants")).to.deep.equal([]);
           expect(session2.get("assignedParticipants")).to.deep.equal([user.id]);
           assign[event.id] = session2.id;
-          expect(user.get("sessionAssignments")).to.deep.equal(assign);
         });
       });
     });
