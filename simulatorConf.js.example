@@ -13,7 +13,7 @@ module.exports = {
         // the range ensures that sessions fill up.
         "SESSION_RANGE": [0, 50],
         // Session mode: "randomized" or "admin". If "randomized", only
-        // randomized sessions will be used.
+        // randomized sessions will be used. Must be duplicated in "SERVER" section!
         "SESSION_MODE": "admin",
         // Disable sending of blur/focus socket traffic?
         "DISABLE_BLUR": true,
@@ -38,6 +38,9 @@ module.exports = {
     "SERVER": {
         // The ID of the event in which to generate sessions.
         "EVENT_ID": 10,
+        // Session mode: "randomized" or "admin". If "randomized", only
+        // randomized sessions will be used. Must be duplicated in "CLIENT" section!
+        "SESSION_MODE": "admin",
         // The range of admin-proposed session IDs to generate in that event.
         "SESSION_RANGE": [0, 50],
         // The range of users to generate.
