@@ -71,7 +71,7 @@
     {{ if(randomized) { }}
         <div class="col-xs-12 group-area">
             <div class="col-xs-12 group-title">
-                <h3 class="session-title"> Group Members </h3>
+                <h3 class="session-title"> {{- title }} </h3>
             </div>
             <div class="col-xs-12 session-spots">
                 <ul class="group-members"></ul>
@@ -93,7 +93,13 @@
                     </div>
 
                     <div class="col-xs-11 session-title-padding">
-                        <h3 class="session-title">{{- title }} </h3> 
+                        <h3 class="session-title">
+                        {{ if(randomized) { }}
+                            Breakout Room
+                        {{ } else { }}
+                            {{- title }} 
+                        {{ } }}
+                        </h3> 
                     </div>
                 </div>
 

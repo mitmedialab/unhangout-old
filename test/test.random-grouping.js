@@ -37,7 +37,7 @@ describe("RANDOM GROUPING", function() {
         expect(event.get("sessions").length).to.equal(length + 1);
         expect(event.get("sessions").at(length)).to.equal(session);
 
-        expect(session.get('title')).to.equal("Breakout Room");
+        expect(session.get('title')).to.equal("Group 1");
         expect(session.get('proposedBy')).to.be.null;
         expect(session.get('activities')).to.deep.equal([{type: "about", autoHide: true}]);
         expect(session.get('joinCap')).to.equal(6);
@@ -49,7 +49,7 @@ describe("RANDOM GROUPING", function() {
       .then(function(session) {
         sess2 = session;
         expect(event.get("sessions").length).to.equal(length + 2);
-        expect(session.get("title")).to.equal("Breakout Room");
+        expect(session.get("title")).to.equal("Group 2");
         expect(session.get('randomized')).to.be.true;
       })
       .then(function() {
