@@ -559,8 +559,8 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
-        this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.render, this);
-        this.listenTo(this.options.event.get("sessions"), 'remove', this.render, this);
+        this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.renderListHeader, this);
+        this.listenTo(this.options.event.get("sessions"), 'remove', this.renderListHeader, this);
     },
 
     itemViewOptions: function() {        
@@ -594,7 +594,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         });
     },
 
-    onRender: function() {         
+    renderListHeader: function() {
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
@@ -614,7 +614,11 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
                 $("#btn-propose-session").show();
                 $("#btn-create-session").hide();
             }
-        }        
+        }     
+    },
+
+    onRender: function() {  
+        this.renderListHeader();
     }
 });
 
