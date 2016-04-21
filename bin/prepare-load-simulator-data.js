@@ -88,6 +88,7 @@ function create(callback) {
                 sessionsOpen: true,
                 adminProposedSessions: sessionMode === "admin",
                 randomizedSessions: sessionMode === "randomized",
+                history: {},
             }, {
                 success: function() { done(null, event); },
                 error: function() { done(err); }
@@ -100,7 +101,9 @@ function create(callback) {
                     return new Promise(function(resolve, reject) {
                         sess.destroy({success: resolve, error: reject});
                     });
-                })).then(function() { done(event); });
+                }))
+                .then(function() { done(null, event); });
+                .catch(function(err) { done(err, event); });
             }
         },
         // Create new sessions
@@ -170,7 +173,8 @@ function create(callback) {
         }
     ], function(err) {
         if (err) {
-            logger.error(err)
+            logger.error(err);
+            callback(err);
         } else {
             logger.info("Done.");
             callback();
