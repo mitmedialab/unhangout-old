@@ -8,7 +8,8 @@ var models = require("../lib/server-models"),
     simConf = require("../simulatorConf.js").SERVER,
     UnhangoutDb = require("../lib/unhangout-db"),
     async = require("async"),
-    _ = require("underscore");
+    _ = require("underscore"),
+    Promise = require("bluebird");
 
 
 var db;
@@ -30,6 +31,7 @@ function destroy(callback) {
         logger.error("Event " + simConf.EVENT_ID + " not found.");
         return callback();
     }
+    models = models.concat(event.getRandomizedSessions());
     var sessions = event.get("sessions");
     for (var i = simConf.SESSION_RANGE[0]; i < simConf.SESSION_RANGE[1]; i++) {
         models.push(sessions.get("loadSession" + i));
@@ -91,7 +93,17 @@ function create(callback) {
                 error: function() { done(err); }
             });
         },
-        // Create sessions
+        // Delete stale sessions
+        function(event, done) {
+            if (event.get("randomizedSessions")) {
+                Promise.all(_.map(event.getRandomizedSessions(), function(sess) {
+                    return new Promise(function(resolve, reject) {
+                        sess.destroy({success: resolve, error: reject});
+                    });
+                })).then(function() { done(event); });
+            }
+        },
+        // Create new sessions
         function(event, done) {
             var sessionIds = [];
             var sessions = event.get("sessions");
