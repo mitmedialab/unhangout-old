@@ -560,6 +560,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.render, this);
+        this.listenTo(this.options.event.get("sessions"), 'remove', this.render, this);
     },
 
     itemViewOptions: function() {        
