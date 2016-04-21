@@ -102,8 +102,10 @@ function create(callback) {
                         sess.destroy({success: resolve, error: reject});
                     });
                 }))
-                .then(function() { done(null, event); });
+                .then(function() { done(null, event); })
                 .catch(function(err) { done(err, event); });
+            } else {
+              done(null, event);
             }
         },
         // Create new sessions
