@@ -71,16 +71,22 @@ function create(callback) {
         // Create event
         function(done) {
             var event = db.events.get(simConf.EVENT_ID);
+            var sessionMode = simConf.SESSION_MODE || "admin";
             if (event) {
                 logger.info("Event " + simConf.EVENT_ID + " already exists.");
             } else {
                 logger.info("Creating Event " + simConf.EVENT_ID);
                 event = new models.ServerEvent({
                     id: simConf.EVENT_ID,
-                    title: "Load Test Event"
+                    title: "Load Test Event",
                 });
             }
-            event.save({open: true, sessionsOpen: true}, {
+            event.save({
+                open: true,
+                sessionsOpen: true,
+                adminProposedSessions: sessionMode === "admin",
+                randomizedSessions: sessionMode === "randomized",
+            }, {
                 success: function() { done(null, event); },
                 error: function() { done(err); }
             });
