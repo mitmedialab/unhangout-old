@@ -252,6 +252,56 @@ a.dropdown-toggle {
   margin-top: 15px;
 }
 
+/* ================== Event Dropdown Submenu Styles ================ */
+.marginBottom-0 {
+    margin-bottom: 0;
+}
+.dropdown-submenu {
+    position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px 6px;
+    border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #cccccc;
+    margin-top: 5px;
+    margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+    border-left-color: #555;
+}
+.dropdown-submenu.pull-left {
+    float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+}
+#choose-breakout-mode {
+  background-color: white;
+}
+
+#choose-breakout-mode:hover {
+  background-color: #eee;
+}
+
 /* ================== EMAIL PREVIEW MODE STYLES ==================== */
 
 .email-preview-container {
@@ -929,6 +979,13 @@ user-admin-border-size = 2px
       width: 30px;
   }
 
+  @media(max-width: 1199px) {
+    .btn-edit-session {
+      width: 23px;
+      height: 23px;
+    }
+  }
+
   .session-title-padding {
     padding-left: 10px;
     padding-right: 10px;
@@ -1189,6 +1246,60 @@ user-admin-border-size = 2px
       padding-top: 15px;
 
       margin-left: 5px;
+    }
+  }
+
+  .group-area {
+    padding: 0px;
+  }
+
+  hr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-top: 1px solid #c0c0c0;
+  }
+
+  .group-title {
+    padding: 0px;
+
+    h3 {
+      height: 20px;
+    }
+  }
+
+  .group-line {
+    padding: 0px;
+    margin-top: -10px;
+    margin-bottom: -10px;
+  }
+
+  .group-members {
+    padding: 0px;
+    margin-bottom: 0px;
+
+    img {
+      width: 28px; 
+      height: 28px; 
+      margin-left: 2px;
+      border-radius: 2px;
+      background-color: white;
+    }
+
+    li.empty {
+      background-color: white;
+      border: 1px solid #dfdfdf;
+      float: left;
+      width: 28px;
+      height: 28px;
+      list-style: none;
+      border-radius: 2px;
+    }
+  }
+
+  @media(max-width: 1199px) {
+    .group-members img {
+      width: 23px;
+      height: 23px;
     }
   }
 }

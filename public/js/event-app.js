@@ -166,21 +166,35 @@ $(document).ready(function() {
             $('#session_name').focus();
         });
 
-        //On page reload show and hide topic list
-        //according to the current mode
-        if(!curEvent.get("adminProposedSessions")) {
-            $("#btn-propose-session").addClass('show');
-            $("#btn-propose-session").removeClass('hide');
-            $("#topic-list").show();
-        } else {
-            $("#btn-propose-session").addClass('hide');
-            $("#btn-propose-session").removeClass('show');
+        /*
+            When the app loads show or hide the breakout 
+            rooms list view controls accordingly  
+        */
+        if(curEvent.get("randomizedSessions")) {
+            $("#btn-propose-session").hide();
+            $("#btn-create-session").hide();
+            $("#btn-group-me").show();
+            $("#random-list").show();
             $("#topic-list").hide();
+        } else {
+            $("#random-list").hide();
+            $("#btn-group-me").hide();
+            if(!curEvent.get("adminProposedSessions")) {
+                $("#btn-propose-session").show();
+                $("#btn-create-session").hide();
+                $("#topic-list").show();
+            } else {
+                $("#btn-propose-session").hide();
+                $("#btn-create-session").show();
+                $("#topic-list").hide();
+            }
         }
 
-        curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
-            this.adminButtonView.render();  
-        }, this));
+        if(IS_ADMIN) {
+            curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
+                this.adminButtonView.render();  
+            }, this));
+        }
 
         // this is a little unorthodox, but not sure how else
         // to do it.
@@ -256,17 +270,6 @@ $(document).ready(function() {
                 this.adminButtonView.messageSessions(dummyEvent);
             }
 
-            var enableDisableParticipantProposedMode = function(data) {
-                if (curEvent.get('adminProposedSessions')) {
-                    hotkeysLog(data, 'enableParticipantProposedMode');
-                    this.adminButtonView.enableParticipantProposedMode(dummyEvent);
-                }
-                else {
-                    hotkeysLog(data, 'disableParticipantProposedMode');
-                    this.adminButtonView.disableParticipantProposedMode(dummyEvent);
-                }
-            }
-
             var focusChatMessage = function(data) {
                 hotkeysLog(data, 'focusChatMessage');
                 $("#chat-input").focus();
@@ -290,7 +293,6 @@ $(document).ready(function() {
                 o: openSessions,
                 w: closeSessions,
                 m: messageSessions,
-                p: enableDisableParticipantProposedMode,
                 a: focusChatMessage,
                 h: highlightChatMessage,
                 b: editWhiteboard,
@@ -379,6 +381,14 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
+        var thisEventAssign = curEvent.get("sessions").find(function(sess) {
+          return sess.get("assignedParticipants").indexOf(auth.USER_ID) !== -1;
+        });
+        if(thisEventAssign) {
+            $("#btn-group-me").find(".text").text("REGROUP ME");
+        } else {
+            $("#btn-group-me").find(".text").text("GROUP ME");
+        }
     }, app);
 
     app.vent.on("about-nav", _.bind(function(hide) {
@@ -419,7 +429,5 @@ $(document).ready(function() {
     });
 
     logger.log("Setup regions.");
-
 });
-
 });

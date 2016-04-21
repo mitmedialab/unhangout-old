@@ -172,6 +172,20 @@ AuthSock.prototype = _.extend({
                         this.acknowledged("focus");
                     }
                     break;
+                case "assign-randomized-group-ack":
+                    this.acknowledged("assign-randomized-group");
+                    break;
+                case "state":
+                    var isSessionAssignment = (
+                        (msg.args.path[3] === "assignedParticipants") &&
+                        (msg.args.op === "set") &&
+                        (_.contains(msg.args.value, this.userId))
+                    );
+                    if (isSessionAssignment) {
+                        delete this.assignedSessionPending;
+                        this.assignedSessionId = msg.args.path[2];
+                    }
+                    break;
                 default:
                     if (msg.type.indexOf("-err") != -1) {
                         this.onerror(msg);
@@ -264,20 +278,49 @@ Rando.prototype = {
                 break;
             case "authorized":
                 if (!simConf.DISABLE_SESSION_JOINING && Math.random() > 0.9) {
-                    var sessionId = simConf.SESSION_RANGE[0] + Math.floor(
-                        (simConf.SESSION_RANGE[1] - simConf.SESSION_RANGE[0]) * Math.random()
-                    );
-                    var roomId = "session/loadSession" + sessionId;
-                    this.sessionSock.write("join", {id: roomId});
-                    this.sessionSock.state = "joining";
-                    this.sessionSock.room = roomId;
+                    var roomId;
+                    if (simConf.SESSION_MODE === "admin" || simConf.SESSION_MODE === undefined) {
+                        // admin-proposed session mode: Just pick a session
+                        // within our prescribed range and try to join it.
+                        var sessionId = simConf.SESSION_RANGE[0] + Math.floor(
+                            (simConf.SESSION_RANGE[1] - simConf.SESSION_RANGE[0]) * Math.random()
+                        );
+                        roomId = "session/loadSession" + sessionId;
+                    } else if (simConf.SESSION_MODE === "randomized") {
+                        // Random session mode: See if we have been assigned a
+                        // group yet -- use it if so, or request a new otherwise
+                        if (this.eventSock.assignedSessionId) {
+                            roomId = "session/" + this.eventSock.assignedSessionId;
+                        } else {
+                            // Request a new grouping if we haven't requested
+                            // one or our request is more than 10 seconds old.
+                            var requestSession = (
+                                !this.eventSock.assignedSessionPending ||
+                                (Date.now() - this.eventSock.assignedSessionPending) > 10000
+                            );
+                            if (requestSession) {
+                                this.eventSock.assignedSessionPending = Date.now();
+                                this.eventSock.write("assign-randomized-session", 
+                                                     {roomId: EVENT_ROOM_ID,
+                                                      eventId: simConf.EVENT_ID});
+                            }
+                        }
+                    }
+                    if (roomId) {
+                        this.sessionSock.write("join", {id: roomId});
+                        this.sessionSock.state = "joining";
+                        this.sessionSock.room = roomId;
+                    }
                 }
+                break;
+            case "grouped":
                 break;
             case "joined":
                 if (!simConf.DISABLE_SESSION_LEAVING && Math.random() > 0.9) {
                     this.sessionSock.write("leave", {id: this.sessionSock.room});
                     this.sessionSock.state = "authorized";
                     this.sessionSock.room = null;
+                    delete this.eventSock.assignedSessionId;
                 }
                 break;
         };

@@ -105,7 +105,8 @@ models.Event = models.BaseModel.extend({
             iframeEmbedCode: "",
             previousVideoEmbeds: [],
             sessionsOpen: false,
-            adminProposedSessions: true,
+            adminProposedSessions: true, 
+            randomizedSessions: false,
             dateAndTime: null,
             timeZoneValue: null,
             admins: []
@@ -331,11 +332,13 @@ models.Session = Backbone.Model.extend({
             // State
             connectedParticipants: [],
             joiningParticipants: [],
+            assignedParticipants: [],
             activities: [],
             joinCap: this.MAX_ATTENDEES,
             approved: false,
             votes: 0,
-            votedBy: []
+            votedBy: [],
+            randomized: false
         };
     },
     getRoomId: function() {
