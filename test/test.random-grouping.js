@@ -109,9 +109,44 @@ describe("RANDOM GROUPING", function() {
     });
   });
 
-//  describe("Sockets", function() {
-//    it("Assigns randomized session on socket message", function() {
-//      var sock = comm
-//    });
-//  });
+  describe("Sockets", function() {
+    it("Assigns randomized session on socket message", function(done) {
+      common.authedSock("regular1", event.getRoomId(), function(sock) {
+        var started = false;
+        var messages = [
+          {type: "assign-randomized-session-ack"},
+          {
+            type: "state",
+            args: {
+              "path": ["event", "sessions", event.get("sessions").length + 1, "assignedParticipants"],
+              "op": "set",
+              "value": ["0"]
+            },
+          }
+        ];
+
+        sock.on("data", function(dataStr) {
+          var data = JSON.parse(dataStr);
+          if (!started && data.type != "assign-randomized-session-ack") {
+            return;
+          }
+          started = true;
+          delete data.timestamp;
+          expect(data).to.deep.equal(messages.shift());
+          if (messages.length === 0) {
+            var sessions = common.server.db.events.get(event.id).get("sessions");
+            var sess = sessions.at(sessions.length - 1);
+            var user = common.server.db.users.findWhere({"sock-key": "regular1"});
+            expect(sess.get("randomized")).to.be.true;
+            expect(sess.get("assignedParticipants")).to.contain(user.id);
+            done();
+          }
+        });
+        sock.write(JSON.stringify({
+          type: "assign-randomized-session",
+          args: {eventId: event.id}
+        }));
+      });
+    });
+  });
 });
