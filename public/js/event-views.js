@@ -59,6 +59,8 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
+        this.listenTo(this.options.event.get("connectedUsers"), 'add',
+                      this.maybeRenderOnAddConnectedUser, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         // Maintain a list of slots and user preferences for them, so that we
@@ -71,6 +73,12 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         this.listenTo(this.model, 'change:approved', this.render, this);
         this.listenTo(this.model, 'change:title', this.render, this);
+    },
+
+    maybeRenderOnAddConnectedUser: function(user, event) {
+        if (this.model.get("assignedParticipants").indexOf(user.id) !== -1) {
+            this.render();
+        }
     },
 
     onRender: function() { 
