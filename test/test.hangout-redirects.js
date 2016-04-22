@@ -1,6 +1,7 @@
 var server = require("../lib/unhangout-server"),
     models = require("../lib/server-models"),
     farming = require("../lib/hangout-farming"),
+    conf = require("../lib/options"),
     common = require("./common"),
     expect = require("expect.js"),
     _ = require("underscore"),
@@ -32,7 +33,7 @@ describe("HANGOUT REDIRECTS", function() {
                         sess = sess || session;
                         var user = common.server.db.users.findWhere({"sock-key": sockKey});
                         return "?gid=rofl&gd=sessionId:" + sess.id +
-                            ":baseUrl:" + encodeURIComponent(encodeURIComponent(common.URL)) +
+                            ":baseUrl:" + encodeURIComponent(encodeURIComponent(conf.ALT_AUTH_CALLBACK_DOMAIN || common.URL)) +
                             ":sockKey:" + sockKey + ":userId:" + user.id;
                     }
                     return true;
