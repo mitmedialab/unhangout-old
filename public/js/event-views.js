@@ -721,7 +721,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #set-iframe-code': 'setIframeCode',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
-        'click #regroup': 'regroupUser'
+        'click #regroup': 'regroupUser',
+        'click #enable-randomized-sessions-mode': 'enableRandomizedSessionsMode'
     },
 
     addUrlToSessionMessage: function(event) {
@@ -735,6 +736,24 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $("#message-sessions-modal .faux-hangout-notice .message").html(
             _.escape(formatSessionMessage($("#session_message").val()))
         );
+    },
+
+    enableRandomizedSessionsMode: function(jqevt) {
+        jqevt.preventDefault();
+        var el = $("#randomized-sessions-modal input");
+        var val = el.val();
+        
+        if(val > 10) {
+            val = 10; 
+        } else if (val < 0) {
+            val = 0;
+        }
+
+        this.options.transport.send("proposed-mode", {
+            roomId: this.options.event.getRoomId(),
+            size: val,
+            mode: "randomized"
+        });
     },
 
     fillTopicPreview: function(event) {
@@ -1038,7 +1057,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'mouseover #choose-breakout-mode': 'chooseBreakoutSubmenu',
         'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
         'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
-        'click #randomized-sessions-mode': 'enableRandomizedSessionsMode'
+        'click #randomized-sessions': "openRandomizedSessionsModal"
     },
 
     openSessions: function(jqevt) {
@@ -1098,9 +1117,9 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         this.changeSessionsProposedMode("participantProposed");
     },
 
-    enableRandomizedSessionsMode: function(jqevt) {
+    openRandomizedSessionsModal: function(jqevt) {
         jqevt.preventDefault();
-        this.changeSessionsProposedMode("randomized"); 
+        $("#randomized-sessions-modal").modal('show');
     },
 
     changeSessionsProposedMode: function(action) {
