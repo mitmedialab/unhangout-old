@@ -59,6 +59,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
+        this.listenTo(this.model, 'change:assignedParticipants', this.differentMethod, this); 
         this.listenTo(this.options.event.get("connectedUsers"), 'add',
                       this.maybeRenderOnAddConnectedUser, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
@@ -73,6 +74,22 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         this.listenTo(this.model, 'change:approved', this.render, this);
         this.listenTo(this.model, 'change:title', this.render, this);
+    },
+
+    differentMethod: function() {
+        if(this.options.event.get("randomizedSessions")) {
+            if(this.model.get("assignedParticipants").indexOf(USER.id) >= 0) {
+                if(!this.options.event.get("sessionsOpen")) {
+                    return;
+                }
+
+                // if the event has started, button presses should attempt to join
+                // the hangout.
+                var url = "/session/" + this.model.get("session-key") +
+                          "?nocache=" + new Date().getTime();
+                window.open(url);
+            }
+        }
     },
 
     maybeRenderOnAddConnectedUser: function(user, event) {
@@ -544,16 +561,28 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
     breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
-    
+    event: null,
+
     emptyView: Backbone.Marionette.ItemView.extend({
-        template: "#session-list-empty-template"
+        initialize: function(options) {
+            event = options.event;
+        },
+
+        template: this.getTemplate,
+        getTemplate: function() {
+            if(event.get("randomizedSessions")) {
+                return "#dummy-session-template"
+            } else {
+                return "#session-list-empty-template"
+            }
+        },        
     }),
 
     id: "session-list",
 
     events: {
         'click #btn-group-me': 'groupUser',
-    },
+    },  
 
     initialize: function() {
         this.renderControls();
@@ -561,6 +590,8 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.render, this);
         this.listenTo(this.options.event.get("sessions"), 'remove', this.render, this);
+        this.listenTo(this.options.event, 'change:sessionsOpen', this.modifyDummySessionJoinButton, this);
+        this.listenTo(this.options.event, 'change:sessionSize', this.buildHangoutAndGroupMembers, this);
     },
 
     itemViewOptions: function() {        
@@ -594,7 +625,34 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         });
     },
 
-    onRender: function() {         
+    buildHangoutAndGroupMembers: function() {
+        var sessionSize = this.options.event.get("sessionSize");
+        var groupMembersFragment = document.createDocumentFragment();
+        for(var i = 0; i< sessionSize; i++) {
+            emptyli = document.createElement("li");
+            emptyli.className = "empty";
+            groupMembersFragment.appendChild(emptyli);
+        }
+        $(".dummy-hangout-users").html(groupMembersFragment);
+        $(".dummy-group-members").html(groupMembersFragment);
+    },
+
+    modifyDummySessionJoinButton: function() {
+        var event = this.options.event;
+        if(event.get("randomizedSessions")) {
+            if(event.get("sessionsOpen")) {
+                $(".btn-group-me").find(".text").text("JOIN");
+                $(".btn-group-me").find(".lock").hide();
+                $(".btn-group-me").attr("disabled", false);
+            } else {
+                $(".btn-group-me").find(".text").text("LOCKED");
+                $(".btn-group-me").addClass("disabled");
+                $(".btn-group-me").attr("disabled", true);
+            }
+        }
+    },
+
+    onRender: function() { 
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();

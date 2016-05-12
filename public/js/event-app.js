@@ -176,6 +176,15 @@ $(document).ready(function() {
             $("#btn-group-me").show();
             $("#random-list").show();
             $("#topic-list").hide();
+            if(curEvent.get("sessionsOpen")) {
+                $(".btn-group-me").find(".text").text("JOIN");
+                $(".btn-group-me").find(".lock").hide();
+                $(".btn-group-me").attr("disabled", false);
+            } else {
+                $(".btn-group-me").find(".text").text("LOCKED");
+                $(".btn-group-me").addClass("disabled");
+                $(".btn-group-me").attr("disabled", true);
+            }
         } else {
             $("#random-list").hide();
             $("#btn-group-me").hide();
@@ -192,7 +201,7 @@ $(document).ready(function() {
 
         if(IS_ADMIN) {
             curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
-                this.adminButtonView.render();  
+                this.adminButtonView.render(); 
             }, this));
         }
 
