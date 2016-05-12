@@ -59,6 +59,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
+        this.listenTo(this.model, 'change:assignedParticipants', this.differentMethod, this); 
         this.listenTo(this.options.event.get("connectedUsers"), 'add',
                       this.maybeRenderOnAddConnectedUser, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
@@ -73,6 +74,22 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         this.listenTo(this.model, 'change:approved', this.render, this);
         this.listenTo(this.model, 'change:title', this.render, this);
+    },
+
+    differentMethod: function() {
+        if(this.options.event.get("randomizedSessions")) {
+            if(this.model.get("assignedParticipants").indexOf(USER.id) >= 0) {
+                if(!this.options.event.get("sessionsOpen")) {
+                    return;
+                }
+
+                // if the event has started, button presses should attempt to join
+                // the hangout.
+                var url = "/session/" + this.model.get("session-key") +
+                          "?nocache=" + new Date().getTime();
+                window.open(url);
+            }
+        }
     },
 
     maybeRenderOnAddConnectedUser: function(user, event) {
@@ -544,7 +561,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
     breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
-    
+
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
@@ -594,7 +611,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         });
     },
 
-    onRender: function() {         
+    onRender: function() { 
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
