@@ -59,7 +59,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
-        this.listenTo(this.model, 'change:assignedParticipants', this.differentMethod, this); 
+        this.listenTo(this.model, 'change:assignedParticipants', this.openHangoutWindow, this); 
         this.listenTo(this.options.event.get("connectedUsers"), 'add',
                       this.maybeRenderOnAddConnectedUser, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
@@ -76,7 +76,7 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:title', this.render, this);
     },
 
-    differentMethod: function() {
+    openHangoutWindow: function() {
         if(this.options.event.get("randomizedSessions")) {
             if(this.model.get("assignedParticipants").indexOf(USER.id) >= 0) {
                 if(!this.options.event.get("sessionsOpen")) {
@@ -581,7 +581,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     id: "session-list",
 
     events: {
-        'click #btn-group-me': 'groupUser',
+        'click .btn-group-me': 'groupUser',
     },  
 
     initialize: function() {
