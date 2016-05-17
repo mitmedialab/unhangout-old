@@ -173,7 +173,6 @@ $(document).ready(function() {
         if(curEvent.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
-            $("#btn-group-me").show();
             $("#random-list").show();
             $("#topic-list").hide();
             if(curEvent.get("sessionsOpen")) {
@@ -187,7 +186,6 @@ $(document).ready(function() {
             }
         } else {
             $("#random-list").hide();
-            $("#btn-group-me").hide();
             if(!curEvent.get("adminProposedSessions")) {
                 $("#btn-propose-session").show();
                 $("#btn-create-session").hide();
@@ -394,9 +392,9 @@ $(document).ready(function() {
           return sess.get("assignedParticipants").indexOf(auth.USER_ID) !== -1;
         });
         if(thisEventAssign) {
-            $("#btn-group-me").find(".text").text("REGROUP ME");
+            $("#btn-regroup-me").show();
         } else {
-            $("#btn-group-me").find(".text").text("GROUP ME");
+            $("#btn-regroup-me").hide();
         }
     }, app);
 

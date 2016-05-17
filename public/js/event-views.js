@@ -656,16 +656,15 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
-            $("#btn-group-me").show();
+            $("#btn-regroup-me").hide();
             var thisEventAssign = this.getMySessionAssignment();
             if(thisEventAssign) {
-                $("#btn-group-me").find(".text").text("REGROUP ME");
-            } else {
-                $("#btn-group-me").find(".text").text("GROUP ME");
-            }
+                $("#btn-regroup-me").find(".text").text("REGROUP ME");
+                $("#btn-regroup-me").show();
+            } 
             this.modifyDummySessionJoinButton();
         } else {
-            $("#btn-group-me").hide();
+            $("#btn-regroup-me").hide();
             if(this.options.event.get("adminProposedSessions")) {
                 $("#btn-propose-session").hide();
                 $("#btn-create-session").show();
