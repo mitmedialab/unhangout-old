@@ -663,6 +663,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
             } else {
                 $("#btn-group-me").find(".text").text("GROUP ME");
             }
+            this.modifyDummySessionJoinButton();
         } else {
             $("#btn-group-me").hide();
             if(this.options.event.get("adminProposedSessions")) {
