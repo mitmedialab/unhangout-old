@@ -561,21 +561,10 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
     breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
-    event: null,
+    dummySessionTemplate: _.template($("#dummy-session-template").html()),
 
     emptyView: Backbone.Marionette.ItemView.extend({
-        initialize: function(options) {
-            event = options.event;
-        },
-
-        template: this.getTemplate,
-        getTemplate: function() {
-            if(event.get("randomizedSessions")) {
-                return "#dummy-session-template"
-            } else {
-                return "#session-list-empty-template"
-            }
-        },        
+        template: "#session-list-empty-template"
     }),
 
     id: "session-list",
@@ -617,6 +606,9 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     renderControls: function() {    
         this.$el.html(this.breakoutRoomsHeaderTemplate());
+        if(this.options.event.get("randomizedSessions")) {
+            this.$el.append(this.dummySessionTemplate());
+        } 
     },
 
     getMySessionAssignment: function() {
@@ -656,15 +648,20 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
-            $("#btn-regroup-me").hide();
             var thisEventAssign = this.getMySessionAssignment();
             if(thisEventAssign) {
                 $("#btn-regroup-me").find(".text").text("REGROUP ME");
                 $("#btn-regroup-me").show();
-            } 
+                $(".dummy-session").hide();
+            } else {
+                $("#btn-regroup-me").hide();
+                $(".dummy-session").show();
+            }
             this.modifyDummySessionJoinButton();
+            this.$el.find(".empty-notice").hide();  
         } else {
             $("#btn-regroup-me").hide();
+            $(".dummy-session").hide();
             if(this.options.event.get("adminProposedSessions")) {
                 $("#btn-propose-session").hide();
                 $("#btn-create-session").show();

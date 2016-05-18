@@ -184,6 +184,7 @@ $(document).ready(function() {
                 $(".btn-group-me").addClass("disabled");
                 $(".btn-group-me").attr("disabled", true);
             }
+            $(".empty-notice").hide();
         } else {
             $("#random-list").hide();
             if(!curEvent.get("adminProposedSessions")) {
@@ -388,13 +389,16 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
-        var thisEventAssign = curEvent.get("sessions").find(function(sess) {
+        var thisEventAssign  = curEvent.get("sessions").find(function(sess) {
           return sess.get("assignedParticipants").indexOf(auth.USER_ID) !== -1;
         });
+        
         if(thisEventAssign) {
             $("#btn-regroup-me").show();
+            $(".dummy-session").hide();
         } else {
             $("#btn-regroup-me").hide();
+            $(".dummy-session").show();
         }
     }, app);
 
