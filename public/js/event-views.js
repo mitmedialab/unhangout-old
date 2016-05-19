@@ -571,6 +571,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     events: {
         'click .btn-group-me': 'groupUser',
+        'click #btn-regroup-me': 'groupUser'
     },  
 
     initialize: function() {
@@ -594,9 +595,20 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     groupUser: function(jqevt) {
         jqevt.preventDefault();
         var thisEventAssign = this.getMySessionAssignment();
+        var mySessionConnected = this.getMySessionConnected();
+
         if(thisEventAssign) {
             var scope = $("#regroup-modal");
             scope.modal('show');
+            if(mySessionConnected) {
+                $(".warning", scope).show();
+                $(".info", scope).hide();
+                $(".regroup", scope).hide();
+            } else {
+                $(".warning", scope).hide();
+                $(".info", scope).show();
+                $(".regroup", scope).show();
+            }
         } else {
             this.options.transport.send("assign-randomized-session", {
                 eventId: this.options.event.id,
@@ -609,6 +621,12 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         if(this.options.event.get("randomizedSessions")) {
             this.$el.append(this.dummySessionTemplate());
         } 
+    },
+
+    getMySessionConnected: function() {
+        return this.options.event.get("sessions").find(function(sess) {
+            return _.pluck(sess.get("connectedParticipants"), "id").indexOf(auth.USER_ID) !== -1;
+        });
     },
 
     getMySessionAssignment: function() {
