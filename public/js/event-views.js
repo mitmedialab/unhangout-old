@@ -59,7 +59,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
         this.listenTo(this.model, 'change:connectedParticipants', this.render, this);
         this.listenTo(this.model, 'change:joiningParticipants', this.render, this);
         this.listenTo(this.model, 'change:assignedParticipants', this.render, this);
-        this.listenTo(this.model, 'change:assignedParticipants', this.openHangoutWindow, this); 
         this.listenTo(this.options.event.get("connectedUsers"), 'add',
                       this.maybeRenderOnAddConnectedUser, this);
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
@@ -74,22 +73,6 @@ views.SessionView = Backbone.Marionette.ItemView.extend({
 
         this.listenTo(this.model, 'change:approved', this.render, this);
         this.listenTo(this.model, 'change:title', this.render, this);
-    },
-
-    openHangoutWindow: function() {
-        if(this.options.event.get("randomizedSessions")) {
-            if(this.model.get("assignedParticipants").indexOf(USER.id) >= 0) {
-                if(!this.options.event.get("sessionsOpen")) {
-                    return;
-                }
-
-                // if the event has started, button presses should attempt to join
-                // the hangout.
-                var url = "/session/" + this.model.get("session-key") +
-                          "?nocache=" + new Date().getTime();
-                window.open(url);
-            }
-        }
     },
 
     maybeRenderOnAddConnectedUser: function(user, event) {
@@ -579,9 +562,10 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.render, this);
+        this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.simulateJoin, this);
         this.listenTo(this.options.event.get("sessions"), 'remove', this.render, this);
         this.listenTo(this.options.event, 'change:sessionsOpen', this.modifyDummySessionJoinButton, this);
-        this.listenTo(this.options.event, 'change:sessionSize', this.buildHangoutAndGroupMembers, this);
+        this.listenTo(this.options.event, 'change:sessionSize', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -601,10 +585,12 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
             var scope = $("#regroup-modal");
             scope.modal('show');
             if(mySessionConnected) {
+                $(".modal-title", scope).text("Oops! We cannot regroup you.");
                 $(".warning", scope).show();
                 $(".info", scope).hide();
                 $(".regroup", scope).hide();
             } else {
+                $(".modal-title", scope).text("Are you sure you want to regroup?");
                 $(".warning", scope).hide();
                 $(".info", scope).show();
                 $(".regroup", scope).show();
@@ -637,14 +623,24 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     buildHangoutAndGroupMembers: function() {
         var sessionSize = this.options.event.get("sessionSize");
-        var groupMembersFragment = document.createDocumentFragment();
-        for(var i = 0; i< sessionSize; i++) {
-            emptyli = document.createElement("li");
-            emptyli.className = "empty";
-            groupMembersFragment.appendChild(emptyli);
+        
+        var groupFragment = createFragment("groupFragment");
+        var groupMembers = $(".dummy-group-members");
+        groupMembers.empty().append(groupFragment);
+
+        var hangoutFragment = createFragment("hangoutFragment");
+        var hangoutUsers = $(".dummy-hangout-users");
+        hangoutUsers.empty().append(hangoutFragment);
+
+        function createFragment(fragment) {
+            fragment = document.createDocumentFragment();
+            for(var i = 0; i< sessionSize; i++) {
+                emptyli = document.createElement("li");
+                emptyli.className = "empty";
+                fragment.appendChild(emptyli);
+            }  
+            return fragment;
         }
-        $(".dummy-hangout-users").html(groupMembersFragment);
-        $(".dummy-group-members").html(groupMembersFragment);
     },
 
     modifyDummySessionJoinButton: function() {
@@ -662,6 +658,18 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         }
     },
 
+    simulateJoin: function() {
+        if(!this.options.event.get("sessionsOpen")) {
+            return;
+        }
+        var session = this.getMySessionAssignment();
+        if(session) {
+            var url = "/session/" + session.get("session-key") +
+              "?nocache=" + new Date().getTime();
+            window.open(url);
+        }
+    },
+
     onRender: function() { 
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
@@ -676,6 +684,7 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
                 $(".dummy-session").show();
             }
             this.modifyDummySessionJoinButton();
+            this.buildHangoutAndGroupMembers();
             this.$el.find(".empty-notice").hide();  
         } else {
             $("#btn-regroup-me").hide();
