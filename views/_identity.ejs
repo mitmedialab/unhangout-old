@@ -20,7 +20,7 @@
                     <li role="presentation" class="divider"></li>
                 <% } %>
 
-                <% if (user.isSuperuser() || user.isAdminOfSomeEvent()) { %>
+                <% if (user.isSuperuser() || user.isAdminOfSomeEvent() || user.hasPerm("createEvents")) { %>
                     <li role="presentation">
                         <a role="menuitem" tabindex="-1" href="/myevents/">My Events</a>
                     </li>
