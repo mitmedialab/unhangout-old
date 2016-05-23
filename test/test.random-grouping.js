@@ -15,6 +15,7 @@ describe("RANDOM GROUPING", function() {
     common.standardSetup(function() {
       event = common.server.db.events.get(1);
       event.set("randomizedSessions", true);
+      event.set("sessionSize", 6);
       eventId = event.get("id");
       group = randomGrouping(common.server.db, options);
       done();
@@ -40,7 +41,7 @@ describe("RANDOM GROUPING", function() {
         expect(session.get('title')).to.equal("Breakout Room 1");
         expect(session.get('proposedBy')).to.be.null;
         expect(session.get('activities')).to.deep.equal([{type: "about", autoHide: true}]);
-        expect(session.get('joinCap')).to.equal(6);
+        expect(session.get('joinCap')).to.equal(event.get("sessionSize")); 
         expect(session.get('randomized')).to.equal(true);
         expect(session.get('approved')).to.equal(true);
 

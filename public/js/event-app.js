@@ -173,12 +173,20 @@ $(document).ready(function() {
         if(curEvent.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
-            $("#btn-group-me").show();
             $("#random-list").show();
             $("#topic-list").hide();
+            if(curEvent.get("sessionsOpen")) {
+                $(".btn-group-me").find(".text").text("JOIN");
+                $(".btn-group-me").find(".lock").hide();
+                $(".btn-group-me").attr("disabled", false);
+            } else {
+                $(".btn-group-me").find(".text").text("LOCKED");
+                $(".btn-group-me").addClass("disabled");
+                $(".btn-group-me").attr("disabled", true);
+            }
+            $(".empty-notice").hide();
         } else {
             $("#random-list").hide();
-            $("#btn-group-me").hide();
             if(!curEvent.get("adminProposedSessions")) {
                 $("#btn-propose-session").show();
                 $("#btn-create-session").hide();
@@ -192,7 +200,7 @@ $(document).ready(function() {
 
         if(IS_ADMIN) {
             curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
-                this.adminButtonView.render();  
+                this.adminButtonView.render(); 
             }, this));
         }
 
@@ -381,13 +389,16 @@ $(document).ready(function() {
         $("#linkedin_url").val(USER.preferredContact.linkedinURL);
         $("#noShareChkBox").prop("checked", USER.preferredContact.noShare);
 
-        var thisEventAssign = curEvent.get("sessions").find(function(sess) {
+        var thisEventAssign  = curEvent.get("sessions").find(function(sess) {
           return sess.get("assignedParticipants").indexOf(auth.USER_ID) !== -1;
         });
+        
         if(thisEventAssign) {
-            $("#btn-group-me").find(".text").text("REGROUP ME");
+            $("#btn-regroup-me").show();
+            $(".dummy-session").hide();
         } else {
-            $("#btn-group-me").find(".text").text("GROUP ME");
+            $("#btn-regroup-me").hide();
+            $(".dummy-session").show();
         }
     }, app);
 

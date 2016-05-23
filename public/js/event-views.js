@@ -544,7 +544,8 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     itemView: views.SessionView,
     itemViewContainer: '#session-list-container',
     breakoutRoomsHeaderTemplate: _.template($("#breakout-rooms-header-template").html()),
-    
+    dummySessionTemplate: _.template($("#dummy-session-template").html()),
+
     emptyView: Backbone.Marionette.ItemView.extend({
         template: "#session-list-empty-template"
     }),
@@ -552,15 +553,19 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     id: "session-list",
 
     events: {
-        'click #btn-group-me': 'groupUser',
-    },
+        'click .btn-group-me': 'groupUser',
+        'click #btn-regroup-me': 'groupUser'
+    },  
 
     initialize: function() {
         this.renderControls();
         this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
         this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
         this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.render, this);
+        this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.simulateJoin, this);
         this.listenTo(this.options.event.get("sessions"), 'remove', this.render, this);
+        this.listenTo(this.options.event, 'change:sessionsOpen', this.modifyDummySessionJoinButton, this);
+        this.listenTo(this.options.event, 'change:sessionSize', this.render, this);
     },
 
     itemViewOptions: function() {        
@@ -574,9 +579,22 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     groupUser: function(jqevt) {
         jqevt.preventDefault();
         var thisEventAssign = this.getMySessionAssignment();
+        var mySessionConnected = this.getMySessionConnected();
+
         if(thisEventAssign) {
             var scope = $("#regroup-modal");
             scope.modal('show');
+            if(mySessionConnected) {
+                $(".modal-title", scope).text("Oops! We cannot regroup you.");
+                $(".warning", scope).show();
+                $(".info", scope).hide();
+                $(".regroup", scope).hide();
+            } else {
+                $(".modal-title", scope).text("Are you sure you want to regroup?");
+                $(".warning", scope).hide();
+                $(".info", scope).show();
+                $(".regroup", scope).show();
+            }
         } else {
             this.options.transport.send("assign-randomized-session", {
                 eventId: this.options.event.id,
@@ -586,6 +604,15 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     renderControls: function() {    
         this.$el.html(this.breakoutRoomsHeaderTemplate());
+        if(this.options.event.get("randomizedSessions")) {
+            this.$el.append(this.dummySessionTemplate());
+        } 
+    },
+
+    getMySessionConnected: function() {
+        return this.options.event.get("sessions").find(function(sess) {
+            return _.pluck(sess.get("connectedParticipants"), "id").indexOf(auth.USER_ID) !== -1;
+        });
     },
 
     getMySessionAssignment: function() {
@@ -594,19 +621,74 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
         });
     },
 
-    onRender: function() {         
+    buildHangoutAndGroupMembers: function() {
+        var sessionSize = this.options.event.get("sessionSize");
+        
+        var groupFragment = createFragment("groupFragment");
+        var groupMembers = $(".dummy-group-members");
+        groupMembers.empty().append(groupFragment);
+
+        var hangoutFragment = createFragment("hangoutFragment");
+        var hangoutUsers = $(".dummy-hangout-users");
+        hangoutUsers.empty().append(hangoutFragment);
+
+        function createFragment(fragment) {
+            fragment = document.createDocumentFragment();
+            for(var i = 0; i< sessionSize; i++) {
+                emptyli = document.createElement("li");
+                emptyli.className = "empty";
+                fragment.appendChild(emptyli);
+            }  
+            return fragment;
+        }
+    },
+
+    modifyDummySessionJoinButton: function() {
+        var event = this.options.event;
+        if(event.get("randomizedSessions")) {
+            if(event.get("sessionsOpen")) {
+                $(".btn-group-me").find(".text").text("JOIN");
+                $(".btn-group-me").find(".lock").hide();
+                $(".btn-group-me").attr("disabled", false);
+            } else {
+                $(".btn-group-me").find(".text").text("LOCKED");
+                $(".btn-group-me").addClass("disabled");
+                $(".btn-group-me").attr("disabled", true);
+            }
+        }
+    },
+
+    simulateJoin: function() {
+        if(!this.options.event.get("sessionsOpen")) {
+            return;
+        }
+        var session = this.getMySessionAssignment();
+        if(session) {
+            var url = "/session/" + session.get("session-key") +
+              "?nocache=" + new Date().getTime();
+            window.open(url);
+        }
+    },
+
+    onRender: function() { 
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
-            $("#btn-group-me").show();
             var thisEventAssign = this.getMySessionAssignment();
             if(thisEventAssign) {
-                $("#btn-group-me").find(".text").text("REGROUP ME");
+                $("#btn-regroup-me").find(".text").text("REGROUP ME");
+                $("#btn-regroup-me").show();
+                $(".dummy-session").hide();
             } else {
-                $("#btn-group-me").find(".text").text("GROUP ME");
+                $("#btn-regroup-me").hide();
+                $(".dummy-session").show();
             }
+            this.modifyDummySessionJoinButton();
+            this.buildHangoutAndGroupMembers();
+            this.$el.find(".empty-notice").hide();  
         } else {
-            $("#btn-group-me").hide();
+            $("#btn-regroup-me").hide();
+            $(".dummy-session").hide();
             if(this.options.event.get("adminProposedSessions")) {
                 $("#btn-propose-session").hide();
                 $("#btn-create-session").show();
@@ -721,7 +803,8 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'click #set-iframe-code': 'setIframeCode',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
-        'click #regroup': 'regroupUser'
+        'click #regroup': 'regroupUser',
+        'click #enable-randomized-sessions-mode': 'enableRandomizedSessionsMode'
     },
 
     addUrlToSessionMessage: function(event) {
@@ -735,6 +818,24 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $("#message-sessions-modal .faux-hangout-notice .message").html(
             _.escape(formatSessionMessage($("#session_message").val()))
         );
+    },
+
+    enableRandomizedSessionsMode: function(jqevt) {
+        jqevt.preventDefault();
+        var el = $("#randomized-sessions-modal input");
+        var val = el.val();
+        
+        if(val > 10) {
+            val = 10; 
+        } else if (val < 0) {
+            val = 0;
+        }
+
+        this.options.transport.send("proposed-mode", {
+            roomId: this.options.event.getRoomId(),
+            size: val,
+            mode: "randomized"
+        });
     },
 
     fillTopicPreview: function(event) {
@@ -1038,7 +1139,7 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         'mouseover #choose-breakout-mode': 'chooseBreakoutSubmenu',
         'click #admin-proposed-sessions-mode': 'disableParticipantProposedMode',
         'click #participant-proposed-sessions-mode': 'enableParticipantProposedMode',
-        'click #randomized-sessions-mode': 'enableRandomizedSessionsMode'
+        'click #randomized-sessions': "openRandomizedSessionsModal"
     },
 
     openSessions: function(jqevt) {
@@ -1098,9 +1199,9 @@ views.AdminButtonView = Backbone.Marionette.Layout.extend({
         this.changeSessionsProposedMode("participantProposed");
     },
 
-    enableRandomizedSessionsMode: function(jqevt) {
+    openRandomizedSessionsModal: function(jqevt) {
         jqevt.preventDefault();
-        this.changeSessionsProposedMode("randomized"); 
+        $("#randomized-sessions-modal").modal('show');
     },
 
     changeSessionsProposedMode: function(action) {
