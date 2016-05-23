@@ -365,6 +365,11 @@ $(document).ready(function() {
 	        return context;
 	    },
 
+	    onRender: function() {
+	    	if(events.length == 0) {
+	    		this.$el.hide();
+	    	}
+	    },
 	});
 
 	/* -------------------   App initialization ---------------- */
