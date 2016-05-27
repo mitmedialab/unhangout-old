@@ -553,6 +553,8 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     events: {
         'click #btn-group-me': 'groupUser',
+        'click #btn-create-session': 'invokeCreateSessionModal',
+        'click #btn-propose-session': 'invokeProposeSessionModal'
     },
 
     initialize: function() {
@@ -570,6 +572,20 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
             transport: this.options.transport
         };
     }, 
+
+    invokeCreateSessionModal: function(jqevt) {
+        jqevt.preventDefault();
+        $("#create-session-modal").modal('show');
+        $(".create-session-error").addClass('hide');
+        $(".create-session-error").removeClass('show');
+    },
+
+    invokeProposeSessionModal: function(jqevt) {
+        jqevt.preventDefault();
+        $("#propose-session-modal").modal('show');
+        $(".propose-session-error").addClass('hide');
+        $(".propose-session-error").removeClass('show');
+    },
 
     groupUser: function(jqevt) {
         jqevt.preventDefault();
@@ -717,7 +733,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         'keyup #session_message': 'updateSessionMessage',
         'click #send-email-button': 'sendFollowupEmail',
         'click #submit-contact-info': 'submitContactInfo',
-        'click #btn-propose-session': 'proposeSessionDialog',
         'click #set-iframe-code': 'setIframeCode',
         'click #propose': 'proposeSession', 
         'input .input-topic-title': 'fillTopicPreview',
@@ -739,28 +754,21 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     fillTopicPreview: function(event) {
         event.preventDefault();
-
         var title = $(".input-topic-title").val();
         var scope = $("#propose-session-modal");
 
         if(title.length > 80 || title.length === 0 || title === "") {    
             scope.modal('show');
-            $(".proposed-title-validate-error", scope).addClass('show');
-            $(".proposed-title-validate-error", scope).removeClass('hide');
-
             if(title.length > 80)
-                $(".proposed-title-validate-error", scope).text("Title should be less than 80 characters");
+                this.showProposeSessionError("Oops! Session title should be less than 80 characters.");
             else if (title.length === 0 || title === "")
-                $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
-
+                this.showProposeSessionError("Oops! Session title cannot be left blank.");
             return;
         } 
 
+        this.hideProposeSessionError();
         $(".title-preview").text("");
         $(".title-preview").text(title);
-        $(".proposed-title-validate-error", scope).removeClass('show');
-        $(".proposed-title-validate-error", scope).addClass('hide');
-
     },
 
     regroupUser: function(event) {
@@ -778,18 +786,11 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
         if(title.length > 80 || title.length === 0 || title === "") {    
             scope.modal('show');
-
-            $(".proposed-title-validate-error", scope).removeClass('hide');
-            $(".proposed-title-validate-error", scope).addClass('show');
-
             if(title.length > 80) {
-                $(".proposed-title-validate-error", scope).text("Title should be less than 80 characters");
+                this.showProposeSessionError("Oops! Session title should be less than 80 characters.");
+            } else if (title.length === 0 || title === "") {
+                this.showProposeSessionError("Oops! Session title cannot be left blank.");
             }
-
-            else if (title.length === 0 || title === "") {
-                $(".proposed-title-validate-error", scope).text("Title cannot be left blank");
-            }
-
             return;
         } 
 
@@ -806,19 +807,12 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         });
 
         scope.modal('hide');
-
         $(".title-preview").text("Your title will appear here");
         $(".input-topic-title").val("");
-        $(".proposed-title-validate-error", scope).addClass('hide');
-        $(".proposed-title-validate-error", scope).removeClass('show');
     },
 
     closeDisconnected: function() {
         $("#disconnected-modal").modal('hide');
-    },
-
-    proposeSessionDialog: function() {
-        $("#propose-session-dialog").modal('show');
     },
 
     setIframeCode: function(event) {
@@ -930,7 +924,6 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         $('.contact-control', scope).removeClass('contact-invalid-error');
 
         scope.modal('hide');
-
     },
 
     createSession: function(event) {
@@ -940,24 +933,21 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         var joinCap = parseInt($.trim($("[name=join_cap]", scope).val()));
         var type = $("[name='session_type']:checked", scope).val();
 
-        if (isNaN(joinCap) || joinCap < 2 || joinCap > 10) {
-            $(".join-cap-error", scope).show();
-            return;
-        }
-
         if(title.length > 80 || title.length === 0 || title === "") {    
             scope.modal('show');
-            $(".session-title-validate-error", scope).addClass('show');
-            $(".session-title-validate-error", scope).removeClass('hide');
-            
-            if(title.length > 80)
-                $(".session-title-validate-error", scope).text("Title should be less than 80 characters");
-            else if (title.length === 0 || title == "")
-                $(".session-title-validate-error", scope).text("Title cannot be left blank");
-
-            return;
-
+            if(title.length > 80) {
+                this.showCreateSessionError("Oops! Session name should be less than 80 characters.");
+                return;
+            } else if (title.length === 0 || title == "") {
+                this.showCreateSessionError("Oops! Session name cannot be left blank.");
+                return;
+            }
         } 
+
+        if (isNaN(joinCap) || joinCap < 2 || joinCap > 10) {
+            this.showCreateSessionError("Oops! Participant limit should be a number between 2 and 10.");
+            return;
+        }
 
         var activities = [];
         switch (type) {
@@ -965,10 +955,14 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 activities.push({type: "about", autoHide: true});
                 break;
             case "video":
+                var ytUrl = $("#session_youtube_id", scope).val();
+                if(!ytUrl) {
+                    this.showCreateSessionError("Oops! URL for a 'Youtube Video' session type cannot be left blank.");
+                    return;
+                }
                 var ytid = video.extractYoutubeId($("#session_youtube_id", scope).val());
                 if (!ytid) {
-                    $(".yt-error", scope).show();
-                    $("#session_youtube_id", scope).parent().addClass("error");
+                    this.showCreateSessionError("Oops! that's an unrecognized Youtube URL! Please enter a valid URL.")
                     return;
                 } else {
                     activities.push({type: "video", video: {provider: "youtube", id: ytid}});
@@ -976,9 +970,13 @@ views.DialogView = Backbone.Marionette.Layout.extend({
                 break;
             case "webpage":
                 var url = this.$("#session_webpage").val();
+                if(!url) {
+                    this.showCreateSessionError("Oops! URL for a 'Webpage' session type cannot be left blank.");
+                    return;
+                }
+
                 if (!/^https:\/\//.test(url)) {
-                    $(".url-error", scope).show();
-                    $("#session_webpage", scope).parent().addClass("error");
+                    this.showCreateSessionError("Oops! We only allow embedding of secure pages in the breakout rooms. Please enter an 'https' url.");
                     return;
                 } else {
                     activities.push({type: "webpage", url: url});
@@ -996,15 +994,10 @@ views.DialogView = Backbone.Marionette.Layout.extend({
         });
 
         $("input[type=text]", scope).val("");
-        $(".yt-error, .url-error, .join-cap-error", scope).hide();
-        $(".error", scope).removeClass(".error");
         scope.modal('hide');
-
-        $(".session-title-validate-error", scope).addClass('hide');
-        $(".session-title-validate-error", scope).removeClass('show');
     },
 
-    sendFollowupEmail: function(jqevt) {
+    sendFollowupEmail: function(jqevt) {    
         jqevt.preventDefault();
 
         $.ajax({
@@ -1018,6 +1011,23 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     closeDisconnected: function() {
         $("#disconnected-modal").modal('hide');
+    },
+
+    showCreateSessionError: function(msg) {
+        $(".create-session-error").addClass("show");
+        $(".create-session-error").removeClass("hide");
+        $(".create-session-error").text(msg);
+    },
+
+    showProposeSessionError: function(msg) {
+        $(".propose-session-error").addClass("show");
+        $(".propose-session-error").removeClass("hide");
+        $(".propose-session-error").text(msg);
+    },
+
+    hideProposeSessionError: function() {
+        $(".propose-session-error").addClass("hide");
+        $(".propose-session-error").removeClass("show");
     }
 });
 
