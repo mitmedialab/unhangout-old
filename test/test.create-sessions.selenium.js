@@ -156,8 +156,8 @@ describe("CREATE SESSIONS", function() {
             expect(val).to.be("");
         });
         browser.byCss("#create-session").click();
-        browser.waitForSelector(".join-cap-error");
-        browser.executeScript("$('.join-cap-error').hide();");
+        browser.waitForSelector(".create-session-error");
+        browser.executeScript("$('.create-session-error').hide();");
 
         // Error for too low
         browser.waitForSelector("#session_name");
@@ -165,8 +165,8 @@ describe("CREATE SESSIONS", function() {
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("1");
         browser.byCss("#create-session").click();
-        browser.waitForSelector(".join-cap-error");
-        browser.executeScript("$('.join-cap-error').hide();");
+        browser.waitForSelector(".create-session-error");
+        browser.executeScript("$('.create-session-error').hide();");
 
         // Error for too high
         browser.waitForSelector("#session_name");
@@ -174,16 +174,17 @@ describe("CREATE SESSIONS", function() {
         browser.byCss("#join_cap").clear();
         browser.byCss("#join_cap").sendKeys("11");
         browser.byCss("#create-session").click();
-        browser.waitForSelector(".join-cap-error");
-        browser.executeScript("$('.join-cap-error').hide();");
+        browser.waitForSelector(".create-session-error");
+        browser.executeScript("$('.create-session-error').hide();");
 
         // Goldilocks
 
         browser.waitForSelector("#session_name");
         browser.byCss("#session_name").sendKeys("Joining Capacity");
         browser.byCss("#join_cap").clear();
+        browser.executeScript("$('#join_cap').val('');");
         browser.byCss("#join_cap").sendKeys("3");
-        browser.byCss("#create-session").click();
+        browser.byCss("#create-session").click();   
 
         browser.waitForSelector(".session .hangout-users");
         browser.byCsss(".session .hangout-users li").then(function(els) {
