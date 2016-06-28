@@ -151,7 +151,9 @@ $(document).ready(function() {
         this.topLeft.show(this.youtubeEmbedView);
         
         this.centerLeft.show(this.sessionListView);
+        this.sessionListView.onRender();
         this.main.show(this.topicListView);
+        this.topicListView.onRender();
 
         this.dialogs.show(this.dialogView);
         this.top.show(this.aboutView);
@@ -166,32 +168,9 @@ $(document).ready(function() {
             $('#session_name').focus();
         });
 
-        /*
-            When the app loads show or hide the breakout 
-            rooms list view controls accordingly  
-        */
-        if(curEvent.get("randomizedSessions")) {
-            $("#btn-propose-session").hide();
-            $("#btn-create-session").hide();
-            $("#btn-group-me").show();
-            $("#random-list").show();
-            $("#topic-list").hide();
-        } else {
-            $("#random-list").hide();
-            $("#btn-group-me").hide();
-            if(!curEvent.get("adminProposedSessions")) {
-                $("#btn-propose-session").show();
-                $("#btn-create-session").hide();
-                $("#topic-list").show();
-            } else {
-                $("#btn-propose-session").hide();
-                $("#btn-create-session").show();
-                $("#topic-list").hide();
-            }
-        }
 
         if(IS_ADMIN) {
-            curEvent.on("change:adminProposedSessions change:sessionsOpen change:open", _.bind(function() {
+            curEvent.on("change:adminProposedSessions change:randomizedSessions change:sessionsOpen change:open", _.bind(function() {
                 this.adminButtonView.render();  
             }, this));
         }

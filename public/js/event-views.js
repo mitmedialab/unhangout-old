@@ -559,8 +559,8 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
 
     initialize: function() {
         this.renderControls();
-        this.listenTo(this.options.event, 'change:adminProposedSessions', this.render, this);
-        this.listenTo(this.options.event, 'change:randomizedSessions', this.render, this);
+        this.listenTo(this.options.event, 'change:adminProposedSessions', this.onRender, this);
+        this.listenTo(this.options.event, 'change:randomizedSessions', this.onRender, this);
         this.listenTo(this.options.event.get("sessions"), 'change:assignedParticipants', this.render, this);
         this.listenTo(this.options.event.get("sessions"), 'remove', this.render, this);
     },
@@ -611,26 +611,27 @@ views.SessionListView = Backbone.Marionette.CollectionView.extend({
     },
 
     onRender: function() {         
+        /*
+            When the app loads show or hide the breakout 
+            rooms list view controls accordingly  
+        */
         if(this.options.event.get("randomizedSessions")) {
             $("#btn-propose-session").hide();
             $("#btn-create-session").hide();
             $("#btn-group-me").show();
-            var thisEventAssign = this.getMySessionAssignment();
-            if(thisEventAssign) {
-                $("#btn-group-me").find(".text").text("REGROUP ME");
-            } else {
-                $("#btn-group-me").find(".text").text("GROUP ME");
-            }
-        } else {
+            $("#random-list").show();
+        } else if (this.options.event.get("adminProposedSessions")) {
+            $("#btn-propose-session").hide();
+            $("#btn-create-session").toggle(IS_ADMIN);
             $("#btn-group-me").hide();
-            if(this.options.event.get("adminProposedSessions")) {
-                $("#btn-propose-session").hide();
-                $("#btn-create-session").show();
-            } else {
-                $("#btn-propose-session").show();
-                $("#btn-create-session").hide();
-            }
-        }        
+            $("#random-list").hide();
+        } else {
+            // participant proposed
+            $("#btn-propose-session").show();
+            $("#btn-create-session").hide();
+            $("#btn-group-me").hide();
+            $("#random-list").hide();
+        }
     }
 });
 
@@ -652,12 +653,11 @@ views.TopicListView = Backbone.Marionette.CollectionView.extend({
     onRender: function() {
         if(this.options.event.get("randomizedSessions")) {
             $("#topic-list").hide();
-        } else {        
-            if(this.options.event.get("adminProposedSessions")) {
-                $("#topic-list").hide();
-            } else {
-                $("#topic-list").show();
-            }
+        } else if (this.options.event.get("adminProposedSessions")) {
+            $("#topic-list").hide();
+        } else {
+            // participant proposed
+            $("#topic-list").show();
         }
     },
 });
