@@ -212,3 +212,14 @@ Alternately, you can skip selenium tests (which are very slow) outright by setti
 
     $ SKIP_SELENIUM_TESTS=1 npm test
 
+G. Production Mode
+------------------
+
+You must set NODE_ENV variable to "production" before starting the node server.
+For example, from Bash command line:
+
+    ```export NODE_ENV=production```
+    
+Production mode uses pre-compiled JS/CSS. They can be compiled using:
+
+    ```node bin/compile-assets.js```
