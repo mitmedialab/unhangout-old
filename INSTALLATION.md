@@ -212,3 +212,13 @@ Alternately, you can skip selenium tests (which are very slow) outright by setti
 
     $ SKIP_SELENIUM_TESTS=1 npm test
 
+G. Production Mode
+------------------
+
+You must set NODE_ENV variable to "production" before starting the node server:
+
+    $ export NODE_ENV=production
+    
+Assets must also be compiled in order to static files to be load:
+
+    $ node bin/compile-assets.js
