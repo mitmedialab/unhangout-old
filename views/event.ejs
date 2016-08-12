@@ -460,7 +460,7 @@
 
 <script type='text/template' id="video-embed-controls-template">
         <div class='row youtube-video-controls'>
-            {{ if (youtubeEmbed || iframeEmbedCode.length > 0) { }}
+            {{ if (youtubeEmbed || iframeEmbedCode) { }}
             <div class="row video-play-trash-row">
                 <div class='col-lg-7 col-xs-6 btn-play-pause'>
                     <div class='current-video-controls'>
@@ -586,14 +586,17 @@
 
 <script type='text/template' id="previous-video-details-template">
     <a tabindex='-1' href='#' class='restore-previous-video'
+       title='{{= title || id }}'
        data-youtube-id='{{= id }}'>
         
         <div class="col-lg-2 col-xs-3">
-            <img src='{{= thumbnail.url }}'>
+            {{ if (thumbnail) { }}
+                <img src='{{= thumbnail.url }}'>
+            {{ } }}
         </div>
 
         <div class="col-lg-8 col-xs-8">
-            <p class='title'>{{= title }}</p>
+            <p class='title'>{{= title || id}}</p>
         </div>
     </a>
 </script>

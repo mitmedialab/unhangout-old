@@ -817,13 +817,14 @@ views.DialogView = Backbone.Marionette.Layout.extend({
 
     setIframeCode: function(event) {
         event.preventDefault();
-        var iframeCode = $(".input-iframe-code").val();
+        var iframeCode = $(".input-iframe-code").val().trim();
         if(!iframeCode) {
             return;
         }
         if(!iframeCode.startsWith('<iframe') && 
             !iframeCode.endsWith('</iframe>') || 
             !iframeCode.endsWith('>')) {
+            alert("Invalid iframe code");
             return;
         };
         var args = {
@@ -1789,7 +1790,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.removeIframeEmbed();
     },
     removeVideoEmbed: function(jqevt) {
-        jqevt.preventDefault();
+        jqevt && jqevt.preventDefault();
         this.removeYouTubeEmbed();
         this.removeHoA();
         this.removeIframeEmbed();
@@ -1811,7 +1812,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }
     },
     removeIframeEmbed: function() {
-        if(this.model.get("iframeEmbedCode").length > 0) {
+        if(this.model.get("iframeEmbedCode")) {
             this.model.set("iframeEmbedCode", "");
             this.options.transport.send("insert-iframe", {
                 iframeCode: "",
@@ -1822,8 +1823,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     embedIframePlayer: function() {
         this.removeYouTubeEmbed();
         this.removeHoA();
-        if(this.model.get("iframeEmbedCode").length == 0) {
-            $("#iframePlayer").remove();
+        if (!this.model.get("iframeEmbedCode")) {
+            this.$("#iframePlayer").remove();
             return;
         }
         setTimeout(_.bind(this.loadIframePlayer, this), 10);
@@ -1862,12 +1863,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         });
     },
     setPlayerVisibility: function() {
-        yt_embed = this.model.get("youtubeEmbed");
-        ls_channel = this.model.get("iframeEmbedCode");
-        visible = true;
-        if(yt_embed == null || ls_channel.length > 0) {
-            visible = false;
-        } 
+        var visible = !!(this.model.get("youtubeEmbed") || this.model.get("iframeEmbedCode"));
         // Display player if it's visible.
         this.ui.player.toggle(visible);
         // Show a placeholder ("video goes here") if video is not visible and
@@ -1891,7 +1887,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
 
         this.ui.controls.html(this.controlsTemplate(context));
 
-        if(this.model.get("iframeEmbedCode").length > 0) {
+        if(this.model.get("iframeEmbedCode")) {
             this.$el.find(".play-for-all").addClass('disabled');
         } else {
             this.$el.find(".play-for-all").addClass('enabled');
@@ -1912,8 +1908,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         }, this));
     },
     onRender: function() {
-        youtubeEmbed = this.model.get("youtubeEmbed");
-        lsChannel = this.model.get("iframeEmbedCode");
+        var youtubeEmbed = this.model.get("youtubeEmbed");
+        var lsChannel = this.model.get("iframeEmbedCode");
 
         this.yt = new video.YoutubeVideo({
             ytID: youtubeEmbed,
@@ -1935,8 +1931,8 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         this.$(".video-player").html(this.yt.el); 
         this.setPlayerVisibility();
 
-        if(lsChannel.length > 0) {
-            this.embedIframePlayer(this.model.get("iframeEmbedCode"));
+        if(lsChannel) {
+            this.embedIframePlayer();
         } 
 
         if (youtubeEmbed) {
