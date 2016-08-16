@@ -8,6 +8,7 @@ var logger = new logging.Logger("transport");
 var Transport = function(roomId) {
     this._setState("CONNECTING");
     this.stateModels = {};
+    this.messages = _.extend({}, Backbone.Events);
 
     this.sock = new SockJS(
         document.location.protocol + "//" +
@@ -43,6 +44,9 @@ var Transport = function(roomId) {
                 break;
             case "join-err":
                 this._setState("JOIN-ERROR");
+                break;
+            case "message":
+                this.handleMessage(msg.args);
                 break;
             case "state":
                 this.handleStateChange(msg.args);
@@ -101,8 +105,22 @@ _.extend(Transport.prototype, Backbone.Events, {
     registerModel: function(name, model) {
         this.stateModels[name] = model;
     },
-    unregisterModel: function(name, moel) {
+    unregisterModel: function(name) {
         delete this.stateModels[name];
+    },
+
+    // 'handleMessage' allows for handling generic messages.
+    // Consumers can listen for specific message types on
+    // Transport.messages.
+    handleMessage: function(args) {
+        // 'args' should look like:
+        // {
+        //   type: 'some-message-type',
+        //   data: {
+        //     foo: bar,
+        //   }
+        // }
+        this.messages.trigger(args.type, args.data);
     },
 
     // `handleStateChange' takes a set of basic operations (modeled after
