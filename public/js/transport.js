@@ -8,6 +8,7 @@ var logger = new logging.Logger("transport");
 var Transport = function(roomId) {
     this._setState("CONNECTING");
     this.stateModels = {};
+    this.queue = [];
 
     this.sock = new SockJS(
         document.location.protocol + "//" +
@@ -33,13 +34,23 @@ var Transport = function(roomId) {
         switch (msg.type) {
             case "auth-ack":
                 this._setState("JOINING");
-                this.send("join", {id: roomId, timestamp: window.INITIAL_DATA_TIMESTAMP});
+                this.sock.send(JSON.stringify({
+                    type: "join",
+                    args: {id: roomId, timestamp: window.INITIAL_DATA_TIMESTAMP}
+                }));
                 break;
             case "auth-err":
                 this._setState("AUTH-ERROR");
                 break;
             case "join-ack":
                 this._setState("JOINED");
+                if (this.queue.length) {
+                    logger.info("Sending queued messages now");
+                    for (var i = 0; i < this.queue.length; i++) {
+                        this.sock.send(this.queue[i]);
+                    }
+                    this.queue = [];
+                }
                 break;
             case "join-err":
                 this._setState("JOIN-ERROR");
@@ -268,7 +279,13 @@ _.extend(Transport.prototype, Backbone.Events, {
 
     },
     send: function(type, args) {
-        this.sock.send(JSON.stringify({type: type, args: args}));
+        var msg = JSON.stringify({type: type, args: args});
+        if (this.state !== "JOINED") {
+            logger.info("Message before joined; queueing");
+            this.queue.push(msg);
+        } else {
+            this.sock.send(msg);
+        }
     }
 });
 
