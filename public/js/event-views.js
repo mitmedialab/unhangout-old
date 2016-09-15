@@ -1714,6 +1714,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
     previousVideoDetailsTemplate: _.template($("#previous-video-details-template").html()),
     ui: {
         player: ".video-player",
+        iframePlayer: ".iframe-player",
         placeholder: ".video-placeholder",
         controls: ".video-controls",
         playForAll: ".play-for-all"
@@ -1863,7 +1864,7 @@ views.VideoEmbedView = Backbone.Marionette.ItemView.extend({
         });
     },
     setPlayerVisibility: function() {
-        var visible = !!(this.model.get("youtubeEmbed") || this.model.get("iframeEmbedCode"));
+        var visible = !!this.model.get("youtubeEmbed");
         // Display player if it's visible.
         this.ui.player.toggle(visible);
         // Show a placeholder ("video goes here") if video is not visible and
