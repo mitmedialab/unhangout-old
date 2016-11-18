@@ -17,7 +17,7 @@
       "email": "srishakatux@gmail.com"
     }
   ],
-  "license": "BSD",
+  "license": "MIT",
   "scripts": {
     "postinstall": "node ./bin/compile-assets.js",
     "start": "node ./bin/unhangout-server",
