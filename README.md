@@ -1,3 +1,10 @@
+Repository moved
+================
+
+This was the original codebase for [Unhangout](https://unhangout.media.mit.edu), but has been replaced by a rewrite found here: https://gitlab.com/unhangout/reunhangout.  The old code is kept here only for historical interest and is no longer maintained.
+
+--------
+
 unhangout
 =========
 
