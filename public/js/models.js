@@ -441,14 +441,14 @@ models.User = Backbone.Model.extend({
 
     initialize: function() {
         this.checkJSON();
-        this.on("change:_json", this.checkJSON);
+        this.on("change:google_json", this.checkJSON);
     },
 
     checkJSON: function() {
-        // _json (which comes from g+) has some extra stuff in it
+        // google_json (which comes from g+) has some extra stuff in it
         // that we might want to extract for our own purposes.
-        if(this.has("_json")) {
-            var json = this.get("_json");
+        if(this.has("google_json")) {
+            var json = this.get("google_json");
 
             // some checking for situations where a user doesn't
             // have a google+ profile picture.
@@ -458,7 +458,7 @@ models.User = Backbone.Model.extend({
                 this.set("picture", "");
             }
 
-            if("link" in json) this.set("link", this.get("_json").link);
+            if("link" in json) this.set("link", this.get("google_json").link);
         }
 
         if(!this.has("admin"))     {

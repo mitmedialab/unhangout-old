@@ -11,6 +11,12 @@
     "UNHANGOUT_REDIS_PORT":6379,
     "UNHANGOUT_REDIS_DB":0,
 
+    "UNHANGOUT_COUCHDB_HOST": "localhost",
+    "UNHANGOUT_COUCHDB_PORT": 5984,
+    "UNHANGOUT_COUCHDB_DATABASE": "unhangout",
+
+    "UNHANGOUT_DB_DRIVER": "redis",
+
     "UNHANGOUT_SMTP": {
         "host": "localhost",
         "port": "2525",
