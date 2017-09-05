@@ -13,7 +13,7 @@ Update your system
         
 Setup the system to handle compiling and installing from source 
 
-    $ sudo apt-get build-essential
+    $ sudo apt-get install build-essential
 
 To enable SSL support install libssl-dev 
 
