@@ -16,8 +16,7 @@
         "bootstrap": "../vendor/bootstrap-3.2.0-dist/js/bootstrap.min",
         "bootstrap-datetimepicker": "../vendor/bootstrap-datetimepicker/bootstrap-datetimepicker.min",
         "moment": "../vendor/moment.min",
-        "moment-timezone": "../vendor/moment-timezone.min",
-        "moment-timezone-data": "../vendor/timezone-data",
+        "moment-timezone": "../vendor/moment-timezone-with-data-2010-2020.min",
         "jstz": "../vendor/jstz",
         "sockjs": "../vendor/sockjs-0.3"
     },

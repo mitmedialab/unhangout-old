@@ -1,6 +1,6 @@
 require([
     "jquery", "underscore", "moment-timezone", "jstz", "models", "auth",
-    "bootstrap", "bootstrap-datetimepicker", "moment-timezone-data"
+    "bootstrap", "bootstrap-datetimepicker"
 ], function($, _, moment, jstz, models) {
 
 var event = new models.Event(EVENT_DATA); // EVENT_DATA from template.
@@ -36,7 +36,7 @@ $(document).ready(function(){
     $(".form_datetime").datetimepicker(options);
 
     // Append timezones to option box.
-    var zones = _.map(moment.tz.zones(), function(z) { return z.displayName; });
+    var zones = moment.tz.names();
     zones.sort(function(a, b) {
         var aIsAmerica = /^America/.test(a);
         var bIsAmerica = /^America/.test(b);

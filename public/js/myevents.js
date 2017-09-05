@@ -1,8 +1,8 @@
 require([
-   "jquery", "underscore", "backbone", "validate", "client-models", "auth",
+   "jquery", "underscore", "backbone", "validate", "client-models", "auth", "moment",
    // plugins
    "backbone.marionette", "bootstrap", "underscore-template-config"
-], function($, _, Backbone, validate, models, auth) {
+], function($, _, Backbone, validate, models, auth, moment) {
 
 $(document).ready(function() { 
 	var users = new models.UserList(USER_DATA);
