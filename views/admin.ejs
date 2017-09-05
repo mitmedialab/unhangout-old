@@ -3,6 +3,16 @@
 <% var sessions; %>
 
 <div class='container admin-container'>
+
+    <% while (data = flash.shift()) { %>
+    <div class="alert alert-<%= data.type %>">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <% if (data.type == "danger") { %>
+            <strong>ERROR:</strong>
+        <% } %>
+        <%= data.message %>
+    </div>
+    <% } %>
    
     <div class='row-fluid'>
         <div class='span6' id='events'>
@@ -32,10 +42,14 @@
                         </form>
                     <% } else { %>
                         <form action="/admin/event/<%=event.id%>/start" method="post">
-                            <button type="submit" class="btn btn btn-small start-event"
+                            <button type="submit" class="btn btn-small start-event"
                                     data-event='<%= event.id %>'>start</button>
                         </form>
                     <% } %>
+                    <form action="/admin/event/<%=event.id%>/delete" method="post">
+                        <button type="submit" class="btn btn-warning btn-small delete-event"
+                                data-event='<%= event.id %>'>delete</button>
+                    </form>
                     <a href="/admin/event/<%=event.id + '?destination=' + encodeURIComponent(destination)%>" class="btn btn-small">
                         <i class='fa fa-pencil' title='Edit'></i> edit
                     </a>
